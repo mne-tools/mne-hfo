@@ -37,11 +37,6 @@ Now you can finally run the tests by running `pytest` in the
     $ cd mne-bids
     $ pytest
 
-If you have installed the `bids-validator`
-on a per-user basis, set the environment variable `VALIDATOR_EXECUTABLE` to point to the path of the `bids-validator` before invoking `pytest`:
-
-    $ VALIDATOR_EXECUTABLE=../bids-validator/bids-validator/bin/bids-validator pytest
-
 ## Building the documentation
 
 The documentation can be built using sphinx. For that, please additionally

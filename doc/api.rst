@@ -8,34 +8,19 @@ API Documentation
 
 mne_bids
 --------
-:py:mod:`mne_bids`:
+:py:mod:`mne_hfo`:
 
-.. automodule:: mne_bids
+.. automodule:: mne_hfo
    :no-members:
    :no-inherited-members:
 
-.. currentmodule:: mne_bids
+.. currentmodule:: mne_hfo
 
 .. autosummary::
    :toctree: generated/
 
-   write_raw_bids
-   read_raw_bids
-   write_meg_calibration
-   write_meg_crosstalk
-   BIDSPath
-   make_dataset_description
-   make_report
-   write_anat
-   mark_bad_channels
-   get_head_mri_trans
-   get_anonymization_daysback
-   print_dir_tree
-   get_entities_from_fname
-   get_entity_vals
-   get_datatypes
-   update_sidecar_json
-   inspect_dataset
+    LineLengthDetector
+    RMSDetector
 
 mne_bids.stats
 --------------

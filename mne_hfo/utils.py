@@ -49,15 +49,15 @@ def _write_json(fname, dictionary, overwrite=False, verbose=False):
         print(json_output)
 
 
-def compute_rms(signal, window_size=6):
+def compute_rms(signal, win_size: int = 6):
     """
-    Calcule the Root Mean Square (RMS) energy
+    Calculate the Root Mean Square (RMS) energy.
 
     Parameters
     ----------
     signal: numpy array
         1D signal to be transformed
-    window_size: int
+    win_size: int
         Number of the points of the window (default=6)
 
     Returns
@@ -65,9 +65,8 @@ def compute_rms(signal, window_size=6):
     rms: numpy array
         Root mean square transformed signal
     """
-    window_size = int(window_size)
     aux = np.power(signal, 2)
-    window = np.ones(window_size) / float(window_size)
+    window = np.ones(win_size) / float(win_size)
     return np.sqrt(np.convolve(aux, window, 'same'))
 
 
@@ -179,7 +178,6 @@ def threshold_quian(signal, threshold):
     return ths_value
 
 
-
 def match_detections(gs_df, dd_df, bn, freq_name=None,
                      sec_unit=None, sec_margin=1):
     """
@@ -215,9 +213,9 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
         gs = [row_gs[1][bn[0]], row_gs[1][bn[1]]]
         if sec_unit:  # We can create subset - significant speed improvement
             for row_dd in dd_df[(dd_df[bn[0]] < gs[0]
-                                + sec_unit * sec_margin) &
+                                 + sec_unit * sec_margin) &
                                 (dd_df[bn[0]] > gs[0]
-                                - sec_unit * sec_margin)].iterrows():
+                                 - sec_unit * sec_margin)].iterrows():
                 dd = [row_dd[1][bn[0]], row_dd[1][bn[1]]]
                 if check_detection_overlap(gs, dd):
                     matched_idcs.append(row_dd[0])

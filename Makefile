@@ -1,4 +1,4 @@
-# simple makefile to simplify repetetive build env management tasks under posix
+# simple makefile to simplify repetitive build env management tasks under posix
 
 # caution: testing won't work on windows, see README
 
@@ -33,14 +33,14 @@ inplace:
 
 test: inplace check-manifest
 	rm -f .coverage
-	$(PYTESTS) mne_bids
+	$(PYTESTS) mne_hfo
 
 test-doc:
-	$(PYTESTS) --doctest-modules --doctest-ignore-import-errors mne_bids
+	$(PYTESTS) --doctest-modules --doctest-ignore-import-errors mne_hfo
 
 test-coverage:
 	rm -rf coverage .coverage
-	$(PYTESTS) --cov=mne_bids --cov-report html:coverage
+	$(PYTESTS) --cov=mne_hfo --cov-report html:coverage
 
 trailing-spaces:
 	find . -name "*.py" | xargs perl -pi -e 's/[ \t]*$$//'
@@ -54,7 +54,7 @@ check-manifest:
 flake:
 	@if command -v flake8 > /dev/null; then \
 		echo "Running flake8"; \
-		flake8 --count mne_bids examples mne_bids/tests; \
+		flake8 --count mne_hfo examples mne_hfo/tests; \
 	else \
 		echo "flake8 not found, please install it!"; \
 		exit 1; \

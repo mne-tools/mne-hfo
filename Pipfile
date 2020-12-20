@@ -12,8 +12,21 @@ mne = "*"
 mne-bids = "*"
 matplotlib = "*"
 joblib = "*"
+tqdm = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-sugar = "*"
+pytest-cov = "*"
+flake8 = "*"
+numpydoc = "*"
+sphinx-gallery = "*"
+sphinx-bootstrap-theme = "*"
+sphinx = "*"
+pydocstyle = "*"
+codespell = "*"
+check-manifest = "*"
+pytest-benchmark = "*"
 
 [requires]
 python_version = "3.8"

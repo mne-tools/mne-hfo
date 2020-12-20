@@ -14,9 +14,24 @@ MNE-HFO is a Python package that computes estimates of high-frequency oscillatio
 in iEEG data stored in the [BIDS](https://bids.neuroimaging.io/)-compatible datasets with the help of
 [MNE-Python](https://mne.tools/stable/index.html).
 
+The initial code was adapted and taken from: https://gitlab.com/icrc-bme/epycom 
+to turn into a sklearn-compatible API. Additional algorithms and functionality are 
+added.
+
 NOTE: This is currently in ALPHA stage, and we are looking for 
 contributors. Please get in touch via Issues tab if you would like to
 contribute.
+
+High frequency oscillations in epilepsy
+---------------------------------------
+A few notes that are worthy of reading. The initial papers on HFOs (Staba et al.) 
+actually only observed HFOs on Hippocampus. In addition, the papers cited that 
+are implemented all selected data before developing their algorithm (i.e. selected 
+channels with HFOs). 
+
+It is also noted that the Hilbert detector was used to show HFOs
+exist in normal brain function, possibly unassociated with 
+the epileptogenic zone.
 
 Why?
 ----
@@ -26,7 +41,7 @@ addition, validation of HFO algorithms depend on i) sharing the algorithms
 ii) sharing the results with others in a readable format and iii) comparing 
 algorithms against each other on the same dataset.
 
-MNE-BIDS links BIDS, MNE-Python and iEEG event detection with the goal to make HFO 
+MNE-HFO links BIDS, MNE-Python and iEEG HFO event detection with the goal to make HFO 
 detection more transparent, more robust, and facilitate data and code sharing with 
 co-workers and collaborators.
 

@@ -1,49 +1,232 @@
+import mne
 import numpy as np
 from sklearn.base import BaseEstimator
+from sklearn.metrics import r2_score, f1_score
+from sklearn.utils.validation import check_is_fitted
 
-from mne_hfo.utils import (threshold_std, compute_rms, compute_line_length)
+from mne_hfo.utils import (threshold_std, compute_rms,
+                           compute_line_length)
 
 ACCEPTED_THRESHOLD_METHODS = ['std']
 ACCEPTED_HFO_METHODS = ['line_length', 'rms']
 
 
 class Detector(BaseEstimator):
+    """Any sliding-window based HFO detector.
+
+    Parameters
+    ----------
+    threshold: float
+        Number of standard deviations to use as a threshold.
+    win_size: int
+        Sliding window size in samples.
+    overlap: float
+        Fraction of the window overlap (0 to 1).
+    scoring_func : str
+        Either ``'f1'``, or ``'r2'``.
+    verbose: bool
+    """
+
     def __init__(self, threshold: int, win_size: int, overlap: float,
-                 verbose: bool = True):
-        """Base class for any HFO detector.
+                 scoring_func: str,
+                 verbose: bool):
+        self.win_size = win_size
+        self.threshold = threshold
+        self.overlap = overlap
+        self.scoring_func = scoring_func
+        self.verbose = verbose
+
+    def _compute_hfo(self, X, picks):
+        """Compute HFO event array.
+
+        Takes a sliding window approach and computes the existence
+        of an HFO defined by algorithm parameters. If an HFO is
+        present, then a ``1`` will be in the array, otherwise
+        a ``0`` will be in the array.
 
         Parameters
         ----------
-        threshold: float
-            Number of standard deviations to use as a threshold.
-        win_size: int
-            Sliding window size in samples.
-        overlap: float
-            Fraction of the window overlap (0 to 1).
-        verbose: bool
+        X : np.ndarray
+            EEG data matrix (n_chs, n_times).
+        picks : np.ndarray | list | None
+            Corresponds to ``picks`` in mne-python.
+
+        Returns
+        -------
+        hfo_event_arr : np.ndarray
+            HFO event array that is (n_chs, n_windows).
         """
-        self._win_size = win_size
-        self._threshold = threshold
-        self._overlap = overlap
-        self.verbose = verbose
+        raise NotImplementedError('Private function that computes the HFOs '
+                                  'needs to be implemented.')
 
-        # store all HFO events found
-        self.hfo_event_arr = None
+    def _compute_n_wins(self, win_size, step_size, n_times):
+        n_windows = int(np.ceil((n_times - win_size) / step_size)) + 1
+        return n_windows
+
+    def fit_predict(self, X, y=None):
+        """Perform fit on X and returns labels for X.
+
+        Returns -1 for outliers and 1 for inliers.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix, dataframe} of shape \
+            (n_samples, n_features)
+
+        y : Ignored
+            Not used, present for API consistency by convention.
+
+        Returns
+        -------
+        y : ndarray of shape (n_samples,)
+            1 for inliers, -1 for outliers.
+        """
+        # override for transductive outlier detectors like LocalOulierFactor
+        return self.fit(X).predict(X)
+
+    def score(self, X, y, sample_weight=None):
+        r"""Return the score of the HFO prediction.
+
+        The coefficient :math:`R^2` is defined as :math:`(1 - \\frac{u}{v})`,
+        where :math:`u` is the residual sum of squares ``((y_true - y_pred)
+        ** 2).sum()`` and :math:`v` is the total sum of squares ``((y_true -
+        y_true.mean()) ** 2).sum()``. The best possible score is 1.0 and it
+        can be negative (because the model can be arbitrarily worse). A
+        constant model that always predicts the expected value of `y`,
+        disregarding the input features, would get a :math:`R^2` score of
+        0.0.
+
+        Parameters
+        ----------
+        X : array-like of shape (n_samples, n_features)
+            Test samples. For some estimators this may be a precomputed
+            kernel matrix or a list of generic objects instead with shape
+            ``(n_samples, n_samples_fitted)``, where ``n_samples_fitted``
+            is the number of samples used in the fitting for the estimator.
+
+        y : array-like of shape (n_samples,) or (n_samples, n_outputs)
+            True values for `X`.
+
+        sample_weight : array-like of shape (n_samples,), default=None
+            Sample weights.
+
+        Returns
+        -------
+        score : float
+            :math:`R^2` of ``self.predict(X)`` wrt. `y`.
+
+        Notes
+        -----
+        The :math:`R^2` score used when calling ``score`` on a regressor uses
+        ``multioutput='uniform_average'`` from version 0.23 to keep consistent
+        with default value of :func:`~sklearn.metrics.r2_score`.
+        This influences the ``score`` method of all the multioutput
+        regressors (except for
+        :class:`~sklearn.multioutput.MultiOutputRegressor`).
+        """
+        # fit and predict
+        y_pred = self.fit_predict(X, y)
+
+        # compute score
+        if self.scoring_func == 'f1':
+            score = f1_score(y, y_pred, sample_weight=sample_weight)
+        elif self.scoring_func == 'r2':
+            score = r2_score(y, y_pred, sample_weight=sample_weight)
+        return score
+
+    def _check_input_raw(self, X, y, picks):
+        if isinstance(X, mne.io.BaseRaw):
+            self.sfreq = X.info['sfreq']
+            X = X.get_data(picks=picks)
+        elif self.sfreq is not None:
+            pass
+        else:
+            raise RuntimeError('If "X" passed in is not a `mne.io.BaseRaw` '
+                               'object, then "sfreq" must be set on '
+                               'instantation of detector.')
+
+        # use sklearn's validation of data
+        if y is None:
+            X = self._validate_data(X, dtype='float64')
+        else:
+            X, y = self._validate_data(X, y, accept_sparse=False,
+                                       dtype='float64',
+                                       accept_large_sparse=False)
+
+        self.n_chs, self.n_times = X.shape
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+
+        if n_windows < 0:
+            raise ValueError(f'Negative dimensions are not allowed. '
+                             f'This is probably due to there being '
+                             f'n_features=1 (sample point) in the dataset. '
+                             f'Current data segment has shape {X.shape}. '
+                             f'Pass in a longer data segment.')
+
+        # if the number of time points is smaller then the window size
+        # then raise an Error
+        if self.n_times < self.win_size:
+            raise ValueError(f'Got data matrix with {self.n_times} sample '
+                             f'points, which is less then {self.win_size} '
+                             f'window size. Please pass in a longer segment.')
+
+        return X, y
 
     @property
-    def win_size(self):
-        return self._win_size
+    def hfo_event_arr(self):
+        """HFO event array.
 
-    @property
-    def overlap(self):
-        return self._overlap
+        Returns
+        -------
+        hfo_event_arr : np.ndarray
+            Array that is (n_chs, n_samples), which has a
+            value of ``1`` if
+        """
+        return self.hfo_event_arr_
 
-    @property
-    def threshold(self):
-        return self._threshold
+    def predict(self, X, picks=None):
+        """Scikit-learn override predict function.
+
+        Just directly computes HFOs using ``fit`` function.
+        """
+        check_is_fitted(self)
+        X, y = self._check_input_raw(X, None, picks)
+        return self.fit(X, None, picks)
+
+    def fit(self, X, y=None, picks=None):
+        """
+        Fit the model according to the given training data.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix} of shape (n_samples, n_features)
+            Training vector, where n_samples is the number of samples and
+            n_features is the number of features. In MNE-HFO, n_features
+            are the number of time points in the EEG data, and n_samples
+            are the number of channels.
+
+        y : array-like of shape (n_samples, n_output)
+            Target vector relative to X.
+
+        picks : array-like of shape (n_samples,) default=None
+            Corresponds to ``mne-python`` picks.
+
+        Returns
+        -------
+        self
+            Fitted estimator.
+
+        Notes
+        -----
+        All detectors use a sliding window to compute HFOs in windows.
+        """
+        raise NotImplementedError('')
 
     @property
     def step_size(self):
+        """Step size of each window."""
         # Calculate window values for easier operation
         return int(np.ceil(self.win_size * self.overlap))
 
@@ -61,7 +244,9 @@ class Detector(BaseEstimator):
         # Overlapping window
         win_start = 0
         win_stop = self.win_size
-        n_windows = int(np.ceil((len(sig) - self.win_size) / self.step_size)) + 1
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
 
         # store the RMS of each window
         signal_win_rms = np.empty(n_windows)
@@ -71,8 +256,8 @@ class Detector(BaseEstimator):
                 win_stop = len(sig)
 
             # compute the RMS of filtered signal in this window
-            signal_win_rms[win_idx] = hfo_detect_func(sig[int(win_start):int(win_stop)],
-                                                      win_size=self.win_size)[0]
+            signal_win_rms[win_idx] = hfo_detect_func(
+                sig[int(win_start):int(win_stop)], win_size=self.win_size)[0]
             if win_stop == len(sig):
                 break
 
@@ -115,13 +300,13 @@ class Detector(BaseEstimator):
         win_idx = 0
         while win_idx < n_windows:
             # log events if they pass our threshold criterion
-            if ch_hfo_events >= det_th:
+            if np.any([event >= det_th for event in ch_hfo_events]):
                 event_start = win_idx * self.step_size
 
                 # group events together if they occur in
                 # contiguous windows
                 while win_idx < n_windows and \
-                        ch_hfo_events >= det_th:
+                        any([event >= det_th for event in ch_hfo_events]):
                     win_idx += 1
                 event_stop = (win_idx * self.step_size) + self.win_size
 

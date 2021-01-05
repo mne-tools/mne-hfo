@@ -55,4 +55,14 @@ The documentation can be found under the following links:
 
 Citing
 ------
-TBD
+For testing and demo purposes, we use the dataset in [1]. 
+If you use the demo/testing dataset, please cite that paper. 
+If you use ``mne-hfo`` itself in your research, please cite 
+the paper (TBD).
+
+References
+----------
+[1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J. Resection of high frequency oscillations predicts seizure outcome in the individual patient.
+Scientific Reports. 2017;7(1):13836.
+https://www.nature.com/articles/s41598-017-13064-1
+doi:10.1038/s41598-017-13064-1

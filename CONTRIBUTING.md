@@ -54,3 +54,13 @@ or
     $ make html-noplot
     
 if you don't want to run the examples to build the documentation. This will result in a faster build but produce no plots in the examples.
+
+### Building tutorials
+Our tutorials will be written as jupyter ipython notebooks. To make 
+your python virtual environment available, install ``ipykernel`` and run:
+
+    python -m ipykernel install --name mnehfo --user 
+
+For some of the tutorials, we use a test dataset that is 
+already in BIDS format. The ground-truth is from publication (reference 
+in README).

@@ -13,6 +13,7 @@ mne-bids = "*"
 matplotlib = "*"
 joblib = "*"
 tqdm = "*"
+ipykernel = "*"
 
 [dev-packages]
 pytest = "*"

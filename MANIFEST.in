@@ -1,13 +1,15 @@
 include *.rst
 include LICENSE
-include mne_bids/__init__.py
+include mne_hfo/__init__.py
+include Pipfile
+include Pipfile.lock
 
 recursive-include examples *.py
 recursive-include examples README.rst
 
-recursive-include mne_bids *.py
+recursive-include mne_hfo *.py
 
-include mne_bids/assets/*
+include mne_hfo/assets/*
 
 ### Exclude
 
@@ -19,6 +21,7 @@ exclude CONTRIBUTING.md
 exclude *.yml
 exclude .mailmap
 exclude paper
+exclude ignore_words.txt
 recursive-exclude mne_bids *.pyc
 
 recursive-exclude doc *

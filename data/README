@@ -1,0 +1,24 @@
+# Fedele HFO iEEG Dataset
+This dataset was obtained from the following publication:
+
+Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J. Resection of high frequency oscillations predicts seizure outcome in the individual patient.
+Scientific Reports. 2017;7(1):13836.
+https://www.nature.com/articles/s41598-017-13064-1
+doi:10.1038/s41598-017-13064-1
+
+There are 20 subjects with HFO events. We converted the dataset into BIDS format for the sake of testing ``mne-hfo``. Even though the publication involves a ``Morphology`` HFO detector, we have implemented our interpretation of the RMS, LineLength and Hilbert detectors in the [mne-hfo repository](https://github.com/adam2392/mne-hfo).
+
+# Note from the paper
+"We excluded all electrode contacts where electrical stimulation evoked motor or language responses (Table S1). In TLE patients, we included only the 3 most mesial bipolar channels".
+It is unclear why they did so, since it would be important to know whether there are "epileptic HFOs" coming from
+the whole network of channels.
+
+# Reference
+- http://crcns.org/data-sets/methods/ieeg-1
+
+References
+----------
+Appelhoff, S., Sanderson, M., Brooks, T., Vliet, M., Quentin, R., Holdgraf, C., Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., Welke, D., Brunner, C., Rockhill, A., Larson, E., Gramfort, A. and Jas, M. (2019). MNE-BIDS: Organizing electrophysiological data into the BIDS format and facilitating their analysis. Journal of Open Source Software 4: (1896). https://doi.org/10.21105/joss.01896
+
+Holdgraf, C., Appelhoff, S., Bickel, S., Bouchard, K., D'Ambrosio, S., David, O., … Hermes, D. (2019). iEEG-BIDS, extending the Brain Imaging Data Structure specification to human intracranial electrophysiology. Scientific Data, 6, 102. https://doi.org/10.1038/s41597-019-0105-7
+

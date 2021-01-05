@@ -1,0 +1,14 @@
+{
+    "Name": "Fedele-epilepsy-HFO-iEEG Dataset",
+    "BIDSVersion": "1.4.0",
+    "DatasetType": "raw",
+    "Authors": [
+        "Fedele T",
+        "Burnos S",
+        "Boran E",
+        "Krayenbühl N",
+        "Hilfiker P",
+        "Grunwald T",
+        "Sarnthein J"
+    ]
+}

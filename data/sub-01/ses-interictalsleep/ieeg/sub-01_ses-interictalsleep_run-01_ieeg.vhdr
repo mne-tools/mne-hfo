@@ -1,0 +1,75 @@
+Brain Vision Data Exchange Header File Version 1.0
+; Written using pybv 0.4.0
+
+[Common Infos]
+Codepage=UTF-8
+DataFile=sub-01_ses-interictalsleep_run-01_ieeg.eeg
+MarkerFile=sub-01_ses-interictalsleep_run-01_ieeg.vmrk
+DataFormat=BINARY
+; Data orientation: MULTIPLEXED=ch1,pt1, ch2,pt1 ...
+DataOrientation=MULTIPLEXED
+NumberOfChannels=50
+; Sampling interval in microseconds
+SamplingInterval=500.0
+
+[Binary Infos]
+BinaryFormat=IEEE_FLOAT_32
+
+[Channel Infos]
+; Each entry: Ch<Channel number>=<Name>,<Reference channel name>,
+; <Resolution in "Unit">,<Unit>, Future extensions..
+; Fields are delimited by commas, some fields might be omitted (empty).
+; Commas in channel names are coded as "\1".
+Ch1=IAR1,,0.1,µV
+Ch2=IAR2,,0.1,µV
+Ch3=IAR3,,0.1,µV
+Ch4=IAR4,,0.1,µV
+Ch5=IAR5,,0.1,µV
+Ch6=IAR6,,0.1,µV
+Ch7=IPR1,,0.1,µV
+Ch8=IPR2,,0.1,µV
+Ch9=IPR3,,0.1,µV
+Ch10=IPR4,,0.1,µV
+Ch11=AHR1,,0.1,µV
+Ch12=AHR2,,0.1,µV
+Ch13=AHR3,,0.1,µV
+Ch14=AHR4,,0.1,µV
+Ch15=AHR5,,0.1,µV
+Ch16=AHR6,,0.1,µV
+Ch17=AHR7,,0.1,µV
+Ch18=AHR8,,0.1,µV
+Ch19=AL1,,0.1,µV
+Ch20=AL2,,0.1,µV
+Ch21=AL3,,0.1,µV
+Ch22=AL4,,0.1,µV
+Ch23=AL5,,0.1,µV
+Ch24=AL6,,0.1,µV
+Ch25=AL7,,0.1,µV
+Ch26=AL8,,0.1,µV
+Ch27=AR1,,0.1,µV
+Ch28=AR2,,0.1,µV
+Ch29=AR3,,0.1,µV
+Ch30=AR4,,0.1,µV
+Ch31=AR5,,0.1,µV
+Ch32=AR6,,0.1,µV
+Ch33=AR7,,0.1,µV
+Ch34=AR8,,0.1,µV
+Ch35=HL1,,0.1,µV
+Ch36=HL2,,0.1,µV
+Ch37=HL3,,0.1,µV
+Ch38=HL4,,0.1,µV
+Ch39=HL5,,0.1,µV
+Ch40=HL6,,0.1,µV
+Ch41=HL7,,0.1,µV
+Ch42=HL8,,0.1,µV
+Ch43=PHR1,,0.1,µV
+Ch44=PHR2,,0.1,µV
+Ch45=PHR3,,0.1,µV
+Ch46=PHR4,,0.1,µV
+Ch47=PHR5,,0.1,µV
+Ch48=PHR6,,0.1,µV
+Ch49=PHR7,,0.1,µV
+Ch50=PHR8,,0.1,µV
+
+[Comment]
+

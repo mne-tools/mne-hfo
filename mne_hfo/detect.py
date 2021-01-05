@@ -5,20 +5,15 @@ import numpy as np
 from mne.utils import warn
 from scipy.signal import hilbert
 from tqdm import tqdm
-import scipy
-
 
 from mne_hfo.base import Detector
+from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ, ACCEPTED_BAND_METHODS
 from mne_hfo.utils import (check_detection_overlap)
-
-MINIMUM_SUGGESTED_SFREQ = 2000
-
-ACCEPTED_BAND_METHODS = ['linear', 'log']
 
 
 def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,
                          cycle_threshold, gap_threshold, threshold):
-    """Iterative bandpass and z-score a channel's signal.
+    """Iterate bandpass and z-score a channel's signal.
 
     Creates a bandpass filter (order=3) between ``l_freq`` and ``h_freq``.
     Then it z-scores the data
@@ -44,10 +39,9 @@ def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,
     tdetects = []
 
     # create highpass and lowpass filters
-    x_cond = mne.filter.filter_data(x_cond,
-                                    sfreq=sfreq, l_freq=l_freq, h_freq=h_freq, method='iir',
-
-                                    )
+    x_cond = mne.filter.filter_data(
+        x_cond, sfreq=sfreq,
+        l_freq=l_freq, h_freq=h_freq, method='iir')
     # b, a = butter(N=3, Wn=l_freq / (sfreq / 2), btype='highpass')
     # x_cond = filtfilt(b, a, x_cond)
     # b, a = butter(N=3, Wn=h_freq / (sfreq / 2), btype='lowpass')
@@ -109,7 +103,7 @@ def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,
 
 def _run_detect_branch(detects, det_idx, HFO_outline):
     """
-    Function to process detections from hilbert detector.
+    Process detections from hilbert detector.
 
     HFO_outline structure:
     [0] - bands in which the detection happened
@@ -117,7 +111,6 @@ def _run_detect_branch(detects, det_idx, HFO_outline):
     [2] - stop for each band
     [3] -
     """
-
     HFO_outline.append(np.copy(detects[det_idx, :]))
 
     # Create a subset for next band
@@ -141,7 +134,7 @@ def _run_detect_branch(detects, det_idx, HFO_outline):
         return HFO_outline
 
 
-class HilbertDetector(Detector):
+class HilbertDetector(Detector):  # noqa
     """2D HFO hilbert detection used in Kucewicz et al. 2014.
 
     A multi-taper method with: 4 Hz bandwidth, 1 sec sliding window,
@@ -158,13 +151,13 @@ class HilbertDetector(Detector):
     threshold: float
         Threshold for detection (default=3)
     band_method: str
-        Spacing of hilbert freqeuncy bands - options: 'linear' or 'log'
+        Spacing of hilbert frequency bands - options: 'linear' or 'log'
         (default='linear'). Linear provides better frequency resolution but
         is slower.
     n_bands: int
         Number of bands if band_spacing = log (default=300)
     cycle_threshold: float
-        Minimum number of cycles to detect (deafult=1)
+        Minimum number of cycles to detect (default=1)
     gap_threshold: float
         Number of cycles for gaps (default=1)
     n_jobs: int
@@ -172,9 +165,6 @@ class HilbertDetector(Detector):
     offset: int
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
-
-    Notes
-    -----
 
     References
     ----------
@@ -209,9 +199,7 @@ class HilbertDetector(Detector):
         self.offset = offset
 
     def fit(self, X):
-        # extract the number of chs and times for the dataset
-        n_chs, n_times = X.shape
-
+        """Override ``Detector.fit`` function."""
         # store all hfo occurrences as an array of channels X windows
         n_windows = int(np.ceil((n_times - self.win_size) / self.step_size)) + 1
         hfo_event_arr = np.empty((n_chs, n_windows))
@@ -308,12 +296,19 @@ class HilbertDetector(Detector):
 
         return chs_hfos
 
-    def score(self, X, y):
+
+class CSDetector(Detector):
+    """CS Detector.
+
+    Not implemented.
+    """
+
+    def __init__(self):
         pass
 
 
-class MorphologyDetector(Detector):
-    """
+class MorphologyDetector(Detector):  # noqa
+    """Morphology detector.
 
     Detection phase looks for ripples (80-250 Hz),
     and fast ripples (250-500 Hz). Using two FIR
@@ -327,8 +322,8 @@ class MorphologyDetector(Detector):
     The next step detects HFOs.
 
     """
-    def __init__(self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float=0.9):
 
+    def __init__(self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9):
         self.sfreq = sfreq
         self.ripple_l_freq = 80
         self.ripple_h_freq = 250
@@ -369,8 +364,8 @@ class MorphologyDetector(Detector):
 
         # determine length of each epoch that passes the threshold
 
-
     def fit(self, X, y=None):
+        """Override ``Detector.fit`` function."""
         # create a copy of the ripple data
         ripple_data = mne.filter.filter_data(X, sfreq=self.sfreq,
                                              l_freq=self.ripple_l_freq,
@@ -380,17 +375,15 @@ class MorphologyDetector(Detector):
 
         # create a copy of the fast ripple data
         fr_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                             l_freq=self.fr_l_freq,
-                                             h_freq=self.fr_h_freq,
+                                         l_freq=self.fr_l_freq,
+                                         h_freq=self.fr_h_freq,
                                          method='fir',
-                                             copy=True)
+                                         copy=True)
 
         # compute the Hilbert transform envelope
         # (i.e. the envelope)
         hfx = np.abs(hilbert(ripple_data))
 
-        pass
-    def score(self, X, y=None):
         pass
 
 
@@ -412,8 +405,6 @@ class LineLengthDetector(Detector):
 
     Parameters
     ----------
-    sfreq: int
-        Sampling frequency
     l_freq: float
         Low cut-off frequency
     h_freq: float
@@ -446,31 +437,26 @@ class LineLengthDetector(Detector):
            Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
     """
 
-    def __init__(self, sfreq: int, l_freq: int = 30, h_freq: int = 100, threshold: float = 3, win_size: int = 100,
-                 overlap: float = 0.25, verbose: bool = False):
-        if sfreq < MINIMUM_SUGGESTED_SFREQ:
-            warn(f'Sampling frequency of {sfreq} is '
-                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
-                 f'Please use with caution.')
-
+    def __init__(self, l_freq: int = 30, h_freq: int = 100,
+                 threshold: float = 3, win_size: int = 100,
+                 overlap: float = 0.25, sfreq: int = None,
+                 scoring_func: str = 'f1',
+                 verbose: bool = False):
         super(LineLengthDetector, self).__init__(
-            threshold, win_size=win_size, overlap=overlap, verbose=verbose)
+            threshold, win_size=win_size, overlap=overlap,
+            scoring_func=scoring_func, verbose=verbose)
 
-        self.sfreq = sfreq
         self.l_freq = l_freq
         self.h_freq = h_freq
+        self.sfreq = sfreq
 
-    def fit(self, X, y=None, picks=None):
-        # extract the number of chs and times for the dataset
-        n_chs, n_times = X.shape
-
+    def _compute_hfo(self, X, picks):
+        """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of channels X windows
-        n_windows = int(np.ceil((n_times - self.win_size) / self.step_size)) + 1
-        hfo_event_arr = np.empty((n_chs, n_windows))
-
-        # store contiguous hfos as one occurrence, so we store
-        # them as a dictionary of lists
-        chs_hfos = collections.defaultdict(list)
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        hfo_event_arr = np.empty((self.n_chs, n_windows))
 
         # bandpass the signal using FIR filter
         X = mne.filter.filter_data(X, sfreq=self.sfreq,
@@ -479,27 +465,39 @@ class LineLengthDetector(Detector):
                                    method='iir', verbose=self.verbose)
 
         # run HFO detection on all the channels
-        for idx in range(n_chs):
+        for idx in range(self.n_chs):
             sig = X[idx, :]
 
             # compute sliding window RMS
             hfo_event_arr[idx, :] = \
-                self._compute_sliding_window_detection(sig, method='line_length')
+                self._compute_sliding_window_detection(
+                    sig, method='line_length')
 
-            # post-process hfo events
-            ch_hfos = self._post_process_ch_hfos(
-                hfo_event_arr[idx, :], n_times=n_times,
-                threshold_method='std'
-            )
+        return hfo_event_arr
 
-            # store hfo event endpoints per channel
-            chs_hfos[idx] = ch_hfos
+    def fit(self, X, y=None, picks=None):
+        """Override ``Detector.fit`` function."""
+        X, y = self._check_input_raw(X, y, picks=picks)
 
-        self.hfo_event_arr = hfo_event_arr
-        return chs_hfos
+        sfreq = self.sfreq
+        if sfreq < MINIMUM_SUGGESTED_SFREQ:
+            warn(f'Sampling frequency of {sfreq} is '
+                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
+                 f'Please use with caution.')
 
-    def score(self, X, y=None):
-        pass
+        # compute HFOs as a binary occurrence array over time
+        hfo_event_arr = self._compute_hfo(X, picks=picks)
+
+        # post-process hfo events
+        # store hfo event endpoints per channel
+        chs_hfos = {idx: self._post_process_ch_hfos(
+            hfo_event_arr[idx, :], n_times=self.n_times,
+            threshold_method='std'
+        ) for idx in range(self.n_chs)}
+
+        self.chs_hfos_ = chs_hfos
+        self.hfo_event_arr_ = hfo_event_arr
+        return self
 
 
 class RMSDetector(Detector):
@@ -515,8 +513,6 @@ class RMSDetector(Detector):
 
     Parameters
     ----------
-    sfreq: float
-        Sampling frequency
     l_freq: float
         Low cut-off frequency. Default = 100.
     h_freq: float
@@ -544,40 +540,27 @@ class RMSDetector(Detector):
     J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.
     """
 
-    def __init__(self, sfreq: float, l_freq: float = 80, h_freq: float = 500,
+    def __init__(self, l_freq: float = 80, h_freq: float = 500,
                  threshold: float = 3, win_size: int = 100,
-                 overlap: float = 0.25,
+                 overlap: float = 0.25, sfreq=None,
+                 scoring_func='f1',
                  # offset: int = 0,
                  verbose: bool = False):
-        if sfreq < MINIMUM_SUGGESTED_SFREQ:
-            warn(f'Sampling frequency of {sfreq} is '
-                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
-                 f'Please use with caution.')
-
         super(RMSDetector, self).__init__(
-            threshold, win_size, overlap, verbose=verbose)
-
-        # could be taken out if we pass in raw object instead
-        self.sfreq = sfreq
+            threshold, win_size, overlap, scoring_func, verbose=verbose)
 
         # hyperparameters
         self.l_freq = l_freq
         self.h_freq = h_freq
+        self.sfreq = sfreq
 
-        # store all HFO events found
-        self.hfo_event_arr = None
-
-    def fit(self, X, y=None, picks=None):
-        # extract the number of chs and times for the dataset
-        n_chs, n_times = X.shape
-
+    def _compute_hfo(self, X, picks):
+        """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of channels X windows
-        n_windows = int(np.ceil((n_times - self.win_size) / self.step_size)) + 1
-        hfo_event_arr = np.empty((n_chs, n_windows))
-
-        # store contiguous hfos as one occurrence, so we store
-        # them as a dictionary of lists
-        chs_hfos = collections.defaultdict(list)
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        hfo_event_arr = np.empty((self.n_chs, n_windows))
 
         # bandpass the signal using FIR filter
         X = mne.filter.filter_data(X, sfreq=self.sfreq,
@@ -586,24 +569,34 @@ class RMSDetector(Detector):
                                    method='fir', verbose=self.verbose)
 
         # run HFO detection on all the channels
-        for idx in range(n_chs):
+        for idx in range(self.n_chs):
             sig = X[idx, :]
 
             # compute sliding window RMS
             hfo_event_arr[idx, :] = \
                 self._compute_sliding_window_detection(sig, method='rms')
+        return hfo_event_arr
 
-            # post-process hfo events
-            ch_hfos = self._post_process_ch_hfos(
-                hfo_event_arr[idx, :], n_times=n_times,
-                threshold_method='std'
-            )
+    def fit(self, X, y=None, picks=None):
+        """Override ``Detector.fit`` function."""
+        X, y = self._check_input_raw(X, y, picks=picks)
 
-            # store hfo event endpoints per channel
-            chs_hfos[idx] = ch_hfos
+        sfreq = self.sfreq
+        if sfreq < MINIMUM_SUGGESTED_SFREQ:
+            warn(f'Sampling frequency of {sfreq} is '
+                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
+                 f'Please use with caution.')
 
-        self.hfo_event_arr = hfo_event_arr
-        return chs_hfos
+        # compute HFOs as a binary occurrence array over time
+        hfo_event_arr = self._compute_hfo(X, picks=picks)
 
-    def score(self, X, y=None):
-        pass
+        # post-process hfo events
+        # store hfo event endpoints per channel
+        chs_hfos = {idx: self._post_process_ch_hfos(
+            hfo_event_arr[idx, :], n_times=self.n_times,
+            threshold_method='std'
+        ) for idx in range(self.n_chs)}
+
+        self.chs_hfos_ = chs_hfos
+        self.hfo_event_arr_ = hfo_event_arr
+        return self

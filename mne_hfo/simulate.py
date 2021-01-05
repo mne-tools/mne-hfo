@@ -4,17 +4,15 @@
 # Distributed under the (new) BSD License. See LICENSE.txt for more info.
 
 """
-Some parts of code are recoded from package Anderson Brito da Silva's pyhfo
-package (https://github.com/britodasilva/pyhfo)
-"""
+Some parts of code are recoded from package Anderson Brito da Silva's pyhfo.
 
+Reference: (https://github.com/britodasilva/pyhfo)
+"""
 import numpy as np
 from scipy.stats import norm
 
 
 # ----- Noise types -----
-
-
 def simulate_pinknoise(N):
     """
     Create a pink noise (1/f) with N points.
@@ -46,8 +44,8 @@ def simulate_pinknoise(N):
     X[range(nPts)] = X[range(nPts)] / n
 
     # prepare a right half of the spectrum - a copy of the left one
-    X[range(nPts, N)] = np.real(X[range(int(N / 2 - 1), 0, -1)]) - \
-                        1j * np.imag(X[range(int(N / 2 - 1), 0, -1)])
+    X[range(nPts, N)] = np.real(X[range(int(N / 2 - 1), 0, -1)])
+    X[range(nPts, N)] -= 1j * np.imag(X[range(int(N / 2 - 1), 0, -1)])
 
     y = np.fft.ifft(X)  # IFFT
 
@@ -91,8 +89,8 @@ def simulate_brownnoise(N):
     # multiplicate the left half of the spectrum
     X[range(nPts)] = X[range(nPts)] / n
     # prepare a right half of the spectrum - a copy of the left one
-    X[range(nPts, N)] = np.real(X[range(int(N / 2 - 1), 0, -1)]) - \
-                        1j * np.imag(X[range(int(N / 2 - 1), 0, -1)])
+    X[range(nPts, N)] = np.real(X[range(int(N / 2 - 1), 0, -1)])
+    X[range(nPts, N)] -= 1j * np.imag(X[range(int(N / 2 - 1), 0, -1)])
 
     y = np.fft.ifft(X)  # IFFT
 
@@ -123,7 +121,6 @@ def simulate_delta(fs=5000, decay_dur=None):
     delta: numpy array
         1D numpy array with delta function
     """
-
     if decay_dur is None:
         decay_dur = np.random.random()
 
@@ -156,7 +153,6 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None):
     line_noise: numpy array
         1D numpy array with line noise
     """
-
     if numcycles is None:
         numcycles = np.random.randint(3, 50)
 
@@ -169,7 +165,7 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None):
 
 def simulate_artifact_spike(fs=5000, dur=None):
     """
-    Artifact like spike (sharp, not gaussian)
+    Artifact like spike (sharp, not gaussian).
 
     Parameters
     ----------
@@ -183,7 +179,6 @@ def simulate_artifact_spike(fs=5000, dur=None):
     artifact_spike: numpy array
         1D numpy array with artifact spike
     """
-
     if dur is None:
         dur = round(np.random.random() / 10, 3)
 
@@ -200,7 +195,7 @@ def simulate_artifact_spike(fs=5000, dur=None):
 # ----- HFO -----
 def _wavelet(numcycles, f, fs):
     """
-    Create a wavelet
+    Create a wavelet.
 
     Parameters
     ----------
@@ -222,14 +217,14 @@ def _wavelet(numcycles, f, fs):
     time = np.linspace((-numcycles / 2) / float(f),
                        (numcycles / 2) / float(f), N)  # time vector
     std = numcycles / (2 * np.pi * f)  # standard deviation
-    wave = np.exp(2 * 1j * np.pi * f * time) * \
-           np.exp(-(time ** 2) / (2 * (std ** 2)))  # waveform
+    wave = np.exp(2 * 1j * np.pi * f * time)
+    wave *= np.exp(-(time ** 2) / (2 * (std ** 2)))  # waveform
     return wave, time
 
 
 def simulate_hfo(fs=5000, freq=None, numcycles=None):
     """
-    Create an HFO
+    Create a simulated HFO signal.
 
     Parameters
     ----------
@@ -259,7 +254,7 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None):
 # ----- Spike -----
 def simulate_spike(fs=5000, dur=None):
     """
-    Create a simple gausian spike.
+    Create a simple gaussian spike.
 
     Parameters
     ----------

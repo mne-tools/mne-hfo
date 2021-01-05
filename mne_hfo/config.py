@@ -20,3 +20,5 @@ REFERENCES = {'mne-bids':
               'extending the Brain Imaging Data Structure specification '
               'to human intracranial electrophysiology. Scientific Data, '
               '6, 102. https://doi.org/10.1038/s41597-019-0105-7'}
+MINIMUM_SUGGESTED_SFREQ = 2000
+ACCEPTED_BAND_METHODS = ['linear', 'log']

@@ -1,17 +1,15 @@
-"""Utility and helper functions for MNE-BIDS."""
-# Authors: Mainak Jas <mainak.jas@telecom-paristech.fr>
-#          Alexandre Gramfort <alexandre.gramfort@telecom-paristech.fr>
-#          Teon Brooks <teon.brooks@gmail.com>
-#          Chris Holdgraf <choldgraf@berkeley.edu>
-#          Stefan Appelhoff <stefan.appelhoff@mailbox.org>
-#          Matt Sanderson <matt.sanderson@mq.edu.au>
-#
+"""Utility and helper functions for MNE-HFO."""
 # License: BSD (3-clause)
 import json
 import os
 from os import path as op
 
 import numpy as np
+import pandas as pd
+
+
+def _merge_overlapping_hfos(events_df: pd.DataFrame):
+    pass
 
 
 def _ensure_tuple(x):
@@ -70,14 +68,14 @@ def compute_rms(signal, win_size: int = 6):
     return np.sqrt(np.convolve(aux, window, 'same'))
 
 
-def compute_line_length(signal, window_size=6):
+def compute_line_length(signal, win_size=6):
     """Calculate line length.
 
     Parameters
     ----------
     signal: numpy array
         1D signal to be transformed
-    window_size: int
+    win_size: int
         Number of the points of the window (default=6)
 
     Returns
@@ -87,6 +85,7 @@ def compute_line_length(signal, window_size=6):
 
     Notes
     -----
+    ::
 
         return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)
 
@@ -100,16 +99,16 @@ def compute_line_length(signal, window_size=6):
     .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.
     """
     aux = np.abs(np.subtract(signal[1:], signal[:-1]))
-    window = np.ones(window_size) / float(window_size)
+    window = np.ones(win_size) / float(win_size)
     data = np.convolve(aux, window)
-    start = int(np.floor(window_size / 2))
-    stop = int(np.ceil(window_size / 2))
+    start = int(np.floor(win_size / 2))
+    stop = int(np.ceil(win_size / 2))
     return data[start:-stop]
 
 
 def threshold_std(signal, threshold):
     """
-    Calculate threshold by Standard Deviations above the mean
+    Calculate threshold by Standard Deviations above the mean.
 
     Parameters
     ----------
@@ -146,17 +145,16 @@ def threshold_tukey(signal, threshold):
 
     References
     ----------
-    1. TUKEY JW. Comparing individual means in the analysis of variance. Biometrics. 1949 Jun;5(2):99-114. PMID: 18151955.
+    [1] TUKEY JW. Comparing individual means in the analysis of
+        variance. Biometrics. 1949 Jun;5(2):99-114. PMID: 18151955.
     """
-    ths_value = np.percentile(
-        signal, 75) + threshold * (np.percentile(signal, 75)
-                                   - np.percentile(signal, 25))
+    ths_value = np.percentile(signal, 75) + threshold * (np.percentile(signal, 75) - np.percentile(signal, 25))  # noqa
     return ths_value
 
 
 def threshold_quian(signal, threshold):
     """
-    Calcule threshold by Quian
+    Calculate threshold by Quian.
 
     Parameters
     ----------
@@ -179,9 +177,9 @@ def threshold_quian(signal, threshold):
 
 
 def match_detections(gs_df, dd_df, bn, freq_name=None,
-                     sec_unit=None, sec_margin=1):
+                     sec_unit=None, sec_margin=1):  # noqa
     """
-    Matches gold standard detections with detector detections.
+    Match gold standard detections with detector detections.
 
     Parameters
     ----------
@@ -195,27 +193,26 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
         Name of frequency column
     sec_unit: int
         Number representing one second of signal - this can
-        significantly imporove the speed of this function
+        significantly improve the speed of this function
     sec_margin: int
         Margin for creating subsets of compared data - should be set according
-        to the legnth of compared events (1s for HFO should be enough)
+        to the length of compared events (1s for HFO should be enough)
 
     Returns
     -------
     match_df: pandas.DataFrame
-        Dataframe with matched indeces (pandas DataFrame)
+        Dataframe with matched indices (pandas DataFrame)
     """
-
     match_df = pd.DataFrame(columns=('gs_index', 'dd_index'))
     match_df_idx = 0
     for row_gs in gs_df.iterrows():
         matched_idcs = []
         gs = [row_gs[1][bn[0]], row_gs[1][bn[1]]]
         if sec_unit:  # We can create subset - significant speed improvement
-            for row_dd in dd_df[(dd_df[bn[0]] < gs[0]
-                                 + sec_unit * sec_margin) &
-                                (dd_df[bn[0]] > gs[0]
-                                 - sec_unit * sec_margin)].iterrows():
+            for row_dd in dd_df[(dd_df[bn[0]] < gs[0] +
+                                 sec_unit * sec_margin) &
+                                (dd_df[bn[0]] > gs[0] -
+                                 sec_unit * sec_margin)].iterrows():
                 dd = [row_dd[1][bn[0]], row_dd[1][bn[1]]]
                 if check_detection_overlap(gs, dd):
                     matched_idcs.append(row_dd[0])
@@ -233,14 +230,14 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
             # In rare event of multiple overlaps get the closest frequency
             if freq_name:
                 dd_idx = (
-                    abs(dd_df.loc[matched_idcs, freq_name]
-                        - row_gs[1][freq_name])).idxmin()
+                    abs(dd_df.loc[matched_idcs, freq_name] -
+                        row_gs[1][freq_name])).idxmin()
                 match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
             # Closest event start - less precision than frequency
             else:
                 dd_idx = (
-                    abs(dd_df.loc[matched_idcs, bn[0]]
-                        - row_gs[1][bn[0]])).idxmin()
+                    abs(dd_df.loc[matched_idcs, bn[0]] -
+                        row_gs[1][bn[0]])).idxmin()
                 match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
 
         match_df_idx += 1
@@ -250,10 +247,10 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
 
 def check_detection_overlap(gs, dd):
     """
-    Evaluates if two detections overlap
+    Evaluate if two detections overlap.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     gs: list
         Gold standard detection [start,stop]
     dd: list
@@ -263,9 +260,7 @@ def check_detection_overlap(gs, dd):
     -------
     overlap: bool
         Whether two events overlap.
-
     """
-
     overlap = False
 
     # dd stop in gs + (dd inside gs)

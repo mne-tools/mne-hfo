@@ -3,11 +3,19 @@ include LICENSE
 include mne_hfo/__init__.py
 include Pipfile
 include Pipfile.lock
+include data/README
+include data/.bidsignore
 
 recursive-include examples *.py
 recursive-include examples README.rst
 
 recursive-include mne_hfo *.py
+
+recursive-include data *.eeg
+recursive-include data *.json
+recursive-include data *.tsv
+recursive-include data *.vhdr
+recursive-include data *.vmrk
 
 include mne_hfo/assets/*
 
@@ -22,6 +30,7 @@ exclude *.yml
 exclude .mailmap
 exclude paper
 exclude ignore_words.txt
+exclude data
 recursive-exclude mne_bids *.pyc
 
 recursive-exclude doc *

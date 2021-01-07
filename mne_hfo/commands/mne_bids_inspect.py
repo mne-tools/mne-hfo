@@ -12,7 +12,7 @@ $ mne_hfo inspect --subject_id=01 --task=experiment --session=test \
 from mne.utils import logger
 
 import mne_hfo
-from mne_hfo import BIDSPath, inspect_dataset
+from mne_bids import BIDSPath, inspect_dataset
 
 
 def run():

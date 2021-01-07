@@ -28,6 +28,7 @@ pydocstyle = "*"
 codespell = "*"
 check-manifest = "*"
 pytest-benchmark = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.8"

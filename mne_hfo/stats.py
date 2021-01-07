@@ -5,12 +5,13 @@
 # License: BSD (3-clause)
 
 
-from mne_hfo import BIDSPath, get_datatypes
+from mne_bids import BIDSPath, get_datatypes
+from mne_bids.stats import count_events
 from mne_hfo.config import EPHY_ALLOWED_DATATYPES
 
 
-def count_events(root_or_path, datatype='auto'):
-    """Count events present in dataset.
+def count_hfo_events(root_or_path, datatype='auto'):
+    """Count HFO events present in dataset.
 
     Parameters
     ----------

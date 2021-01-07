@@ -1,3 +1,5 @@
+from typing import Union
+
 import mne
 import numpy as np
 from sklearn.base import BaseEstimator
@@ -27,14 +29,16 @@ class Detector(BaseEstimator):
     verbose: bool
     """
 
-    def __init__(self, threshold: int, win_size: int, overlap: float,
-                 scoring_func: str,
+    def __init__(self, threshold: Union[int, float],
+                 win_size: Union[int, None], overlap: Union[float, None],
+                 scoring_func: str, n_jobs: int,
                  verbose: bool):
         self.win_size = win_size
         self.threshold = threshold
         self.overlap = overlap
         self.scoring_func = scoring_func
         self.verbose = verbose
+        self.n_jobs = n_jobs
 
     def _compute_hfo(self, X, picks):
         """Compute HFO event array.
@@ -185,6 +189,16 @@ class Detector(BaseEstimator):
             value of ``1`` if
         """
         return self.hfo_event_arr_
+
+    @property
+    def chs_hfos_dict(self):
+        """Return dictionary of HFO start/end points."""
+        return self.chs_hfos_
+
+    @property
+    def chs_hfos_list(self):
+        """Return list of HFO start/end points for each channel."""
+        return [vals for vals in self.chs_hfos_dict.values()]
 
     def predict(self, X, picks=None):
         """Scikit-learn override predict function.

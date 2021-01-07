@@ -74,8 +74,11 @@ codespell-error:  # running on travis
 	@echo "Running code-spell check"
 	@codespell -i 0 -q 7 -S $(CODESPELL_SKIPS) --ignore-words=ignore_words.txt $(CODESPELL_DIRS)
 
+type-check:
+	mypy ./mne_hfo
+
 pep:
-	@$(MAKE) -k flake pydocstyle check-manifest codespell-error
+	@$(MAKE) -k flake pydocstyle check-manifest codespell-error type-check
 
 build-doc:
 	cd doc; make clean

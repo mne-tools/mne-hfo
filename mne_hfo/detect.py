@@ -1,7 +1,9 @@
 import collections
+from typing import Tuple, Union
 
 import mne
 import numpy as np
+from joblib import Parallel, delayed, cpu_count
 from mne.utils import warn
 from scipy.signal import hilbert
 from tqdm import tqdm
@@ -179,14 +181,16 @@ class HilbertDetector(Detector):  # noqa
                  threshold: float = 3, band_method: str = 'linear',
                  n_bands: int = 300, cycle_threshold: float = 1,
                  gap_threshold: float = 1, n_jobs: int = 1,
-                 offset: int = 0, verbose: bool = False):
+                 offset: int = 0, scoring_func: str = 'f1',
+                 verbose: bool = False):
         if band_method not in ACCEPTED_BAND_METHODS:
             raise ValueError(f'Band method {band_method} is not '
                              f'an acceptable parameter. Please use '
                              f'one of {ACCEPTED_BAND_METHODS}')
 
-        super(HilbertDetector, self).__init__(threshold, win_size=None, overlap=None,
-                                              verbose=verbose)
+        super(HilbertDetector, self).__init__(
+            threshold, win_size=None, overlap=None,
+            scoring_func=scoring_func, n_jobs=n_jobs, verbose=verbose)
 
         self.sfreq = sfreq
         self.l_freq = l_freq
@@ -200,8 +204,11 @@ class HilbertDetector(Detector):  # noqa
 
     def fit(self, X):
         """Override ``Detector.fit`` function."""
+        n_chs, n_times = X.shape
+
         # store all hfo occurrences as an array of channels X windows
-        n_windows = int(np.ceil((n_times - self.win_size) / self.step_size)) + 1
+        n_windows = int(np.ceil((n_times - self.win_size) /
+                                self.step_size)) + 1
         hfo_event_arr = np.empty((n_chs, n_windows))
 
         # store contiguous hfos as one occurrence, so we store
@@ -220,14 +227,15 @@ class HilbertDetector(Detector):  # noqa
             low_fc = float(self.l_freq)
             high_fc = float(self.h_freq)
             freq_cutoffs = np.logspace(0, np.log10(high_fc), self.n_bands)
-            freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) & (freq_cutoffs < high_fc)]
+            freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) &
+                                        (freq_cutoffs < high_fc)]
             freq_span = len(freq_cutoffs) - 1
         elif self.band_method == 'linear':
             freq_cutoffs = np.arange(self.l_freq, self.h_freq)
             freq_span = (self.h_freq - self.l_freq) - 1
 
         # run detector on all channels
-        for idx in range(n_chs):
+        for idx in range(self.n_chs):
             sig = X[idx, :]
 
             output = []
@@ -241,13 +249,17 @@ class HilbertDetector(Detector):  # noqa
                         from joblib import Parallel, delayed
                     except ImportError:
                         try:
-                            from sklearn.externals.joblib import Parallel, delayed
+                            from sklearn.externals.joblib import (
+                                Parallel, delayed)
                         except ImportError:
-                            warn('joblib not installed. Cannot run in parallel.')
+                            warn('joblib not installed. '
+                                 'Cannot run in parallel.')
                             self.n_jobs = 1
 
                 # Run the filters in their threads and return the result
-                iter_mat = [(sig, self.sfreq, i, freq_cutoffs[i], freq_cutoffs[i + 1],
+                iter_mat = [(sig, self.sfreq, i,
+                             freq_cutoffs[i],
+                             freq_cutoffs[i + 1],
                              self.cycle_threshold, self.gap_threshold,
                              self.threshold) for i in range(freq_span)]
                 tdetects_concat = Parallel(n_jobs=self.n_jobs)(
@@ -257,8 +269,8 @@ class HilbertDetector(Detector):  # noqa
                     for iter_args in tqdm(iter_mat, unit='HFO-first-phase')
                 )
             else:
-                # OPTIMIZE - check if there is a better way to do this (S transform?+
-                # spectra zeroing?)
+                # OPTIMIZE - check if there is a better way to do this
+                # (S transform?+ spectra zeroing?)
                 for i in tqdm(range(freq_span), unit='HFO-first-phase'):
                     bot = freq_cutoffs[i]
                     top = freq_cutoffs[i + 1]
@@ -270,7 +282,8 @@ class HilbertDetector(Detector):  # noqa
                     tdetects_concat.append(_band_z_score_detect(args))
 
             # post process detected HFO events by detecting outline of events
-            detects = np.array([det for band in tdetects_concat for det in band])
+            detects = np.array([det for band in tdetects_concat
+                                for det in band])
             outlines = []
             if len(detects):
                 while sum(detects[:, 0] != 0):
@@ -286,7 +299,8 @@ class HilbertDetector(Detector):  # noqa
                 stop = max(outline[:, 2])
                 freq_min = freq_cutoffs[int(outline[0, 0])]
                 freq_max = freq_cutoffs[int(outline[-1, 0])]
-                frequency_at_max = freq_cutoffs[int(outline[np.argmax(outline[:, 3]), 0])]
+                frequency_at_max = freq_cutoffs[
+                    int(outline[np.argmax(outline[:, 3]), 0])]
                 max_amplitude = max(outline[:, 3])
 
                 output.append((start, stop,
@@ -294,97 +308,9 @@ class HilbertDetector(Detector):  # noqa
                                max_amplitude))
             chs_hfos[idx] = output
 
+        self.hfo_event_arr_ = hfo_event_arr
+        self.chs_hfos_ = chs_hfos
         return chs_hfos
-
-
-class CSDetector(Detector):
-    """CS Detector.
-
-    Not implemented.
-    """
-
-    def __init__(self):
-        pass
-
-
-class MorphologyDetector(Detector):  # noqa
-    """Morphology detector.
-
-    Detection phase looks for ripples (80-250 Hz),
-    and fast ripples (250-500 Hz). Using two FIR
-    bandpass filters.
-
-    The baseline was defined as the wavelet entropy of
-    the Stockwell-transform. Then a segment is considered
-    baseline when the Stockwell entropy was larger then 90%
-    of the Stockwell entropy maximum theoretical limit.
-
-    The next step detects HFOs.
-
-    """
-
-    def __init__(self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9):
-        self.sfreq = sfreq
-        self.ripple_l_freq = 80
-        self.ripple_h_freq = 250
-        self.fr_l_freq = 250
-        self.fr_h_freq = 500
-
-        self.entropy_threshold = entropy_threshold
-
-        # threshold in ms for ripple and fast ripple
-        self.ripple_threshold = 20
-        self.fr_threshold = 10
-
-        """
-        HFOobj.BLborder  = 0.02; % sec, ignore borders of 1 sec interval because of ST transform
-        HFOobj.BLmindist = 10*p.fs/1e3; % pt, min disance interval for baseline in po
-        HFOobj.dur       = input.dur; % number os seconds to take for baseline detection
-        """
-
-    def _detect_baseline(self, X, fmin, fmax, entropy_threshold):
-        # compute stockwell transform: C x F x T
-        st_power, freqs = mne.time_frequency.tfr_stockwell(X, fmin=fmin, fmax=fmax)
-
-        # get the total power: F x T
-        st_power_total = np.sum(st_power, axis=0)
-
-        # compute relative energy to convert into "probability" distribution for each frequency
-        # should result in F x T array
-        rel_st_energy = np.divide(st_power, st_power_total)
-
-        # compute total entropy per frequency
-        freq_entropy = -np.sum(rel_st_energy * np.log2(rel_st_energy), axis=1)
-
-        # get the entropy threshold per freq
-        entropy_freq_threshold = freq_entropy * entropy_threshold
-
-        # apply threshold and baseline
-        freq_ent_thresh = freq_entropy > entropy_freq_threshold
-
-        # determine length of each epoch that passes the threshold
-
-    def fit(self, X, y=None):
-        """Override ``Detector.fit`` function."""
-        # create a copy of the ripple data
-        ripple_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                             l_freq=self.ripple_l_freq,
-                                             h_freq=self.ripple_h_freq,
-                                             method='fir',
-                                             copy=True)
-
-        # create a copy of the fast ripple data
-        fr_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                         l_freq=self.fr_l_freq,
-                                         h_freq=self.fr_h_freq,
-                                         method='fir',
-                                         copy=True)
-
-        # compute the Hilbert transform envelope
-        # (i.e. the envelope)
-        hfx = np.abs(hilbert(ripple_data))
-
-        pass
 
 
 class LineLengthDetector(Detector):
@@ -405,10 +331,9 @@ class LineLengthDetector(Detector):
 
     Parameters
     ----------
-    l_freq: float
-        Low cut-off frequency
-    h_freq: float
-        High cut-off frequency
+    filter_band : tuple(float, float) | None
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1.
     threshold: float
         Number of standard deviations to use as a threshold
     win_size: int
@@ -429,26 +354,41 @@ class LineLengthDetector(Detector):
     ----------
     .. [1] A. B. Gardner, G. A. Worrell, E. Marsh, D. Dlugos, and B. Litt,
            “Human and automated detection of high-frequency oscillations in
-           clinical intracranial EEG recordings,” Clin. Neurophysiol., vol. 118,
-           no. 5, pp. 1134–1143, May 2007.
+           clinical intracranial EEG recordings,” Clin. Neurophysiol.,
+           vol. 118, no. 5, pp. 1134–1143, May 2007.
     .. [2] Esteller, R. et al. (2001). Line length: an efficient feature for
            seizure onset detection. In Engineering in Medicine and Biology
            Society, 2001. Proceedings of the 23rd Annual International
            Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
     """
 
-    def __init__(self, l_freq: int = 30, h_freq: int = 100,
-                 threshold: float = 3, win_size: int = 100,
+    def __init__(self,
+                 threshold: Union[int, float] = 3, win_size: int = 100,
                  overlap: float = 0.25, sfreq: int = None,
-                 scoring_func: str = 'f1',
+                 filter_band: Tuple[int, int] = (30, 100),
+                 scoring_func: str = 'f1', n_jobs: int = -1,
                  verbose: bool = False):
         super(LineLengthDetector, self).__init__(
             threshold, win_size=win_size, overlap=overlap,
-            scoring_func=scoring_func, verbose=verbose)
+            scoring_func=scoring_func, n_jobs=n_jobs,
+            verbose=verbose)
 
-        self.l_freq = l_freq
-        self.h_freq = h_freq
+        self.filter_band = filter_band
         self.sfreq = sfreq
+
+    @property
+    def l_freq(self):
+        """Lower frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[0]
+
+    @property
+    def h_freq(self):
+        """Higher frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[1]
 
     def _compute_hfo(self, X, picks):
         """Override ``Detector._compute_hfo`` function."""
@@ -459,19 +399,35 @@ class LineLengthDetector(Detector):
         hfo_event_arr = np.empty((self.n_chs, n_windows))
 
         # bandpass the signal using FIR filter
-        X = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                   l_freq=self.l_freq,
-                                   h_freq=self.h_freq, picks=picks,
-                                   method='iir', verbose=self.verbose)
+        if self.filter_band is not None:
+            X = mne.filter.filter_data(X, sfreq=self.sfreq,
+                                       l_freq=self.l_freq,
+                                       h_freq=self.h_freq, picks=picks,
+                                       method='iir', verbose=self.verbose)
 
         # run HFO detection on all the channels
-        for idx in range(self.n_chs):
-            sig = X[idx, :]
+        if self.n_jobs == 1:
+            for idx in tqdm(range(self.n_chs)):
+                sig = X[idx, :]
 
-            # compute sliding window RMS
-            hfo_event_arr[idx, :] = \
-                self._compute_sliding_window_detection(
-                    sig, method='line_length')
+                # compute sliding window RMS
+                hfo_event_arr[idx, :] = \
+                    self._compute_sliding_window_detection(
+                        sig, method='line_length')
+        else:
+            if self.n_jobs == -1:
+                n_jobs = cpu_count()
+            else:
+                n_jobs = self.n_jobs
+
+            # run joblib parallelization over channels
+            results = Parallel(n_jobs=n_jobs)(
+                delayed(self._compute_sliding_window_detection)(
+                    X[idx, :], 'line_length'
+                ) for idx in tqdm(range(self.n_chs))
+            )
+            for idx in range(len(results)):
+                hfo_event_arr[idx, :] = results[idx]
 
         return hfo_event_arr
 
@@ -540,19 +496,33 @@ class RMSDetector(Detector):
     J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.
     """
 
-    def __init__(self, l_freq: float = 80, h_freq: float = 500,
-                 threshold: float = 3, win_size: int = 100,
+    def __init__(self, threshold: Union[int, float] = 3, win_size: int = 100,
                  overlap: float = 0.25, sfreq=None,
-                 scoring_func='f1',
-                 # offset: int = 0,
+                 filter_band: Tuple[int, int] = (100, 500),
+                 scoring_func='f1', n_jobs: int = -1,
                  verbose: bool = False):
         super(RMSDetector, self).__init__(
-            threshold, win_size, overlap, scoring_func, verbose=verbose)
+            threshold, win_size, overlap,
+            scoring_func,
+            n_jobs=n_jobs, verbose=verbose)
 
         # hyperparameters
-        self.l_freq = l_freq
-        self.h_freq = h_freq
+        self.filter_band = filter_band
         self.sfreq = sfreq
+
+    @property
+    def l_freq(self):
+        """Lower frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[0]
+
+    @property
+    def h_freq(self):
+        """Higher frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[1]
 
     def _compute_hfo(self, X, picks):
         """Override ``Detector._compute_hfo`` function."""
@@ -569,12 +539,27 @@ class RMSDetector(Detector):
                                    method='fir', verbose=self.verbose)
 
         # run HFO detection on all the channels
-        for idx in range(self.n_chs):
-            sig = X[idx, :]
+        if self.n_jobs == 1:
+            for idx in tqdm(range(self.n_chs)):
+                sig = X[idx, :]
 
-            # compute sliding window RMS
-            hfo_event_arr[idx, :] = \
-                self._compute_sliding_window_detection(sig, method='rms')
+                # compute sliding window RMS
+                hfo_event_arr[idx, :] = \
+                    self._compute_sliding_window_detection(sig, method='rms')
+        else:
+            if self.n_jobs == -1:
+                n_jobs = cpu_count()
+            else:
+                n_jobs = self.n_jobs
+
+            results = Parallel(n_jobs=n_jobs)(
+                delayed(self._compute_sliding_window_detection)(
+                    X[idx, :], 'rms'
+                ) for idx in tqdm(range(self.n_chs))
+            )
+            for idx in range(len(results)):
+                hfo_event_arr[idx, :] = results[idx]
+
         return hfo_event_arr
 
     def fit(self, X, y=None, picks=None):

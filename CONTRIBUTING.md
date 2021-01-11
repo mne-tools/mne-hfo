@@ -18,7 +18,7 @@ you can install it by running
     $ pip install -U https://github.com/mne-tools/mne-python/archive/master.zip
 
 ### Install development version of MNE-HFO 
-First, you should [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the `mne-bids` repository. Then, clone the fork and install it in
+First, you should [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the `mne-hfo` repository. Then, clone the fork and install it in
 "editable" mode.
 
     $ git clone https://github.com/<your-GitHub-username>/mne-hfo
@@ -32,9 +32,9 @@ dependencies to ensure you will be able to run all tests.
 
 ### Invoke pytest
 Now you can finally run the tests by running `pytest` in the
-`mne-bids` directory.
+`mne-hfo` directory.
 
-    $ cd mne-bids
+    $ cd mne-hfo
     $ pytest
 
 ## Building the documentation

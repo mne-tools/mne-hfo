@@ -73,12 +73,12 @@ jobs:
           name: Install and configure dependencies
           command: |
             npm install -g --silent gh-pages@2.2
-            git config --global user.email "circle@mne.com"
+            git config --global user.email "adam2392@gmail.com"
             git config --global user.name "Circle Ci"
 
       - add_ssh_keys:
           fingerprints:
-            - "7f:74:00:17:2b:1a:7d:68:56:68:6b:64:b5:e0:7f:91"
+            - "4b:5a:c1:a6:fd:bf:23:0e:54:ae:c1:5c:0c:39:eb:ce"
 
       - run:
           # push built docs into the `dev` directory on the `gh-pages` branch

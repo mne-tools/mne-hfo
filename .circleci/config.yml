@@ -2,9 +2,11 @@
 version: 2.1
 
 jobs:
-  docs-build:
+  unit-test:
     docker:
       - image: circleci/python:3.8.1-buster
+    environment:
+      CODECOV_TOKEN: "24ebd27b-4413-4e7e-acbd-46499658bd1e"
     steps:
         - checkout
 
@@ -14,18 +16,30 @@ jobs:
               - data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
 
         # Also restore pip cache to speed up installations
-        - restore_cache:
+        - restore_cache:  # ensure this step occurs *before* installing dependencies
             keys:
-              - pip-cache-0-{{ checksum "./test_requirements.txt" }}
+              # when lock file changes, use increasingly general patterns to restore cache
+              - pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+              - pip-packages-v1-{{ .Branch }}-
+              - pip-packages-v1-
 
         - run:
-            name: Get Python running
+            name: Setup Python environment via Pipenv
             command: |
-              python -m pip install --user --upgrade --progress-bar off pip
-              python -m pip install --user --upgrade --progress-bar off -r test_requirements.txt
-              python -m pip install --user --upgrade --progress-bar off -r doc/requirements.txt
-              pip install --upgrade --no-deps https://api.github.com/repos/mne-tools/mne-python/zipball/master
-              python -m pip install --user -e .
+              sudo pip install --upgrade pip
+              sudo pip install pipenv
+              pipenv install --skip-lock --dev
+
+        - run:
+            name: Run unit and integration tests
+            command: |
+              pipenv run make pep
+              pipenv run pytest --cov=mne_hfo ./tests/ --cov-report=xml --cov-config=setup.cfg --verbose
+
+        - run:
+            name: Build the documentation
+            command: |
+              make build-doc
 
         - run:
             name: Build the documentation
@@ -40,6 +54,14 @@ jobs:
             path: doc/_build/html/
             destination: dev
 
+          - store_artifacts:
+              path: ./coverage.xml
+
+          - run:
+              name: Upload codecov report
+              command: |
+                bash <(curl -s https://codecov.io/bash)
+
         - run:
             name: Check links
             command: |
@@ -53,11 +75,10 @@ jobs:
             paths:
               - ~/mne_data
 
-        # Store pip cache
         - save_cache:
-            key: pip-cache-0-{{ checksum "./test_requirements.txt" }}
+            key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
             paths:
-              - ~/.cache/pip
+              - "~/.local/share/virtualenvs/venv"
 
   docs-deploy:
     # will only be run on master branch
@@ -88,17 +109,17 @@ jobs:
 workflows:
   commit:
     jobs:
-      - docs-build
+      - unit-test
       - docs-deploy:
           requires:
-            - docs-build
+            - unit-test
           filters:
             branches:
               only: master
 
   scheduled:
     jobs:
-      - docs-build
+      - unit-test
 
     triggers:
       - schedule:

@@ -54,13 +54,13 @@ jobs:
           path: doc/_build/html/
           destination: dev
 
-          - store_artifacts:
-              path: ./coverage.xml
+      - store_artifacts:
+          path: ./coverage.xml
 
-          - run:
-              name: Upload codecov report
-              command: |
-                bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: Upload codecov report
+          command: |
+            bash <(curl -s https://codecov.io/bash)
 
       - run:
           name: Check links

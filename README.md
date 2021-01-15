@@ -13,7 +13,7 @@ in iEEG data stored in the [BIDS](https://bids.neuroimaging.io/)-compatible data
 [MNE-Python](https://mne.tools/stable/index.html).
 
 The initial code was adapted and taken from: https://gitlab.com/icrc-bme/epycom 
-to turn into a sklearn-compatible API. Additional algorithms and functionality are 
+to turn into a sklearn-compatible API that works with ``mne-python``. Additional algorithms and functionality are 
 added.
 
 NOTE: This is currently in ALPHA stage, and we are looking for 

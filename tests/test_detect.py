@@ -44,8 +44,8 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
     filt_data = filtfilt(b, a, create_testing_eeg_data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
-    compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size)
-    compute_instance.params = {'win_size': window_size}
+    compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size,
+                                          filter_band=None)
     dets = benchmark(compute_instance.fit,
                      filt_data)
 
@@ -54,13 +54,17 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
     expected_vals = [(5040, 5198),
                      (34992, 35134)]
 
+    # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
-        print(dets.chs_hfos_list)
-        assert dets.chs_hfos_list[idx][0] == exp_val[0]
-        assert dets.chs_hfos_list[idx][1] == exp_val[1]
+        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
+        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
 def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
+    """Test RMSDetector with simulated HFO.
+
+    Assumes simulated data has already been "bandpass" filtered.
+    """
     fs = 5000
     b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
     filt_data = filtfilt(b, a, create_testing_eeg_data)[np.newaxis, :]
@@ -71,18 +75,13 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     dets = benchmark(compute_instance.fit,
                      filt_data)
 
-    compute_instance.fit(filt_data)
-
     expected_vals = [(5040, 5198),
                      (35008, 35134)]
 
+    # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
-        print(dets.chs_hfos_list)
-        print(dets.hfo_event_arr)
-        print(dets.hfo_event_arr.shape)
-        print(dets.get_params())
-        assert dets.chs_hfos_list[idx][0] == exp_val[0]
-        assert dets.chs_hfos_list[idx][1] == exp_val[1]
+        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
+        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
 @pytest.mark.skip(reason='need to implement...')

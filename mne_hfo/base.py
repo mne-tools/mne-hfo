@@ -240,7 +240,10 @@ class Detector(BaseEstimator):
 
     @property
     def step_size(self):
-        """Step size of each window."""
+        """Step size of each window.
+
+        Window increment over the samples of signal.
+        """
         # Calculate window values for easier operation
         return int(np.ceil(self.win_size * self.overlap))
 
@@ -265,14 +268,15 @@ class Detector(BaseEstimator):
         # store the RMS of each window
         signal_win_rms = np.empty(n_windows)
         win_idx = 0
-        while win_start < len(sig):
-            if win_stop > len(sig):
-                win_stop = len(sig)
+        while win_start < self.n_times:
+            if win_stop > self.n_times:
+                win_stop = self.n_times
 
             # compute the RMS of filtered signal in this window
             signal_win_rms[win_idx] = hfo_detect_func(
                 sig[int(win_start):int(win_stop)], win_size=self.win_size)[0]
-            if win_stop == len(sig):
+
+            if win_stop == self.n_times:
                 break
 
             win_start += self.step_size
@@ -280,13 +284,28 @@ class Detector(BaseEstimator):
             win_idx += 1
         return signal_win_rms
 
-    def _post_process_ch_hfos(self, ch_hfo_events, n_times,
+    def _post_process_ch_hfos(self, metric_vals_list, n_times,
                               threshold_method='std'):
         """Post process one channel's HFO events.
 
         Joins contiguously detected HFOs as one event, and applies
         the threshold based on number of stdev above baseline on the
         RMS of the bandpass filtered signal.
+
+        Parameters
+        ----------
+        metric_vals_list : list
+            List of HFO metric values (e.g. Line Length, or RMS) over windows.
+        n_times : int
+            The number of time points in the original data matrix fed in.
+        threshold_method : str
+            The threshold method to use.
+
+        Returns
+        -------
+        output : List[Tuple[int, int]]
+            A list of tuples, storing the event start and stop sample index
+            for the detected HFO.
         """
         if threshold_method not in ACCEPTED_THRESHOLD_METHODS:
             raise ValueError(f'Threshold method {threshold_method} '
@@ -300,27 +319,27 @@ class Detector(BaseEstimator):
             print(f'Using {threshold_method} to perform HFO '
                   f'thresholding.')
 
-        n_windows = len(ch_hfo_events)
+        n_windows = len(metric_vals_list)
 
         # store post-processed hfo events as a list
         output = []
 
         # only keep RMS values above a certain number
         # stdevs above baseline (threshold)
-        det_th = threshold_func(ch_hfo_events, self.threshold)
+        det_th = threshold_func(metric_vals_list, self.threshold)
 
         # Detect and now group events if they are within a
         # step size of each other
         win_idx = 0
         while win_idx < n_windows:
             # log events if they pass our threshold criterion
-            if np.any([event >= det_th for event in ch_hfo_events]):
+            if metric_vals_list[win_idx] >= det_th:
                 event_start = win_idx * self.step_size
 
                 # group events together if they occur in
                 # contiguous windows
                 while win_idx < n_windows and \
-                        any([event >= det_th for event in ch_hfo_events]):
+                        metric_vals_list[win_idx] >= det_th:
                     win_idx += 1
                 event_stop = (win_idx * self.step_size) + self.win_size
 
@@ -334,4 +353,5 @@ class Detector(BaseEstimator):
                 win_idx += 1
             else:
                 win_idx += 1
+
         return output

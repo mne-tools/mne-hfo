@@ -32,6 +32,7 @@ mypy = "*"
 nbsphinx = "*"
 sphinx-copybutton = "*"
 pipfile-requirements = "*"
+pandoc = "*"
 
 [requires]
 python_version = "3.8"

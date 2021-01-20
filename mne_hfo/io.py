@@ -1,23 +1,25 @@
 from typing import List, Dict, Union
 
-import numpy as np
-import pandas as pd
 import mne
-from mne import events_from_annotations
+import pandas as pd
 
 EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
 
 
-def create_events_df(input: Union[Dict[List], mne.io.BaseRaw], sfreq: float=None) -> pd.DataFrame:
+def create_events_df(input: Union[Dict[str, List], mne.io.BaseRaw],
+                     sfreq: float = None) -> pd.DataFrame:
     """Create a BIDS events dataframe for HFO events.
 
     Parameters
     ----------
     input : dictionary(list(tuple(int, int))) | mne.io.BaseRaw
-        The input data structure that is either a mne ``Raw`` object with ``Annotations`` set
-        that correspond to the HFO events, or a dictionary of lists of HFO start/end points.
+        The input data structure that is either a mne ``Raw``
+        object with ``Annotations`` set that correspond to the
+        HFO events, or a dictionary of lists of HFO
+        start/end points.
     sfreq : float | None
-        The sampling frequency. Only required if the input is not a mne.io.BaseRaw object.
+        The sampling frequency. Only required if the input is
+        not a mne.io.BaseRaw object.
 
     Returns
     -------
@@ -26,15 +28,15 @@ def create_events_df(input: Union[Dict[List], mne.io.BaseRaw], sfreq: float=None
 
     References
     ----------
-    [1] https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html
+    [1] https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html  # noqa
     """
     # handle error checks and extract
     if isinstance(input, mne.io.BaseRaw):
         if input.annotations is None:
-            raise ValueError(f'Trying to create events DataFrame using '
-                             f'a mne Raw object without Annotations. '
-                             f'Please use `raw.set_annotations` to '
-                             f'add the HFO events.')
+            raise ValueError('Trying to create events DataFrame using '
+                             'a mne Raw object without Annotations. '
+                             'Please use `raw.set_annotations` to '
+                             'add the HFO events.')
         annotations = input.annotations
 
         onset = annotations.onset
@@ -68,6 +70,7 @@ def create_events_df(input: Union[Dict[List], mne.io.BaseRaw], sfreq: float=None
     event_df = _create_events_df(onset=onset, duration=duration, sample=sample,
                                  description=description)
     return event_df
+
 
 def _create_events_df(onset: List[float], duration: List[float],
                       description: List[str], sample: List[int],

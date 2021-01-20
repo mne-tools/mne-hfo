@@ -21,7 +21,7 @@ DISTNAME = 'mne-hfo'
 DESCRIPTION = descr
 MAINTAINER = 'Adam Li'
 MAINTAINER_EMAIL = 'adam2392@gmail.com'
-URL = 'https://mne.tools/mne-hfo/'
+URL = 'https://adam2392/mne-hfo/'
 LICENSE = 'BSD (3-clause)'
 DOWNLOAD_URL = 'https://github.com/adam2392/mne-hfo.git'
 VERSION = version
@@ -71,12 +71,9 @@ if __name__ == "__main__":
           ],
           platforms='any',
           packages=find_packages(),
-          entry_points={'console_scripts': [
-              'mne_hfo = mne_hfo.commands.run:main',
-          ]},
           project_urls={
               'Documentation': URL,
-              'Bug Reports': 'https://github.com/mne-tools/mne-hfo/issues',
-              'Source': 'https://github.com/mne-tools/mne-hfo',
+              'Bug Reports': 'https://github.com/adam2392/mne-hfo/issues',
+              'Source': 'https://github.com/adam2392/mne-hfo',
           },
           )

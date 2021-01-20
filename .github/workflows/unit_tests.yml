@@ -140,7 +140,7 @@ jobs:
         run: pip install --no-deps .
       - name: Run pytest
         run: |
-          python -m pytest . --cov=mne_hfo mne_hfo/tests/ mne_hfo/commands/tests/ --cov-report=xml --cov-config=setup.cfg --verbose --ignore mne-python
+          python -m pytest . --cov=mne_hfo --cov-report=xml --cov-config=setup.cfg --verbose --ignore mne-python
         shell: bash
 #      - name: Upload coverage stats to codecov
 #        if: "matrix.os == 'ubuntu-latest'"

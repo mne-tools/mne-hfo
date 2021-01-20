@@ -40,7 +40,7 @@ extensions = [
     'numpydoc',
     'nbsphinx',  # to render jupyter notebooks
     'sphinx_copybutton',
-    'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
+    # 'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
     'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
     # 'm2r',
 ]
@@ -50,10 +50,20 @@ copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
 
 # generate autosummary even if no references
+# -- sphinx.ext.autosummary
 autosummary_generate = True
+
 autodoc_default_options = {'inherited-members': None}
+autodoc_typehints = 'signature'
+
+nitpick_ignore = [('py:class', 'type')]
+
+# -- numpydoc
+# Below is needed to prevent errors
 numpydoc_class_members_toctree = False
 numpydoc_attributes_as_param_list = True
+numpydoc_use_blockquotes = True
+
 default_role = 'autolink'  # XXX silently allows bad syntax, someone should fix
 
 # The suffix(es) of source filenames.
@@ -73,7 +83,7 @@ copyright = u'2020-%s, MNE Developers. Last updated on %s' % (td.year,
 
 author = u'Adam Li'
 
-nitpick_ignore = [('py:class', 'type')]
+
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -88,7 +98,7 @@ release = version
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db',
-                    '.DS_Store']
+                    '.DS_Store', "**.ipynb_checkpoints"]
 
 # HTML options (e.g., theme)
 # see: https://sphinx-bootstrap-theme.readthedocs.io/en/latest/README.html
@@ -115,7 +125,7 @@ html_theme_options = {
     'navbar_links': [
         ("News", "whats_new"),
         ("Install", "install"),
-        ("Use", "use"),
+        ("Tutorial", "tutorial"),
         ("API", "api"),
         ("CLI", "generated/cli"),
         ("Contribute!", "contribute")

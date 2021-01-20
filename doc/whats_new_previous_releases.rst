@@ -8,9 +8,9 @@ What was new in previous releases?
 ==================================
 
 .. currentmodule:: mne_hfo
-.. _changes_0_1:
+.. _changes_0_0:
 
-Version 0.1
+Version 0.0
 -----------
 
 Notable changes

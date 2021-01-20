@@ -18,29 +18,29 @@ def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
 
     Returns
     -------
-    events_df : pd.DataFrame
+    events_df : DataFrame
     """
     pass
 
 
-def create_events_df(input: Union[Dict[str, List], mne.io.BaseRaw],
+def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
                      sfreq: float = None) -> pd.DataFrame:
     """Create a BIDS events dataframe for HFO events.
 
     Parameters
     ----------
-    input : dictionary(list(tuple(int, int))) | mne.io.BaseRaw
+    input : dictionary(list(tuple(int, int))) | mne.io.Raw
         The input data structure that is either a mne ``Raw``
         object with ``Annotations`` set that correspond to the
         HFO events, or a dictionary of lists of HFO
         start/end points.
     sfreq : float | None
         The sampling frequency. Only required if the input is
-        not a mne.io.BaseRaw object.
+        not a ``mne.io.BaseRaw`` object.
 
     Returns
     -------
-    events_df : pd.DataFrame
+    events_df : DataFrame
         The event dataframe according to BIDS [1].
 
     References

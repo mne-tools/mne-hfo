@@ -10,6 +10,9 @@ jobs:
     steps:
       - checkout
 
+      # make sure pandoc is on the system
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
+        -
       # restore cache from last build. Unless __init__.py has changed since then
       - restore_cache:
           keys:

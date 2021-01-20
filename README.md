@@ -5,6 +5,7 @@
 ![License](https://img.shields.io/pypi/l/mne-bids)
 [![Code Maintainability](https://api.codeclimate.com/v1/badges/3afe97439ec5133ce267/maintainability)](https://codeclimate.com/github/adam2392/mne-hfo/maintainability)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mne-hfo)
 
 [comment]: <> ([![PyPI Download count]&#40;https://pepy.tech/badge/mne-bids&#41;]&#40;https://pepy.tech/project/mne-bids&#41;)
 

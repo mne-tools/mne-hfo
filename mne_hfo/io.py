@@ -120,7 +120,8 @@ def _create_events_df(onset: List[float], duration: List[float],
                            f'{len(duration)}.')
 
     # create the event dataframe according to BIDS events
-    event_df = pd.DataFrame(data=np.column_stack([onset, duration, sample, description]),
+    event_df = pd.DataFrame(data=np.column_stack([onset, duration,
+                                                  sample, description]),
                             index=None,
                             columns=EVENT_COLUMNS)
     event_df.astype({

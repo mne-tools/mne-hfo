@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) St. Anne's University Hospital in Brno. International Clinical
-# Research Center, Biomedical Engineering. All Rights Reserved.
-# Distributed under the (new) BSD License. See LICENSE.txt for more info.
-
 """
 Some parts of code are recoded from package Anderson Brito da Silva's pyhfo.
 

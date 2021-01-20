@@ -453,7 +453,7 @@ class LineLengthDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_list)
+        self._create_event_df(self.chs_hfos_dict)
         return self
 
 
@@ -592,5 +592,5 @@ class RMSDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_list)
+        self._create_event_df(self.chs_hfos_dict)
         return self

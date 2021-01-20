@@ -54,6 +54,13 @@ The documentation can be found under the following links:
 - for the [stable release](https://mne.tools/mne-bids/)
 - for the [latest (development) version](https://mne.tools/mne-bids/dev/index.html)
 
+A basic working example is listed here, assuming one has loaded in a 
+mne-Python ``Raw`` object already.
+
+    from mne_hfo import RMSDetector
+    detector = RMSDetector()
+    detector.fit(raw)
+
 Citing
 ------
 For testing and demo purposes, we use the dataset in [1]. 

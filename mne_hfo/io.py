@@ -81,6 +81,8 @@ def create_events_df(input: Union[Dict[str, List], mne.io.BaseRaw],
             duration.append(offset_sec - onset_sec)
             sample.append(endpoints[0])
             description.append(f'hfo_{ch_name}')
+    else:
+        raise ValueError('Unaccepted data structure for input.')
 
     # now create the dataframe
     event_df = _create_events_df(onset=onset, duration=duration, sample=sample,

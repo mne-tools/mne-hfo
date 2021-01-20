@@ -5,6 +5,7 @@ include Pipfile
 include Pipfile.lock
 include data/README
 include data/.bidsignore
+include *.txt
 
 recursive-include examples *.py
 recursive-include examples README.rst

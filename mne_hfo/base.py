@@ -6,6 +6,7 @@ from sklearn.base import BaseEstimator
 from sklearn.metrics import r2_score, f1_score
 from sklearn.utils.validation import check_is_fitted
 
+from mne_hfo.io import create_events_df
 from mne_hfo.utils import (threshold_std, compute_rms,
                            compute_line_length)
 
@@ -208,6 +209,10 @@ class Detector(BaseEstimator):
         check_is_fitted(self)
         X, y = self._check_input_raw(X, None, picks)
         return self.fit(X, None, picks)
+
+    def _create_event_df(self, chs_hfos_list):
+        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq)
+        self.df = event_df
 
     def fit(self, X, y=None, picks=None):
         """

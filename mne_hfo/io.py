@@ -17,7 +17,7 @@ def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
 
     Returns
     -------
-
+    events_df : pd.DataFrame
     """
     pass
 

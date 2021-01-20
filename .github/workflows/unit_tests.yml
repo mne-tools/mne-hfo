@@ -134,7 +134,7 @@ jobs:
           date
           python --version
           which python
-          mne sys_info
+          python -c "import mne; mne.sys_info()"
 
       - name: Install MNE-HFO
         run: pip install --no-deps .

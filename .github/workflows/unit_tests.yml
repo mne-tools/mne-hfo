@@ -125,8 +125,8 @@ jobs:
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
-          pipfile2req > requirements.txt --dev
           pip install -r requirements.txt
+          pip install -r test_requirements.txt
 
       - name: Display versions and environment information
         run: |

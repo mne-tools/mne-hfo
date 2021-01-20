@@ -23,7 +23,7 @@ Notable changes
 Authors
 ~~~~~~~
 
-* xxx
+* `Adam Li`_
 
 Detailed list of changes
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +31,7 @@ Detailed list of changes
 Enhancements
 ^^^^^^^^^^^^
 
-- xxx
+- Added :func:`create_events_df` to generate a DataFrame of HFO events from ``Raw`` object, or dictionary of lists of HFO endpoints, by `Adam Li`_ (:gh:`7`)
 
 API changes
 ^^^^^^^^^^^
@@ -41,7 +41,7 @@ API changes
 Requirements
 ^^^^^^^^^^^^
 
-- xxx
+- Added ``tqdm``, ``joblib`` and ``pandas`` to requirements, by `Adam Li`_ (:gh:`7`)
 
 Bug fixes
 ^^^^^^^^^

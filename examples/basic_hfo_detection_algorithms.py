@@ -34,8 +34,8 @@ import shutil
 import mne
 from mne.datasets import eegbci
 
-from mne_hfo import write_raw_bids, BIDSPath, print_dir_tree
-from mne_hfo.stats import count_events
+from mne_bids import write_raw_bids, BIDSPath, print_dir_tree
+from mne_bids.stats import count_events
 
 ###############################################################################
 # Download the data

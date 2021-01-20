@@ -3,20 +3,21 @@ import os
 import sys
 from datetime import date
 
+import sphinx_bootstrap_theme
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
-import sphinx_bootstrap_theme
 
-import mne_hfo
-
+sys.path.insert(0, os.path.abspath(".."))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 curdir = os.path.dirname(__file__)
+sys.path.append(os.path.abspath(os.path.join(curdir, '..')))
 sys.path.append(os.path.abspath(os.path.join(curdir, '..', 'mne_hfo')))
 sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
 
+import mne_hfo
 
 # -- General configuration ------------------------------------------------
 
@@ -41,6 +42,7 @@ extensions = [
     'sphinx_copybutton',
     'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
     'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
+    # 'm2r',
 ]
 
 # configure sphinx-copybutton
@@ -66,10 +68,12 @@ master_doc = 'index'
 # General information about the project.
 project = u'mne_hfo'
 td = date.today()
-copyright = u'2017-%s, MNE Developers. Last updated on %s' % (td.year,
+copyright = u'2020-%s, MNE Developers. Last updated on %s' % (td.year,
                                                               td.isoformat())
 
-author = u'MNE Developers'
+author = u'Adam Li'
+
+nitpick_ignore = [('py:class', 'type')]
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -127,6 +131,8 @@ intersphinx_mapping = {
     'scipy': ('https://scipy.github.io/devdocs', None),
     'matplotlib': ('https://matplotlib.org', None),
     'nilearn': ('https://nilearn.github.io', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
+    'sklearn': ('http://scikit-learn.org/stable', None)
 }
 intersphinx_timeout = 5
 
@@ -151,16 +157,17 @@ sphinx_gallery_conf = {
     'within_subsection_order': ExampleTitleSortKey,
     'gallery_dirs': 'auto_examples',
     'filename_pattern': '^((?!sgskip).)*$',
-    'binder': {
-        # Required keys
-        'org': 'mne-tools',
-        'repo': 'mne-hfo',
-        'branch': 'gh-pages',  # noqa: E501 Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
-        'binderhub_url': 'https://mybinder.org',  # noqa: E501 Any URL of a binderhub deployment. Must be full URL (e.g. https://mybinder.org).
-        'filepath_prefix': filepath_prefix,  # noqa: E501 A prefix to prepend to any filepaths in Binder links.
-        'dependencies': [
-            '../test_requirements.txt',
-            './requirements.txt',
-        ],
-    }
+    # 'binder': {
+    #     # Required keys
+    #     'org': 'mne-tools',
+    #     'repo': 'mne-hfo',
+    #     'branch': 'gh-pages',  # noqa: E501 Can be any branch, tag, or commit hash. Use a branch that hosts your docs.
+    #     'binderhub_url': 'https://mybinder.org',
+    #     # noqa: E501 Any URL of a binderhub deployment. Must be full URL (e.g. https://mybinder.org).
+    #     'filepath_prefix': filepath_prefix,  # noqa: E501 A prefix to prepend to any filepaths in Binder links.
+    #     'dependencies': [
+    #         '../test_requirements.txt',
+    #         './requirements.txt',
+    #     ],
+    # }
 }

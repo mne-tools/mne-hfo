@@ -10,7 +10,7 @@ EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
 
 
 def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
-    """Read an *events.tsv file to a DataFrame.
+    """Read an events.tsv file to a DataFrame.
 
     Parameters
     ----------

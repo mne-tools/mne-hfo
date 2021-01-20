@@ -29,6 +29,9 @@ codespell = "*"
 check-manifest = "*"
 pytest-benchmark = "*"
 mypy = "*"
+nbsphinx = "*"
+sphinx-copybutton = "*"
+pipfile-requirements = "*"
 
 [requires]
 python_version = "3.8"

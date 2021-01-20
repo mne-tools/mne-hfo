@@ -23,19 +23,6 @@ Python
                              datatype='meg', bids_root='./bids_dataset')
     >>> write_raw_bids(raw, bids_path=bids_path)
 
-Command Line Interface
-~~~~~~~~~~~~~~~~~~~~~~
-
-Simply type ``mne_bids`` in your command line and press enter to see a list of
-accepted commands. Then type ``mne_bids <command> --help``, where ``<command>``
-is one of the accepted commands, to get more information about it.
-
-Example:
-
-.. code-block:: bash
-
-  $ mne_bids raw_to_bids --subject_id sub01 --task rest --raw data.edf --bids_root new_path
-
 
 .. _bidspath-intro:
 

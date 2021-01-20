@@ -53,6 +53,9 @@ upload-pipy:
 check-manifest:
 	check-manifest --ignore .circleci/*,doc,.DS_Store
 
+reqs:
+	pipfile2req > test_requirements.txt --dev
+
 flake:
 	@if command -v flake8 > /dev/null; then \
 		echo "Running flake8"; \

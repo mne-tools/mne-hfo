@@ -21,7 +21,7 @@ modify BIDS-formatted data.
 # We are importing everything we need for this example:
 from mne.datasets import somato
 
-from mne_hfo import (BIDSPath, read_raw_bids,
+from mne_bids import (BIDSPath, read_raw_bids,
                      print_dir_tree, make_report, update_sidecar_json)
 
 ###############################################################################

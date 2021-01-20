@@ -27,16 +27,14 @@ mne_hfo.io
 
 :py:mod:`mne_hfo.io`:
 
-.. automodule:: mne_hfo.stats
+.. automodule:: mne_hfo.io
    :no-members:
    :no-inherited-members:
 
-.. currentmodule:: mne_hfo.stats
+.. currentmodule:: mne_hfo.io
 
 .. autosummary::
    :toctree: generated/
 
    create_events_df
    read_events_tsv
-
-

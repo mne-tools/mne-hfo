@@ -1,63 +1,68 @@
-What is MNE-BIDS?
-=================
+..  -*- coding: utf-8 -*-
 
-MNE-BIDS is a Python package that allows you to read and write
-`BIDS <https://bids.neuroimaging.io/>`_\ -compatible datasets with the help of
-`MNE-Python <https://mne.tools/stable/index.html>`_.
+.. _contents:
 
-.. image:: http://mne.tools/mne-bids/assets/MNE-BIDS.png
-   :alt: Schematic: From raw data to BIDS using MNE-BIDS
+Overview of mne-hfo_
+====================
 
-Why?
-----
-MNE-BIDS links BIDS and MNE-Python with the goal to make your analyses faster
-to code, more robust, and facilitate data and code sharing with co-workers
-and collaborators.
+.. _mne-hfo: https://graspy.neurodata.io
+
+mne-hfo is a Python package for analysis of iEEG data for HFO events.
+
+Motivation
+----------
+
+A graph, or network, provides a mathematically intuitive representation of data with 
+some sort of relationship between items. For example, a social network can be 
+represented as a graph by considering all participants in the social network as nodes, 
+with connections representing whether each pair of individuals in the network are friends 
+with one another. Naively, one might apply traditional statistical techniques to a graph, 
+which neglects the spatial arrangement of nodes within the network and is not utilizing 
+all of the information present in the graph. In this package, we provide utilities and 
+algorithms designed for the processing and analysis of graphs with specialized graph 
+statistical algorithms.
+
+Python
+------
+
+Python is a powerful programming language that allows concise expressions of network
+algorithms.  Python has a vibrant and growing ecosystem of packages that
+graspologic uses to provide more features such as numerical linear algebra and
+plotting.  In order to make the most out of graspologic you will want to know how
+to write basic programs in Python.  Among the many guides to Python, we
+recommend the `Python documentation <https://docs.python.org/3/>`_.
+
+Free software
+-------------
+
+graspologic is free software; you can redistribute it and/or modify it under the
+terms of the :doc:`MIT </license>` license.  We welcome contributions.
+Join us on `GitHub <https://github.com/microsoft/graspologic>`_.
+
+Documentation
+=============
+
+mne-hfo is a HFO-detection package in python.
+
+.. toctree::
+   :maxdepth: 1
+
+   install
+   tutorial
+   contribute
+   whats_new
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Useful Links
+
+   graspologic @ GitHub <http://www.github.com/microsoft/graspologic/>
+   graspologic @ PyPI <https://pypi.org/project/graspologic/>
+   Issue Tracker <https://github.com/microsoft/graspologic/issues>
 
 
-What is this BIDS thing, anyway?
---------------------------------
-BIDS, the Brain Imaging Data Structure, is a standard that describes how to
-organize neuroimaging and electrophysiological data. In particular, it defines:
+Indices and tables
+==================
 
-- which file formats to use
-- how to name your files
-- where to place your files within a directory structure
-- what additional metadata to store
-
-The complete set of rules is written down in the
-`BIDS specification <https://bids-specification.readthedocs.io/>`_.
-
-
-Supported file formats
-----------------------
-
-Currently, we support all file formats that are in the BIDS specification for MEG, EEG, and iEEG data.
-We also support a range of additional manufacturer formats to facilitate converting them to their BIDS-recommended
-formats. For example, if you have a Nihon Kohden file, you can read that file using MNE-Python, and
-then use MNE-BIDS convert it to the BrainVision format and store it according to BIDS.
-
-Citing MNE-BIDS
----------------
-
-If you use MNE-BIDS in your work, please cite our
-`publication in JOSS <https://doi.org/10.21105/joss.01896>`_.
-
-Appelhoff, S., Sanderson, M., Brooks, T., Vliet, M., Quentin, R., Holdgraf, C.,
-Chaumon, M., Mikulan, E., Tavabi, K., Höchenberger, R., Welke, D., Brunner, C.,
-Rockhill, A., Larson, E., Gramfort, A., & Jas, M. (2019). **MNE-BIDS:
-Organizing electrophysiological data into the BIDS format and facilitating
-their analysis.**
-*Journal of Open Source Software,* 4:1896.
-DOI: `10.21105/joss.01896 <https://doi.org/10.21105/joss.01896>`_
-
-Please also cite one of the following papers to credit BIDS, depending on which
-data type you used:
-
-- `BIDS-MEG <http://doi.org/10.1038/sdata.2018.110>`_
-- `BIDS-EEG <https://doi.org/10.1038/s41597-019-0104-8>`_
-- `BIDS-iEEG <https://doi.org/10.1038/s41597-019-0105-7>`_
-
-
-.. contents:: :local:
-    :depth: 3
+* :ref:`genindex`
+* :ref:`search`

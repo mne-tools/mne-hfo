@@ -1,9 +1,25 @@
+from pathlib import Path
 from typing import List, Dict, Union
 
 import mne
 import pandas as pd
+from mne_bids import BIDSPath
 
 EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
+
+
+def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
+    """Read an *events.tsv file to a DataFrame.
+
+    Parameters
+    ----------
+    bids_path : BIDSPath | pathlib.Path
+
+    Returns
+    -------
+
+    """
+    pass
 
 
 def create_events_df(input: Union[Dict[str, List], mne.io.BaseRaw],

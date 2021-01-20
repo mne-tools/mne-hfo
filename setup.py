@@ -43,13 +43,14 @@ if __name__ == "__main__":
               'mne-bids >= 0.6',
               'numpy >=1.14',
               'scipy >=0.18.1',
-              'scikit-learn >= 0.23'
+              'scikit-learn >= 0.23',
+              'tqdm',
+              'pandas >=0.23.4'
           ],
           extras_require={
               'full': [
                   'joblib >= 1.0.0',
                   'matplotlib',
-                  'pandas >=0.23.4'
               ]
           },
           classifiers=[

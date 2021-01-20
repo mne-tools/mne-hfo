@@ -44,7 +44,7 @@ jobs:
           python --version
           which python
       - name: Run style & documentation tests
-        run: pipenv run make pep
+        run: make pep
 
   build:
     runs-on: ${{ matrix.os }}

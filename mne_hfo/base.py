@@ -142,6 +142,7 @@ class Detector(BaseEstimator):
     def _check_input_raw(self, X, y, picks):
         if isinstance(X, mne.io.BaseRaw):
             self.sfreq = X.info['sfreq']
+            self.ch_names = X.ch_names
             X = X.get_data(picks=picks)
         elif self.sfreq is not None:
             pass

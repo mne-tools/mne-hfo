@@ -46,8 +46,17 @@ MNE-HFO links BIDS, MNE-Python and iEEG HFO event detection with the goal to mak
 detection more transparent, more robust, and facilitate data and code sharing with 
 co-workers and collaborators.
 
-How?
-----
+Installation
+------------
+Installation is RECOMMENDED via a python virtual environment, using ``pipenv``. 
+The package is hosted on ``pypi``, which can be installed via pip, or pipenv.
+
+    pipenv install mne-hfo
+
+Note: Installation has been tested on MacOSX and Ubuntu.
+
+Documentation and Usage
+-----------------------
 
 The documentation can be found under the following links:
 
@@ -60,6 +69,8 @@ mne-Python ``Raw`` object already.
     from mne_hfo import RMSDetector
     detector = RMSDetector()
     detector.fit(raw)
+
+Note: Functionality has been tested on MacOSX and Ubuntu.
 
 Citing
 ------

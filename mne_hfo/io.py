@@ -66,21 +66,22 @@ def create_events_df(input: Union[Dict[str, List], mne.io.BaseRaw],
                                'be also passed in.')
         onset, duration = [], []
         sample, description = [], []
-        for ch_name, endpoints in input.items():
-            if len(endpoints) != 2:
-                raise ValueError(f'All HFO events must be stored as a '
-                                 f'tuple of 2 numbers: the start and end '
-                                 f'sample point of the event. For '
-                                 f'{ch_name}, there is an event '
-                                 f'stored as {endpoints} that does '
-                                 f'not follow this.')
-            onset_sec = endpoints[0] / sfreq
-            offset_sec = endpoints[1] / sfreq
-            onset.append(onset_sec)
+        for ch_name, endpoints_list in input.items():
+            for endpoints in endpoints_list:
+                if len(endpoints) != 2:
+                    raise ValueError(f'All HFO events must be stored as a '
+                                     f'tuple of 2 numbers: the start and end '
+                                     f'sample point of the event. For '
+                                     f'{ch_name}, there is an event '
+                                     f'stored as {endpoints} that does '
+                                     f'not follow this.')
+                onset_sec = endpoints[0] / sfreq
+                offset_sec = endpoints[1] / sfreq
+                onset.append(onset_sec)
 
-            duration.append(offset_sec - onset_sec)
-            sample.append(endpoints[0])
-            description.append(f'hfo_{ch_name}')
+                duration.append(offset_sec - onset_sec)
+                sample.append(endpoints[0])
+                description.append(f'hfo_{ch_name}')
     else:
         raise ValueError('Unaccepted data structure for input.')
 

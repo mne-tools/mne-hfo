@@ -85,6 +85,6 @@ type-check:
 pep:
 	@$(MAKE) -k flake pydocstyle check-manifest codespell-error type-check
 
-build-docs:
+build-doc:
 	cd docs; make clean
 	cd docs; make html

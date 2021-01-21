@@ -31,7 +31,7 @@ Detailed list of changes
 Enhancements
 ^^^^^^^^^^^^
 
-- Added :func:`mne_hfo.create_events_df` to generate a DataFrame of HFO events from ``Raw`` object, or dictionary of lists of HFO endpoints, by `Adam Li`_ (:gh:`7`)
+- Added :func:`mne_hfo.io.create_events_df` to generate a DataFrame of HFO events from ``Raw`` object, or dictionary of lists of HFO endpoints, by `Adam Li`_ (:gh:`7`)
 
 API changes
 ^^^^^^^^^^^

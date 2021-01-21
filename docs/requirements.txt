@@ -6,3 +6,8 @@ numpydoc
 matplotlib
 pillow
 pandas
+sphinx==1.8.5
+sphinxcontrib-rawfiles
+nbsphinx>=0.4.2
+ipython>=7.4.0
+ipykernel>=5.1.0

@@ -7,8 +7,8 @@ import sphinx_bootstrap_theme
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
 
+sys.path.insert(0, os.path.abspath(".."))
 import mne_hfo
-# sys.path.insert(0, os.path.abspath(".."))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -17,8 +17,6 @@ curdir = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.join(curdir, '..')))
 sys.path.append(os.path.abspath(os.path.join(curdir, '..', 'mne_hfo')))
 sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
-
-
 
 # -- General configuration ------------------------------------------------
 

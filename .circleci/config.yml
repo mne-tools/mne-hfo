@@ -60,12 +60,12 @@ jobs:
           command: |
             bash <(curl -s https://codecov.io/bash)
 
-      - run:
-          name: Check links
-          command: |
-            pipenv run make -C doc clean
-            pipenv run make -C doc linkcheck
-            pipenv run make -C doc linkcheck-grep
+#      - run:
+#          name: Check links
+#          command: |
+#            pipenv run make -C doc clean
+#            pipenv run make -C doc linkcheck
+#            pipenv run make -C doc linkcheck-grep
 
       # Store the data cache
 #      - save_cache:

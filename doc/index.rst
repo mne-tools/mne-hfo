@@ -38,7 +38,7 @@ Free software
 
 mne-hfo is free software; you can redistribute it and/or modify it under the
 terms of the ``BSD`` license.  We welcome contributions.
-Join us on `GitHub <https://github.com/adma2392/mne-hfo>`_.
+Join us on `GitHub <https://github.com/adam2392/mne-hfo>`_.
 
 Documentation
 =============

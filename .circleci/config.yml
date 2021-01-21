@@ -2,7 +2,7 @@
 version: 2.1
 
 jobs:
-  unit-test:
+  docs-build:
     docker:
       - image: circleci/python:3.8.1-buster
     environment:
@@ -107,17 +107,17 @@ jobs:
 workflows:
   commit:
     jobs:
-      - unit-test
+      - docs-build
       - docs-deploy:
           requires:
-            - unit-test
+            - docs-build
           filters:
             branches:
               only: master
 
   scheduled:
     jobs:
-      - unit-test
+      - docs-build
 
     triggers:
       - schedule:

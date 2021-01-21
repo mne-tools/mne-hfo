@@ -45,11 +45,11 @@ jobs:
             pipenv run make build-doc
 
       - persist_to_workspace:
-          root: doc/_build
+          root: docs/_build
           paths: html
 
       - store_artifacts:
-          path: doc/_build/html/
+          path: docs/_build/html/
           destination: dev
 
       - store_artifacts:
@@ -102,7 +102,7 @@ jobs:
       - run:
           # push built docs into the `dev` directory on the `gh-pages` branch
           name: Deploy docs to gh-pages branch
-          command: gh-pages --dotfiles --message "doc updates [skip ci]" --dist doc/_build/html --dest ./dev
+          command: gh-pages --dotfiles --message "doc updates [skip ci]" --dist docs/_build/html --dest ./dev
 
 workflows:
   commit:

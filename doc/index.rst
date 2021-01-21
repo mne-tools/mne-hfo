@@ -12,32 +12,33 @@ mne-hfo is a Python package for analysis of iEEG data for HFO events.
 Motivation
 ----------
 
-A graph, or network, provides a mathematically intuitive representation of data with 
-some sort of relationship between items. For example, a social network can be 
-represented as a graph by considering all participants in the social network as nodes, 
-with connections representing whether each pair of individuals in the network are friends 
-with one another. Naively, one might apply traditional statistical techniques to a graph, 
-which neglects the spatial arrangement of nodes within the network and is not utilizing 
-all of the information present in the graph. In this package, we provide utilities and 
-algorithms designed for the processing and analysis of graphs with specialized graph 
-statistical algorithms.
+High-frequency oscillations are events that clinicians hypothesize to be related
+to the epileptogenic zone. They have also been observed in other physiological
+processes. They are loosely defined as oscillations in a "high-frequency band"
+that are greater then some baseline according to a metric. For example,
+the Line Length HFO detector, uses the ``line length`` metric of the time-series signal
+to determine if a certain channel epoch is an HFO or not. In this package, we provide
+utilities and algorithms for detecting HFOs that have been proposed in the literature.
+In addition, we formulate the design of the package to be closely tied with ``scikit-learn``,
+``mne-python``, and the ``BIDS`` data specification. These design choices make the
+algorithms easy to tune, easy to use, and the results easy to share.
 
 Python
 ------
 
 Python is a powerful programming language that allows concise expressions of network
 algorithms.  Python has a vibrant and growing ecosystem of packages that
-graspologic uses to provide more features such as numerical linear algebra and
-plotting.  In order to make the most out of graspologic you will want to know how
+mne-hfo uses to provide more features such as numerical linear algebra and
+plotting.  In order to make the most out of mne-hfo you will want to know how
 to write basic programs in Python.  Among the many guides to Python, we
 recommend the `Python documentation <https://docs.python.org/3/>`_.
 
 Free software
 -------------
 
-graspologic is free software; you can redistribute it and/or modify it under the
+mne-hfo is free software; you can redistribute it and/or modify it under the
 terms of the ``BSD`` license.  We welcome contributions.
-Join us on `GitHub <https://github.com/microsoft/graspologic>`_.
+Join us on `GitHub <https://github.com/adma2392/mne-hfo>`_.
 
 Documentation
 =============
@@ -46,19 +47,11 @@ mne-hfo is a HFO-detection package in python.
 
 .. toctree::
    :maxdepth: 1
-
-   install
-   tutorial
-   contribute
-   whats_new
-
-.. toctree::
-   :maxdepth: 1
    :caption: Useful Links
 
-   graspologic @ GitHub <http://www.github.com/microsoft/graspologic/>
-   graspologic @ PyPI <https://pypi.org/project/graspologic/>
-   Issue Tracker <https://github.com/microsoft/graspologic/issues>
+   mne-hfo @ GitHub <http://www.github.com/adam2392/mne-hfo/>
+   mne-hfo @ PyPI <https://pypi.org/project/mne-hfo/>
+   Issue Tracker <https://github.com/adam2392/mne-hfo/issues>
 
 
 Indices and tables

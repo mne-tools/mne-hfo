@@ -34,7 +34,7 @@ exclude ignore_words.txt
 exclude data
 recursive-exclude mne_bids *.pyc
 
-recursive-exclude doc *
+recursive-exclude docs *
 recursive-exclude paper *
 
 exclude test_requirements.txt

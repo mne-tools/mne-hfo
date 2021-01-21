@@ -9,7 +9,7 @@ from mne_bids import BIDSPath
 EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
 
 
-def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
+def read_events_tsv(bids_path: Union[Path, BIDSPath]):
     """Read an events.tsv file to a DataFrame.
 
     Parameters
@@ -24,7 +24,7 @@ def read_events_tsv(bids_path: Union[Path, BIDSPath]) -> pd.DataFrame:
 
 
 def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
-                     sfreq: float = None) -> pd.DataFrame:
+                     sfreq: float = None):
     """Create a BIDS events dataframe for HFO events.
 
     Parameters

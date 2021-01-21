@@ -7,7 +7,7 @@ import sphinx_bootstrap_theme
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
 
-sys.path.insert(0, os.path.abspath(".."))
+# sys.path.insert(0, os.path.abspath(".."))
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -31,6 +31,7 @@ import mne_hfo
 extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.autodoc',
+    'sphinx_autodoc_typehints',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
@@ -83,8 +84,6 @@ copyright = u'2020-%s, MNE Developers. Last updated on %s' % (td.year,
 
 author = u'Adam Li'
 
-
-
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -117,7 +116,7 @@ html_css_files = ['style.css']
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'navbar_title': 'MNE-BIDS',
+    'navbar_title': 'MNE-HFO',
     'bootswatch_theme': "flatly",
     'navbar_sidebarrel': False,  # no "previous / next" navigation
     'navbar_pagenav': False,  # no "Page" navigation in sidebar
@@ -127,7 +126,6 @@ html_theme_options = {
         ("Install", "install"),
         ("Tutorial", "tutorial"),
         ("API", "api"),
-        ("CLI", "generated/cli"),
         ("Contribute!", "contribute")
     ]}
 
@@ -137,6 +135,7 @@ html_sidebars = {'**': ['localtoc.html']}
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'mne': ('https://mne.tools/dev', None),
+    'mne-bids': ('https://mne.tools/mne-bids/dev/', None),
     'numpy': ('https://numpy.org/devdocs', None),
     'scipy': ('https://scipy.github.io/devdocs', None),
     'matplotlib': ('https://matplotlib.org', None),

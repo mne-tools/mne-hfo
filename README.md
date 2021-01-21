@@ -62,8 +62,8 @@ Documentation and Usage
 
 The documentation can be found under the following links:
 
-- for the [stable release](https://mne.tools/mne-bids/)
-- for the [latest (development) version](https://mne.tools/mne-bids/dev/index.html)
+- for the [stable release](https://mne-hfo.readthedocs.io/en/stable/index.html)
+- for the [latest (development) version](https://mne-hfo.readthedocs.io/en/latest/index.html)
 
 A basic working example is listed here, assuming one has loaded in a 
 mne-Python ``Raw`` object already.

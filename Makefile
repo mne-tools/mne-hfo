@@ -56,7 +56,8 @@ check-manifest:
 reqs:
 	pipfile2req --dev > test_requirements.txt
 	pipfile2req > requirements.txt
-	cp requirements.txt docs/requirements.txt
+	pipfile2req > docs/requirements.txt
+	pipfile2req --dev > docs/requirements.txt
 
 flake:
 	@if command -v flake8 > /dev/null; then \

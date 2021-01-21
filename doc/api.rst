@@ -6,8 +6,8 @@
 API Documentation
 =================
 
-mne_bids
---------
+mne_hfo
+-------
 :py:mod:`mne_hfo`:
 
 .. automodule:: mne_hfo
@@ -22,40 +22,19 @@ mne_bids
     LineLengthDetector
     RMSDetector
 
-mne_bids.stats
---------------
+mne_hfo.io
+----------
 
-:py:mod:`mne_bids.stats`:
+:py:mod:`mne_hfo.io`:
 
-.. automodule:: mne_bids.stats
+.. automodule:: mne_hfo.io
    :no-members:
    :no-inherited-members:
 
-.. currentmodule:: mne_bids.stats
+.. currentmodule:: mne_hfo.io
 
 .. autosummary::
    :toctree: generated/
 
-   count_events
-
-
-mne_bids.copyfiles
-------------------
-
-:py:mod:`mne_bids.copyfiles`:
-
-.. automodule:: mne_bids.copyfiles
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: mne_bids.copyfiles
-
-.. autosummary::
-   :toctree: generated/
-
-   copyfile_brainvision
-   copyfile_edf
-   copyfile_eeglab
-   copyfile_ctf
-   copyfile_bti
-   copyfile_kit
+   create_events_df
+   read_events_tsv

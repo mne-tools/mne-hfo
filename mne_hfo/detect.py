@@ -453,6 +453,7 @@ class LineLengthDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
+        self._create_event_df(self.chs_hfos_dict)
         return self
 
 
@@ -525,18 +526,25 @@ class RMSDetector(Detector):
         return self.filter_band[1]
 
     def _compute_hfo(self, X, picks):
-        """Override ``Detector._compute_hfo`` function."""
+        """Override ``Detector._compute_hfo`` function.
+
+        Returns
+        -------
+        hfo_event_arr : np.ndarray (channels x windows)
+            The HFO metric value within each window per channel.
+        """
         # store all hfo occurrences as an array of channels X windows
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
         hfo_event_arr = np.empty((self.n_chs, n_windows))
 
-        # bandpass the signal using FIR filter
-        X = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                   l_freq=self.l_freq,
-                                   h_freq=self.h_freq, picks=picks,
-                                   method='fir', verbose=self.verbose)
+        if self.l_freq is not None or self.h_freq is not None:
+            # bandpass the signal using FIR filter
+            X = mne.filter.filter_data(X, sfreq=self.sfreq,
+                                       l_freq=self.l_freq,
+                                       h_freq=self.h_freq, picks=picks,
+                                       method='fir', verbose=self.verbose)
 
         # run HFO detection on all the channels
         if self.n_jobs == 1:
@@ -584,4 +592,5 @@ class RMSDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
+        self._create_event_df(self.chs_hfos_dict)
         return self

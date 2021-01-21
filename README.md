@@ -1,7 +1,11 @@
 
 [![Codecov](https://codecov.io/gh/adam2392/mne-hfo/branch/master/graph/badge.svg)](https://codecov.io/gh/adam2392/mne-hfo)
 [![GitHub Actions](https://github.com/adam2392/mne-hfo/workflows/test_suite/badge.svg)](https://github.com/adam2392/mne-hfo/actions)
-[![CircleCI](https://circleci.com/gh/mne-tools/mne-bids.svg?style=svg)](https://circleci.com/gh/mne-tools/mne-bids)
+[![CircleCI](https://circleci.com/gh/adam2392/mne-hfo.svg?style=svg)](https://circleci.com/gh/adam2392/mne-hfo)
+![License](https://img.shields.io/pypi/l/mne-bids)
+[![Code Maintainability](https://api.codeclimate.com/v1/badges/3afe97439ec5133ce267/maintainability)](https://codeclimate.com/github/adam2392/mne-hfo/maintainability)
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mne-hfo)
 
 [comment]: <> ([![PyPI Download count]&#40;https://pepy.tech/badge/mne-bids&#41;]&#40;https://pepy.tech/project/mne-bids&#41;)
 
@@ -13,7 +17,7 @@ in iEEG data stored in the [BIDS](https://bids.neuroimaging.io/)-compatible data
 [MNE-Python](https://mne.tools/stable/index.html).
 
 The initial code was adapted and taken from: https://gitlab.com/icrc-bme/epycom 
-to turn into a sklearn-compatible API. Additional algorithms and functionality are 
+to turn into a sklearn-compatible API that works with ``mne-python``. Additional algorithms and functionality are 
 added.
 
 NOTE: This is currently in ALPHA stage, and we are looking for 
@@ -43,13 +47,31 @@ MNE-HFO links BIDS, MNE-Python and iEEG HFO event detection with the goal to mak
 detection more transparent, more robust, and facilitate data and code sharing with 
 co-workers and collaborators.
 
-How?
-----
+Installation
+------------
+Installation is RECOMMENDED via a python virtual environment, using ``pipenv``. 
+The package is hosted on ``pypi``, which can be installed via pip, or pipenv.
+
+    pipenv install mne-hfo
+
+Note: Installation has been tested on MacOSX and Ubuntu.
+
+Documentation and Usage
+-----------------------
 
 The documentation can be found under the following links:
 
 - for the [stable release](https://mne.tools/mne-bids/)
 - for the [latest (development) version](https://mne.tools/mne-bids/dev/index.html)
+
+A basic working example is listed here, assuming one has loaded in a 
+mne-Python ``Raw`` object already.
+
+    from mne_hfo import RMSDetector
+    detector = RMSDetector()
+    detector.fit(raw)
+
+Note: Functionality has been tested on MacOSX and Ubuntu.
 
 Citing
 ------

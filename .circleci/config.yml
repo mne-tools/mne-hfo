@@ -5,59 +5,78 @@ jobs:
   docs-build:
     docker:
       - image: circleci/python:3.8.1-buster
+    environment:
+      CODECOV_TOKEN: "24ebd27b-4413-4e7e-acbd-46499658bd1e"
     steps:
-        - checkout
+      - checkout
 
-        # restore cache from last build. Unless __init__.py has changed since then
-        - restore_cache:
-            keys:
-              - data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
+      # make sure pandoc is on the system
+      - run: sudo apt-get update && sudo apt-get install -y pandoc
 
-        # Also restore pip cache to speed up installations
-        - restore_cache:
-            keys:
-              - pip-cache-0-{{ checksum "./test_requirements.txt" }}
+      # restore cache from last build. Unless __init__.py has changed since then
+      - restore_cache:
+          keys:
+            - data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
 
-        - run:
-            name: Get Python running
-            command: |
-              python -m pip install --user --upgrade --progress-bar off pip
-              python -m pip install --user --upgrade --progress-bar off -r test_requirements.txt
-              python -m pip install --user --upgrade --progress-bar off -r doc/requirements.txt
-              pip install --upgrade --no-deps https://api.github.com/repos/mne-tools/mne-python/zipball/master
-              python -m pip install --user -e .
+      # Also restore pip cache to speed up installations
+      - restore_cache: # ensure this step occurs *before* installing dependencies
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - pip-packages-v1-{{ .Branch }}-
+            - pip-packages-v1-
 
-        - run:
-            name: Build the documentation
-            command: |
-              make build-doc
+      - run:
+          name: Setup Python environment via Pipenv
+          command: |
+            sudo pip install --upgrade pip
+            sudo pip install pipenv
+            pipenv install --skip-lock --dev
 
-        - persist_to_workspace:
-            root: doc/_build
-            paths: html
+      - run:
+          name: Run unit and integration tests
+          command: |
+            pipenv run make pep
+            pipenv run pytest --cov=mne_hfo ./tests/ --cov-report=xml --cov-config=setup.cfg --verbose
 
-        - store_artifacts:
-            path: doc/_build/html/
-            destination: dev
+      - run:
+          name: Build the documentation
+          command: |
+            pipenv run make build-doc
 
-        - run:
-            name: Check links
-            command: |
-              make -C doc clean
-              make -C doc linkcheck
-              make -C doc linkcheck-grep
+      - persist_to_workspace:
+          root: doc/_build
+          paths: html
 
-        # Store the data cache
-        - save_cache:
-            key: data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
-            paths:
-              - ~/mne_data
+      - store_artifacts:
+          path: doc/_build/html/
+          destination: dev
 
-        # Store pip cache
-        - save_cache:
-            key: pip-cache-0-{{ checksum "./test_requirements.txt" }}
-            paths:
-              - ~/.cache/pip
+      - store_artifacts:
+          path: ./coverage.xml
+
+      - run:
+          name: Upload codecov report
+          command: |
+            bash <(curl -s https://codecov.io/bash)
+
+#      - run:
+#          name: Check links
+#          command: |
+#            pipenv run make -C doc clean
+#            pipenv run make -C doc linkcheck
+#            pipenv run make -C doc linkcheck-grep
+
+      # Store the data cache
+#      - save_cache:
+#          key: data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
+#          paths:
+#            - ~/mne_data
+
+      - save_cache:
+          key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "~/.local/share/virtualenvs/venv"
 
   docs-deploy:
     # will only be run on master branch

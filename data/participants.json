@@ -1,0 +1,70 @@
+{
+    "participant_id": {
+        "Description": "Unique participant identifier"
+    },
+    "age": {
+        "Description": "Age of the participant at time of testing",
+        "Units": "years"
+    },
+    "sex": {
+        "Description": "Biological sex of the participant",
+        "Levels": {
+            "F": "female",
+            "M": "male"
+        }
+    },
+    "hand": {
+        "Description": "Handedness of the participant",
+        "Levels": {
+            "R": "right",
+            "L": "left",
+            "A": "ambidextrous"
+        }
+    },
+    "epilepsy": {
+        "Description": "The type of epilepsy patient had.",
+        "Levels": {
+            "TLE": "temporal lobe epilepsy",
+            "ETE": "extratemporal lobe epilepsy"
+        },
+        "Units": ""
+    },
+    "ilae": {
+        "Description": "A clinical classification from 1-6. See literature for better overview.",
+        "Levels": {
+            "1": "seizure free",
+            "2": "significant seizure frequency reduction",
+            "3": "slight seizure frequency reduction",
+            "4": "no change",
+            "5": "",
+            "6": "",
+            "-1": "no surgery, or outcome"
+        },
+        "Units": ""
+    },
+    "nights": {
+        "Description": "The number of nights spent monitoring",
+        "Units": "number nights"
+    },
+    "outcome": {
+        "Description": "Success of failed surgery.",
+        "Levels": {
+            "S": "successful surgery; seizure freedom",
+            "F": "failed surgery; recurring seizures",
+            "NR": "no resection/surgery"
+        },
+        "Units": ""
+    },
+    "months_follow_up": {
+        "Description": "Number of months since surgery that followed up to get surgical outcome.",
+        "Units": "months"
+    },
+    "lesion": {
+        "Description": "Whether the patient had a lesionectomy or not.",
+        "Levels": {
+            "1": "yes",
+            "0": "no"
+        },
+        "Units": ""
+    }
+}

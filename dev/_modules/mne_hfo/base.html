@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.base &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../whats_new.html">News</a></li>
+                <li><a href="../../install.html">Install</a></li>
+                <li><a href="../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne.tools/mne-bids/dev/index.html">Development</a></li>
+    <li><a href="https://mne.tools/mne-bids/stable/index.html">Stable</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.6</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.5</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.4/index.html">v0.4</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.3/index.html">v0.3</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.2/index.html">v0.2</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary">
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for mne_hfo.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">r2_score</span><span class="p">,</span> <span class="n">f1_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="kn">import</span> <span class="n">check_is_fitted</span>
+
+<span class="kn">from</span> <span class="nn">mne_hfo.io</span> <span class="kn">import</span> <span class="n">create_events_df</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">threshold_std</span><span class="p">,</span> <span class="n">compute_rms</span><span class="p">,</span>
+                           <span class="n">compute_line_length</span><span class="p">)</span>
+
+<span class="n">ACCEPTED_THRESHOLD_METHODS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span>
+<span class="n">ACCEPTED_HFO_METHODS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;line_length&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Detector</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Any sliding-window based HFO detector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    threshold: float</span>
+<span class="sd">        Number of standard deviations to use as a threshold.</span>
+<span class="sd">    win_size: int</span>
+<span class="sd">        Sliding window size in samples.</span>
+<span class="sd">    overlap: float</span>
+<span class="sd">        Fraction of the window overlap (0 to 1).</span>
+<span class="sd">    scoring_func : str</span>
+<span class="sd">        Either ``&#39;f1&#39;``, or ``&#39;r2&#39;``.</span>
+<span class="sd">    verbose: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                 <span class="n">win_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">overlap</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                 <span class="n">scoring_func</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span> <span class="o">=</span> <span class="n">win_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">=</span> <span class="n">overlap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scoring_func</span> <span class="o">=</span> <span class="n">scoring_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
+
+    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute HFO event array.</span>
+
+<span class="sd">        Takes a sliding window approach and computes the existence</span>
+<span class="sd">        of an HFO defined by algorithm parameters. If an HFO is</span>
+<span class="sd">        present, then a ``1`` will be in the array, otherwise</span>
+<span class="sd">        a ``0`` will be in the array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            EEG data matrix (n_chs, n_times).</span>
+<span class="sd">        picks : np.ndarray | list | None</span>
+<span class="sd">            Corresponds to ``picks`` in mne-python.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hfo_event_arr : np.ndarray</span>
+<span class="sd">            HFO event array that is (n_chs, n_windows).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Private function that computes the HFOs &#39;</span>
+                                  <span class="s1">&#39;needs to be implemented.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">n_times</span><span class="p">):</span>
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">n_times</span> <span class="o">-</span> <span class="n">win_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">n_windows</span>
+
+    <span class="k">def</span> <span class="nf">fit_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform fit on X and returns labels for X.</span>
+
+<span class="sd">        Returns -1 for outliers and 1 for inliers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix, dataframe} of shape \</span>
+<span class="sd">            (n_samples, n_features)</span>
+
+<span class="sd">        y : Ignored</span>
+<span class="sd">            Not used, present for API consistency by convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y : ndarray of shape (n_samples,)</span>
+<span class="sd">            1 for inliers, -1 for outliers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># override for transductive outlier detectors like LocalOulierFactor</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the score of the HFO prediction.</span>
+
+<span class="sd">        The coefficient :math:`R^2` is defined as :math:`(1 - \\frac{u}{v})`,</span>
+<span class="sd">        where :math:`u` is the residual sum of squares ``((y_true - y_pred)</span>
+<span class="sd">        ** 2).sum()`` and :math:`v` is the total sum of squares ``((y_true -</span>
+<span class="sd">        y_true.mean()) ** 2).sum()``. The best possible score is 1.0 and it</span>
+<span class="sd">        can be negative (because the model can be arbitrarily worse). A</span>
+<span class="sd">        constant model that always predicts the expected value of `y`,</span>
+<span class="sd">        disregarding the input features, would get a :math:`R^2` score of</span>
+<span class="sd">        0.0.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like of shape (n_samples, n_features)</span>
+<span class="sd">            Test samples. For some estimators this may be a precomputed</span>
+<span class="sd">            kernel matrix or a list of generic objects instead with shape</span>
+<span class="sd">            ``(n_samples, n_samples_fitted)``, where ``n_samples_fitted``</span>
+<span class="sd">            is the number of samples used in the fitting for the estimator.</span>
+
+<span class="sd">        y : array-like of shape (n_samples,) or (n_samples, n_outputs)</span>
+<span class="sd">            True values for `X`.</span>
+
+<span class="sd">        sample_weight : array-like of shape (n_samples,), default=None</span>
+<span class="sd">            Sample weights.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        score : float</span>
+<span class="sd">            :math:`R^2` of ``self.predict(X)`` wrt. `y`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The :math:`R^2` score used when calling ``score`` on a regressor uses</span>
+<span class="sd">        ``multioutput=&#39;uniform_average&#39;`` from version 0.23 to keep consistent</span>
+<span class="sd">        with default value of :func:`~sklearn.metrics.r2_score`.</span>
+<span class="sd">        This influences the ``score`` method of all the multioutput</span>
+<span class="sd">        regressors (except for</span>
+<span class="sd">        :class:`~sklearn.multioutput.MultiOutputRegressor`).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># fit and predict</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># compute score</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoring_func</span> <span class="o">==</span> <span class="s1">&#39;f1&#39;</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoring_func</span> <span class="o">==</span> <span class="s1">&#39;r2&#39;</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">score</span>
+
+    <span class="k">def</span> <span class="nf">_check_input_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">picks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">BaseRaw</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ch_names</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">ch_names</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;If &quot;X&quot; passed in is not a `mne.io.BaseRaw` &#39;</span>
+                               <span class="s1">&#39;object, then &quot;sfreq&quot; must be set on &#39;</span>
+                               <span class="s1">&#39;instantation of detector.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># use sklearn&#39;s validation of data</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                       <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+                                       <span class="n">accept_large_sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_windows</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Negative dimensions are not allowed. &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;This is probably due to there being &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;n_features=1 (sample point) in the dataset. &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Current data segment has shape </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">. &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Pass in a longer data segment.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># if the number of time points is smaller then the window size</span>
+        <span class="c1"># then raise an Error</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Got data matrix with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="si">}</span><span class="s1"> sample &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;points, which is less then </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="si">}</span><span class="s1"> &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;window size. Please pass in a longer segment.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hfo_event_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;HFO event array.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hfo_event_arr : np.ndarray</span>
+<span class="sd">            Array that is (n_chs, n_samples), which has a</span>
+<span class="sd">            value of ``1`` if</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chs_hfos_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return dictionary of HFO start/end points.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chs_hfos_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of HFO start/end points for each channel.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">vals</span> <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scikit-learn override predict function.</span>
+
+<span class="sd">        Just directly computes HFOs using ``fit`` function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">picks</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">picks</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_event_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chs_hfos_list</span><span class="p">):</span>
+        <span class="n">event_df</span> <span class="o">=</span> <span class="n">create_events_df</span><span class="p">(</span><span class="n">chs_hfos_list</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">event_df</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit the model according to the given training data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : {array-like, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">            Training vector, where n_samples is the number of samples and</span>
+<span class="sd">            n_features is the number of features. In MNE-HFO, n_features</span>
+<span class="sd">            are the number of time points in the EEG data, and n_samples</span>
+<span class="sd">            are the number of channels.</span>
+
+<span class="sd">        y : array-like of shape (n_samples, n_output)</span>
+<span class="sd">            Target vector relative to X.</span>
+
+<span class="sd">        picks : array-like of shape (n_samples,) default=None</span>
+<span class="sd">            Corresponds to ``mne-python`` picks.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">            Fitted estimator.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        All detectors use a sliding window to compute HFOs in windows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">step_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Step size of each window.</span>
+
+<span class="sd">        Window increment over the samples of signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate window values for easier operation</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_compute_sliding_window_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ACCEPTED_HFO_METHODS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sliding window HFO detection method &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1"> is not implemented. Please &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;use one of </span><span class="si">{</span><span class="n">ACCEPTED_HFO_METHODS</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;rms&#39;</span><span class="p">:</span>
+            <span class="n">hfo_detect_func</span> <span class="o">=</span> <span class="n">compute_rms</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;line_length&#39;</span><span class="p">:</span>
+            <span class="n">hfo_detect_func</span> <span class="o">=</span> <span class="n">compute_line_length</span>
+
+        <span class="c1"># Overlapping window</span>
+        <span class="n">win_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">win_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span>
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">)</span>
+
+        <span class="c1"># store the RMS of each window</span>
+        <span class="n">signal_win_rms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_windows</span><span class="p">)</span>
+        <span class="n">win_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">win_start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">win_stop</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">:</span>
+                <span class="n">win_stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span>
+
+            <span class="c1"># compute the RMS of filtered signal in this window</span>
+            <span class="n">signal_win_rms</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">hfo_detect_func</span><span class="p">(</span>
+                <span class="n">sig</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">win_start</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="n">win_stop</span><span class="p">)],</span> <span class="n">win_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">win_stop</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">win_start</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span>
+            <span class="n">win_stop</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span>
+            <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">signal_win_rms</span>
+
+    <span class="k">def</span> <span class="nf">_post_process_ch_hfos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_vals_list</span><span class="p">,</span> <span class="n">n_times</span><span class="p">,</span>
+                              <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Post process one channel&#39;s HFO events.</span>
+
+<span class="sd">        Joins contiguously detected HFOs as one event, and applies</span>
+<span class="sd">        the threshold based on number of stdev above baseline on the</span>
+<span class="sd">        RMS of the bandpass filtered signal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metric_vals_list : list</span>
+<span class="sd">            List of HFO metric values (e.g. Line Length, or RMS) over windows.</span>
+<span class="sd">        n_times : int</span>
+<span class="sd">            The number of time points in the original data matrix fed in.</span>
+<span class="sd">        threshold_method : str</span>
+<span class="sd">            The threshold method to use.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output : List[Tuple[int, int]]</span>
+<span class="sd">            A list of tuples, storing the event start and stop sample index</span>
+<span class="sd">            for the detected HFO.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">threshold_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ACCEPTED_THRESHOLD_METHODS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Threshold method </span><span class="si">{</span><span class="n">threshold_method</span><span class="si">}</span><span class="s1"> &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;is not an implemented threshold method. &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Please use one of </span><span class="si">{</span><span class="n">ACCEPTED_THRESHOLD_METHODS</span><span class="si">}</span><span class="s1"> &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;methods.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">threshold_method</span> <span class="o">==</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span>
+            <span class="n">threshold_func</span> <span class="o">=</span> <span class="n">threshold_std</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using </span><span class="si">{</span><span class="n">threshold_method</span><span class="si">}</span><span class="s1"> to perform HFO &#39;</span>
+                  <span class="sa">f</span><span class="s1">&#39;thresholding.&#39;</span><span class="p">)</span>
+
+        <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric_vals_list</span><span class="p">)</span>
+
+        <span class="c1"># store post-processed hfo events as a list</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># only keep RMS values above a certain number</span>
+        <span class="c1"># stdevs above baseline (threshold)</span>
+        <span class="n">det_th</span> <span class="o">=</span> <span class="n">threshold_func</span><span class="p">(</span><span class="n">metric_vals_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+
+        <span class="c1"># Detect and now group events if they are within a</span>
+        <span class="c1"># step size of each other</span>
+        <span class="n">win_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span><span class="p">:</span>
+            <span class="c1"># log events if they pass our threshold criterion</span>
+            <span class="k">if</span> <span class="n">metric_vals_list</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
+                <span class="n">event_start</span> <span class="o">=</span> <span class="n">win_idx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span>
+
+                <span class="c1"># group events together if they occur in</span>
+                <span class="c1"># contiguous windows</span>
+                <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span> <span class="ow">and</span> \
+                        <span class="n">metric_vals_list</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
+                    <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">event_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">win_idx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span>
+
+                <span class="k">if</span> <span class="n">event_stop</span> <span class="o">&gt;</span> <span class="n">n_times</span><span class="p">:</span>
+                    <span class="n">event_stop</span> <span class="o">=</span> <span class="n">n_times</span>
+
+                <span class="c1"># TODO: Optional feature calculations</span>
+
+                <span class="c1"># Write into output</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_start</span><span class="p">,</span> <span class="n">event_stop</span><span class="p">))</span>
+                <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-21.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

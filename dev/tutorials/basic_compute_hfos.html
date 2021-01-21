@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial on Computing HFOs &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../whats_new.html">News</a></li>
+                <li><a href="../install.html">Install</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne.tools/mne-bids/dev/index.html">Development</a></li>
+    <li><a href="https://mne.tools/mne-bids/stable/index.html">Stable</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.6</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.5</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.4/index.html">v0.4</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.3/index.html">v0.3</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.2/index.html">v0.2</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li><a class="reference internal" href="#">Tutorial on Computing HFOs</a><ul>
+<li><a class="reference internal" href="#Dataset-Preprocessing">Dataset Preprocessing</a></li>
+<li><a class="reference internal" href="#References">References</a></li>
+<li><a class="reference internal" href="#Define-dataset-paths-and-load-the-data">Define dataset paths and load the data</a></li>
+<li><a class="reference internal" href="#Line-Length-Detector">Line Length Detector</a></li>
+<li><a class="reference internal" href="#RMS-Detector">RMS Detector</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#Reproducing-Results-Using-Morphology-Detector">Reproducing Results Using Morphology Detector</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Tutorial-on-Computing-HFOs">
+<h1>Tutorial on Computing HFOs<a class="headerlink" href="#Tutorial-on-Computing-HFOs" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will walk through how to compute HFOs on a sample dataset that is defined in [1].</p>
+<p>We will demonstrate usage of the following detectors:</p>
+<ul class="simple">
+<li><p>Line Length detector</p></li>
+<li><p>RMS detector</p></li>
+<li><p>Morphology detector (used in the paper)</p></li>
+</ul>
+<div class="section" id="Dataset-Preprocessing">
+<h2>Dataset Preprocessing<a class="headerlink" href="#Dataset-Preprocessing" title="Permalink to this headline">¶</a></h2>
+<p>Note that the data has been converted to BIDS to facilitate easy loading using <code class="docutils literal notranslate"><span class="pre">mne-bids</span></code> package. Another thing to note is that the authors in this dataset reported HFOs detected using bipolar montage. In addition, they only analyzed HFOs for a subset of the recording channels.</p>
+<p>In order to compare results to a monopolar reference, we define an HFO to be “found” if there was an HFO in either of the corresponding bipolar contacts.</p>
+</div>
+<div class="section" id="References">
+<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+<p>[1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J. Resection of high frequency oscillations predicts seizure outcome in the individual patient. Scientific Reports. 2017;7(1):13836. <a class="reference external" href="https://www.nature.com/articles/s41598-017-13064-1">https://www.nature.com/articles/s41598-017-13064-1</a> doi:10.1038/s41598-017-13064-1</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># first let&#39;s load in all our packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="p">(</span><span class="n">read_raw_bids</span><span class="p">,</span> <span class="n">BIDSPath</span><span class="p">,</span>
+                      <span class="n">get_entity_vals</span><span class="p">,</span> <span class="n">get_datatypes</span><span class="p">,</span>
+                      <span class="n">make_report</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mne_bids.stats</span> <span class="kn">import</span> <span class="n">count_events</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mne_hfo</span> <span class="kn">import</span> <span class="n">LineLengthDetector</span><span class="p">,</span> <span class="n">RMSDetector</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Define-dataset-paths-and-load-the-data">
+<h2>Define dataset paths and load the data<a class="headerlink" href="#Define-dataset-paths-and-load-the-data" title="Permalink to this headline">¶</a></h2>
+<p>The data is assumed to be in BIDS format. We have converted the dataset into BIDS, which you can load using <a class="reference external" href="https://github.com/mne-tools/mne-bids">mne-bids</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># this may change depending on where you store the data</span>
+<span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;/Users/adam2392/Dropbox/fedele_hfo_data/&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># print a boiler plate summary report using mne-bids</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">make_report</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Summarizing participants.tsv /Users/adam2392/Dropbox/fedele_hfo_data/participants.tsv...
+The Fedele-epilepsy-HFO-iEEG Dataset dataset was created with BIDS version 1.4.0
+by Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, and
+Sarnthein J. This report was generated with MNE-BIDS
+(https://doi.org/10.21105/joss.01896). The dataset consists of 20 participants
+(comprised of 14 men and 6 women; handedness were all unknown; ages ranged from
+17.0 to 52.0 (mean = 32.1, std = 11.26))and 1 recording sessions:
+interictalsleep. Data was recorded using a iEEG system (Neuralynx manufacturer)
+sampled at 2000.0 Hz with line noise at 50.0 Hz using Sampling with parameters
+2000 Downsampled (Hz). There were 385 scans in total. Recording durations ranged
+from 204.0 to 720.0 seconds (mean = 302.44, std = 37.85), for a total of
+116438.81 seconds of data recorded over all scans. For each dataset, there were
+on average 51.88 (std = 15.55) recording channels per scan, out of which 51.88
+(std = 15.55) were used in analysis (0.0 +/- 0.0 were removed from analysis).
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># there are iEEG datatypes throughout the dataset</span>
+<span class="n">datatypes</span> <span class="o">=</span> <span class="n">get_datatypes</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">datatypes</span><span class="p">)</span>
+
+<span class="c1"># get all the subjects, sessions</span>
+<span class="n">subjects</span> <span class="o">=</span> <span class="n">get_entity_vals</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">)</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">get_entity_vals</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;ieeg&#39;]
+[&#39;01&#39;, &#39;02&#39;, &#39;03&#39;, &#39;04&#39;, &#39;05&#39;, &#39;06&#39;, &#39;07&#39;, &#39;08&#39;, &#39;09&#39;, &#39;10&#39;, &#39;11&#39;, &#39;12&#39;, &#39;13&#39;, &#39;14&#39;, &#39;15&#39;, &#39;16&#39;, &#39;17&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;]
+[&#39;interictalsleep&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># construct BIDSPath for dataset we will demo</span>
+<span class="n">bids_path</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="s1">&#39;01&#39;</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="s1">&#39;interictalsleep&#39;</span><span class="p">,</span>
+                     <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;ieeg&#39;</span><span class="p">,</span>
+                     <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;ieeg&#39;</span><span class="p">,</span>
+                     <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.vhdr&#39;</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+
+<span class="c1"># get all matching datasets</span>
+<span class="n">fpaths</span> <span class="o">=</span> <span class="n">bids_path</span><span class="o">.</span><span class="n">match</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fpaths</span><span class="p">)</span><span class="si">}</span><span class="s1"> matching filepaths for this subject and session.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 28 matching filepaths for this subject and session.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># analyze the first run</span>
+<span class="n">dataset_path</span> <span class="o">=</span> <span class="n">fpaths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+
+<span class="c1"># count the different HFO types (fr, ripple, frandr) that were detected using</span>
+<span class="c1"># the published Morphology detector</span>
+<span class="n">counts_df</span> <span class="o">=</span> <span class="n">count_events</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">counts_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/Users/adam2392/Dropbox/fedele_hfo_data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_ieeg.vhdr
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th colspan="21" halign="left">NaN</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>trial_type</th>
+      <th>fr_AHR1-2</th>
+      <th>fr_AHR2-3</th>
+      <th>fr_AHR3-4</th>
+      <th>fr_AL1-2</th>
+      <th>fr_AL2-3</th>
+      <th>fr_AL3-4</th>
+      <th>fr_AR1-2</th>
+      <th>fr_AR2-3</th>
+      <th>fr_AR3-4</th>
+      <th>fr_HL1-2</th>
+      <th>...</th>
+      <th>ripple_IAR2-3</th>
+      <th>ripple_IAR3-4</th>
+      <th>ripple_IAR4-5</th>
+      <th>ripple_IAR5-6</th>
+      <th>ripple_IPR1-2</th>
+      <th>ripple_IPR2-3</th>
+      <th>ripple_IPR3-4</th>
+      <th>ripple_PHR1-2</th>
+      <th>ripple_PHR2-3</th>
+      <th>ripple_PHR3-4</th>
+    </tr>
+    <tr>
+      <th>subject</th>
+      <th>session</th>
+      <th>run</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>01</th>
+      <th>interictalsleep</th>
+      <th>01</th>
+      <td>15</td>
+      <td>23</td>
+      <td>12</td>
+      <td>15</td>
+      <td>19</td>
+      <td>20</td>
+      <td>25</td>
+      <td>28</td>
+      <td>11</td>
+      <td>9</td>
+      <td>...</td>
+      <td>351</td>
+      <td>223</td>
+      <td>179</td>
+      <td>238</td>
+      <td>12</td>
+      <td>32</td>
+      <td>128</td>
+      <td>121</td>
+      <td>111</td>
+      <td>64</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 60 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># load dataset into mne Raw object</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="n">read_raw_bids</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Extracting parameters from /Users/adam2392/Dropbox/fedele_hfo_data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_ieeg.vhdr...
+Setting channel info structure...
+Reading events from /Users/adam2392/Dropbox/fedele_hfo_data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_events.tsv.
+Reading channel info from /Users/adam2392/Dropbox/fedele_hfo_data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_channels.tsv.
+&lt;RawBrainVision | sub-01_ses-interictalsleep_run-01_ieeg.eeg, 50 x 600000 (300.0 s), ~56 kB, data not loaded&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+&lt;ipython-input-21-dd941634114c&gt;:1: RuntimeWarning: Limited 1 annotation(s) that were expanding outside the data range.
+  raw = read_raw_bids(dataset_path)
+&lt;ipython-input-21-dd941634114c&gt;:1: RuntimeWarning: Did not find any electrodes.tsv associated with sub-01_ses-interictalsleep_run-01.
+
+The search_str was &#34;/Users/adam2392/Dropbox/fedele_hfo_data/sub-01/**/sub-01_ses-interictalsleep*electrodes.tsv&#34;
+  raw = read_raw_bids(dataset_path)
+&lt;ipython-input-21-dd941634114c&gt;:1: RuntimeWarning: Did not find any coordsystem.json associated with sub-01_ses-interictalsleep_run-01.
+
+The search_str was &#34;/Users/adam2392/Dropbox/fedele_hfo_data/sub-01/**/sub-01_ses-interictalsleep*coordsystem.json&#34;
+  raw = read_raw_bids(dataset_path)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">raw</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;plotting channels with HFO events detected in &#39;</span>
+      <span class="s1">&#39;the original publication in color.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_basic_compute_hfos_9_0.png" src="../_images/tutorials_basic_compute_hfos_9_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+plotting channels with HFO events detected in the original publication in color.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Data has sampling rate of </span><span class="si">{</span><span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;sfreq&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> Hz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Data has sampling rate of 2000.0 Hz
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Line-Length-Detector">
+<h2>Line Length Detector<a class="headerlink" href="#Line-Length-Detector" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;l_freq&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="s1">&#39;h_freq&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;win_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">detector</span> <span class="o">=</span> <span class="n">LineLengthDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">chs_hfo</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-34-e8c257a17900&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>chs_hfo <span class="ansi-blue-fg">=</span> detector<span class="ansi-blue-fg">.</span>fit<span class="ansi-blue-fg">(</span>raw<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/Documents/mne-hfo/mne_hfo/detect.py</span> in <span class="ansi-cyan-fg">fit</span><span class="ansi-blue-fg">(self, raw, y, picks)</span>
+<span class="ansi-green-intense-fg ansi-bold">    484</span>             <span class="ansi-red-fg"># compute sliding window RMS</span>
+<span class="ansi-green-intense-fg ansi-bold">    485</span>             hfo_event_arr<span class="ansi-blue-fg">[</span>idx<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">:</span><span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span><span class="ansi-red-fg"> </span><span class="ansi-red-fg">\</span>
+<span class="ansi-green-fg">--&gt; 486</span><span class="ansi-red-fg">                 </span>self<span class="ansi-blue-fg">.</span>_compute_sliding_window_detection<span class="ansi-blue-fg">(</span>sig<span class="ansi-blue-fg">,</span> method<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;line_length&#39;</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    487</span>
+<span class="ansi-green-intense-fg ansi-bold">    488</span>             <span class="ansi-red-fg"># post-process hfo events</span>
+
+<span class="ansi-green-fg">~/Documents/mne-hfo/mne_hfo/base.py</span> in <span class="ansi-cyan-fg">_compute_sliding_window_detection</span><span class="ansi-blue-fg">(self, sig, method)</span>
+<span class="ansi-green-intense-fg ansi-bold">     75</span>                 win_stop <span class="ansi-blue-fg">=</span> len<span class="ansi-blue-fg">(</span>sig<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     76</span>
+<span class="ansi-green-fg">---&gt; 77</span><span class="ansi-red-fg">             </span><span class="ansi-red-fg"># compute the RMS of filtered signal in this window</span>
+<span class="ansi-green-intense-fg ansi-bold">     78</span>             signal_win_rms[win_idx] = hfo_detect_func(sig[int(win_start):int(win_stop)],
+<span class="ansi-green-intense-fg ansi-bold">     79</span>                                                       win_size=self.win_size)[0]
+
+<span class="ansi-red-fg">TypeError</span>: compute_line_length() got an unexpected keyword argument &#39;win_size&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="RMS-Detector">
+<h2>RMS Detector<a class="headerlink" href="#RMS-Detector" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;l_freq&#39;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="s1">&#39;h_freq&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;win_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">chs_hfo</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-36-e8c257a17900&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>chs_hfo <span class="ansi-blue-fg">=</span> detector<span class="ansi-blue-fg">.</span>fit<span class="ansi-blue-fg">(</span>raw<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">~/Documents/mne-hfo/mne_hfo/detect.py</span> in <span class="ansi-cyan-fg">fit</span><span class="ansi-blue-fg">(self, raw, y, picks)</span>
+<span class="ansi-green-intense-fg ansi-bold">    591</span>
+<span class="ansi-green-intense-fg ansi-bold">    592</span>             <span class="ansi-red-fg"># post-process hfo events</span>
+<span class="ansi-green-fg">--&gt; 593</span><span class="ansi-red-fg">             ch_hfos = self._post_process_ch_hfos(
+</span><span class="ansi-green-intense-fg ansi-bold">    594</span>                 hfo_event_arr<span class="ansi-blue-fg">[</span>idx<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">:</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">,</span> n_times<span class="ansi-blue-fg">=</span>n_times<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">    595</span>                 threshold_method<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;std&#39;</span>
+
+<span class="ansi-green-fg">~/Documents/mne-hfo/mne_hfo/base.py</span> in <span class="ansi-cyan-fg">_post_process_ch_hfos</span><span class="ansi-blue-fg">(self, ch_hfo_events, n_times, threshold_method)</span>
+<span class="ansi-green-intense-fg ansi-bold">    119</span>         win_idx <span class="ansi-blue-fg">=</span> <span class="ansi-cyan-fg">0</span>
+<span class="ansi-green-intense-fg ansi-bold">    120</span>         <span class="ansi-green-fg">while</span> win_idx <span class="ansi-blue-fg">&lt;</span> n_windows<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 121</span><span class="ansi-red-fg">             </span><span class="ansi-red-fg"># log events if they pass our threshold criterion</span>
+<span class="ansi-green-intense-fg ansi-bold">    122</span>             <span class="ansi-green-fg">if</span> ch_hfo_events <span class="ansi-blue-fg">&gt;=</span> det_th<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    123</span>                 event_start <span class="ansi-blue-fg">=</span> win_idx <span class="ansi-blue-fg">*</span> self<span class="ansi-blue-fg">.</span>step_size
+
+<span class="ansi-red-fg">ValueError</span>: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Reproducing-Results-Using-Morphology-Detector">
+<h1>Reproducing Results Using Morphology Detector<a class="headerlink" href="#Reproducing-Results-Using-Morphology-Detector" title="Permalink to this headline">¶</a></h1>
+<p>Here, we will reproduce to the best of our ability the results published using the morphology detector. We will show the results on the bipolar reference and also compare to the published results only using the subset of channels they selected.</p>
+<p>Later on, we will then show the results for the other channels.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># detector parameters</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-21.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

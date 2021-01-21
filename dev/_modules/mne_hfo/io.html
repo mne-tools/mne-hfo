@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.io &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../whats_new.html">News</a></li>
+                <li><a href="../../install.html">Install</a></li>
+                <li><a href="../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne.tools/mne-bids/dev/index.html">Development</a></li>
+    <li><a href="https://mne.tools/mne-bids/stable/index.html">Stable</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.6</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.5</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.4/index.html">v0.4</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.3/index.html">v0.3</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.2/index.html">v0.2</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary">
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for mne_hfo.io</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="n">BIDSPath</span>
+
+<span class="n">EVENT_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_type&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="read_events_tsv"><a class="viewcode-back" href="../../generated/mne_hfo.io.read_events_tsv.html#mne_hfo.io.read_events_tsv">[docs]</a><span class="k">def</span> <span class="nf">read_events_tsv</span><span class="p">(</span><span class="n">bids_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">BIDSPath</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Read an events.tsv file to a DataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bids_path : BIDSPath | pathlib.Path</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    events_df : DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="create_events_df"><a class="viewcode-back" href="../../generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df">[docs]</a><span class="k">def</span> <span class="nf">create_events_df</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">],</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">],</span>
+                     <span class="n">sfreq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a BIDS events dataframe for HFO events.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input : dictionary(list(tuple(int, int))) | mne.io.Raw</span>
+<span class="sd">        The input data structure that is either a mne ``Raw``</span>
+<span class="sd">        object with ``Annotations`` set that correspond to the</span>
+<span class="sd">        HFO events, or a dictionary of lists of HFO</span>
+<span class="sd">        start/end points.</span>
+<span class="sd">    sfreq : float | None</span>
+<span class="sd">        The sampling frequency. Only required if the input is</span>
+<span class="sd">        not a ``mne.io.BaseRaw`` object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    events_df : DataFrame</span>
+<span class="sd">        The event dataframe according to BIDS [1].</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html  # noqa</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># handle error checks and extract</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">BaseRaw</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">annotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Trying to create events DataFrame using &#39;</span>
+                             <span class="s1">&#39;a mne Raw object without Annotations. &#39;</span>
+                             <span class="s1">&#39;Please use `raw.set_annotations` to &#39;</span>
+                             <span class="s1">&#39;add the HFO events.&#39;</span><span class="p">)</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">annotations</span>
+
+        <span class="n">onset</span> <span class="o">=</span> <span class="n">annotations</span><span class="o">.</span><span class="n">onset</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">annotations</span><span class="o">.</span><span class="n">duration</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">onset</span> <span class="o">*</span> <span class="nb">input</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">annotations</span><span class="o">.</span><span class="n">description</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sfreq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;If input is a dictionary of a list of HFO &#39;</span>
+                               <span class="s1">&#39;events, then the sampling frequency must &#39;</span>
+                               <span class="s1">&#39;be also passed in.&#39;</span><span class="p">)</span>
+        <span class="n">onset</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">sample</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ch_name</span><span class="p">,</span> <span class="n">endpoints_list</span> <span class="ow">in</span> <span class="nb">input</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">endpoints</span> <span class="ow">in</span> <span class="n">endpoints_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">endpoints</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;All HFO events must be stored as a &#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39;tuple of 2 numbers: the start and end &#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39;sample point of the event. For &#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ch_name</span><span class="si">}</span><span class="s1">, there is an event &#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39;stored as </span><span class="si">{</span><span class="n">endpoints</span><span class="si">}</span><span class="s1"> that does &#39;</span>
+                                     <span class="sa">f</span><span class="s1">&#39;not follow this.&#39;</span><span class="p">)</span>
+                <span class="n">onset_sec</span> <span class="o">=</span> <span class="n">endpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">sfreq</span>
+                <span class="n">offset_sec</span> <span class="o">=</span> <span class="n">endpoints</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">sfreq</span>
+                <span class="n">onset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">onset_sec</span><span class="p">)</span>
+
+                <span class="n">duration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset_sec</span> <span class="o">-</span> <span class="n">onset_sec</span><span class="p">)</span>
+                <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">endpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">description</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hfo_</span><span class="si">{</span><span class="n">ch_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unaccepted data structure for input.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># now create the dataframe</span>
+    <span class="n">event_df</span> <span class="o">=</span> <span class="n">_create_events_df</span><span class="p">(</span><span class="n">onset</span><span class="o">=</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">event_df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_create_events_df</span><span class="p">(</span><span class="n">onset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                      <span class="n">description</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">sample</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create ``events.tsv`` file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    onset :</span>
+<span class="sd">    description :</span>
+<span class="sd">    sample : list</span>
+<span class="sd">        Samples are the onset (in secs) multiplied by sample rate.</span>
+<span class="sd">    duration :</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    event_df : pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Length of &quot;onset&quot;, &quot;description&quot;, &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;&quot;duration&quot;, &quot;sample&quot; need to be the same. &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;The passed in arguments have length &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># create the event dataframe according to BIDS events</span>
+    <span class="n">event_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                                  <span class="n">sample</span><span class="p">,</span> <span class="n">description</span><span class="p">]),</span>
+                            <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">columns</span><span class="o">=</span><span class="n">EVENT_COLUMNS</span><span class="p">)</span>
+    <span class="n">event_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+        <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;trial_type&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="n">event_df</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_hfo_rate</span><span class="p">(</span><span class="n">events_df</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">compute_ch_rates</span><span class="p">(</span><span class="n">events_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                     <span class="n">picks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>  <span class="c1"># noqa</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">events_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">EVENT_COLUMNS</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Event dataframe columns must contain &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">EVENT_COLUMNS</span><span class="si">}</span><span class="s1"> in order to compute &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;HFO rate.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># merge overlapping HFOs</span>
+    <span class="c1"># events_df = _merge_overlapping_hfos(events_df)</span>
+
+    <span class="c1"># compute the rate of each channel found</span>
+    <span class="n">ch_hfo_rate</span> <span class="o">=</span> <span class="n">_compute_hfo_rate</span><span class="p">(</span><span class="n">events_df</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ch_hfo_rate</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-21.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

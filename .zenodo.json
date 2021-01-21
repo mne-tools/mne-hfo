@@ -1,0 +1,23 @@
+{
+  "title": "MNE-HFO: Computing high-frequency oscillations from iEEG data that is BIDS and MNE compatible.",
+  "description": "MNE-HFO is a Python library to facilitate the computation of high-frequency oscillations.",
+  "creators": [
+    {
+      "affiliation": "Institute for Computational Medicine, Johns Hopkins University, Baltimore, MD, USA",
+      "name": "Li, Adam",
+      "orcid": "0000-0001-8421-365X"
+    },
+  ],
+  "keywords": [
+    "BIDS",
+    "brain imaging data structure",
+    "neuroscience",
+    "mne",
+    "python",
+    "intracranial electroencephalography",
+    "ieeg",
+    "high frequency oscillation"
+  ],
+  "license": "BSD-3-Clause",
+  "upload_type": "software"
+}

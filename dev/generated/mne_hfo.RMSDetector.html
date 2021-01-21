@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.RMSDetector &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../whats_new.html">News</a></li>
+                <li><a href="../install.html">Install</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne.tools/mne-bids/dev/index.html">Development</a></li>
+    <li><a href="https://mne.tools/mne-bids/stable/index.html">Stable</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.6</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.5/index.html">v0.5</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.4/index.html">v0.4</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.3/index.html">v0.3</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.2/index.html">v0.2</a></li>
+    <li><a href="https://mne.tools/mne-bids/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li><a class="reference internal" href="#">mne_hfo.RMSDetector</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-rmsdetector">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.RMSDetector</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <div class="section" id="mne-hfo-rmsdetector">
+<h1>mne_hfo.RMSDetector<a class="headerlink" href="#mne-hfo-rmsdetector" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="mne_hfo.RMSDetector">
+<em class="property">class </em><code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">RMSDetector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filter_band</span><span class="o">=</span><span class="default_value">(100, 500)</span></em>, <em class="sig-param"><span class="n">scoring_func</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root mean square (RMS) detection algorithm (Staba Detector).</p>
+<p>The original algorithm described in the reference, takes a sliding
+window of 3 ms, computes the RMS values between 100 and 500 Hz.
+Then events separated by less than 10 ms were combined into one event.
+Then events not having a minimum of 6 peaks (i.e. band-pass signal
+rectified above 0 V) with greater then 3 std above mean baseline
+were removed. A finite impulse response (FIR) filter with a
+Hamming window was used.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>l_freq: float</strong></p>
+<blockquote>
+<div><p>Low cut-off frequency. Default = 100.</p>
+</div></blockquote>
+<p><strong>h_freq: float</strong></p>
+<blockquote>
+<div><p>High cut-off frequency. Default = 500. Note, that
+this should be set according to the Nyquist
+sampling rate.</p>
+</div></blockquote>
+<p><strong>threshold: float</strong></p>
+<blockquote>
+<div><p>Number of standard deviations to use as a threshold.
+Default = 3.</p>
+</div></blockquote>
+<p><strong>win_size: int</strong></p>
+<blockquote>
+<div><p>Sliding window size in samples. Default = 100. The
+original paper uses a window size equivalent to 3 ms.</p>
+</div></blockquote>
+<p><strong>overlap: float</strong></p>
+<blockquote>
+<div><p>Fraction of the window overlap (0 to 1). Default = 0.25.
+The original paper uses an overlap of 0.</p>
+</div></blockquote>
+<p><strong>offset: int</strong></p>
+<blockquote>
+<div><p>Offset which is added to the final detection. This is used when the
+function is run in separate windows. Default = 0</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>[1] R. J. Staba, C. L. Wilson, A. Bragin, I. Fried, and J. Engel,
+“Quantitative Analysis of High-Frequency Oscillations (80 − 500 Hz)
+Recorded in Human Epileptic Hippocampus and Entorhinal Cortex,”
+J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
+<dl class="field-list">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#mne_hfo.RMSDetector.chs_hfos_dict" title="mne_hfo.RMSDetector.chs_hfos_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chs_hfos_dict</span></code></a></p>
+<blockquote>
+<div><p>Return dictionary of HFO start/end points.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.chs_hfos_list" title="mne_hfo.RMSDetector.chs_hfos_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chs_hfos_list</span></code></a></p>
+<blockquote>
+<div><p>Return list of HFO start/end points for each channel.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.h_freq" title="mne_hfo.RMSDetector.h_freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h_freq</span></code></a></p>
+<blockquote>
+<div><p>Higher frequency band for HFO definition.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.hfo_event_arr" title="mne_hfo.RMSDetector.hfo_event_arr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hfo_event_arr</span></code></a></p>
+<blockquote>
+<div><p>HFO event array.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.l_freq" title="mne_hfo.RMSDetector.l_freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">l_freq</span></code></a></p>
+<blockquote>
+<div><p>Lower frequency band for HFO definition.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.step_size" title="mne_hfo.RMSDetector.step_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_size</span></code></a></p>
+<blockquote>
+<div><p>Step size of each window.</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y, picks])</p></td>
+<td><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit_predict" title="mne_hfo.RMSDetector.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
+<td><p>Perform fit on X and returns labels for X.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.get_params" title="mne_hfo.RMSDetector.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.predict" title="mne_hfo.RMSDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X[, picks])</p></td>
+<td><p>Scikit-learn override predict function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.score" title="mne_hfo.RMSDetector.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(X, y[, sample_weight])</p></td>
+<td><p>Return the score of the HFO prediction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.set_params" title="mne_hfo.RMSDetector.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.chs_hfos_dict">
+<em class="property">property </em><code class="sig-name descname">chs_hfos_dict</code><a class="headerlink" href="#mne_hfo.RMSDetector.chs_hfos_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dictionary of HFO start/end points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.chs_hfos_list">
+<em class="property">property </em><code class="sig-name descname">chs_hfos_list</code><a class="headerlink" href="#mne_hfo.RMSDetector.chs_hfos_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of HFO start/end points for each channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.fit_predict">
+<code class="sig-name descname">fit_predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.fit_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform fit on X and returns labels for X.</p>
+<p>Returns -1 for outliers and 1 for inliers.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">{array-like, sparse matrix, dataframe} of shape             (n_samples, n_features)</span></dt><dd></dd>
+</dl>
+<p><strong>y</strong> : Ignored</p>
+<blockquote>
+<div><p>Not used, present for API consistency by convention.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> : ndarray of shape (n_samples,)</p>
+<blockquote>
+<div><p>1 for inliers, -1 for outliers.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.get_params">
+<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">deep</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>deep</strong> : bool, default=True</p>
+<blockquote>
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>params</strong> : dict</p>
+<blockquote>
+<div><p>Parameter names mapped to their values.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.h_freq">
+<em class="property">property </em><code class="sig-name descname">h_freq</code><a class="headerlink" href="#mne_hfo.RMSDetector.h_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Higher frequency band for HFO definition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.hfo_event_arr">
+<em class="property">property </em><code class="sig-name descname">hfo_event_arr</code><a class="headerlink" href="#mne_hfo.RMSDetector.hfo_event_arr" title="Permalink to this definition">¶</a></dt>
+<dd><p>HFO event array.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>hfo_event_arr</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Array that is (n_chs, n_samples), which has a
+value of <code class="docutils literal notranslate"><span class="pre">1</span></code> if</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.l_freq">
+<em class="property">property </em><code class="sig-name descname">l_freq</code><a class="headerlink" href="#mne_hfo.RMSDetector.l_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lower frequency band for HFO definition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scikit-learn override predict function.</p>
+<p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">sample_weight</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the score of the HFO prediction.</p>
+<p>The coefficient <span class="math notranslate nohighlight">\(R^2\)</span> is defined as <span class="math notranslate nohighlight">\((1 - \\frac{u}{v})\)</span>,
+where <span class="math notranslate nohighlight">\(u\)</span> is the residual sum of squares <code class="docutils literal notranslate"><span class="pre">((y_true</span> <span class="pre">-</span> <span class="pre">y_pred)</span>
+<span class="pre">**</span> <span class="pre">2).sum()</span></code> and <span class="math notranslate nohighlight">\(v\)</span> is the total sum of squares <code class="docutils literal notranslate"><span class="pre">((y_true</span> <span class="pre">-</span>
+<span class="pre">y_true.mean())</span> <span class="pre">**</span> <span class="pre">2).sum()</span></code>. The best possible score is 1.0 and it
+can be negative (because the model can be arbitrarily worse). A
+constant model that always predicts the expected value of <em class="xref py py-obj">y</em>,
+disregarding the input features, would get a <span class="math notranslate nohighlight">\(R^2\)</span> score of
+0.0.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : array-like of shape (n_samples, n_features)</p>
+<blockquote>
+<div><p>Test samples. For some estimators this may be a precomputed
+kernel matrix or a list of generic objects instead with shape
+<code class="docutils literal notranslate"><span class="pre">(n_samples,</span> <span class="pre">n_samples_fitted)</span></code>, where <code class="docutils literal notranslate"><span class="pre">n_samples_fitted</span></code>
+is the number of samples used in the fitting for the estimator.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like of shape (n_samples,) or (n_samples, n_outputs)</p>
+<blockquote>
+<div><p>True values for <em class="xref py py-obj">X</em>.</p>
+</div></blockquote>
+<p><strong>sample_weight</strong> : array-like of shape (n_samples,), default=None</p>
+<blockquote>
+<div><p>Sample weights.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> : float</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(R^2\)</span> of <code class="docutils literal notranslate"><span class="pre">self.predict(X)</span></code> wrt. <em class="xref py py-obj">y</em>.</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <span class="math notranslate nohighlight">\(R^2\)</span> score used when calling <code class="docutils literal notranslate"><span class="pre">score</span></code> on a regressor uses
+<code class="docutils literal notranslate"><span class="pre">multioutput='uniform_average'</span></code> from version 0.23 to keep consistent
+with default value of <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="(in scikit-learn v0.24)"><code class="xref py py-func docutils literal notranslate"><span class="pre">r2_score()</span></code></a>.
+This influences the <code class="docutils literal notranslate"><span class="pre">score</span></code> method of all the multioutput
+regressors (except for
+<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.multioutput.MultiOutputRegressor.html#sklearn.multioutput.MultiOutputRegressor" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiOutputRegressor</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.set_params">
+<code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>). The latter have
+parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
+possible to update each component of a nested object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**params</strong> : dict</p>
+<blockquote>
+<div><p>Estimator parameters.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> : estimator instance</p>
+<blockquote>
+<div><p>Estimator instance.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.RMSDetector.step_size">
+<em class="property">property </em><code class="sig-name descname">step_size</code><a class="headerlink" href="#mne_hfo.RMSDetector.step_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step size of each window.</p>
+<p>Window increment over the samples of signal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="examples-using-mne-hfo-rmsdetector">
+<span id="sphx-glr-backreferences-mne-hfo-rmsdetector"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.RMSDetector</span></code><a class="headerlink" href="#examples-using-mne-hfo-rmsdetector" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-clear"></div></div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-21.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

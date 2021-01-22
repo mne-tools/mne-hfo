@@ -64,3 +64,16 @@ your python virtual environment available, install ``ipykernel`` and run:
 For some of the tutorials, we use a test dataset that is 
 already in BIDS format. The ground-truth is from publication (reference 
 in README).
+
+## Notes on Detector Design
+The amount of HFO code and algorithms out there is quite staggering. In order to make an 
+easy to use package, with a standard API, we conform each of the HFO ``Detector`` to 
+be [scikit-learn compatible](https://scikit-learn.org/stable/developers/develop.html), which 
+can then leverage the entire ``scikit-learn`` API, such as ``Pipeline``, ``GridSearchCV``, and more.
+
+In addition, we develop our Detectors to work with [mne-python Raw objects](https://mne.tools/stable/generated/mne.io.Raw.html)
+which are just very robust data structure for EEG data.
+
+Finally, we assume that the datasets we work with are generally [BIDS-compliant](https://bids-specification.readthedocs.io/en/stable/).
+We structure all HFO output as a task ``*events.tsv`` file, which stores the HFO events 
+according to the events directive (https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html).

@@ -62,7 +62,7 @@ Documentation and Usage
 
 The documentation can be found under the following links:
 
-- # for the [stable release](https://mne-hfo.readthedocs.io/en/stable/index.html)
+- for the [stable release](https://mne-hfo.readthedocs.io/en/stable/index.html)
 - for the [latest (development) version](https://mne-hfo.readthedocs.io/en/latest/index.html)
 
 A basic working example is listed here, assuming one has loaded in a 
@@ -73,6 +73,17 @@ mne-Python ``Raw`` object already.
     detector.fit(raw)
 
 Note: Functionality has been tested on MacOSX and Ubuntu.
+
+All output to ``*events.tsv`` BIDS-compliant files will look like the following:
+
+| onset      | duration | sample | trial_type |
+| ---------- | -------- | ------ | ---------- |
+| 1     | 3    | 1000   | hfo_A2-A1  |
+
+which will imply that there is an HFO detected using a bipolar referencing at channel ``A2-A1``
+at 1 second with duration of 3 seconds. The onset sample occurs at sample 1000 (thus ``sfreq`` is 1000 Hz).
+If a monopolar referencing is used, then the ``trial_type`` might be ``hfo_A2`` to imply 
+that an HFO was detected at channel ``A2``.
 
 Citing
 ------

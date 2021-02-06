@@ -343,6 +343,8 @@ class LineLengthDetector(Detector):
     offset: int
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
+    hfo_name: str
+        What to name the events detected (i.e. fast ripple if freq_band is (250, 500))
 
     Notes
     -----
@@ -367,6 +369,7 @@ class LineLengthDetector(Detector):
                  overlap: float = 0.25, sfreq: int = None,
                  filter_band: Tuple[int, int] = (30, 100),
                  scoring_func: str = 'f1', n_jobs: int = -1,
+                 hfo_name: str = "hfo",
                  verbose: bool = False):
         super(LineLengthDetector, self).__init__(
             threshold, win_size=win_size, overlap=overlap,
@@ -375,6 +378,7 @@ class LineLengthDetector(Detector):
 
         self.filter_band = filter_band
         self.sfreq = sfreq
+        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -453,7 +457,7 @@ class LineLengthDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict)
+        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
         return self
 
 
@@ -498,6 +502,7 @@ class RMSDetector(Detector):
                  overlap: float = 0.25, sfreq=None,
                  filter_band: Tuple[int, int] = (100, 500),
                  scoring_func='f1', n_jobs: int = -1,
+                 hfo_name: str = "hfo",
                  verbose: bool = False):
         super(RMSDetector, self).__init__(
             threshold, win_size, overlap,
@@ -507,6 +512,7 @@ class RMSDetector(Detector):
         # hyperparameters
         self.filter_band = filter_band
         self.sfreq = sfreq
+        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -589,5 +595,5 @@ class RMSDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict)
+        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
         return self

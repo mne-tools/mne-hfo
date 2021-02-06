@@ -215,8 +215,8 @@ class Detector(BaseEstimator):
         X, y = self._check_input_raw(X, None)
         return self.fit(X, None)
 
-    def _create_event_df(self, chs_hfos_list):
-        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq)
+    def _create_event_df(self, chs_hfos_list, hfo_name):
+        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq, event_name=hfo_name)
         self.df = event_df
 
     def fit(self, X, y=None):

@@ -24,7 +24,7 @@ def read_events_tsv(bids_path: Union[Path, BIDSPath]):
 
 
 def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
-                     sfreq: float = None):
+                     sfreq: float = None, event_name: str = "hfo"):
     """Create a BIDS events dataframe for HFO events.
 
     Parameters
@@ -37,6 +37,8 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
     sfreq : float | None
         The sampling frequency. Only required if the input is
         not a ``mne.io.BaseRaw`` object.
+    event_name: str
+        The name of the event to add to the "trial_type" column
 
     Returns
     -------
@@ -82,7 +84,7 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
 
                 duration.append(offset_sec - onset_sec)
                 sample.append(endpoints[0])
-                description.append(f'hfo_{ch_name}')
+                description.append(f'{event_name}_{ch_name}')
     else:
         raise ValueError('Unaccepted data structure for input.')
 
@@ -93,7 +95,7 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
 
 
 def _create_events_df(onset: List[float], duration: List[float],
-                      description: List[str], sample: List[int],
+                      description: List[str], sample: List[int]
                       ) -> pd.DataFrame:
     """Create ``events.tsv`` file.
 

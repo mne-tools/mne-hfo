@@ -203,6 +203,13 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
     match_df: pandas.DataFrame
         Dataframe with matched indices (pandas DataFrame)
     """
+    # Ensure the desired columns are numeric
+    gs_df, dd_df = _check_column_types([gs_df, dd_df], bn)
+    # If df has duration instead of end time, add a new column
+    if bn[1].lower() == "duration":
+        print("modifying from duration")
+        gs_df, dd_df = _change_duration_to_offset(gs_df, dd_df, bn)
+        bn[1] = "offset"
     match_df = pd.DataFrame(columns=('gs_index', 'dd_index'))
     match_df_idx = 0
     for row_gs in gs_df.iterrows():
@@ -249,6 +256,27 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
         match_df_idx += 1
 
     return match_df
+
+
+def _change_duration_to_offset(dfs, cols):
+    for ind, df in enumerate(dfs):
+        df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
+        df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
+        dfs[ind] = df
+    return dfs
+
+
+def _check_column_types(dfs, cols):
+    for ind, df in enumerate(dfs):
+        df_dtypes = df.dtypes
+        modify_df = False
+        for col in cols:
+            if not(df_dtypes.get(col) is np.float64 or df_dtypes.get(col) is np.int64):
+                modify_df = True
+        if modify_df:
+            df[cols] = df[cols].apply(pd.to_numeric)
+            dfs[ind] = df
+    return dfs
 
 
 def check_detection_overlap(gs, dd):

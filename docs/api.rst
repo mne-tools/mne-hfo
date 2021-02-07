@@ -66,13 +66,7 @@ Simulation
 Post-processing HFO Detections
 ------------------------------
 
-:py:mod:`mne_hfo.utils`:
-
-.. automodule:: mne_hfo.utils
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: mne_hfo.utils
+.. currentmodule:: mne_hfo
 
 .. autosummary::
    :toctree: generated/

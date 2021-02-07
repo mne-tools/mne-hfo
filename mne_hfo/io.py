@@ -5,6 +5,7 @@ from typing import List, Dict, Union, Optional
 
 import mne
 import numpy as np
+import pandas
 import pandas as pd
 from mne_bids import read_raw_bids, get_entities_from_fname, BIDSPath
 
@@ -14,7 +15,7 @@ ANNOT_COLUMNS = ['onset', 'duration', 'label', 'channels']
 
 def _create_events_df(onset: List[float], duration: List[float],
                       description: List[str], sample: List[int]
-                      ) -> pd.DataFrame:
+                      ) -> pandas.core.frame.DataFrame:
     """Create ``events.tsv`` file.
 
     Parameters
@@ -44,6 +45,7 @@ def _create_events_df(onset: List[float], duration: List[float],
                                                   sample, description]),
                             index=None,
                             columns=EVENT_COLUMNS)
+
     event_df = event_df.astype({
         'onset': 'float64',
         'duration': 'float64',
@@ -141,12 +143,10 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
     Output of the dataframe will have the following column structures:
     ..
 
-        ({
-            'onset': 'float64',
-            'duration': 'float64',
-            'sample': 'int',
-            'trial_type': 'str'
-        })
+        'onset': 'float64',
+        'duration': 'float64',
+        'sample': 'int',
+        'trial_type': 'str'
 
     References
     ----------
@@ -265,7 +265,8 @@ def create_annotations_df(onset: List[float], duration: List[float],
     return annot_df
 
 
-def read_annotations(fname: Union[str, Path], root: Path) -> pd.DataFrame:
+def read_annotations(fname: Union[str, Path], root: Path) \
+        -> pandas.core.frame.DataFrame:
     """Read annotations.tsv Derivative file.
 
     Annotations are part of the BIDS-Derivatives for Common
@@ -355,7 +356,7 @@ def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
     tsv_fname.parent.mkdir(parents=True, exist_ok=True)
 
     # write the dataframe itself as a tsv file
-    annot_df.to_csv(tsv_fname, sep='\t', index=None)
+    annot_df.to_csv(tsv_fname, sep='\t', index=False)
 
     # create annotations json
     annot_json = {

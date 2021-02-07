@@ -6,6 +6,7 @@
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mne-hfo)
 [![Documentation Status](https://readthedocs.org/projects/mne-hfo/badge/?version=latest)](https://mne-hfo.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4485036.svg)](https://doi.org/10.5281/zenodo.4485036)
 
 [comment]: <> ([![PyPI Download count]&#40;https://pepy.tech/badge/mne-bids&#41;]&#40;https://pepy.tech/project/mne-bids&#41;)
 
@@ -75,6 +76,21 @@ which will imply that there is an HFO detected using a bipolar referencing at ch
 at 1 second with duration of 3 seconds. The onset sample occurs at sample 1000 (thus ``sfreq`` is 1000 Hz). If a
 monopolar referencing is used, then the ``trial_type`` might be ``hfo_A2`` to imply that an HFO was detected at
 channel ``A2``.
+
+Outputting data according to BIDS Extension Proposal 21, instead would result in 
+an ``*annotations.tsv`` file. 
+
+| onset      | duration | label | channels |
+| ---------- | -------- | ------ | ---------- |
+| 1     |  3  | hfo  | A2-A1 | 
+
+with a corresponding ``*annotations.json`` file.
+
+    {
+        'IntendedFor': sub-01/ses-01/eeg/sub-01_ses-01_task-01_eeg.<ext>,
+        'Description': 'Automatic annotations of HFO events using mne-hfo.',
+    }
+
 
 Citing
 ------

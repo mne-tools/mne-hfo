@@ -38,7 +38,8 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
         The sampling frequency. Only required if the input is
         not a ``mne.io.BaseRaw`` object.
     event_name: str
-        The name of the event to add to the "trial_type" column
+        The prefix of the channel event to add to the "trial_type" column (e.g. ``hfo`` for channel ``A1``
+        would result in ``hfo_A1``).
 
     Returns
     -------

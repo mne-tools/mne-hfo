@@ -34,6 +34,7 @@ sphinx-copybutton = "*"
 pipfile-requirements = "*"
 pandoc = "*"
 sphinx-autodoc-typehints = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.8"

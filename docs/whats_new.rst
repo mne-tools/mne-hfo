@@ -36,7 +36,7 @@ Enhancements
 API changes
 ^^^^^^^^^^^
 
-- xxx
+- Added :func:`mne_hfo.io.events_to_annotations` to go from ``*events.tsv`` to ``*annotations.tsv`` files, by `Adam Li`_ (:gh:`10`)
 
 Requirements
 ^^^^^^^^^^^^

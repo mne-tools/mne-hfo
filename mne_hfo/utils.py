@@ -188,7 +188,8 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
     dd_df: pandas.DataFrame
         Detector detections
     bn: list
-        Names of event start stop [start_name, stop_name], e.g ['onset', 'offset']
+        Names of event start stop [start_name, stop_name], e.g
+        ['onset', 'offset'].
     freq_name: str
         Name of frequency column
     sec_unit: int
@@ -216,7 +217,8 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
         matched_idcs = []
         gs = [row_gs[1][bn[0]], row_gs[1][bn[1]]]
         if sec_unit:  # We can create subset - significant speed improvement
-            # Only look at detector detection rows that have onsets within the window of time provided
+            # Only look at detector detection rows that have onsets
+            # within the window of time provided
             for row_dd in dd_df[(dd_df[bn[0]] < gs[0] +
                                  sec_unit * sec_margin) &
                                 (dd_df[bn[0]] > gs[0] -
@@ -271,7 +273,8 @@ def _check_column_types(dfs, cols):
         df_dtypes = df.dtypes
         modify_df = False
         for col in cols:
-            if not(df_dtypes.get(col) is np.float64 or df_dtypes.get(col) is np.int64):
+            if not (df_dtypes.get(col) is np.float64 or
+                    df_dtypes.get(col) is np.int64):
                 modify_df = True
         if modify_df:
             df[cols] = df[cols].apply(pd.to_numeric)
@@ -314,20 +317,23 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
     """
     Get a dictionary of hfo events that overlap between two sets.
 
-    Note: Both input dictionaries should come from the same original dataset and therefore contain the same keys
+    Note: Both input dictionaries should come from the same original
+    dataset and therefore contain the same keys.
 
     Parameters
     ----------
     hfo_dict1 : dict
-        keys are channel names and values are list of tuples of start and end times
+        keys are channel names and values are list of tuples of start
+        and end times.
     hfo_dict2 : dict
-        keys are channel names and values are list of tuples of start and end times
+        keys are channel names and values are list of tuples of start
+        and end times.
 
     Returns
     -------
-    Dict:
-        Subset of hfo_dict1 containing just the entries that overlap with hfo_dict2
-
+    coincident_hfo_dict : Dict
+        Subset of hfo_dict1 containing just the entries that overlap
+        with hfo_dict2.
     """
     coincident_hfo_dict = {}
     for ch_name, hfo_list1 in hfo_dict1.items():
@@ -339,7 +345,7 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
 
 def _find_overlapping_events(list1, list2):
     """
-    Get subset of list1 that overlaps with list2
+    Get subset of list1 that overlaps with list2.
 
     Parameters
     ----------
@@ -347,10 +353,12 @@ def _find_overlapping_events(list1, list2):
         list of tuples (start_time, end_time)
     list2 : list
         list of tuples (start_time, end_time)
+
     Returns
     -------
-    list:
-        list of tuples (start_time, end_time) that overlap between list1 and list2
+    overlapping_events : list
+        list of tuples (start_time, end_time) that overlap between
+        list1 and list2.
     """
     # Sort events by start times to speed up calculation
     list1 = sorted(list1, key=lambda x: x[0])
@@ -363,4 +371,3 @@ def _find_overlapping_events(list1, list2):
             if check_detection_overlap(event_time1, event_time2):
                 overlapping_events.append(event_time1)
     return overlapping_events
-

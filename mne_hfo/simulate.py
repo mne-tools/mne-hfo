@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 
 # ----- Noise types -----
-def simulate_pinknoise(N):
+def simulate_pink_noise(N):
     """
     Create a pink noise (1/f) with N points.
 
@@ -54,7 +54,7 @@ def simulate_pinknoise(N):
     return y
 
 
-def simulate_brownnoise(N):
+def simulate_brown_noise(N):
     """
     Create a brown noise (1/f²) with N points.
 

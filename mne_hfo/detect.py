@@ -344,7 +344,8 @@ class LineLengthDetector(Detector):
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
     hfo_name: str
-        What to name the events detected (i.e. fast ripple if freq_band is (250, 500))
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
 
     Notes
     -----

@@ -17,7 +17,8 @@ ACCEPTED_HFO_METHODS = ['line_length', 'rms']
 class Detector(BaseEstimator):
     """Any sliding-window based HFO detector.
 
-    Note: Detection will occur on all channels present. Subset your dataset before detecting
+    Note: Detection will occur on all channels present.
+    Subset your dataset before detecting.
 
     Parameters
     ----------
@@ -216,7 +217,8 @@ class Detector(BaseEstimator):
         return self.fit(X, None)
 
     def _create_event_df(self, chs_hfos_list, hfo_name):
-        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq, event_name=hfo_name)
+        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
+                                    event_name=hfo_name)
         self.df = event_df
 
     def fit(self, X, y=None):

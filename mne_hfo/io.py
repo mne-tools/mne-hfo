@@ -55,14 +55,14 @@ def _create_events_df(onset: List[float], duration: List[float],
     return event_df
 
 
-def _read_annotations_json(fname):
+def _read_annotations_json(fname: Union[str, Path]) -> Dict:
     with open(fname, 'r', encoding='utf-8') as fin:
         annot_dict = json.load(fin)
 
     return annot_dict
 
 
-def events_to_annotations(events_df):
+def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     """Backwards-compatible function to convert events to annotations.
 
     HFO events could be stored as ``*events.tsv`` files, but since
@@ -95,9 +95,9 @@ def events_to_annotations(events_df):
                            f'is BIDS-compliant.')
 
     # extract data points from events dataframe
-    onset = events_df['onset'].to_list()
-    duration = events_df['duration'].to_list()
-    description = events_df['trial_type'].to_list()
+    onset = events_df['onset'].tolist()
+    duration = events_df['duration'].tolist()
+    description = events_df['trial_type'].tolist()
 
     # extract channels for each HFO event
     annotation_label = []
@@ -116,7 +116,8 @@ def events_to_annotations(events_df):
 
 
 def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
-                     sfreq: float = None, event_name: str = "hfo"):
+                     sfreq: float = None, event_name: str = "hfo") \
+        -> pd.DataFrame:
     """Create a BIDS events dataframe for HFO events.
 
     Parameters
@@ -199,7 +200,8 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
 
 def create_annotations_df(onset: List[float], duration: List[float],
                           ch_name: List[str],
-                          annotation_label: Optional[List[str]] = None):
+                          annotation_label: Optional[List[str]] = None) \
+        -> pd.DataFrame:
     """Create a BIDS-derivative annotations dataframe for HFO events.
 
     Parameters
@@ -317,7 +319,7 @@ def read_annotations(fname: Union[str, Path], root: Path) \
 
 def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
                       intended_for: str, root: Path,
-                      description: str = None):
+                      description: str = None) -> None:
     """Write annotations dataframe to disc.
 
     Parameters

@@ -8,7 +8,7 @@ import scipy.io
 class MatReader:
     """
     Object to read mat files into a nested dictionary if need be.
-    Helps keep strucutre from matlab similar to what is used in python.
+    Helps keep structure from matlab similar to what is used in python.
     """
 
     def __init__(self, filename=None):

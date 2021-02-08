@@ -205,7 +205,7 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
         Dataframe with matched indices (pandas DataFrame)
     """
     # Ensure the desired columns are numeric
-    gs_df, dd_df = _check_column_types([gs_df, dd_df], bn)
+    gs_df, dd_df = _enforce_numeric_cols([gs_df, dd_df], bn)
     # If df has duration instead of end time, add a new column
     if bn[1].lower() == "duration":
         print("modifying from duration")
@@ -261,21 +261,59 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
 
 
 def _change_duration_to_offset(dfs, cols):
+    """
+    Append an offset column to the provided dataframes.
+
+    Parameters
+    ----------
+    dfs : List
+        List of pandas dataframes without an offset column
+    cols : Tuple
+        Tuple of column names (onset_col_name, duration_col_name)
+
+    Returns
+    -------
+    List
+        List of dataframes with additional column
+
+    """
     for ind, df in enumerate(dfs):
+        # Get indices of onset and duration columns
         df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
+        # Sum the two columns to create offset column
         df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
         dfs[ind] = df
     return dfs
 
 
-def _check_column_types(dfs, cols):
+def _enforce_numeric_cols(dfs, cols):
+    """
+    Modify provided columns to be numeric type.
+
+    Changes to either float or int depending on the data in the column.
+
+    Parameters
+    ----------
+    dfs : List
+        List of pandas dataframes to have modified columns
+    cols : List
+        List of column names to modify
+
+    Returns
+    -------
+    List
+        List of modified pandas dataframes.
+
+    """
     for ind, df in enumerate(dfs):
         df_dtypes = df.dtypes
         modify_df = False
+        # Speed up by checking if columns are already numeric
         for col in cols:
             if not (df_dtypes.get(col) is np.float64 or
                     df_dtypes.get(col) is np.int64):
                 modify_df = True
+        # If not, modify
         if modify_df:
             df[cols] = df[cols].apply(pd.to_numeric)
             dfs[ind] = df

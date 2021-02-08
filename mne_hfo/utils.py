@@ -208,8 +208,8 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
     gs_df, dd_df = _enforce_numeric_cols([gs_df, dd_df], bn)
     # If df has duration instead of end time, add a new column
     if bn[1].lower() == "duration":
-        print("modifying from duration")
-        gs_df, dd_df = _change_duration_to_offset(gs_df, dd_df, bn)
+        gs_df = _append_offset_to_df(gs_df, bn)
+        dd_df = _append_offset_to_df(dd_df, bn)
         bn[1] = "offset"
     match_df = pd.DataFrame(columns=('gs_index', 'dd_index'))
     match_df_idx = 0
@@ -260,14 +260,14 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
     return match_df
 
 
-def _change_duration_to_offset(dfs, cols):
+def _append_offset_to_df(df, cols = ["onset", "duration"]):
     """
-    Append an offset column to the provided dataframes.
+    Append an offset column to the provided dataframe.
 
     Parameters
     ----------
-    dfs : List
-        List of pandas dataframes without an offset column
+    df : pd.DataFrame
+        DataFrame without an offset column
     cols : Tuple
         Tuple of column names (onset_col_name, duration_col_name)
 
@@ -277,13 +277,11 @@ def _change_duration_to_offset(dfs, cols):
         List of dataframes with additional column
 
     """
-    for ind, df in enumerate(dfs):
-        # Get indices of onset and duration columns
-        df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
-        # Sum the two columns to create offset column
-        df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
-        dfs[ind] = df
-    return dfs
+    # Get indices of onset and duration columns
+    df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
+    # Sum the two columns to create offset column
+    df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
+    return df
 
 
 def _enforce_numeric_cols(dfs, cols):

@@ -373,6 +373,8 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
         Subset of hfo_dict1 containing just the entries that overlap
         with hfo_dict2.
     """
+    if set(hfo_dict1.keys()) != set(hfo_dict2.keys()):
+        raise RuntimeError(f"The two dictionaries must have the same keys.")
     coincident_hfo_dict = {}
     for ch_name, hfo_list1 in hfo_dict1.items():
         hfo_list2 = hfo_dict2.get(ch_name)

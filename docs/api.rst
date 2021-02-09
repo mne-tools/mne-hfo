@@ -92,3 +92,4 @@ Metrics
     compute_line_length
     threshold_std
     threshold_tukey
+    find_coincident_events

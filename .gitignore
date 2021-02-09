@@ -8,17 +8,17 @@ coverage
 .venv
 
 # Sphinx documentation
-doc/_build/
-doc/generated/
-doc/auto_examples/
-doc/auto_tutorials/
-doc/modules/generated/
-doc/sphinxext/cachedir
+docs/_build/
+docs/generated/
+docs/auto_examples/
+docs/auto_tutorials/
+docs/modules/generated/
+docs/sphinxext/cachedir
 pip-log.txt
 .coverage
 tags
-doc/coverages
-doc/samples
+docs/coverages
+docs/samples
 cover
 
 # Pycharm

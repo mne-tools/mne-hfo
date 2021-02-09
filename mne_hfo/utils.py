@@ -260,7 +260,7 @@ def match_detections(gs_df, dd_df, bn, freq_name=None,
     return match_df
 
 
-def _append_offset_to_df(df, cols = ["onset", "duration"]):
+def _append_offset_to_df(df, cols=["onset", "duration"]):
     """
     Append an offset column to the provided dataframe.
 
@@ -372,7 +372,7 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
         with hfo_dict2.
     """
     if set(hfo_dict1.keys()) != set(hfo_dict2.keys()):
-        raise RuntimeError(f"The two dictionaries must have the same keys.")
+        raise RuntimeError("The two dictionaries must have the same keys.")
     coincident_hfo_dict = {}
     for ch_name, hfo_list1 in hfo_dict1.items():
         hfo_list2 = hfo_dict2.get(ch_name)

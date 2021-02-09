@@ -13,6 +13,7 @@ mne-bids = ">=0.6"
 matplotlib = "*"
 joblib = ">=1.0.0"
 tqdm = "*"
+pydocstyle = "*"
 
 [dev-packages]
 ipykernel = "*"

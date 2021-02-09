@@ -343,6 +343,9 @@ class LineLengthDetector(Detector):
     offset: int
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
+    hfo_name: str
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
 
     Notes
     -----
@@ -367,6 +370,7 @@ class LineLengthDetector(Detector):
                  overlap: float = 0.25, sfreq: int = None,
                  filter_band: Tuple[int, int] = (30, 100),
                  scoring_func: str = 'f1', n_jobs: int = -1,
+                 hfo_name: str = "hfo",
                  verbose: bool = False):
         super(LineLengthDetector, self).__init__(
             threshold, win_size=win_size, overlap=overlap,
@@ -375,6 +379,7 @@ class LineLengthDetector(Detector):
 
         self.filter_band = filter_band
         self.sfreq = sfreq
+        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -390,7 +395,7 @@ class LineLengthDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo(self, X, picks):
+    def _compute_hfo(self, X):
         """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of channels X windows
         n_windows = self._compute_n_wins(self.win_size,
@@ -402,7 +407,7 @@ class LineLengthDetector(Detector):
         if self.filter_band is not None:
             X = mne.filter.filter_data(X, sfreq=self.sfreq,
                                        l_freq=self.l_freq,
-                                       h_freq=self.h_freq, picks=picks,
+                                       h_freq=self.h_freq,
                                        method='iir', verbose=self.verbose)
 
         # run HFO detection on all the channels
@@ -431,9 +436,9 @@ class LineLengthDetector(Detector):
 
         return hfo_event_arr
 
-    def fit(self, X, y=None, picks=None):
+    def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
-        X, y = self._check_input_raw(X, y, picks=picks)
+        X, y = self._check_input_raw(X, y)
 
         sfreq = self.sfreq
         if sfreq < MINIMUM_SUGGESTED_SFREQ:
@@ -442,18 +447,18 @@ class LineLengthDetector(Detector):
                  f'Please use with caution.')
 
         # compute HFOs as a binary occurrence array over time
-        hfo_event_arr = self._compute_hfo(X, picks=picks)
+        hfo_event_arr = self._compute_hfo(X)
 
         # post-process hfo events
         # store hfo event endpoints per channel
-        chs_hfos = {idx: self._post_process_ch_hfos(
+        chs_hfos = {ch_name: self._post_process_ch_hfos(
             hfo_event_arr[idx, :], n_times=self.n_times,
             threshold_method='std'
-        ) for idx in range(self.n_chs)}
+        ) for idx, ch_name in enumerate(self.ch_names)}
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict)
+        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
         return self
 
 
@@ -470,12 +475,9 @@ class RMSDetector(Detector):
 
     Parameters
     ----------
-    l_freq: float
-        Low cut-off frequency. Default = 100.
-    h_freq: float
-        High cut-off frequency. Default = 500. Note, that
-        this should be set according to the Nyquist
-        sampling rate.
+    filter_band : tuple(float, float) | None
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1.
     threshold: float
         Number of standard deviations to use as a threshold.
         Default = 3.
@@ -501,6 +503,7 @@ class RMSDetector(Detector):
                  overlap: float = 0.25, sfreq=None,
                  filter_band: Tuple[int, int] = (100, 500),
                  scoring_func='f1', n_jobs: int = -1,
+                 hfo_name: str = "hfo",
                  verbose: bool = False):
         super(RMSDetector, self).__init__(
             threshold, win_size, overlap,
@@ -510,6 +513,7 @@ class RMSDetector(Detector):
         # hyperparameters
         self.filter_band = filter_band
         self.sfreq = sfreq
+        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -525,7 +529,7 @@ class RMSDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo(self, X, picks):
+    def _compute_hfo(self, X):
         """Override ``Detector._compute_hfo`` function.
 
         Returns
@@ -543,7 +547,7 @@ class RMSDetector(Detector):
             # bandpass the signal using FIR filter
             X = mne.filter.filter_data(X, sfreq=self.sfreq,
                                        l_freq=self.l_freq,
-                                       h_freq=self.h_freq, picks=picks,
+                                       h_freq=self.h_freq,
                                        method='fir', verbose=self.verbose)
 
         # run HFO detection on all the channels
@@ -570,9 +574,9 @@ class RMSDetector(Detector):
 
         return hfo_event_arr
 
-    def fit(self, X, y=None, picks=None):
+    def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
-        X, y = self._check_input_raw(X, y, picks=picks)
+        X, y = self._check_input_raw(X, y)
 
         sfreq = self.sfreq
         if sfreq < MINIMUM_SUGGESTED_SFREQ:
@@ -581,16 +585,16 @@ class RMSDetector(Detector):
                  f'Please use with caution.')
 
         # compute HFOs as a binary occurrence array over time
-        hfo_event_arr = self._compute_hfo(X, picks=picks)
+        hfo_event_arr = self._compute_hfo(X)
 
         # post-process hfo events
         # store hfo event endpoints per channel
-        chs_hfos = {idx: self._post_process_ch_hfos(
+        chs_hfos = {ch_name: self._post_process_ch_hfos(
             hfo_event_arr[idx, :], n_times=self.n_times,
             threshold_method='std'
-        ) for idx in range(self.n_chs)}
+        ) for idx, ch_name in enumerate(self.ch_names)}
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict)
+        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
         return self

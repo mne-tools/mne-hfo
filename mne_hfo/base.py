@@ -17,6 +17,9 @@ ACCEPTED_HFO_METHODS = ['line_length', 'rms']
 class Detector(BaseEstimator):
     """Any sliding-window based HFO detector.
 
+    Note: Detection will occur on all channels present.
+    Subset your dataset before detecting.
+
     Parameters
     ----------
     threshold: float
@@ -139,12 +142,14 @@ class Detector(BaseEstimator):
             score = r2_score(y, y_pred, sample_weight=sample_weight)
         return score
 
-    def _check_input_raw(self, X, y, picks):
+    def _check_input_raw(self, X, y):
         if isinstance(X, mne.io.BaseRaw):
             self.sfreq = X.info['sfreq']
             self.ch_names = X.ch_names
-            X = X.get_data(picks=picks)
+            X = X.get_data()
         elif self.sfreq is not None:
+            # Just name the channels their index
+            self.ch_names = [str(i) for i in range(X.shape[0])]
             pass
         else:
             raise RuntimeError('If "X" passed in is not a `mne.io.BaseRaw` '
@@ -202,20 +207,21 @@ class Detector(BaseEstimator):
         """Return list of HFO start/end points for each channel."""
         return [vals for vals in self.chs_hfos_dict.values()]
 
-    def predict(self, X, picks=None):
+    def predict(self, X):
         """Scikit-learn override predict function.
 
         Just directly computes HFOs using ``fit`` function.
         """
         check_is_fitted(self)
-        X, y = self._check_input_raw(X, None, picks)
-        return self.fit(X, None, picks)
+        X, y = self._check_input_raw(X, None)
+        return self.fit(X, None)
 
-    def _create_event_df(self, chs_hfos_list):
-        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq)
+    def _create_event_df(self, chs_hfos_list, hfo_name):
+        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
+                                    event_name=hfo_name)
         self.df = event_df
 
-    def fit(self, X, y=None, picks=None):
+    def fit(self, X, y=None):
         """
         Fit the model according to the given training data.
 

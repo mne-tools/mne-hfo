@@ -6,8 +6,8 @@
 
 import numpy as np
 
-from mne_hfo.simulate import (simulate_pinknoise,
-                              simulate_brownnoise,
+from mne_hfo.simulate import (simulate_pink_noise,
+                              simulate_brown_noise,
                               simulate_delta,
                               simulate_line_noise,
                               simulate_artifact_spike,
@@ -17,12 +17,12 @@ from mne_hfo.simulate import (simulate_pinknoise,
 
 # ----- Noise -----
 def test_simulate_pinknoise():
-    sim = simulate_pinknoise(5000)
+    sim = simulate_pink_noise(5000)
     assert round(np.std(sim), 5) == 1.0
 
 
 def test_simulate_brownnoise():
-    sim = simulate_brownnoise(5000)
+    sim = simulate_brown_noise(5000)
     assert round(np.std(sim), 5) == 1.0
 
 

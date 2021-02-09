@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 
 # ----- Noise types -----
-def simulate_pinknoise(N):
+def simulate_pink_noise(N):
     """
     Create a pink noise (1/f) with N points.
 
@@ -54,7 +54,7 @@ def simulate_pinknoise(N):
     return y
 
 
-def simulate_brownnoise(N):
+def simulate_brown_noise(N):
     """
     Create a brown noise (1/f²) with N points.
 
@@ -229,7 +229,7 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None):
         Frequency of the artificial HFO (default=None - random frequency
         between 80 nad 600 Hz)
     numcycles: int
-        Number of HFO cycles (default=None - cycles between 9 - 14)
+        Number of HFO cycles (default=None - cycles between 9 - 15)
 
     Returns
     -------
@@ -241,7 +241,7 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None):
     if numcycles is None:
         numcycles = np.random.randint(9, 15)
     if freq is None:
-        freq = np.random.randint(60, 600)
+        freq = np.random.randint(80, 600)
     wave, time = _wavelet(numcycles, freq, fs)
     return np.real(wave), time
 

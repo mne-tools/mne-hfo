@@ -3,6 +3,8 @@ import platform
 
 import numpy as np
 import pytest
+import shutil as sh
+from pathlib import Path
 from mne.utils import run_subprocess
 
 from mne_hfo.simulate import simulate_hfo, simulate_spike
@@ -36,6 +38,17 @@ def _bids_validate():
         run_subprocess(cmd, shell=shell)
 
     return _validate
+
+
+@pytest.fixture(scope='function')
+def test_bids_root(tmpdir):
+    """Temporary BIDS dataset.
+
+    Copies over dataset in ``data/`` to temporary directory.
+    """
+    data_path = Path('data')
+    sh.copytree(data_path, tmpdir, dirs_exist_ok=True)
+    return tmpdir
 
 
 @pytest.fixture(scope="module")
@@ -96,3 +109,16 @@ def create_testing_data():
         data += y
 
     return data
+
+
+@pytest.fixture(scope="module")
+def create_testing_events_dicts():
+    """Create testing events with one channel each."""
+    # Overlap in 3 of the 4 events
+    df1 = {
+        "01": [(0.0, 6.73), (12.6, 14.87), (22.342, 31.1), (45.9, 67.2)]
+    }
+    df2 = {
+        "01": [(0.2, 6.93), (12.3, 15.12), (45.8, 65.6), (98.3, 101.45)]
+    }
+    return df1, df2

@@ -56,7 +56,8 @@ autosummary_generate = True
 autodoc_default_options = {'inherited-members': None}
 autodoc_typehints = 'signature'
 
-nitpick_ignore = [('py:class', 'type')]
+# prevent jupyter notebooks from being run even if empty cell
+# nbsphinx_execute = 'never'
 
 # -- numpydoc
 # Below is needed to prevent errors
@@ -179,3 +180,10 @@ sphinx_gallery_conf = {
     #     ],
     # }
 }
+
+# Enable nitpicky mode - which ensures that all references in the docs
+# resolve.
+
+nitpicky = True
+nitpick_ignore = [('py:class:', 'type'),
+                  ('py:class', 'pandas.core.frame.DataFrame')]

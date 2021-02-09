@@ -13,6 +13,7 @@ mne-bids = ">=0.6"
 matplotlib = "*"
 joblib = ">=1.0.0"
 tqdm = "*"
+pydocstyle = "*"
 
 [dev-packages]
 ipykernel = "*"
@@ -34,6 +35,7 @@ sphinx-copybutton = "*"
 pipfile-requirements = "*"
 pandoc = "*"
 sphinx-autodoc-typehints = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.8"

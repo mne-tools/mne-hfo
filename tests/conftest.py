@@ -109,3 +109,16 @@ def create_testing_data():
         data += y
 
     return data
+
+
+@pytest.fixture(scope="module")
+def create_testing_events_dicts():
+    """Create testing events with one channel each."""
+    # Overlap in 3 of the 4 events
+    df1 = {
+        "01": [(0.0, 6.73), (12.6, 14.87), (22.342, 31.1), (45.9, 67.2)]
+    }
+    df2 = {
+        "01": [(0.2, 6.93), (12.3, 15.12), (45.8, 65.6), (98.3, 101.45)]
+    }
+    return df1, df2

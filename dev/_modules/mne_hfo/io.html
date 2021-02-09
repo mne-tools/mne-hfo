@@ -122,33 +122,126 @@
     <div class="body col-md-9 content" role="main">
       
   <h1>Source code for mne_hfo.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">mne</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="n">BIDSPath</span>
+<span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="n">read_raw_bids</span><span class="p">,</span> <span class="n">get_entities_from_fname</span><span class="p">,</span> <span class="n">BIDSPath</span>
 
 <span class="n">EVENT_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_type&#39;</span><span class="p">]</span>
+<span class="n">ANNOT_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;channels&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="read_events_tsv"><a class="viewcode-back" href="../../generated/mne_hfo.io.read_events_tsv.html#mne_hfo.io.read_events_tsv">[docs]</a><span class="k">def</span> <span class="nf">read_events_tsv</span><span class="p">(</span><span class="n">bids_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">BIDSPath</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Read an events.tsv file to a DataFrame.</span>
+<span class="k">def</span> <span class="nf">_create_events_df</span><span class="p">(</span><span class="n">onset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                      <span class="n">description</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">sample</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+                      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create ``events.tsv`` file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    bids_path : BIDSPath | pathlib.Path</span>
+<span class="sd">    onset :</span>
+<span class="sd">    description :</span>
+<span class="sd">    sample : list</span>
+<span class="sd">        Samples are the onset (in secs) multiplied by sample rate.</span>
+<span class="sd">    duration :</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    events_df : DataFrame</span>
+<span class="sd">    event_df : pd.DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
+    <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Length of &quot;onset&quot;, &quot;description&quot;, &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;&quot;duration&quot;, &quot;sample&quot; need to be the same. &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;The passed in arguments have length &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># create the event dataframe according to BIDS events</span>
+    <span class="n">event_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
+                                                  <span class="n">sample</span><span class="p">,</span> <span class="n">description</span><span class="p">]),</span>
+                            <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">columns</span><span class="o">=</span><span class="n">EVENT_COLUMNS</span><span class="p">)</span>
+
+    <span class="n">event_df</span> <span class="o">=</span> <span class="n">event_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+        <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;trial_type&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="n">event_df</span>
+
+
+<span class="k">def</span> <span class="nf">_read_annotations_json</span><span class="p">(</span><span class="n">fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="n">annot_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">annot_dict</span>
+
+
+<div class="viewcode-block" id="events_to_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations">[docs]</a><span class="k">def</span> <span class="nf">events_to_annotations</span><span class="p">(</span><span class="n">events_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Backwards-compatible function to convert events to annotations.</span>
+
+<span class="sd">    HFO events could be stored as ``*events.tsv`` files, but since</span>
+<span class="sd">    they are computed on the raw data, they should be ``*annotations``</span>
+<span class="sd">    BIDS-Derivative files. This function will take in an event DataFrame</span>
+<span class="sd">    and convert to annotations DataFrame.</span>
+
+<span class="sd">    It assumes that the event DataFrame ``description`` column has</span>
+<span class="sd">    the structure: ``&lt;hfo_event_name&gt;_&lt;ch_name&gt;``. For example,</span>
+<span class="sd">    it could be ``ripple_A1`` for a &quot;ripple&quot; detected in</span>
+<span class="sd">    channel A1, or ``fastripple_A2-A1`` for a &quot;fast ripple&quot; detected</span>
+<span class="sd">    in bipolar channel A2-A1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    events_df : pd.DataFrame</span>
+<span class="sd">        Events dataframe.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    annot_df : pd.DataFrame</span>
+<span class="sd">        Annotations dataframe structured using</span>
+<span class="sd">        :func:`create_annotations_df`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">required_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">events_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_cols</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Passed in events dataframe is missing &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;one of required columns </span><span class="si">{</span><span class="n">required_cols</span><span class="si">}</span><span class="s1">. &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;Please double check that the events dataframe &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;is BIDS-compliant.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># extract data points from events dataframe</span>
+    <span class="n">onset</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="c1"># extract channels for each HFO event</span>
+    <span class="n">annotation_label</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ch_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># split events dataframe description</span>
+    <span class="k">for</span> <span class="n">desc_str</span> <span class="ow">in</span> <span class="n">description</span><span class="p">:</span>
+        <span class="n">annot</span><span class="p">,</span> <span class="n">ch</span> <span class="o">=</span> <span class="n">desc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="n">annotation_label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+        <span class="n">ch_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+
+    <span class="c1"># create the annotations dataframe</span>
+    <span class="n">annot_df</span> <span class="o">=</span> <span class="n">create_annotations_df</span><span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">,</span>
+                                     <span class="n">annotation_label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">annot_df</span></div>
 
 
 <div class="viewcode-block" id="create_events_df"><a class="viewcode-back" href="../../generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df">[docs]</a><span class="k">def</span> <span class="nf">create_events_df</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">],</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">Raw</span><span class="p">],</span>
-                     <span class="n">sfreq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                     <span class="n">sfreq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hfo&quot;</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create a BIDS events dataframe for HFO events.</span>
 
 <span class="sd">    Parameters</span>
@@ -157,15 +250,28 @@
 <span class="sd">        The input data structure that is either a mne ``Raw``</span>
 <span class="sd">        object with ``Annotations`` set that correspond to the</span>
 <span class="sd">        HFO events, or a dictionary of lists of HFO</span>
-<span class="sd">        start/end points.</span>
+<span class="sd">        start/end sample points.</span>
 <span class="sd">    sfreq : float | None</span>
 <span class="sd">        The sampling frequency. Only required if the input is</span>
 <span class="sd">        not a ``mne.io.BaseRaw`` object.</span>
+<span class="sd">    event_name: str</span>
+<span class="sd">        The prefix of the channel event to add to the &quot;trial_type&quot; column (e.g. ``hfo`` for channel ``A1``</span>
+<span class="sd">        would result in ``hfo_A1``).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    events_df : DataFrame</span>
 <span class="sd">        The event dataframe according to BIDS [1].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Output of the dataframe will have the following column structures:</span>
+<span class="sd">    ..</span>
+
+<span class="sd">        &#39;onset&#39;: &#39;float64&#39;,</span>
+<span class="sd">        &#39;duration&#39;: &#39;float64&#39;,</span>
+<span class="sd">        &#39;sample&#39;: &#39;int&#39;,</span>
+<span class="sd">        &#39;trial_type&#39;: &#39;str&#39;</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -206,7 +312,7 @@
 
                 <span class="n">duration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset_sec</span> <span class="o">-</span> <span class="n">onset_sec</span><span class="p">)</span>
                 <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">endpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="n">description</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hfo_</span><span class="si">{</span><span class="n">ch_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">description</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">event_name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">ch_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unaccepted data structure for input.&#39;</span><span class="p">)</span>
 
@@ -216,65 +322,183 @@
     <span class="k">return</span> <span class="n">event_df</span></div>
 
 
-<span class="k">def</span> <span class="nf">_create_events_df</span><span class="p">(</span><span class="n">onset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-                      <span class="n">description</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">sample</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-                      <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create ``events.tsv`` file.</span>
+<div class="viewcode-block" id="create_annotations_df"><a class="viewcode-back" href="../../generated/mne_hfo.io.create_annotations_df.html#mne_hfo.io.create_annotations_df">[docs]</a><span class="k">def</span> <span class="nf">create_annotations_df</span><span class="p">(</span><span class="n">onset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+                          <span class="n">ch_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                          <span class="n">annotation_label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create a BIDS-derivative annotations dataframe for HFO events.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    onset :</span>
-<span class="sd">    description :</span>
-<span class="sd">    sample : list</span>
-<span class="sd">        Samples are the onset (in secs) multiplied by sample rate.</span>
-<span class="sd">    duration :</span>
+<span class="sd">    onset : float</span>
+<span class="sd">        Onset time in seconds.</span>
+<span class="sd">    duration : float</span>
+<span class="sd">        Duration in seconds.</span>
+<span class="sd">    ch_name : str</span>
+<span class="sd">        The name of the event to add to the &quot;trial_type&quot; column</span>
+<span class="sd">    annotation_label : list of str | None</span>
+<span class="sd">        List of annotation labels to label the annotation. If None (default)</span>
+<span class="sd">        then will be ``&quot;HFO&quot;``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    event_df : pd.DataFrame</span>
+<span class="sd">    annot_df : DataFrame</span>
+<span class="sd">        The annotations dataframe according to BIDS-Derivatives [1].</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] https://bids-specification.readthedocs.io/en/stable/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="ow">or</span> \
-            <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Length of &quot;onset&quot;, &quot;description&quot;, &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;&quot;duration&quot;, &quot;sample&quot; need to be the same. &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;The passed in arguments have length &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Length of &quot;onset&quot;, &quot;description&quot;, &#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;&quot;duration&quot;, need to be the same. &#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;The passed in arguments have length &#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># set annotation labels</span>
+    <span class="k">if</span> <span class="n">annotation_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># all labels are just &quot;HFO&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HFO&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotation_label</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Length of &quot;annotation_label&quot; need to &#39;</span>
+                   <span class="sa">f</span><span class="s1">&#39;be the same as other arguments if it &#39;</span>
+                   <span class="sa">f</span><span class="s1">&#39;is not None. The passed in arguments &#39;</span>
+                   <span class="sa">f</span><span class="s1">&#39;have length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span><span class="si">}</span><span class="s1">, &#39;</span>
+                   <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">annotation_label</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">annotation_label</span>
+
+    <span class="c1"># all description has the HFO events in there</span>
+    <span class="n">channels</span> <span class="o">=</span> <span class="p">[[</span><span class="n">desc</span><span class="p">]</span> <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">ch_name</span><span class="p">]</span>
 
     <span class="c1"># create the event dataframe according to BIDS events</span>
-    <span class="n">event_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span>
-                                                  <span class="n">sample</span><span class="p">,</span> <span class="n">description</span><span class="p">]),</span>
+    <span class="n">annot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span>
+                                                  <span class="n">channels</span><span class="p">]),</span>
                             <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">columns</span><span class="o">=</span><span class="n">EVENT_COLUMNS</span><span class="p">)</span>
-    <span class="n">event_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+                            <span class="n">columns</span><span class="o">=</span><span class="n">ANNOT_COLUMNS</span><span class="p">)</span>
+    <span class="n">annot_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
         <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
         <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;sample&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;trial_type&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span>
+        <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;channels&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
     <span class="p">})</span>
-    <span class="k">return</span> <span class="n">event_df</span>
+    <span class="k">return</span> <span class="n">annot_df</span></div>
 
 
-<span class="k">def</span> <span class="nf">_compute_hfo_rate</span><span class="p">(</span><span class="n">events_df</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">):</span>
-    <span class="k">pass</span>
+<div class="viewcode-block" id="read_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations">[docs]</a><span class="k">def</span> <span class="nf">read_annotations</span><span class="p">(</span><span class="n">fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Read annotations.tsv Derivative file.</span>
+
+<span class="sd">    Annotations are part of the BIDS-Derivatives for Common</span>
+<span class="sd">    Electrophysiological derivatives [1].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : str | pathlib.Path</span>
+<span class="sd">        The BIDS filename for the ``*annotations.tsv|json`` files.</span>
+<span class="sd">    root : str | pathlib.Path</span>
+<span class="sd">        The root of the BIDS dataset.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    annot_tsv : pd.DataFrame</span>
+<span class="sd">        The DataFrame for the annotations.tsv with extra columns appended</span>
+<span class="sd">        to make sense of the sample data.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#  # noqa</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fname</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">tsv_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.tsv&#39;</span><span class="p">)</span>
+    <span class="n">json_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+
+    <span class="c1"># read the annotations.tsv file</span>
+    <span class="n">annot_tsv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tsv_fname</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># read the annotations.json file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="n">annot_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+
+    <span class="c1"># extract the sample freq</span>
+    <span class="n">raw_rel_fpath</span> <span class="o">=</span> <span class="n">annot_json</span><span class="p">[</span><span class="s1">&#39;IntendedFor&#39;</span><span class="p">]</span>
+    <span class="n">entities</span> <span class="o">=</span> <span class="n">get_entities_from_fname</span><span class="p">(</span><span class="n">raw_rel_fpath</span><span class="p">)</span>
+    <span class="n">raw_fpath</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="c1"># read data</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">read_raw_bids</span><span class="p">(</span><span class="n">raw_fpath</span><span class="p">)</span>
+    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">]</span>
+
+    <span class="c1"># create sample column</span>
+    <span class="n">annot_tsv</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annot_tsv</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">sfreq</span>
+    <span class="k">return</span> <span class="n">annot_tsv</span></div>
 
 
-<span class="k">def</span> <span class="nf">compute_ch_rates</span><span class="p">(</span><span class="n">events_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-                     <span class="n">picks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>  <span class="c1"># noqa</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">events_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">EVENT_COLUMNS</span><span class="p">]):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Event dataframe columns must contain &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">EVENT_COLUMNS</span><span class="si">}</span><span class="s1"> in order to compute &#39;</span>
-                           <span class="sa">f</span><span class="s1">&#39;HFO rate.&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">write_annotations</span><span class="p">(</span><span class="n">annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+                      <span class="n">intended_for</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+                      <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Write annotations dataframe to disc.</span>
 
-    <span class="c1"># merge overlapping HFOs</span>
-    <span class="c1"># events_df = _merge_overlapping_hfos(events_df)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    annot_df : pd.DataFrame</span>
+<span class="sd">        The annotations DataFrame.</span>
+<span class="sd">    fname : str | pathlib.Path</span>
+<span class="sd">        The BIDS filename to write annotations to.</span>
+<span class="sd">    intended_for : str | pathlib.Path</span>
+<span class="sd">        The ``IntendedFor`` BIDS keyword corresponding to the</span>
+<span class="sd">        ``Raw`` file that the Annotations were created from.</span>
+<span class="sd">    root : str | pathlib.Path</span>
+<span class="sd">        The root of the BIDS dataset.</span>
+<span class="sd">    description : str | None</span>
+<span class="sd">        The description of the Annotations file. If None (default),</span>
+<span class="sd">        will describe it as HFO events detected using mne-hfo.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fname</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">tsv_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.tsv&#39;</span><span class="p">)</span>
+    <span class="n">json_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)</span>
 
-    <span class="c1"># compute the rate of each channel found</span>
-    <span class="n">ch_hfo_rate</span> <span class="o">=</span> <span class="n">_compute_hfo_rate</span><span class="p">(</span><span class="n">events_df</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;HFO annotated events detected using &#39;</span> \
+                      <span class="s1">&#39;mne-hfo algorithms.&#39;</span>
 
-    <span class="k">return</span> <span class="n">ch_hfo_rate</span>
+    <span class="c1"># error check that intendeFor exists</span>
+    <span class="n">entities</span> <span class="o">=</span> <span class="n">get_entities_from_fname</span><span class="p">(</span><span class="n">intended_for</span><span class="p">)</span>
+    <span class="n">intended_for_path</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">intended_for_path</span><span class="o">.</span><span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The intended for raw dataset &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;does not exist at </span><span class="si">{</span><span class="n">intended_for_path</span><span class="si">}</span><span class="s1">. &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;Please make sure it does.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># make sure parent directories exist</span>
+    <span class="n">tsv_fname</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># write the dataframe itself as a tsv file</span>
+    <span class="n">annot_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tsv_fname</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># create annotations json</span>
+    <span class="n">annot_json</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+        <span class="s1">&#39;IntendedFor&#39;</span><span class="p">:</span> <span class="n">intended_for_path</span><span class="o">.</span><span class="n">basename</span><span class="p">,</span>
+        <span class="s1">&#39;Author&#39;</span><span class="p">:</span> <span class="s1">&#39;mne-hfo&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;LabelDescription&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;hfo_&lt;ch_name&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;Generic HFO detected at channel name.&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ripple_&lt;ch_name&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;Ripple HFO detected at channel.&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;fastripple_&lt;ch_name&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;Fast ripple HFO detected at channel&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;frandr_&lt;ch_name&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;Fast ripple and ripple HFOs co-occurrence &#39;</span>
+                                <span class="s1">&#39;at channel&#39;</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">annot_json</span><span class="p">,</span> <span class="n">fout</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -289,7 +513,7 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

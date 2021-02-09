@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.io.read_events_tsv &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.match_detections &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -117,8 +117,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.io.read_events_tsv</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-io-read-events-tsv">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.io.read_events_tsv</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.match_detections</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-match-detections">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detections</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -127,28 +127,53 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-io-read-events-tsv">
-<h1>mne_hfo.io.read_events_tsv<a class="headerlink" href="#mne-hfo-io-read-events-tsv" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-match-detections">
+<h1>mne_hfo.match_detections<a class="headerlink" href="#mne-hfo-match-detections" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.io.read_events_tsv">
-<code class="sig-prename descclassname">mne_hfo.io.</code><code class="sig-name descname">read_events_tsv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bids_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#read_events_tsv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.io.read_events_tsv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read an events.tsv file to a DataFrame.</p>
-<dl class="field-list simple">
+<dt id="mne_hfo.match_detections">
+<code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">match_detections</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gs_df</span></em>, <em class="sig-param"><span class="n">dd_df</span></em>, <em class="sig-param"><span class="n">bn</span></em>, <em class="sig-param"><span class="n">freq_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sec_unit</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sec_margin</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/utils.html#match_detections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.match_detections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Match gold standard detections with detector detections.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>bids_path</strong><span class="classifier">BIDSPath | pathlib.Path</span></dt><dd></dd>
-</dl>
+<dd class="field-odd"><p><strong>gs_df: pandas.DataFrame</strong></p>
+<blockquote>
+<div><p>Gold standard detections</p>
+</div></blockquote>
+<p><strong>dd_df: pandas.DataFrame</strong></p>
+<blockquote>
+<div><p>Detector detections</p>
+</div></blockquote>
+<p><strong>bn: list</strong></p>
+<blockquote>
+<div><p>Names of event start stop [start_name, stop_name], e.g
+[‘onset’, ‘offset’].</p>
+</div></blockquote>
+<p><strong>freq_name: str</strong></p>
+<blockquote>
+<div><p>Name of frequency column</p>
+</div></blockquote>
+<p><strong>sec_unit: int</strong></p>
+<blockquote>
+<div><p>Number representing one second of signal - this can
+significantly improve the speed of this function</p>
+</div></blockquote>
+<p><strong>sec_margin: int</strong></p>
+<blockquote>
+<div><p>Margin for creating subsets of compared data - should be set according
+to the length of compared events (1s for HFO should be enough)</p>
+</div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>events_df</strong><span class="classifier">DataFrame</span></dt><dd></dd>
-</dl>
+<dd class="field-even"><p>match_df: pandas.DataFrame</p>
+<blockquote>
+<div><p>Dataframe with matched indices (pandas DataFrame)</p>
+</div></blockquote>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-io-read-events-tsv">
-<span id="sphx-glr-backreferences-mne-hfo-io-read-events-tsv"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.io.read_events_tsv</span></code><a class="headerlink" href="#examples-using-mne-hfo-io-read-events-tsv" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-match-detections">
+<span id="sphx-glr-backreferences-mne-hfo-match-detections"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detections</span></code><a class="headerlink" href="#examples-using-mne-hfo-match-detections" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 
@@ -165,7 +190,7 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

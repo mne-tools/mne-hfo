@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.utils &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../whats_new.html">News</a></li>
+                <li><a href="../../install.html">Install</a></li>
+                <li><a href="../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne-hfo.readthedocs.io/en/latest/index.html">Development</a></li>
+    <li><a href="https://mne-hfo.readthedocs.io/en/stable/index.html">Stable</a></li>
+    <li><a href="https://mne-hfo.readthedocs.io/en/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary">
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <h1>Source code for mne_hfo.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility and helper functions for MNE-HFO.&quot;&quot;&quot;</span>
+<span class="c1"># License: BSD (3-clause)</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">op</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_overlapping_hfos</span><span class="p">(</span><span class="n">events_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">_ensure_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a tuple.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_types</span><span class="p">(</span><span class="n">variables</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make sure all vars are str or None.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You supplied a value (</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">) of type &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="si">}</span><span class="s2">, where a string or None was &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;expected.&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_write_json</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write JSON to a file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1">&quot; already exists. &#39;</span>
+                              <span class="s1">&#39;Please set overwrite to True.&#39;</span><span class="p">)</span>
+
+    <span class="n">json_output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_output</span><span class="p">)</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Writing &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39;...&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json_output</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="compute_rms"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_rms.html#mne_hfo.compute_rms">[docs]</a><span class="k">def</span> <span class="nf">compute_rms</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Root Mean Square (RMS) energy.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal: numpy array</span>
+<span class="sd">        1D signal to be transformed</span>
+<span class="sd">    win_size: int</span>
+<span class="sd">        Number of the points of the window (default=6)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rms: numpy array</span>
+<span class="sd">        Root mean square transformed signal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="s1">&#39;same&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="compute_line_length"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_line_length.html#mne_hfo.compute_line_length">[docs]</a><span class="k">def</span> <span class="nf">compute_line_length</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate line length.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal: numpy array</span>
+<span class="sd">        1D signal to be transformed</span>
+<span class="sd">    win_size: int</span>
+<span class="sd">        Number of the points of the window (default=6)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    line_length: numpy array</span>
+<span class="sd">        Line length transformed signal</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        return np.mean(np.abs(np.diff(data, axis=-1)), axis=-1)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for</span>
+<span class="sd">           seizure onset detection. In Engineering in Medicine and Biology</span>
+<span class="sd">           Society, 2001. Proceedings of the 23rd Annual International</span>
+<span class="sd">           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</span>
+
+<span class="sd">    .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">signal</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">win_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">win_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="o">-</span><span class="n">stop</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="threshold_std"><a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_std.html#mne_hfo.threshold_std">[docs]</a><span class="k">def</span> <span class="nf">threshold_std</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate threshold by Standard Deviations above the mean.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal: numpy array</span>
+<span class="sd">        1D signal for threshold determination</span>
+<span class="sd">    threshold: float</span>
+<span class="sd">        Number of SD above the mean</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ths_value: float</span>
+<span class="sd">        Value of the threshold</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ths_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ths_value</span></div>
+
+
+<div class="viewcode-block" id="threshold_tukey"><a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.threshold_tukey">[docs]</a><span class="k">def</span> <span class="nf">threshold_tukey</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate threshold by Tukey method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal: numpy array</span>
+<span class="sd">        1D signal for threshold determination</span>
+<span class="sd">    threshold: float</span>
+<span class="sd">        Number of interquartile interval above the 75th percentile</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ths_value: float</span>
+<span class="sd">        Value of the threshold</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] TUKEY JW. Comparing individual means in the analysis of</span>
+<span class="sd">        variance. Biometrics. 1949 Jun;5(2):99-114. PMID: 18151955.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ths_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>  <span class="c1"># noqa</span>
+    <span class="k">return</span> <span class="n">ths_value</span></div>
+
+
+<span class="k">def</span> <span class="nf">threshold_quian</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate threshold by Quian.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal: numpy array</span>
+<span class="sd">        1D signal for threshold determination</span>
+<span class="sd">    threshold: float</span>
+<span class="sd">        Number of estimated noise SD above the mean</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ths_value: float</span>
+<span class="sd">        Value of the threshold</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    1. Quian Quiroga, R. 2004. Neural Computation 16: 1661–87.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ths_value</span> <span class="o">=</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span> <span class="o">/</span> <span class="mf">0.6745</span>
+    <span class="k">return</span> <span class="n">ths_value</span>
+
+
+<div class="viewcode-block" id="match_detections"><a class="viewcode-back" href="../../generated/mne_hfo.match_detections.html#mne_hfo.match_detections">[docs]</a><span class="k">def</span> <span class="nf">match_detections</span><span class="p">(</span><span class="n">gs_df</span><span class="p">,</span> <span class="n">dd_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">,</span> <span class="n">freq_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">sec_unit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sec_margin</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># noqa</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Match gold standard detections with detector detections.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gs_df: pandas.DataFrame</span>
+<span class="sd">        Gold standard detections</span>
+<span class="sd">    dd_df: pandas.DataFrame</span>
+<span class="sd">        Detector detections</span>
+<span class="sd">    bn: list</span>
+<span class="sd">        Names of event start stop [start_name, stop_name], e.g</span>
+<span class="sd">        [&#39;onset&#39;, &#39;offset&#39;].</span>
+<span class="sd">    freq_name: str</span>
+<span class="sd">        Name of frequency column</span>
+<span class="sd">    sec_unit: int</span>
+<span class="sd">        Number representing one second of signal - this can</span>
+<span class="sd">        significantly improve the speed of this function</span>
+<span class="sd">    sec_margin: int</span>
+<span class="sd">        Margin for creating subsets of compared data - should be set according</span>
+<span class="sd">        to the length of compared events (1s for HFO should be enough)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    match_df: pandas.DataFrame</span>
+<span class="sd">        Dataframe with matched indices (pandas DataFrame)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure the desired columns are numeric</span>
+    <span class="n">gs_df</span><span class="p">,</span> <span class="n">dd_df</span> <span class="o">=</span> <span class="n">_enforce_numeric_cols</span><span class="p">([</span><span class="n">gs_df</span><span class="p">,</span> <span class="n">dd_df</span><span class="p">],</span> <span class="n">bn</span><span class="p">)</span>
+    <span class="c1"># If df has duration instead of end time, add a new column</span>
+    <span class="k">if</span> <span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;duration&quot;</span><span class="p">:</span>
+        <span class="n">gs_df</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">gs_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">)</span>
+        <span class="n">dd_df</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">dd_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">)</span>
+        <span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;offset&quot;</span>
+    <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;gs_index&#39;</span><span class="p">,</span> <span class="s1">&#39;dd_index&#39;</span><span class="p">))</span>
+    <span class="n">match_df_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">row_gs</span> <span class="ow">in</span> <span class="n">gs_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">matched_idcs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+        <span class="k">if</span> <span class="n">sec_unit</span><span class="p">:</span>  <span class="c1"># We can create subset - significant speed improvement</span>
+            <span class="c1"># Only look at detector detection rows that have onsets</span>
+            <span class="c1"># within the window of time provided</span>
+            <span class="k">for</span> <span class="n">row_dd</span> <span class="ow">in</span> <span class="n">dd_df</span><span class="p">[(</span><span class="n">dd_df</span><span class="p">[</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
+                                 <span class="n">sec_unit</span> <span class="o">*</span> <span class="n">sec_margin</span><span class="p">)</span> <span class="o">&amp;</span>
+                                <span class="p">(</span><span class="n">dd_df</span><span class="p">[</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span>
+                                 <span class="n">sec_unit</span> <span class="o">*</span> <span class="n">sec_margin</span><span class="p">)]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">dd</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+                <span class="c1"># Check if the events overlap</span>
+                <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">dd</span><span class="p">):</span>
+                    <span class="n">matched_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Look at all detector detection rows</span>
+            <span class="k">for</span> <span class="n">row_dd</span> <span class="ow">in</span> <span class="n">dd_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">dd</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
+                <span class="c1"># Check if the events overlap</span>
+                <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">dd</span><span class="p">):</span>
+                    <span class="n">matched_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># No overlap found for this gold standard row</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="c1"># One overlap found for this gold standard row</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matched_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># In rare event of multiple overlaps get the closest frequency</span>
+            <span class="k">if</span> <span class="n">freq_name</span><span class="p">:</span>
+                <span class="n">dd_idx</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">abs</span><span class="p">(</span><span class="n">dd_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matched_idcs</span><span class="p">,</span> <span class="n">freq_name</span><span class="p">]</span> <span class="o">-</span>
+                        <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">freq_name</span><span class="p">]))</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+                <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dd_idx</span><span class="p">]</span>
+            <span class="c1"># Closest event start - less precision than frequency</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dd_idx</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">abs</span><span class="p">(</span><span class="n">dd_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matched_idcs</span><span class="p">,</span> <span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span>
+                        <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+                <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dd_idx</span><span class="p">]</span>
+
+        <span class="n">match_df_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">match_df</span></div>
+
+
+<span class="k">def</span> <span class="nf">_append_offset_to_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Append an offset column to the provided dataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        DataFrame without an offset column</span>
+<span class="sd">    cols : Tuple</span>
+<span class="sd">        Tuple of column names (onset_col_name, duration_col_name)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List</span>
+<span class="sd">        List of dataframes with additional column</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get indices of onset and duration columns</span>
+    <span class="n">df_col_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+    <span class="c1"># Sum the two columns to create offset column</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">df_col_indices</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+
+<span class="k">def</span> <span class="nf">_enforce_numeric_cols</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify provided columns to be numeric type.</span>
+
+<span class="sd">    Changes to either float or int depending on the data in the column.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dfs : List</span>
+<span class="sd">        List of pandas dataframes to have modified columns</span>
+<span class="sd">    cols : List</span>
+<span class="sd">        List of column names to modify</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List</span>
+<span class="sd">        List of modified pandas dataframes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dfs</span><span class="p">):</span>
+        <span class="n">df_dtypes</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span>
+        <span class="n">modify_df</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Speed up by checking if columns are already numeric</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">df_dtypes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="ow">or</span>
+                    <span class="n">df_dtypes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">):</span>
+                <span class="n">modify_df</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># If not, modify</span>
+        <span class="k">if</span> <span class="n">modify_df</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">)</span>
+            <span class="n">dfs</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
+    <span class="k">return</span> <span class="n">dfs</span>
+
+
+<span class="k">def</span> <span class="nf">check_detection_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">dd</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate if two detections overlap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gs: list</span>
+<span class="sd">        Gold standard detection [start,stop]</span>
+<span class="sd">    dd: list</span>
+<span class="sd">        Detector detection [start,stop]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    overlap: bool</span>
+<span class="sd">        Whether two events overlap.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">overlap</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># dd stop in gs + (dd inside gs)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># dd start in gs + (dd inside gs)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># gs inside dd</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">overlap</span>
+
+
+<div class="viewcode-block" id="find_coincident_events"><a class="viewcode-back" href="../../generated/mne_hfo.utils.find_coincident_events.html#mne_hfo.find_coincident_events">[docs]</a><span class="k">def</span> <span class="nf">find_coincident_events</span><span class="p">(</span><span class="n">hfo_dict1</span><span class="p">,</span> <span class="n">hfo_dict2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a dictionary of hfo events that overlap between two sets.</span>
+
+<span class="sd">    Note: Both input dictionaries should come from the same original</span>
+<span class="sd">    dataset and therefore contain the same keys.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hfo_dict1 : dict</span>
+<span class="sd">        keys are channel names and values are list of tuples of start</span>
+<span class="sd">        and end times.</span>
+<span class="sd">    hfo_dict2 : dict</span>
+<span class="sd">        keys are channel names and values are list of tuples of start</span>
+<span class="sd">        and end times.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coincident_hfo_dict : Dict</span>
+<span class="sd">        Subset of hfo_dict1 containing just the entries that overlap</span>
+<span class="sd">        with hfo_dict2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">hfo_dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hfo_dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The two dictionaries must have the same keys.&quot;</span><span class="p">)</span>
+    <span class="n">coincident_hfo_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ch_name</span><span class="p">,</span> <span class="n">hfo_list1</span> <span class="ow">in</span> <span class="n">hfo_dict1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">hfo_list2</span> <span class="o">=</span> <span class="n">hfo_dict2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span>
+        <span class="n">coincident_hfo_list</span> <span class="o">=</span> <span class="n">_find_overlapping_events</span><span class="p">(</span><span class="n">hfo_list1</span><span class="p">,</span> <span class="n">hfo_list2</span><span class="p">)</span>
+        <span class="n">coincident_hfo_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">ch_name</span><span class="p">:</span> <span class="n">coincident_hfo_list</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">coincident_hfo_dict</span></div>
+
+
+<span class="k">def</span> <span class="nf">_find_overlapping_events</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get subset of list1 that overlaps with list2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list1 : list</span>
+<span class="sd">        list of tuples (start_time, end_time)</span>
+<span class="sd">    list2 : list</span>
+<span class="sd">        list of tuples (start_time, end_time)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    overlapping_events : list</span>
+<span class="sd">        list of tuples (start_time, end_time) that overlap between</span>
+<span class="sd">        list1 and list2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort events by start times to speed up calculation</span>
+    <span class="n">list1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">list2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list2</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">overlapping_events</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">event_time1</span> <span class="ow">in</span> <span class="n">list1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">event_time2</span> <span class="ow">in</span> <span class="n">list2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_time2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">event_time1</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">event_time1</span><span class="p">,</span> <span class="n">event_time2</span><span class="p">):</span>
+                <span class="n">overlapping_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">overlapping_events</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

@@ -467,6 +467,9 @@
 <span class="sd">    offset: int</span>
 <span class="sd">        Offset which is added to the final detection. This is used when the</span>
 <span class="sd">        function is run in separate windows. Default = 0</span>
+<span class="sd">    hfo_name: str</span>
+<span class="sd">        What to name the events detected (i.e. fast ripple if freq_band is</span>
+<span class="sd">        (250, 500)).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -491,6 +494,7 @@
                  <span class="n">overlap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">filter_band</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
                  <span class="n">scoring_func</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;f1&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">hfo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hfo&quot;</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LineLengthDetector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">threshold</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="n">win_size</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span>
@@ -499,6 +503,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="o">=</span> <span class="n">filter_band</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span> <span class="o">=</span> <span class="n">hfo_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">l_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -514,7 +519,7 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo`` function.&quot;&quot;&quot;</span>
         <span class="c1"># store all hfo occurrences as an array of channels X windows</span>
         <span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">,</span>
@@ -526,7 +531,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span><span class="p">,</span>
                                        <span class="n">l_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span><span class="p">,</span>
-                                       <span class="n">h_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">,</span>
+                                       <span class="n">h_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">,</span>
                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;iir&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># run HFO detection on all the channels</span>
@@ -555,9 +560,9 @@
 
         <span class="k">return</span> <span class="n">hfo_event_arr</span>
 
-<div class="viewcode-block" id="LineLengthDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.LineLengthDetector.html#mne_hfo.LineLengthDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LineLengthDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.LineLengthDetector.html#mne_hfo.LineLengthDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override ``Detector.fit`` function.&quot;&quot;&quot;</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
         <span class="n">sfreq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span>
         <span class="k">if</span> <span class="n">sfreq</span> <span class="o">&lt;</span> <span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="p">:</span>
@@ -566,18 +571,18 @@
                  <span class="sa">f</span><span class="s1">&#39;Please use with caution.&#39;</span><span class="p">)</span>
 
         <span class="c1"># compute HFOs as a binary occurrence array over time</span>
-        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">)</span>
+        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="c1"># post-process hfo events</span>
         <span class="c1"># store hfo event endpoints per channel</span>
-        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
+        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">ch_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
             <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">n_times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">,</span>
             <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)}</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_names</span><span class="p">)}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span> <span class="o">=</span> <span class="n">chs_hfos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span> <span class="o">=</span> <span class="n">hfo_event_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
@@ -594,12 +599,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    l_freq: float</span>
-<span class="sd">        Low cut-off frequency. Default = 100.</span>
-<span class="sd">    h_freq: float</span>
-<span class="sd">        High cut-off frequency. Default = 500. Note, that</span>
-<span class="sd">        this should be set according to the Nyquist</span>
-<span class="sd">        sampling rate.</span>
+<span class="sd">    filter_band : tuple(float, float) | None</span>
+<span class="sd">        Low cut-off frequency at index 0 and high cut-off frequency</span>
+<span class="sd">        at index 1.</span>
 <span class="sd">    threshold: float</span>
 <span class="sd">        Number of standard deviations to use as a threshold.</span>
 <span class="sd">        Default = 3.</span>
@@ -625,6 +627,7 @@
                  <span class="n">overlap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">filter_band</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
                  <span class="n">scoring_func</span><span class="o">=</span><span class="s1">&#39;f1&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">hfo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hfo&quot;</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RMSDetector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">threshold</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span>
@@ -634,6 +637,7 @@
         <span class="c1"># hyperparameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="o">=</span> <span class="n">filter_band</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span> <span class="o">=</span> <span class="n">hfo_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">l_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -649,7 +653,7 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo`` function.</span>
 
 <span class="sd">        Returns</span>
@@ -667,7 +671,7 @@
             <span class="c1"># bandpass the signal using FIR filter</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span><span class="p">,</span>
                                        <span class="n">l_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span><span class="p">,</span>
-                                       <span class="n">h_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">,</span>
+                                       <span class="n">h_freq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">,</span>
                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;fir&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># run HFO detection on all the channels</span>
@@ -694,9 +698,9 @@
 
         <span class="k">return</span> <span class="n">hfo_event_arr</span>
 
-<div class="viewcode-block" id="RMSDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RMSDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override ``Detector.fit`` function.&quot;&quot;&quot;</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
         <span class="n">sfreq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span>
         <span class="k">if</span> <span class="n">sfreq</span> <span class="o">&lt;</span> <span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="p">:</span>
@@ -705,18 +709,18 @@
                  <span class="sa">f</span><span class="s1">&#39;Please use with caution.&#39;</span><span class="p">)</span>
 
         <span class="c1"># compute HFOs as a binary occurrence array over time</span>
-        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="n">picks</span><span class="p">)</span>
+        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="c1"># post-process hfo events</span>
         <span class="c1"># store hfo event endpoints per channel</span>
-        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
+        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">ch_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
             <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">n_times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">,</span>
             <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)}</span>
+        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_names</span><span class="p">)}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span> <span class="o">=</span> <span class="n">chs_hfos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span> <span class="o">=</span> <span class="n">hfo_event_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_event_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div></div>
 </pre></div>
 
@@ -732,7 +736,7 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

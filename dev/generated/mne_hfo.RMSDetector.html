@@ -131,7 +131,7 @@
 <h1>mne_hfo.RMSDetector<a class="headerlink" href="#mne-hfo-rmsdetector" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="mne_hfo.RMSDetector">
-<em class="property">class </em><code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">RMSDetector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filter_band</span><span class="o">=</span><span class="default_value">(100, 500)</span></em>, <em class="sig-param"><span class="n">scoring_func</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">RMSDetector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filter_band</span><span class="o">=</span><span class="default_value">(100, 500)</span></em>, <em class="sig-param"><span class="n">scoring_func</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">hfo_name</span><span class="o">=</span><span class="default_value">'hfo'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Root mean square (RMS) detection algorithm (Staba Detector).</p>
 <p>The original algorithm described in the reference, takes a sliding
 window of 3 ms, computes the RMS values between 100 and 500 Hz.
@@ -142,15 +142,10 @@ were removed. A finite impulse response (FIR) filter with a
 Hamming window was used.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>l_freq: float</strong></p>
+<dd class="field-odd"><p><strong>filter_band</strong> : tuple(float, float) | None</p>
 <blockquote>
-<div><p>Low cut-off frequency. Default = 100.</p>
-</div></blockquote>
-<p><strong>h_freq: float</strong></p>
-<blockquote>
-<div><p>High cut-off frequency. Default = 500. Note, that
-this should be set according to the Nyquist
-sampling rate.</p>
+<div><p>Low cut-off frequency at index 0 and high cut-off frequency
+at index 1.</p>
 </div></blockquote>
 <p><strong>threshold: float</strong></p>
 <blockquote>
@@ -214,7 +209,7 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y, picks])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
 <td><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit_predict" title="mne_hfo.RMSDetector.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
@@ -223,7 +218,7 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.get_params" title="mne_hfo.RMSDetector.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.predict" title="mne_hfo.RMSDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X[, picks])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.predict" title="mne_hfo.RMSDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
 <td><p>Scikit-learn override predict function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.score" title="mne_hfo.RMSDetector.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(X, y[, sample_weight])</p></td>
@@ -248,7 +243,7 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 
 <dl class="py method">
 <dt id="mne_hfo.RMSDetector.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.RMSDetector.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p>
 </dd></dl>
 
@@ -326,7 +321,7 @@ value of <code class="docutils literal notranslate"><span class="pre">1</span></
 
 <dl class="py method">
 <dt id="mne_hfo.RMSDetector.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scikit-learn override predict function.</p>
 <p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
 </dd></dl>
@@ -428,7 +423,7 @@ possible to update each component of a nested object.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

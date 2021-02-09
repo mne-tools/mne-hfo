@@ -1,0 +1,11 @@
+﻿mne\_hfo.io.events\_to\_annotations
+===================================
+
+.. currentmodule:: mne_hfo.io
+
+.. autofunction:: events_to_annotations
+
+.. _sphx_glr_backreferences_mne_hfo.io.events_to_annotations:
+
+.. minigallery:: mne_hfo.io.events_to_annotations
+    :add-heading:

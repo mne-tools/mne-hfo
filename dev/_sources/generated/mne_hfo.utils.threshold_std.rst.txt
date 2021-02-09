@@ -1,0 +1,11 @@
+﻿mne\_hfo.utils.threshold\_std
+=============================
+
+.. currentmodule:: mne_hfo.utils
+
+.. autofunction:: threshold_std
+
+.. _sphx_glr_backreferences_mne_hfo.utils.threshold_std:
+
+.. minigallery:: mne_hfo.utils.threshold_std
+    :add-heading:

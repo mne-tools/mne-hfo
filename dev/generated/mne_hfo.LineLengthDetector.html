@@ -131,7 +131,7 @@
 <h1>mne_hfo.LineLengthDetector<a class="headerlink" href="#mne-hfo-linelengthdetector" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="mne_hfo.LineLengthDetector">
-<em class="property">class </em><code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">LineLengthDetector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filter_band</span><span class="o">=</span><span class="default_value">(30, 100)</span></em>, <em class="sig-param"><span class="n">scoring_func</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">mne_hfo.</code><code class="sig-name descname">LineLengthDetector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">win_size</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filter_band</span><span class="o">=</span><span class="default_value">(30, 100)</span></em>, <em class="sig-param"><span class="n">scoring_func</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">hfo_name</span><span class="o">=</span><span class="default_value">'hfo'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Line-length detection algorithm.</p>
 <p>Original paper defines HFOS as “(HFOs), which we collectively
 term as all activity &gt;40 Hz (including gamma, high-gamma,
@@ -166,6 +166,11 @@ at index 1.</p>
 <blockquote>
 <div><p>Offset which is added to the final detection. This is used when the
 function is run in separate windows. Default = 0</p>
+</div></blockquote>
+<p><strong>hfo_name: str</strong></p>
+<blockquote>
+<div><p>What to name the events detected (i.e. fast ripple if freq_band is
+(250, 500)).</p>
 </div></blockquote>
 </dd>
 </dl>
@@ -222,7 +227,7 @@ Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.fit" title="mne_hfo.LineLengthDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y, picks])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.fit" title="mne_hfo.LineLengthDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
 <td><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.fit_predict" title="mne_hfo.LineLengthDetector.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
@@ -231,7 +236,7 @@ Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.get_params" title="mne_hfo.LineLengthDetector.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.predict" title="mne_hfo.LineLengthDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X[, picks])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.predict" title="mne_hfo.LineLengthDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
 <td><p>Scikit-learn override predict function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.LineLengthDetector.score" title="mne_hfo.LineLengthDetector.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(X, y[, sample_weight])</p></td>
@@ -256,7 +261,7 @@ Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</p>
 
 <dl class="py method">
 <dt id="mne_hfo.LineLengthDetector.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p>
 </dd></dl>
 
@@ -334,7 +339,7 @@ value of <code class="docutils literal notranslate"><span class="pre">1</span></
 
 <dl class="py method">
 <dt id="mne_hfo.LineLengthDetector.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">picks</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scikit-learn override predict function.</p>
 <p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
 </dd></dl>
@@ -436,7 +441,7 @@ possible to update each component of a nested object.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

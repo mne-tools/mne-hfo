@@ -118,8 +118,11 @@
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">API Documentation</a><ul>
-<li><a class="reference internal" href="#mne-hfo">mne_hfo</a></li>
-<li><a class="reference internal" href="#mne-hfo-io">mne_hfo.io</a></li>
+<li><a class="reference internal" href="#detectors">Detectors</a></li>
+<li><a class="reference internal" href="#bids-io-functions">BIDS-IO functions</a></li>
+<li><a class="reference internal" href="#simulation">Simulation</a></li>
+<li><a class="reference internal" href="#post-processing-hfo-detections">Post-processing HFO Detections</a></li>
+<li><a class="reference internal" href="#metrics">Metrics</a></li>
 </ul>
 </li>
 </ul>
@@ -130,8 +133,8 @@
       
   <div class="section" id="api-documentation">
 <span id="id1"></span><h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="mne-hfo">
-<h2>mne_hfo<a class="headerlink" href="#mne-hfo" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="detectors">
+<h2>Detectors<a class="headerlink" href="#detectors" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="#module-mne_hfo" title="mne_hfo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo</span></code></a>:</p>
 <span class="target" id="module-mne_hfo"></span><p>MNE software for computing HFOs from iEEG data.</p>
 <table class="longtable docutils align-default">
@@ -149,8 +152,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="mne-hfo-io">
-<h2>mne_hfo.io<a class="headerlink" href="#mne-hfo-io" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bids-io-functions">
+<h2>BIDS-IO functions<a class="headerlink" href="#bids-io-functions" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="#module-mne_hfo.io" title="mne_hfo.io"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo.io</span></code></a>:</p>
 <span class="target" id="module-mne_hfo.io"></span><table class="longtable docutils align-default">
 <colgroup>
@@ -158,11 +161,94 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_events_df</span></code></a>(input[, sfreq])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_events_df</span></code></a>(input[, sfreq, event_name])</p></td>
 <td><p>Create a BIDS events dataframe for HFO events.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_events_tsv.html#mne_hfo.io.read_events_tsv" title="mne_hfo.io.read_events_tsv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_events_tsv</span></code></a>(bids_path)</p></td>
-<td><p>Read an events.tsv file to a DataFrame.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.create_annotations_df.html#mne_hfo.io.create_annotations_df" title="mne_hfo.io.create_annotations_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_annotations_df</span></code></a>(onset, duration, ch_name)</p></td>
+<td><p>Create a BIDS-derivative annotations dataframe for HFO events.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations" title="mne_hfo.io.read_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_annotations</span></code></a>(fname, root)</p></td>
+<td><p>Read annotations.tsv Derivative file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">events_to_annotations</span></code></a>(events_df)</p></td>
+<td><p>Backwards-compatible function to convert events to annotations.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-mne_hfo.simulate" title="mne_hfo.simulate"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo.simulate</span></code></a>:</p>
+<span class="target" id="module-mne_hfo.simulate"></span><p>Some parts of code are recoded from package Anderson Brito da Silva’s pyhfo.</p>
+<p>Reference: (<a class="reference external" href="https://github.com/britodasilva/pyhfo">https://github.com/britodasilva/pyhfo</a>)</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_pink_noise.html#mne_hfo.simulate.simulate_pink_noise" title="mne_hfo.simulate.simulate_pink_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_pink_noise</span></code></a>(N)</p></td>
+<td><p>Create a pink noise (1/f) with N points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_brown_noise.html#mne_hfo.simulate.simulate_brown_noise" title="mne_hfo.simulate.simulate_brown_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_brown_noise</span></code></a>(N)</p></td>
+<td><p>Create a brown noise (1/f²) with N points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_line_noise.html#mne_hfo.simulate.simulate_line_noise" title="mne_hfo.simulate.simulate_line_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_line_noise</span></code></a>([fs, freq, numcycles])</p></td>
+<td><p>Line noise artifact.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_delta.html#mne_hfo.simulate.simulate_delta" title="mne_hfo.simulate.simulate_delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_delta</span></code></a>([fs, decay_dur])</p></td>
+<td><p>Delta function with exponential decay.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_artifact_spike.html#mne_hfo.simulate.simulate_artifact_spike" title="mne_hfo.simulate.simulate_artifact_spike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_artifact_spike</span></code></a>([fs, dur])</p></td>
+<td><p>Artifact like spike (sharp, not gaussian).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_spike.html#mne_hfo.simulate.simulate_spike" title="mne_hfo.simulate.simulate_spike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_spike</span></code></a>([fs, dur])</p></td>
+<td><p>Create a simple gaussian spike.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.simulate.simulate_hfo.html#mne_hfo.simulate.simulate_hfo" title="mne_hfo.simulate.simulate_hfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulate_hfo</span></code></a>([fs, freq, numcycles])</p></td>
+<td><p>Create a simulated HFO signal.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="post-processing-hfo-detections">
+<h2>Post-processing HFO Detections<a class="headerlink" href="#post-processing-hfo-detections" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.match_detections.html#mne_hfo.match_detections" title="mne_hfo.match_detections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_detections</span></code></a>(gs_df, dd_df, bn[, …])</p></td>
+<td><p>Match gold standard detections with detector detections.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="metrics">
+<h2>Metrics<a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-mne_hfo.utils" title="mne_hfo.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo.utils</span></code></a>:</p>
+<span class="target" id="module-mne_hfo.utils"></span><p>Utility and helper functions for MNE-HFO.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms" title="mne_hfo.utils.compute_rms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_rms</span></code></a>(signal[, win_size])</p></td>
+<td><p>Calculate the Root Mean Square (RMS) energy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length" title="mne_hfo.utils.compute_line_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_line_length</span></code></a>(signal[, win_size])</p></td>
+<td><p>Calculate line length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_std.html#mne_hfo.utils.threshold_std" title="mne_hfo.utils.threshold_std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_std</span></code></a>(signal, threshold)</p></td>
+<td><p>Calculate threshold by Standard Deviations above the mean.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey" title="mne_hfo.utils.threshold_tukey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_tukey</span></code></a>(signal, threshold)</p></td>
+<td><p>Calculate threshold by Tukey method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.find_coincident_events.html#mne_hfo.utils.find_coincident_events" title="mne_hfo.utils.find_coincident_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_coincident_events</span></code></a>(hfo_dict1, hfo_dict2)</p></td>
+<td><p>Get a dictionary of hfo events that overlap between two sets.</p></td>
 </tr>
 </tbody>
 </table>
@@ -182,7 +268,7 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

@@ -131,7 +131,7 @@
 <h1>mne_hfo.io.create_events_df<a class="headerlink" href="#mne-hfo-io-create-events-df" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="mne_hfo.io.create_events_df">
-<code class="sig-prename descclassname">mne_hfo.io.</code><code class="sig-name descname">create_events_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#create_events_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.io.create_events_df" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mne_hfo.io.</code><code class="sig-name descname">create_events_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">sfreq</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">event_name</span><span class="o">=</span><span class="default_value">'hfo'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#create_events_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.io.create_events_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a BIDS events dataframe for HFO events.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -140,12 +140,17 @@
 <div><p>The input data structure that is either a mne <code class="docutils literal notranslate"><span class="pre">Raw</span></code>
 object with <code class="docutils literal notranslate"><span class="pre">Annotations</span></code> set that correspond to the
 HFO events, or a dictionary of lists of HFO
-start/end points.</p>
+start/end sample points.</p>
 </div></blockquote>
 <p><strong>sfreq</strong> : float | None</p>
 <blockquote>
 <div><p>The sampling frequency. Only required if the input is
 not a <code class="docutils literal notranslate"><span class="pre">mne.io.BaseRaw</span></code> object.</p>
+</div></blockquote>
+<p><strong>event_name: str</strong></p>
+<blockquote>
+<div><p>The prefix of the channel event to add to the “trial_type” column (e.g. <code class="docutils literal notranslate"><span class="pre">hfo</span></code> for channel <code class="docutils literal notranslate"><span class="pre">A1</span></code>
+would result in <code class="docutils literal notranslate"><span class="pre">hfo_A1</span></code>).</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -155,8 +160,22 @@ not a <code class="docutils literal notranslate"><span class="pre">mne.io.BaseRa
 </div></blockquote>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Output of the dataframe will have the following column structures:
+..</p>
+<blockquote>
+<div><p>‘onset’: ‘float64’,
+‘duration’: ‘float64’,
+‘sample’: ‘int’,
+‘trial_type’: ‘str’</p>
+</div></blockquote>
 <p class="rubric">References</p>
 <p>[1] <a class="reference external" href="https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html">https://bids-specification.readthedocs.io/en/stable/04-modality-specific-files/05-task-events.html</a>  # noqa</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="section" id="examples-using-mne-hfo-io-create-events-df">
@@ -177,7 +196,7 @@ not a <code class="docutils literal notranslate"><span class="pre">mne.io.BaseRa
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-01-22.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>

@@ -1,21 +1,29 @@
-from typing import List, Dict
-from datetime import datetime, timezone, timedelta
-
-import pandas as pd
-import numpy as np
 import collections
+from datetime import datetime, timezone, timedelta
+from typing import List, Dict
+
+import numpy as np
+import pandas as pd
+
 from mne_hfo.io import ANNOT_COLUMNS
 from mne_hfo.utils import _find_overlapping_events
 
 
 def _compute_hfo_rate(df, rate_rule, origin):
-    return df.resample(rate_rule, origin=origin).mean()
+    resampled_df = df.resample(rate_rule, origin=origin).apply(
+        {'onset': 'count'}
+    )
+    print(f'REsampled dataframe: {rate_rule}, {origin}')
+    print(resampled_df)
+    print('heres the mean')
+    print(resampled_df.mean().values)
+    return resampled_df.mean().values[0]
 
 
 def compute_chs_hfo_rates(annot_df: pd.DataFrame,
-                          ch_names: List[str]=None,
-                          rate='h', over_time:bool=False,
-                          end_sec: float=None) -> Dict[str, float]:  # noqa
+                          ch_names: List[str] = None,
+                          rate: str = 'h', over_time: bool = False,
+                          end_sec: float = None, verbose: bool = True) -> Dict[str, float]:  # noqa
     """Compute channel HFO rates from annotations DataFrame.
 
     This function will assume that each row is another
@@ -46,7 +54,6 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
 
     # ensure certain columns are numeric
 
-
     # first compute sampling rate from sample / onset columns
     sfreq = annot_df['sample'] / annot_df['onset']
     if sfreq.nunique() != 1:
@@ -61,11 +68,17 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
 
     # start timestamp with current time
     ref_timestamp = datetime.now(tz=timezone.utc)
-    annot_df['timestamp'] = ref_timestamp + pd.to_timedelta(annot_df['onset'], unit='s')
+    print(annot_df)
+    annot_df['timestamp'] = \
+        ref_timestamp + pd.to_timedelta(annot_df['onset'], unit='s')
     if end_sec is None:
         end_timestamp = annot_df['timestamp'].max()
     else:
-        end_timestamp = ref_timestamp + timedelta(seconds=end_sec)
+        end_timestamp = ref_timestamp + timedelta(seconds=end_sec - 1)
+
+    if verbose:
+        print(f'Beginning timestamp: {ref_timestamp}')
+        print(f'Got end timestamp of: {end_timestamp}')
 
     # set timestamp as the datetime index to allow resampling
     annot_df.set_index('timestamp', inplace=True)
@@ -82,15 +95,18 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
         # get channel name
         ch_name = group['channels'].values[0]
 
-        # print(idx, group)
+        print(ch_name)
+        print(group)
 
-        df2 = group.copy()
-        # end_timestamp = df2.index[-1]
-        df2 = df2.reindex(pd.date_range(ref_timestamp, end_timestamp,
-                                        freq='1min'),
-                          fill_value=pd.n)
+        # resample datetime indices over a certain frequency
+        # so we can now count the number of HFO occurrences in a
+        # set time frame
+        dt_idx = pd.date_range(ref_timestamp, end_timestamp, freq=rate)
+        group = group.reindex(dt_idx, fill_value=np.nan)
+
         print('Resampled index...')
-        print(df2)
+        print(group.shape)
+        print(group)
 
         # now compute the rate in this group
         ch_hfo_rates[ch_name] = _compute_hfo_rate(group,
@@ -98,10 +114,13 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
                                                   origin=ref_timestamp)
 
         print('inside here...')
-        print(group.groupby(['timestamp']).size())#.unstack(fill_value=0))
+        print(ch_hfo_rates[ch_name])
+        if ch_name == 'A1':
+            raise Exception('hi')
+        # print(group.groupby(['timestamp']).size())#.unstack(fill_value=0))
 
-        if not over_time:
-            ch_hfo_rates[ch_name] = ch_hfo_rates[ch_name].count()
+        # if not over_time:
+        # ch_hfo_rates[ch_name] = ch_hfo_rates[ch_name].count()
 
     return ch_hfo_rates
 

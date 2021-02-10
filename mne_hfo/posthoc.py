@@ -1,6 +1,6 @@
 import collections
 from datetime import datetime, timezone, timedelta
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 import pandas as pd
 
@@ -149,7 +149,7 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
 
     Returns
     -------
-    coincident_hfo_dict : Dict
+    coincident_hfo_dict : dict
         Subset of hfo_dict1 containing just the entries that overlap
         with hfo_dict2.
     """

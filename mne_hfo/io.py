@@ -221,6 +221,13 @@ def create_annotations_df(onset: List[float], duration: List[float],
     annot_df : DataFrame
         The annotations dataframe according to BIDS-Derivatives [1].
 
+    Notes
+    -----
+    For many post-hoc operations, it will be required to know the sampling
+    rate of the data. In order to compute that, it is recommended to take
+    the sampling rate and multiply it with the ``'onset'`` column to get
+    a new ``'sample'`` column denoting the sample point each HFO occurs at.
+
     References
     ----------
     .. [1] https://bids-specification.readthedocs.io/en/stable/
@@ -258,7 +265,7 @@ def create_annotations_df(onset: List[float], duration: List[float],
                                                   channels]),
                             index=None,
                             columns=ANNOT_COLUMNS)
-    annot_df.astype({
+    annot_df = annot_df.astype({
         'onset': 'float64',
         'duration': 'float64',
         'label': 'str',

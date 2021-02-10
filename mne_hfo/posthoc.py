@@ -9,31 +9,16 @@ from mne_hfo.io import ANNOT_COLUMNS
 from mne_hfo.utils import _find_overlapping_events
 
 
-def _to_freq(x, rate='s'):
+def _to_freq(x, rate: str = 's'):
     f = x.count() / x.mean()
-    print('here...')
-    print(x)
-    print(f)
-    print(x.count(), x.mean())
     return f / TIME_SCALE_TO_SECS[rate]
-
-
-def _compute_hfo_rate(df, rate_rule, origin):
-    resampled_df = df.resample(rate_rule, origin=origin).apply(
-        {'onset': 'count'}
-    )
-    print(f'REsampled dataframe: {rate_rule}, {origin}')
-    print(resampled_df)
-    print('heres the mean')
-    print(resampled_df.mean().values)
-    return resampled_df.mean().values[0]
 
 
 def compute_chs_hfo_rates(annot_df: pd.DataFrame,
                           ch_names: Optional[List[str]] = None,
                           rate: str = 'h',
                           end_sec: float = None,
-                          verbose: bool = True) -> Dict[str, float]:  # noqa
+                          verbose: bool = True):
     """Compute channel HFO rates from annotations DataFrame.
 
     This function will assume that each row is another
@@ -42,7 +27,7 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
 
     Parameters
     ----------
-    annot_df : pd.DataFrame
+    annot_df : pandas.core.DataFrame
         The DataFrame corresponding to the ``annotations.tsv`` file.
     ch_names : list of str | None
         A list of channel names to constrain the rate computation to.
@@ -69,7 +54,7 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
 
     See Also
     --------
-    mne_hfo.io.read_annotations
+    mne_hfo.io.read_annotations : Reading in annotations.tsv file as DataFrame.
     """
     if any([col not in annot_df.columns
             for col in ANNOT_COLUMNS + ['sample']]):

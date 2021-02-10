@@ -24,3 +24,6 @@ REFERENCES = {
 }
 MINIMUM_SUGGESTED_SFREQ = 2000
 ACCEPTED_BAND_METHODS = ['linear', 'log']
+
+# conversion of time scales to seconds
+TIME_SCALE_TO_SECS = {'s': 1., 'm': 60., 'h': 60. * 60, 'd': 60. * 60 * 24}

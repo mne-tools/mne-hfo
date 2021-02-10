@@ -1,12 +1,21 @@
 import collections
 from datetime import datetime, timezone, timedelta
-from typing import List, Dict
+from typing import List, Dict, Optional
 
-import numpy as np
 import pandas as pd
 
 from mne_hfo.io import ANNOT_COLUMNS
 from mne_hfo.utils import _find_overlapping_events
+from mne_hfo.config import TIME_SCALE_TO_SECS
+
+
+def _to_freq(x, rate='s'):
+    f = x.count() / x.mean()
+    print('here...')
+    print(x)
+    print(f)
+    print(x.count(), x.mean())
+    return f / TIME_SCALE_TO_SECS[rate]
 
 
 def _compute_hfo_rate(df, rate_rule, origin):
@@ -21,9 +30,10 @@ def _compute_hfo_rate(df, rate_rule, origin):
 
 
 def compute_chs_hfo_rates(annot_df: pd.DataFrame,
-                          ch_names: List[str] = None,
-                          rate: str = 'h', over_time: bool = False,
-                          end_sec: float = None, verbose: bool = True) -> Dict[str, float]:  # noqa
+                          ch_names: Optional[List[str]] = None,
+                          rate: str = 'h',
+                          end_sec: float = None,
+                          verbose: bool = True) -> Dict[str, float]:  # noqa
     """Compute channel HFO rates from annotations DataFrame.
 
     This function will assume that each row is another
@@ -35,24 +45,37 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
     annot_df : pd.DataFrame
         The DataFrame corresponding to the ``annotations.tsv`` file.
     ch_names : list of str | None
+        A list of channel names to constrain the rate computation to.
+        Default = None will compute rate for all channels present in the
+        ``annot_df``.
     rate : str
         The frequency at which to compute the HFO rate. Default='h', for
         every hour.
-    over_time :
+    end_sec : float | None
+        The end time (in seconds) of the dataset that HFOs were computed on.
+        If None (default), then will take the last detected HFO as the end
+        time point.
+    verbose : bool
+        Verbosity.
 
     Returns
     -------
+    ch_hfo_rates : dict
+        The HFO rates per channel with any HFOs.
+
+    References
+    ----------
+    .. [1] https://stackoverflow.com/questions/66143839/computing-rate-of-occurrences-per-unit-of-time-in-a-pandas-dataframe  # noqa
 
     See Also
     --------
     mne_hfo.io.read_annotations
     """
-    if any([col not in annot_df.columns for col in ANNOT_COLUMNS + ['sample']]):
+    if any([col not in annot_df.columns
+            for col in ANNOT_COLUMNS + ['sample']]):
         raise RuntimeError(f'Annotations dataframe columns must contain '
                            f'{ANNOT_COLUMNS + ["sample"]} in order to compute '
                            f'HFO rate.')
-
-    # ensure certain columns are numeric
 
     # first compute sampling rate from sample / onset columns
     sfreq = annot_df['sample'] / annot_df['onset']
@@ -61,63 +84,62 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
                          f'should have the same sampling rate. '
                          f'Found {sfreq.nunique()} different '
                          f'sampling rates.')
-    sfreq = sfreq.values[0]
 
     # store channel rates over sliding window
     ch_hfo_rates = collections.defaultdict(list)
 
     # start timestamp with current time
     ref_timestamp = datetime.now(tz=timezone.utc)
-    print(annot_df)
-    annot_df['timestamp'] = \
-        ref_timestamp + pd.to_timedelta(annot_df['onset'], unit='s')
+    onset_tdelta = pd.to_timedelta(annot_df['onset'], unit='s')  # type: ignore
+    annot_df['timestamp'] = ref_timestamp + onset_tdelta
+
+    # get the end point in seconds
     if end_sec is None:
         end_timestamp = annot_df['timestamp'].max()
     else:
-        end_timestamp = ref_timestamp + timedelta(seconds=end_sec - 1)
+        end_timestamp = ref_timestamp + timedelta(seconds=end_sec)
+
+    # get end time in seconds
+    annot_df['end_time'] = (
+            end_timestamp - ref_timestamp
+    ).total_seconds()  # type: ignore
 
     if verbose:
         print(f'Beginning timestamp: {ref_timestamp}')
         print(f'Got end timestamp of: {end_timestamp}')
 
     # set timestamp as the datetime index to allow resampling
-    annot_df.set_index('timestamp', inplace=True)
+    annot_df.set_index('timestamp', inplace=True)  # type: ignore
 
     # get all unique channels
     if ch_names is None:
-        ch_names = annot_df['channels'].unique()
-        print('Found ... ', ch_names)
+        ch_names = annot_df['channels'].unique()  # type: ignore
     else:
         # search for channel names not inside pandas dataframe
-        print('not yet...')
+        if not all([name in annot_df['channels'] for name in ch_names]):
+            raise ValueError('Not all channels are inside the '
+                             'annotation DataFrame.')
 
     for idx, group in annot_df.groupby(['channels']):
         # get channel name
         ch_name = group['channels'].values[0]
 
-        print(ch_name)
-        print(group)
+        if ch_name not in ch_names:  # type: ignore
+            continue
 
         # resample datetime indices over a certain frequency
         # so we can now count the number of HFO occurrences in a
         # set time frame
-        dt_idx = pd.date_range(ref_timestamp, end_timestamp, freq=rate)
-        group = group.reindex(dt_idx, fill_value=np.nan)
+        # dt_idx = pd.date_range(ref_timestamp, end_timestamp, freq=rate)
+        # group = group.reindex(dt_idx, fill_value=np.nan)
 
-        print('Resampled index...')
-        print(group.shape)
-        print(group)
+        # see Reference [1] where we compute rate of occurrence
+        result = group.end_time.agg(lambda x: _to_freq(x, rate=rate))
+        if verbose:
+            print(f'Found HFO rate per {rate} for {ch_name} as {result}')
 
         # now compute the rate in this group
-        ch_hfo_rates[ch_name] = _compute_hfo_rate(group,
-                                                  rate_rule=rate,
-                                                  origin=ref_timestamp)
-
-        print('inside here...')
-        print(ch_hfo_rates[ch_name])
-        if ch_name == 'A1':
-            raise Exception('hi')
-        # print(group.groupby(['timestamp']).size())#.unstack(fill_value=0))
+        ch_hfo_rates[ch_name] = result
 
         # if not over_time:
         # ch_hfo_rates[ch_name] = ch_hfo_rates[ch_name].count()

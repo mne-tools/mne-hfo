@@ -1,9 +1,13 @@
+import itertools
+
 import pytest
+import numpy as np
 
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
     compute_chs_hfo_rates
 )
+from mne_hfo.config import TIME_SCALE_TO_SECS
 
 
 def test_find_coincident_events(create_testing_events_dicts):
@@ -22,10 +26,13 @@ def test_find_coincident_events(create_testing_events_dicts):
         find_coincident_events(df1, df2)
 
 
-@pytest.mark.parametrize('end_sec', [10,
-                                     # 20, 50
-                                     ])
-def test_metrics_df(end_sec):
+# parameters for testing HFO rates over units of time
+end_secs = [10, 20, 10.25, 50.5]
+rates = ['s', 'm', 'h', 'd']
+
+
+@pytest.mark.parametrize('end_sec, rate', itertools.product(end_secs, rates))
+def test_metrics_df(end_sec, rate):
     """Test metrics based on reference dataframe and detector ran dataframe."""
     onset = [1.5, 2.0, 3, 5.5]
     duration = [0.1, 1.0, 1.0, 0.1]
@@ -41,9 +48,17 @@ def test_metrics_df(end_sec):
 
     # now add sample column
     annot_df['sample'] = annot_df['onset'] * sfreq
-    chs_hfo_rates = compute_chs_hfo_rates(annot_df=annot_df, rate='s',
+    chs_hfo_rates = compute_chs_hfo_rates(annot_df=annot_df,
+                                          rate=rate,
                                           end_sec=end_sec)
     assert chs_hfo_rates['A2'] == chs_hfo_rates['A3']
-    assert chs_hfo_rates['A2'] == 1 / end_sec
-    print(chs_hfo_rates)
-    raise Exception('hi')
+    np.testing.assert_almost_equal(chs_hfo_rates['A2'],
+                                   (1. / end_sec) / TIME_SCALE_TO_SECS[rate],
+                                   decimal=6)
+    np.testing.assert_almost_equal(chs_hfo_rates['A1'],
+                                   (2. / end_sec) / TIME_SCALE_TO_SECS[rate],
+                                   decimal=6)
+
+    # error if specifying channel names are not inside dataframe
+    with pytest.raises(ValueError, match=''):
+        compute_chs_hfo_rates(annot_df, ch_names=['A0', 'A1'])

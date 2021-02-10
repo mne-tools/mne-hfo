@@ -4,9 +4,9 @@ from typing import List, Dict, Optional
 
 import pandas as pd
 
+from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.io import ANNOT_COLUMNS
 from mne_hfo.utils import _find_overlapping_events
-from mne_hfo.config import TIME_SCALE_TO_SECS
 
 
 def _to_freq(x, rate='s'):
@@ -100,9 +100,8 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
         end_timestamp = ref_timestamp + timedelta(seconds=end_sec)
 
     # get end time in seconds
-    annot_df['end_time'] = (
-            end_timestamp - ref_timestamp
-    ).total_seconds()  # type: ignore
+    annot_df['end_time'] = \
+        (end_timestamp - ref_timestamp).total_seconds()  # type: ignore
 
     if verbose:
         print(f'Beginning timestamp: {ref_timestamp}')

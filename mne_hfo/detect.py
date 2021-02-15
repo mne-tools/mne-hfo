@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from mne_hfo.base import Detector
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ, ACCEPTED_BAND_METHODS
-from mne_hfo.utils import (check_detection_overlap)
+from mne_hfo.posthoc import check_detection_overlap
 
 
 def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,

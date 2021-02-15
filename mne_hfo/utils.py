@@ -3,14 +3,39 @@
 import json
 import os
 from os import path as op
-from typing import List
 
 import numpy as np
 import pandas as pd
 
+from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
 
-def _merge_overlapping_hfos(events_df: pd.DataFrame):
-    pass
+
+def _check_df(df: pd.DataFrame, df_type: str,
+              copy: bool = True) -> pd.DataFrame:
+    """Check dataframe for correctness."""
+    if df_type == 'annotations':
+        if any([col not in df.columns
+                for col in ANNOT_COLUMNS + ['sample']]):
+            raise RuntimeError(f'Annotations dataframe columns must contain '
+                               f'{ANNOT_COLUMNS + ["sample"]}.')
+    elif df_type == 'events':
+        if any([col not in df.columns
+                for col in EVENT_COLUMNS + ['sample']]):
+            raise RuntimeError(f'Events dataframe columns must contain '
+                               f'{EVENT_COLUMNS}.')
+
+    # first compute sampling rate from sample / onset columns
+    sfreq = df['sample'] / df['onset']
+    if sfreq.nunique() != 1:
+        raise ValueError(f'All rows in the annotations dataframe '
+                         f'should have the same sampling rate. '
+                         f'Found {sfreq.nunique()} different '
+                         f'sampling rates.')
+
+    if copy:
+        return df.copy()
+
+    return df
 
 
 def _ensure_tuple(x):
@@ -177,92 +202,6 @@ def threshold_quian(signal, threshold):
     return ths_value
 
 
-def match_detections(ytrue_df, ypredict_df, bn, freq_name=None,
-                     sec_unit=None, sec_margin=1):  # noqa
-    """
-    Match gold standard detections with detector detections.
-
-    Parameters
-    ----------
-    ytrue_df: pandas.DataFrame
-        Gold standard detections
-    ypredict_df: pandas.DataFrame
-        Detector detections
-    bn: list
-        Names of event start stop [start_name, stop_name], e.g
-        ['onset', 'offset'].
-    freq_name: str
-        Name of frequency column
-    sec_unit: int
-        Number representing one second of signal - this can
-        significantly improve the speed of this function
-    sec_margin: int
-        Margin for creating subsets of compared data - should be set according
-        to the length of compared events (1s for HFO should be enough)
-
-    Returns
-    -------
-    match_df: pandas.DataFrame
-        Dataframe with matched indices (pandas DataFrame)
-    """
-    # Ensure the desired columns are numeric
-    ytrue_df[bn] = ytrue_df[bn].apply(pd.to_numeric())
-    ypredict_df[bn] = ypredict_df[bn].apply(pd.to_numeric())
-
-    # If df has duration instead of end time, add a new column
-    if bn[1].lower() == "duration":
-        ytrue_df = _append_offset_to_df(ytrue_df, bn)
-        ypredict_df = _append_offset_to_df(ypredict_df, bn)
-        bn[1] = "offset"
-    match_df = pd.DataFrame(columns=('gs_index', 'dd_index'))
-    match_df_idx = 0
-    for row_gs in ytrue_df.iterrows():
-        matched_idcs = []
-        gs = [row_gs[1][bn[0]], row_gs[1][bn[1]]]
-        if sec_unit:  # We can create subset - significant speed improvement
-            # Only look at detector detection rows that have onsets
-            # within the window of time provided
-            for row_dd in ypredict_df[(ypredict_df[bn[0]] < gs[0] +
-                                       sec_unit * sec_margin) &
-                                      (ypredict_df[bn[0]] > gs[0] -
-                                       sec_unit * sec_margin)].iterrows():
-                dd = [row_dd[1][bn[0]], row_dd[1][bn[1]]]
-                # Check if the events overlap
-                if check_detection_overlap(gs, dd):
-                    matched_idcs.append(row_dd[0])
-        else:
-            # Look at all detector detection rows
-            for row_dd in ypredict_df.iterrows():
-                dd = [row_dd[1][bn[0]], row_dd[1][bn[1]]]
-                # Check if the events overlap
-                if check_detection_overlap(gs, dd):
-                    matched_idcs.append(row_dd[0])
-
-        # No overlap found for this gold standard row
-        if len(matched_idcs) == 0:
-            match_df.loc[match_df_idx] = [row_gs[0], None]
-        # One overlap found for this gold standard row
-        elif len(matched_idcs) == 1:
-            match_df.loc[match_df_idx] = [row_gs[0], matched_idcs[0]]
-        else:
-            # In rare event of multiple overlaps get the closest frequency
-            if freq_name:
-                dd_idx = (
-                    abs(ypredict_df.loc[matched_idcs, freq_name] -
-                        row_gs[1][freq_name])).idxmin()
-                match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
-            # Closest event start - less precision than frequency
-            else:
-                dd_idx = (
-                    abs(ypredict_df.loc[matched_idcs, bn[0]] -
-                        row_gs[1][bn[0]])).idxmin()
-                match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
-
-        match_df_idx += 1
-
-    return match_df
-
-
 def _append_offset_to_df(df, cols=["onset", "duration"]):
     """
     Append an offset column to the provided dataframe.
@@ -285,64 +224,3 @@ def _append_offset_to_df(df, cols=["onset", "duration"]):
     # Sum the two columns to create offset column
     df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
     return df
-
-
-def check_detection_overlap(y_true: List[float], y_predict: List[float]):
-    """
-    Evaluate if two detections overlap.
-
-    Parameters
-    ----------
-    y_true: list
-        Gold standard detection [start,stop]
-    y_predict: list
-        Detector detection [start,stop]
-
-    Returns
-    -------
-    overlap: bool
-        Whether two events overlap.
-    """
-    overlap = False
-
-    # dd stop in gs + (dd inside gs)
-    if (y_predict[1] >= y_true[0]) and (y_predict[1] <= y_true[1]):
-        overlap = True
-    # dd start in gs + (dd inside gs)
-    if (y_predict[0] >= y_true[0]) and (y_predict[0] <= y_true[1]):
-        overlap = True
-    # gs inside dd
-    if (y_predict[0] <= y_true[0]) and (y_predict[1] >= y_true[1]):
-        overlap = True
-
-    return overlap
-
-
-def _find_overlapping_events(list1, list2):
-    """
-    Get subset of list1 that overlaps with list2.
-
-    Parameters
-    ----------
-    list1 : list
-        list of tuples (start_time, end_time)
-    list2 : list
-        list of tuples (start_time, end_time)
-
-    Returns
-    -------
-    overlapping_events : list
-        list of tuples (start_time, end_time) that overlap between
-        list1 and list2.
-    """
-    # Sort events by start times to speed up calculation
-    list1 = sorted(list1, key=lambda x: x[0])
-    list2 = sorted(list2, key=lambda x: x[0])
-    overlapping_events = []
-    for event_time1 in list1:
-        for event_time2 in list2:
-            if event_time2[0] > event_time1[1]:
-                break
-            if check_detection_overlap(event_time1, event_time2):
-                overlapping_events.append(event_time1)
-    return overlapping_events

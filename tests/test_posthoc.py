@@ -1,17 +1,23 @@
 import itertools
 
-import pytest
 import numpy as np
+import pandas as pd
+import pytest
 
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
-    compute_chs_hfo_rates
+    compute_chs_hfo_rates, merge_overlapping_events
 )
 from mne_hfo.config import TIME_SCALE_TO_SECS
 
 
-def test_find_coincident_events(create_testing_events_dicts):
-    df1, df2 = create_testing_events_dicts
+def test_find_coincident_events():
+    df1 = {
+        "01": [(0.0, 6.73), (12.6, 14.87), (22.342, 31.1), (45.9, 67.2)]
+    }
+    df2 = {
+        "01": [(0.2, 6.93), (12.3, 15.12), (45.8, 65.6), (98.3, 101.45)]
+    }
     # Expect to return the first three events from df1,
     # which have overlap with df2
     expected_output = {
@@ -24,6 +30,41 @@ def test_find_coincident_events(create_testing_events_dicts):
     with pytest.raises(RuntimeError, match='The two dictionaries'
                                            ' must have the same keys.'):
         find_coincident_events(df1, df2)
+
+
+def test_merge_overlapping_hfos():
+    onset = [1.5, 2.0]
+    duration = [0.1, 1.0]
+    ch_name = ['A1', 'A1']
+    sfreq = 1000
+
+    # create the annotations dataframe
+    annot_df = create_annotations_df(onset, duration, ch_name)
+    annot_df['sample'] = annot_df['onset'] * sfreq
+
+    # first, test that no merging occurs when it shouldn't
+    # merge overlapping HFOs should result in the exact same
+    # annotations dataframe
+    new_annot_df = merge_overlapping_events(annot_df)
+    pd.testing.assert_frame_equal(annot_df, new_annot_df)
+
+    # now
+    onset = [1.5, 2.0, 1.55]
+    duration = [0.1, 1.0, 0.5]
+    ch_name = ['A1', 'A1', 'A1']
+
+    # create the annotations dataframe
+    annot_df = create_annotations_df(onset, duration, ch_name)
+    annot_df['sample'] = annot_df['onset'] * sfreq
+
+    # nexxt, test that merging occurs when all three events overlap
+    # merge overlapping HFOs should result in the exact same
+    # annotations dataframe
+    new_annot_df = merge_overlapping_events(annot_df)
+    assert new_annot_df.shape == (1, 5)
+    assert new_annot_df['onset'].values == [1.5]
+    assert new_annot_df['duration'].values == [0.55]
+    assert new_annot_df['channels'].values == ['A1']
 
 
 # parameters for testing HFO rates over units of time

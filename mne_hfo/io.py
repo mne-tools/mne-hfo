@@ -9,8 +9,7 @@ import pandas
 import pandas as pd
 from mne_bids import read_raw_bids, get_entities_from_fname, BIDSPath
 
-EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
-ANNOT_COLUMNS = ['onset', 'duration', 'label', 'channels']
+from mne_hfo.config import EVENT_COLUMNS, ANNOT_COLUMNS
 
 
 def _create_events_df(onset: List[float], duration: List[float],

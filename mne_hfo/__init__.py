@@ -7,5 +7,5 @@ from mne_hfo.hodetect import MorphologyDetector, CSDetector
 from mne_hfo.io import (create_events_df, read_annotations,
                         create_annotations_df, events_to_annotations,
                         write_annotations)
-from mne_hfo.utils import match_detections
-from mne_hfo.posthoc import find_coincident_events, compute_chs_hfo_rates
+from mne_hfo.posthoc import (find_coincident_events, compute_chs_hfo_rates, match_detections,
+                             merge_overlapping_events)

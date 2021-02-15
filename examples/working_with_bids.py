@@ -13,13 +13,16 @@ MNE-HFO to detect HFOs. Specifically, we will follow these steps:
 1. Load data via :func:`mne_bids.read_raw_bids`. We will load a sample subject
 from the Fedele dataset [1].
 
-2. Run a few :class:`mne_hfo.base.Detector` instances to detect HFOs
+2. Run a few ``mne_hfo.base.Detector`` instances to detect HFOs
 
 3. Format the detected HFOs as a :class:`pandas.DataFrame`
 
 4. Write to disk according to BEP-021_ and read it in again.
 
 .. _BEP-021: https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#
+
+References
+----------
 .. [1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J.
     Resection of high frequency oscillations predicts seizure outcome in the individual
     patient. Scientific Reports. 2017;7(1):13836.
@@ -76,7 +79,7 @@ raw = read_raw_bids(bids_path)
 ###############################################################################
 # Detect HFOs
 # -----------
-# All detectors inherit from the base class :class:`mne_hfo.base.Detector`,
+# All detectors inherit from the base class ``mne_hfo.base.Detector``,
 # which inherits from the :class:`sklearn.base.BaseEstimator` class.
 # To run any estimator, one instantiates it along with the hyper-parameters,
 # and then calls the ``fit`` function. Afterwards, detected HFOs are available

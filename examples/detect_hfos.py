@@ -3,15 +3,17 @@
 01. Detect HFOs in Simulated Dataset
 ====================================
 
+.. currentmodule:: mne_hfo
+
 MNE-HFO currently depends on the data structures defined by ``MNE-Python``.
-Namely the :func:`mne.io.Raw` object.
+Namely the :py:class:`mne.io.Raw` object.
 
 In this example, we use MNE-HFO to simulate raw data and detect HFOs.
 Specifically, we will follow these steps:
 
 1. Create some simulated data and artificially simulate a few HFOs
 
-2. Run a few :class:`mne_hfo.base.Detector` instances to detect HFOs
+2. Run a few ``mne_hfo.base.Detector`` instances to detect HFOs
 
 3. Format the detected HFOs as a :class:`pandas.DataFrame`
 
@@ -87,7 +89,7 @@ raw.plot()
 ###############################################################################
 # Detect HFOs
 # -----------
-# All detectors inherit from the base class :class:`mne_hfo.base.Detector`,
+# All detectors inherit from the base class ``mne_hfo.base.Detector``,
 # which inherits from the :class:`sklearn.base.BaseEstimator` class.
 # To run any estimator, one instantiates it along with the hyper-parameters,
 # and then calls the ``fit`` function. Afterwards, detected HFOs are available

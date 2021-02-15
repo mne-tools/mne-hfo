@@ -48,7 +48,8 @@ can be installed via pip, or pipenv.
 
     pipenv install mne-hfo
 
-Note: Installation has been tested on MacOSX and Ubuntu.
+Note: Installation has been tested on MacOSX and Ubuntu, but should 
+probably work on Windows too.
 
 Documentation and Usage
 -----------------------

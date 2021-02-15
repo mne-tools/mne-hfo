@@ -85,7 +85,7 @@ def test_metrics_df(end_sec, rate):
     # error will occur without the sample column
     with pytest.raises(RuntimeError, match='Annotations dataframe '
                                            'columns must contain'):
-        compute_chs_hfo_rates(annot_df=annot_df)
+        compute_chs_hfo_rates(annot_df=annot_df, rate=rate)
 
     # now add sample column
     annot_df['sample'] = annot_df['onset'] * sfreq
@@ -102,4 +102,4 @@ def test_metrics_df(end_sec, rate):
 
     # error if specifying channel names are not inside dataframe
     with pytest.raises(ValueError, match=''):
-        compute_chs_hfo_rates(annot_df, ch_names=['A0', 'A1'])
+        compute_chs_hfo_rates(annot_df, rate=rate, ch_names=['A0', 'A1'])

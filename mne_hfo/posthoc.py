@@ -30,8 +30,8 @@ def _to_freq(x, rate: str = 's'):
 
 
 def compute_chs_hfo_rates(annot_df: pd.DataFrame,
+                          rate: str,
                           ch_names: Optional[List[str]] = None,
-                          rate: str = 'h',
                           end_sec: float = None,
                           verbose: bool = True):
     """Compute channel HFO rates from annotations DataFrame.
@@ -44,13 +44,14 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
     ----------
     annot_df : pandas.core.DataFrame
         The DataFrame corresponding to the ``annotations.tsv`` file.
+    rate : str
+        The frequency at which to compute the HFO rate.
+        One of ``s`` (second), ``m`` (minute), ``h`` (hour),
+        ``d`` (day) to compute rate of the dataframe.
     ch_names : list of str | None
         A list of channel names to constrain the rate computation to.
         Default = None will compute rate for all channels present in the
         ``annot_df``.
-    rate : str
-        The frequency at which to compute the HFO rate. Default='h', for
-        every hour.
     end_sec : float | None
         The end time (in seconds) of the dataset that HFOs were computed on.
         If None (default), then will take the last detected HFO as the end
@@ -157,10 +158,10 @@ def _join_times(df: pd.DataFrame) -> pd.DataFrame:
     ----------
     .. [1] https://stackoverflow.com/questions/57804145/combining-rows-with-overlapping-time-periods-in-a-pandas-dataframe  # noqa
     """
-    startdf = pd.DataFrame({    # type: ignore
+    startdf = pd.DataFrame({  # type: ignore
         'time': df['start_timestamp'],  # type: ignore
         'what': 1})  # type: ignore
-    enddf = pd.DataFrame({   # type: ignore
+    enddf = pd.DataFrame({  # type: ignore
         'time': df['end_timestamp'],  # type: ignore
         'what': -1})  # type: ignore
 

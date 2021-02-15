@@ -125,6 +125,7 @@ html_theme_options = {
         ("News", "whats_new"),
         ("Install", "install"),
         ("Tutorial", "tutorial"),
+        ("Use", "use"),
         ("API", "api"),
         ("Contribute!", "contribute")
     ]}

@@ -66,7 +66,7 @@ def test_io_annot_df(test_bids_root):
     pd.testing.assert_frame_equal(annot_df, new_annot_df)
 
     # if derivatives is not in the subdirectory of bids dataset,
-    # then an error will raise if root is not pased in
+    # then an error will raise if root is not passed in
     tempdir = _TempDir()
     out_fname = Path(tempdir) / 'derivatives' / 'sub-01' / annot_path.basename  # noqa
     # save to temporary directory

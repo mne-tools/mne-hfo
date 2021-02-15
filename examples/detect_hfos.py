@@ -78,7 +78,7 @@ data[ev_start: ev_start + len(sim)] += sim * 10
 # set to 'seeg' for the sake of the example
 ch_names = ['A1']
 info = create_info(sfreq=sfreq, ch_names=ch_names, ch_types='seeg')
-raw = RawArray(data=data, info=info)
+raw = RawArray(data=data[np.newaxis, :], info=info)
 
 ###############################################################################
 # Let's plot the data and see what it looks like

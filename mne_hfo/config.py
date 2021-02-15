@@ -1,7 +1,7 @@
 """Configuration values for MNE-HFO."""
 BIDS_VERSION = "1.4.0"
 
-DOI = """n/a"""
+DOI = """10.5281/zenodo.4485036"""
 
 EPHY_ALLOWED_DATATYPES = ['ieeg']
 

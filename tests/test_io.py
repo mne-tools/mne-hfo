@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from mne.utils import _TempDir
 from mne_bids import BIDSPath, read_raw_bids
 
 from mne_hfo import (create_annotations_df, create_events_df,
@@ -59,6 +60,21 @@ def test_io_annot_df(test_bids_root):
 
     # read them back
     annot_df = read_annotations(fname=out_fname, root=test_bids_root)
+
+    # if you fail to pass in root, it should be inferred correctly
+    new_annot_df = read_annotations(fname=out_fname)
+    pd.testing.assert_frame_equal(annot_df, new_annot_df)
+
+    # if derivatives is not in the subdirectory of bids dataset,
+    # then an error will raise if root is not pased in
+    tempdir = _TempDir()
+    out_fname = Path(tempdir) / 'derivatives' / 'sub-01' / annot_path.basename  # noqa
+    # save to temporary directory
+    write_annotations(annot_df, fname=out_fname,
+                      intended_for=bids_path,
+                      root=test_bids_root)
+    with pytest.raises(RuntimeError, match='No raw dataset found'):
+        read_annotations(fname=out_fname)
 
 
 def test_create_events_df():

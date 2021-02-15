@@ -3,11 +3,10 @@
 01. Detect HFOs in Simulated Dataset
 ====================================
 
-MNE-HFO requires strict adherence to the BIDS specification for EEG/iEEG data.
-It currently depends on the data structures defined by ``MNE-Python`` and
-``MNE-BIDS``.
+MNE-HFO currently depends on the data structures defined by ``MNE-Python``.
+Namely the :func:`mne.io.Raw` object.
 
-In this example, we use MNE-HFO to simulate real raw data and detect HFOs.
+In this example, we use MNE-HFO to simulate raw data and detect HFOs.
 Specifically, we will follow these steps:
 
 1. Create some simulated data and artificially simulate a few HFOs
@@ -25,17 +24,13 @@ Specifically, we will follow these steps:
 
 ###############################################################################
 # We are importing everything we need for this example:
-import os.path as op
 
 import numpy as np
 from mne import create_info
 from mne.io import RawArray
-from mne.utils import _TempDir
-from mne_bids import BIDSPath, write_raw_bids
 
 from mne_hfo import (RMSDetector, compute_chs_hfo_rates,
-                     events_to_annotations, write_annotations,
-                     read_annotations)
+                     events_to_annotations)
 from mne_hfo.simulate import simulate_hfo
 
 ###############################################################################
@@ -90,19 +85,6 @@ raw = RawArray(data=data, info=info)
 raw.plot()
 
 ###############################################################################
-# To make dataset BIDS-compliant, we'll write the data to BIDS using
-# ``mne_bids``.
-subject = '01'
-task = 'interictal'
-# raw._filenames.append()
-
-tempdir = _TempDir()
-bids_path = BIDSPath(subject=subject, task=task,
-                     datatype='ieeg',
-                     suffix='ieeg', extension='.vhdr')
-write_raw_bids(raw, bids_path)
-
-###############################################################################
 # Detect HFOs
 # -----------
 # All detectors inherit from the base class :class:`mne_hfo.base.Detector`,
@@ -137,30 +119,9 @@ print(event_df.head())
 
 # convert event df -> annotation df
 annot_df = events_to_annotations(event_df)
-
-# compute HFOs per second
-compute_chs_hfo_rates(annot_df=annot_df, rate='s')
-
-# save event dataframe to disc
-bids_path = BIDSPath(subject=subject, task=task,
-                     suffix='events', extension='.tsv')
-event_fpath = op.join(tempdir, bids_path.basename)
-event_df.to_csv(event_fpath, sep='\t', index=None)
-
-# alternatively save annotation dataframe to disc
-bids_path.update(suffix='annotations')
-fname = op.join(tempdir, bids_path.basename)
-intended_for = raw.filenames[0]
-root = tempdir
-write_annotations(annot_df, fname=fname,
-                  intended_for=intended_for, root=root)
-
 print(annot_df.head())
 
 ###############################################################################
-# Read data back in
-# -----------------
-
-annot_df = read_annotations(fname)
-
-print(annot_df.head())
+# compute HFO rate as HFOs per second
+ch_rates = compute_chs_hfo_rates(annot_df=annot_df, rate='s')
+print(ch_rates)

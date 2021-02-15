@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/style.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -20,8 +20,6 @@
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -55,6 +53,7 @@
                 <li><a href="whats_new.html">News</a></li>
                 <li><a href="install.html">Install</a></li>
                 <li><a href="tutorial.html">Tutorial</a></li>
+                <li><a href="use.html">Use</a></li>
                 <li><a href="#">API</a></li>
                 <li><a href="contribute.html">Contribute!</a></li>
             
@@ -167,7 +166,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.create_annotations_df.html#mne_hfo.io.create_annotations_df" title="mne_hfo.io.create_annotations_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_annotations_df</span></code></a>(onset, duration, ch_name)</p></td>
 <td><p>Create a BIDS-derivative annotations dataframe for HFO events.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations" title="mne_hfo.io.read_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_annotations</span></code></a>(fname, root)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations" title="mne_hfo.io.read_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_annotations</span></code></a>(fname[, root])</p></td>
 <td><p>Read annotations.tsv Derivative file.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">events_to_annotations</span></code></a>(events_df)</p></td>
@@ -219,8 +218,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.match_detections.html#mne_hfo.match_detections" title="mne_hfo.match_detections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_detections</span></code></a>(gs_df, dd_df, bn[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.match_detections.html#mne_hfo.match_detections" title="mne_hfo.match_detections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_detections</span></code></a>(ytrue_df, ypredict_df, bn)</p></td>
 <td><p>Match gold standard detections with detector detections.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_coincident_events</span></code></a>(hfo_dict1, hfo_dict2)</p></td>
+<td><p>Get a dictionary of hfo events that overlap between two sets.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_chs_hfo_rates</span></code></a>(annot_df, rate[, …])</p></td>
+<td><p>Compute channel HFO rates from annotations DataFrame.</p></td>
 </tr>
 </tbody>
 </table>
@@ -247,9 +252,6 @@
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey" title="mne_hfo.utils.threshold_tukey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_tukey</span></code></a>(signal, threshold)</p></td>
 <td><p>Calculate threshold by Tukey method.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.find_coincident_events.html#mne_hfo.utils.find_coincident_events" title="mne_hfo.utils.find_coincident_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_coincident_events</span></code></a>(hfo_dict1, hfo_dict2)</p></td>
-<td><p>Get a dictionary of hfo events that overlap between two sets.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -268,8 +270,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
     </p>
   </div>
 </footer>

@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
@@ -20,8 +20,6 @@
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
@@ -55,6 +53,7 @@
                 <li><a href="../../whats_new.html">News</a></li>
                 <li><a href="../../install.html">Install</a></li>
                 <li><a href="../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../use.html">Use</a></li>
                 <li><a href="../../api.html">API</a></li>
                 <li><a href="../../contribute.html">Contribute!</a></li>
             
@@ -124,6 +123,7 @@
   <h1>Source code for mne_hfo.io</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -131,10 +131,26 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">mne.utils</span> <span class="kn">import</span> <span class="n">run_subprocess</span>
 <span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="n">read_raw_bids</span><span class="p">,</span> <span class="n">get_entities_from_fname</span><span class="p">,</span> <span class="n">BIDSPath</span>
 
-<span class="n">EVENT_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_type&#39;</span><span class="p">]</span>
-<span class="n">ANNOT_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;channels&#39;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">EVENT_COLUMNS</span><span class="p">,</span> <span class="n">ANNOT_COLUMNS</span>
+
+
+<span class="k">def</span> <span class="nf">_bids_validate</span><span class="p">(</span><span class="n">bids_root</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run BIDS validator.&quot;&quot;&quot;</span>
+    <span class="n">vadlidator_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;--config.error=41&#39;</span><span class="p">]</span>
+    <span class="n">exe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;VALIDATOR_EXECUTABLE&#39;</span><span class="p">,</span> <span class="s1">&#39;bids-validator&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span><span class="p">:</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">bids_validator_exe</span> <span class="o">=</span> <span class="p">[</span><span class="n">exe</span><span class="p">,</span> <span class="o">*</span><span class="n">vadlidator_args</span><span class="p">]</span>
+
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">bids_validator_exe</span><span class="p">,</span> <span class="n">bids_root</span><span class="p">]</span>
+    <span class="n">run_subprocess</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_create_events_df</span><span class="p">(</span><span class="n">onset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -223,6 +239,9 @@
     <span class="n">duration</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
+    <span class="n">sfreqs</span> <span class="o">=</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">events_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span>
+    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreqs</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
     <span class="c1"># extract channels for each HFO event</span>
     <span class="n">annotation_label</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">ch_names</span> <span class="o">=</span> <span class="p">[]</span>
@@ -236,6 +255,8 @@
     <span class="c1"># create the annotations dataframe</span>
     <span class="n">annot_df</span> <span class="o">=</span> <span class="n">create_annotations_df</span><span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">,</span>
                                      <span class="n">annotation_label</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sfreq</span><span class="p">)</span>
+    <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">sfreq</span>
     <span class="k">return</span> <span class="n">annot_df</span></div>
 
 
@@ -345,6 +366,13 @@
 <span class="sd">    annot_df : DataFrame</span>
 <span class="sd">        The annotations dataframe according to BIDS-Derivatives [1].</span>
 
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For many post-hoc operations, it will be required to know the sampling</span>
+<span class="sd">    rate of the data. In order to compute that, it is recommended to take</span>
+<span class="sd">    the sampling rate and multiply it with the ``&#39;onset&#39;`` column to get</span>
+<span class="sd">    a new ``&#39;sample&#39;`` column denoting the sample point each HFO occurs at.</span>
+
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] https://bids-specification.readthedocs.io/en/stable/</span>
@@ -382,7 +410,7 @@
                                                   <span class="n">channels</span><span class="p">]),</span>
                             <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">columns</span><span class="o">=</span><span class="n">ANNOT_COLUMNS</span><span class="p">)</span>
-    <span class="n">annot_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
+    <span class="n">annot_df</span> <span class="o">=</span> <span class="n">annot_df</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span>
         <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
         <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
         <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span>
@@ -391,7 +419,7 @@
     <span class="k">return</span> <span class="n">annot_df</span></div>
 
 
-<div class="viewcode-block" id="read_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations">[docs]</a><span class="k">def</span> <span class="nf">read_annotations</span><span class="p">(</span><span class="n">fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> \
+<div class="viewcode-block" id="read_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations">[docs]</a><span class="k">def</span> <span class="nf">read_annotations</span><span class="p">(</span><span class="n">fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
         <span class="o">-&gt;</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Read annotations.tsv Derivative file.</span>
 
@@ -401,9 +429,10 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    fname : str | pathlib.Path</span>
-<span class="sd">        The BIDS filename for the ``*annotations.tsv|json`` files.</span>
-<span class="sd">    root : str | pathlib.Path</span>
-<span class="sd">        The root of the BIDS dataset.</span>
+<span class="sd">        The BIDS file path for the ``*annotations.tsv|json`` files.</span>
+<span class="sd">    root : str | pathlib.Path | None</span>
+<span class="sd">        The root of the BIDS dataset. If None (default), will try</span>
+<span class="sd">        to infer the BIDS root from the ``fname`` argument.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -420,6 +449,18 @@
     <span class="n">tsv_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.tsv&#39;</span><span class="p">)</span>
     <span class="n">json_fname</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fpath</span> <span class="o">=</span> <span class="n">fname</span>
+
+        <span class="k">while</span> <span class="n">fpath</span> <span class="o">!=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;derivatives&#39;</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="c1"># once derivatives is found, then</span>
+        <span class="c1"># BIDS root is its parent</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">parent</span>
+
     <span class="c1"># read the annotations.tsv file</span>
     <span class="n">annot_tsv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tsv_fname</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -430,7 +471,15 @@
     <span class="c1"># extract the sample freq</span>
     <span class="n">raw_rel_fpath</span> <span class="o">=</span> <span class="n">annot_json</span><span class="p">[</span><span class="s1">&#39;IntendedFor&#39;</span><span class="p">]</span>
     <span class="n">entities</span> <span class="o">=</span> <span class="n">get_entities_from_fname</span><span class="p">(</span><span class="n">raw_rel_fpath</span><span class="p">)</span>
-    <span class="n">raw_fpath</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">raw_fpath</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span>
+                         <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;ieeg&#39;</span><span class="p">,</span>
+                         <span class="n">extension</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">raw_rel_fpath</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="p">,</span>
+                         <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_fpath</span><span class="o">.</span><span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;No raw dataset found for </span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Please set &quot;root&quot; kwarg.&#39;</span>
+        <span class="p">)</span>
 
     <span class="c1"># read data</span>
     <span class="n">raw</span> <span class="o">=</span> <span class="n">read_raw_bids</span><span class="p">(</span><span class="n">raw_fpath</span><span class="p">)</span>
@@ -452,7 +501,7 @@
 <span class="sd">        The annotations DataFrame.</span>
 <span class="sd">    fname : str | pathlib.Path</span>
 <span class="sd">        The BIDS filename to write annotations to.</span>
-<span class="sd">    intended_for : str | pathlib.Path</span>
+<span class="sd">    intended_for : str | pathlib.Path | BIDSPath</span>
 <span class="sd">        The ``IntendedFor`` BIDS keyword corresponding to the</span>
 <span class="sd">        ``Raw`` file that the Annotations were created from.</span>
 <span class="sd">    root : str | pathlib.Path</span>
@@ -472,7 +521,11 @@
 
     <span class="c1"># error check that intendeFor exists</span>
     <span class="n">entities</span> <span class="o">=</span> <span class="n">get_entities_from_fname</span><span class="p">(</span><span class="n">intended_for</span><span class="p">)</span>
-    <span class="n">intended_for_path</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">intended_for</span><span class="p">)</span>
+    <span class="c1"># write the correct extension for BrainVision</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;.eeg&#39;</span><span class="p">:</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;.vhdr&#39;</span>
+    <span class="n">intended_for_path</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="o">**</span><span class="n">entities</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">intended_for_path</span><span class="o">.</span><span class="n">fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The intended for raw dataset &#39;</span>
                            <span class="sa">f</span><span class="s1">&#39;does not exist at </span><span class="si">{</span><span class="n">intended_for_path</span><span class="si">}</span><span class="s1">. &#39;</span>
@@ -513,8 +566,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
     </p>
   </div>
 </footer>

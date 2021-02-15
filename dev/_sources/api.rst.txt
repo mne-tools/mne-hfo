@@ -72,7 +72,8 @@ Post-processing HFO Detections
    :toctree: generated/
 
     match_detections
-
+    find_coincident_events
+    compute_chs_hfo_rates
 
 Metrics
 -------
@@ -92,4 +93,3 @@ Metrics
     compute_line_length
     threshold_std
     threshold_tukey
-    find_coincident_events

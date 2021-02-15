@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -20,8 +20,6 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -55,6 +53,7 @@
                 <li><a href="../whats_new.html">News</a></li>
                 <li><a href="../install.html">Install</a></li>
                 <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../use.html">Use</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../contribute.html">Contribute!</a></li>
             
@@ -131,7 +130,7 @@
 <h1>mne_hfo.io.create_annotations_df<a class="headerlink" href="#mne-hfo-io-create-annotations-df" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="mne_hfo.io.create_annotations_df">
-<code class="sig-prename descclassname">mne_hfo.io.</code><code class="sig-name descname">create_annotations_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">onset</span></em>, <em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">ch_name</span></em>, <em class="sig-param"><span class="n">annotation_label</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#create_annotations_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.io.create_annotations_df" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.io.</span></code><code class="sig-name descname"><span class="pre">create_annotations_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ch_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#create_annotations_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.io.create_annotations_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a BIDS-derivative annotations dataframe for HFO events.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -160,6 +159,11 @@ then will be <code class="docutils literal notranslate"><span class="pre">&quot;
 </div></blockquote>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>For many post-hoc operations, it will be required to know the sampling
+rate of the data. In order to compute that, it is recommended to take
+the sampling rate and multiply it with the <code class="docutils literal notranslate"><span class="pre">'onset'</span></code> column to get
+a new <code class="docutils literal notranslate"><span class="pre">'sample'</span></code> column denoting the sample point each HFO occurs at.</p>
 <p class="rubric">References</p>
 <dl class="citation">
 <dt class="label" id="r7ef75920f34d-1"><span class="brackets">1</span></dt>
@@ -191,8 +195,8 @@ then will be <code class="docutils literal notranslate"><span class="pre">&quot;
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
     </p>
   </div>
 </footer>

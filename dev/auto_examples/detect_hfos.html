@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01. Detect HFOs in Simulated Dataset &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          MNE-HFO</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1.dev0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../whats_new.html">News</a></li>
+                <li><a href="../install.html">Install</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../use.html">Use</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../contribute.html">Contribute!</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
+  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
+    v0.1.dev0
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li><a href="https://mne-hfo.readthedocs.io/en/latest/index.html">Development</a></li>
+    <li><a href="https://mne-hfo.readthedocs.io/en/stable/index.html">Stable</a></li>
+    <li><a href="https://mne-hfo.readthedocs.io/en/v0.1/index.html">v0.1</a></li>
+  </ul>
+</div>
+
+
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li><a class="reference internal" href="#">01. Detect HFOs in Simulated Dataset</a><ul>
+<li><a class="reference internal" href="#simulate-the-data">Simulate the data</a></li>
+<li><a class="reference internal" href="#detect-hfos">Detect HFOs</a></li>
+<li><a class="reference internal" href="#convert-hfo-events-to-annotations">Convert HFO events to annotations</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-detect-hfos-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="detect-hfos-in-simulated-dataset">
+<span id="sphx-glr-auto-examples-detect-hfos-py"></span><h1>01. Detect HFOs in Simulated Dataset<a class="headerlink" href="#detect-hfos-in-simulated-dataset" title="Permalink to this headline">¶</a></h1>
+<p>MNE-HFO currently depends on the data structures defined by <code class="docutils literal notranslate"><span class="pre">MNE-Python</span></code>.
+Namely the <a class="reference external" href="https://mne.tools/dev/generated/mne.io.Raw.html#mne.io.Raw" title="(in MNE v0.23.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">mne.io.Raw</span></code></a> object.</p>
+<p>In this example, we use MNE-HFO to simulate raw data and detect HFOs.
+Specifically, we will follow these steps:</p>
+<ol class="arabic simple">
+<li><p>Create some simulated data and artificially simulate a few HFOs</p></li>
+<li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+718.ga9cacd9ef)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Write to disk and read it in again.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Adam Li &lt;adam2392@gmail.com&gt;</span>
+<span class="c1">#</span>
+</pre></div>
+</div>
+<p>We are importing everything we need for this example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mne</span> <span class="kn">import</span> <a href="https://mne.tools/dev/generated/mne.create_info.html#mne.create_info" title="mne.create_info" class="sphx-glr-backref-module-mne sphx-glr-backref-type-py-function"><span class="n">create_info</span></a>
+<span class="kn">from</span> <span class="nn">mne.io</span> <span class="kn">import</span> <a href="https://mne.tools/dev/generated/mne.io.RawArray.html#mne.io.RawArray" title="mne.io.RawArray" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-class"><span class="n">RawArray</span></a>
+
+<span class="kn">from</span> <span class="nn">mne_hfo</span> <span class="kn">import</span> <span class="p">(</span><a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector" title="mne_hfo.RMSDetector" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-class"><span class="n">RMSDetector</span></a><span class="p">,</span> <a href="../generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-function"><span class="n">compute_chs_hfo_rates</span></a><span class="p">,</span>
+                     <span class="n">events_to_annotations</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.simulate</span> <span class="kn">import</span> <a href="../generated/mne_hfo.simulate.simulate_hfo.html#mne_hfo.simulate.simulate_hfo" title="mne_hfo.simulate.simulate_hfo" class="sphx-glr-backref-module-mne_hfo-simulate sphx-glr-backref-type-py-function"><span class="n">simulate_hfo</span></a>
+</pre></div>
+</div>
+<div class="section" id="simulate-the-data">
+<h2>Simulate the data<a class="headerlink" href="#simulate-the-data" title="Permalink to this headline">¶</a></h2>
+<p>First, we need some data to work with. We will use a fake dataset that we
+simulate.</p>
+<p>In this example, we will simulate sinusoidal data that has an artificial
+HFO added at two points with 9 cycles each.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># simulate the testing dataset</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs</span></a> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">,</span> <span class="mf">32.5</span><span class="p">,</span> <span class="mf">67.5</span><span class="p">,</span> <span class="mf">165.0</span><span class="p">,</span>
+         <span class="mf">250.0</span><span class="p">,</span> <span class="mf">425.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">1500.0</span><span class="p">]</span>
+
+<span class="c1"># sampling frequency</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># number of seconds to simulate</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a> <span class="o">*</span> <span class="mi">10</span>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a> <span class="o">=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.zeros.html#numpy.zeros" title="numpy.zeros" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">zeros</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a><span class="p">)</span>
+
+<span class="c1"># generate some sinusoidal data at specified frequencies</span>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.arange.html#numpy.arange" title="numpy.arange" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">arange</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freq</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs</span></a><span class="p">:</span>
+    <span class="c1"># freq_amp = basic_amp / freq</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a> <span class="o">=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">sin</span></a><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">pi</span></a> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freq</span></a> <span class="o">*</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">/</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a><span class="p">)</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a> <span class="o">+=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">y</span></a>
+
+<span class="c1"># We have dummy data now inject 2 HFOs</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freq</span></a> <span class="o">=</span> <span class="mi">250</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">numcycles</span></a> <span class="o">=</span> <span class="mi">9</span>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.simulate.simulate_hfo.html#mne_hfo.simulate.simulate_hfo" title="mne_hfo.simulate.simulate_hfo" class="sphx-glr-backref-module-mne_hfo-simulate sphx-glr-backref-type-py-function"><span class="n">simulate_hfo</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freq</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">numcycles</span></a><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a><span class="p">)]</span> <span class="o">+=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a> <span class="o">*</span> <span class="mi">10</span>
+
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.simulate.simulate_hfo.html#mne_hfo.simulate.simulate_hfo" title="mne_hfo.simulate.simulate_hfo" class="sphx-glr-backref-module-mne_hfo-simulate sphx-glr-backref-type-py-function"><span class="n">simulate_hfo</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freq</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">numcycles</span></a><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a><span class="p">[</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ev_start</span></a> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a><span class="p">)]</span> <span class="o">+=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sim</span></a> <span class="o">*</span> <span class="mi">10</span>
+
+<span class="c1"># convert the data into mne-python</span>
+<span class="c1"># note: the channel names are made up and the channel types are just</span>
+<span class="c1"># set to &#39;seeg&#39; for the sake of the example</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ch_names</span></a> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span>
+<a href="https://mne.tools/dev/generated/mne.Info.html#mne.Info" title="mne.Info" class="sphx-glr-backref-module-mne sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">info</span></a> <span class="o">=</span> <a href="https://mne.tools/dev/generated/mne.create_info.html#mne.create_info" title="mne.create_info" class="sphx-glr-backref-module-mne sphx-glr-backref-type-py-function"><span class="n">create_info</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sfreq</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ch_names</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ch_names</span></a><span class="p">,</span> <span class="n">ch_types</span><span class="o">=</span><span class="s1">&#39;seeg&#39;</span><span class="p">)</span>
+<a href="https://mne.tools/dev/generated/mne.io.RawArray.html#mne.io.RawArray" title="mne.io.RawArray" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">raw</span></a> <span class="o">=</span> <a href="https://mne.tools/dev/generated/mne.io.RawArray.html#mne.io.RawArray" title="mne.io.RawArray" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-class"><span class="n">RawArray</span></a><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a><span class="o">=</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data</span></a><span class="p">[</span><a href="https://numpy.org/devdocs/reference/constants.html#numpy.newaxis" title="numpy.newaxis" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-data"><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span></a><span class="p">,</span> <span class="p">:],</span> <a href="https://mne.tools/dev/generated/mne.Info.html#mne.Info" title="mne.Info" class="sphx-glr-backref-module-mne sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">info</span></a><span class="o">=</span><a href="https://mne.tools/dev/generated/mne.Info.html#mne.Info" title="mne.Info" class="sphx-glr-backref-module-mne sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">info</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Creating RawArray with float64 data, n_channels=1, n_times=20000
+    Range : 0 ... 19999 =      0.000 ...     9.999 secs
+Ready.
+</pre></div>
+</div>
+<p>Let’s plot the data and see what it looks like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://mne.tools/dev/generated/mne.io.RawArray.html#mne.io.RawArray.plot" title="mne.io.RawArray.plot" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-method"><span class="n">raw</span><span class="o">.</span><span class="n">plot</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="detect hfos" class="sphx-glr-single-img" src="../_images/sphx_glr_detect_hfos_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;MNEBrowseFigure size 640x480 with 4 Axes&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="detect-hfos">
+<h2>Detect HFOs<a class="headerlink" href="#detect-hfos" title="Permalink to this headline">¶</a></h2>
+<p>All detectors inherit from the base class <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code>,
+which inherits from the <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.base.BaseEstimator.html#sklearn.base.BaseEstimator" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code></a> class.
+To run any estimator, one instantiates it along with the hyper-parameters,
+and then calls the <code class="docutils literal notranslate"><span class="pre">fit</span></code> function. Afterwards, detected HFOs are available
+in the various data structures. The recommended usage is the DataFrame, which
+is accessible via the <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector.hfo_df</span></code> property.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">kwargs</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># threshold for &quot;significance&quot;</span>
+    <span class="s1">&#39;win_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># window size in samples</span>
+    <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="mf">0.25</span>  <span class="c1"># overlap in percentage relative to the window size</span>
+<span class="p">}</span>
+<a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector" title="mne_hfo.RMSDetector" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">detector</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector" title="mne_hfo.RMSDetector" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-class"><span class="n">RMSDetector</span></a><span class="p">(</span><span class="o">**</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">kwargs</span></a><span class="p">)</span>
+
+<span class="c1"># run detector</span>
+<a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">fit</span></a><span class="p">(</span><span class="n">X</span><span class="o">=</span><a href="https://mne.tools/dev/generated/mne.io.RawArray.html#mne.io.RawArray" title="mne.io.RawArray" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">raw</span></a><span class="p">)</span>
+
+<span class="c1"># get the event dataframe</span>
+<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.hfo_df" title="mne_hfo.RMSDetector.hfo_df" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">hfo_df</span></a>
+<span class="nb">print</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method"><span class="n">event_df</span><span class="o">.</span><span class="n">head</span></a><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:00&lt;?, ?it/s]
+100%|##########| 1/1 [00:00&lt;00:00, 99.64it/s]
+   onset  ...  trial_type
+0    1.0  ...      hfo_A1
+1    7.0  ...      hfo_A1
+
+[2 rows x 4 columns]
+</pre></div>
+</div>
+</div>
+<div class="section" id="convert-hfo-events-to-annotations">
+<h2>Convert HFO events to annotations<a class="headerlink" href="#convert-hfo-events-to-annotations" title="Permalink to this headline">¶</a></h2>
+<p>Detectors output HFO events detected as a DataFrame fashioned after the
+<code class="docutils literal notranslate"><span class="pre">*_events.tsv</span></code> files in BIDS-iEEG. Instead, HFO events are indeed
+Derivatives of the Raw data, that are estimated/detected using mne-hfo.
+The correct way to store them is in terms of an <code class="docutils literal notranslate"><span class="pre">*_annotations.tsv</span></code>,
+according to the BIDS-Derivatives specification.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert event df -&gt; annotation df</span>
+<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annot_df</span></a> <span class="o">=</span> <span class="n">events_to_annotations</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method"><span class="n">annot_df</span><span class="o">.</span><span class="n">head</span></a><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2000.0
+   onset  ...   sample
+0    1.0  ...   2000.0
+1    7.0  ...  14000.0
+
+[2 rows x 5 columns]
+</pre></div>
+</div>
+<p>compute HFO rate as HFOs per second</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/collections.html#collections.defaultdict" title="collections.defaultdict" class="sphx-glr-backref-module-collections sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ch_rates</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-function"><span class="n">compute_chs_hfo_rates</span></a><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annot_df</span></a><span class="o">=</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annot_df</span></a><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://docs.python.org/3/library/collections.html#collections.defaultdict" title="collections.defaultdict" class="sphx-glr-backref-module-collections sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ch_rates</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Beginning timestamp: 2021-02-15 20:01:23.251591+00:00
+Got end timestamp of: 2021-02-15 20:01:30.251591+00:00
+Found HFO rate per s for A1 as 0.2857142857142857
+defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;A1&#39;: 0.2857142857142857})
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.126 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-detect-hfos-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b0a7e07d3abf35bc8e62af473976ade1/detect_hfos.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">detect_hfos.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5c8915be3493689290f84e54f184fd76/detect_hfos.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">detect_hfos.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+    </p>
+  </div>
+</footer>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-37225609-2');
+</script>
+
+  </body>
+</html>

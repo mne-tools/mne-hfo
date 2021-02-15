@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/style.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -20,8 +20,6 @@
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
 <meta charset='utf-8'>
@@ -55,6 +53,7 @@
                 <li><a href="#">News</a></li>
                 <li><a href="install.html">Install</a></li>
                 <li><a href="tutorial.html">Tutorial</a></li>
+                <li><a href="use.html">Use</a></li>
                 <li><a href="api.html">API</a></li>
                 <li><a href="contribute.html">Contribute!</a></li>
             
@@ -161,8 +160,9 @@
 <div class="section" id="enhancements">
 <h4>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.compute_chs_hfo_rates()</span></code></a> to compute HFO rates per unit of time for every channel, by <em class="xref py py-obj">Adam Li</em>) (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/13">#13</a>)</p></li>
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.create_events_df()</span></code></a> to generate a DataFrame of HFO events from <code class="docutils literal notranslate"><span class="pre">Raw</span></code> object, or dictionary of lists of HFO endpoints, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/7">#7</a>)</p></li>
-<li><p>Added <a class="reference internal" href="generated/mne_hfo.utils.find_coincident_events.html#mne_hfo.utils.find_coincident_events" title="mne_hfo.utils.find_coincident_events"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.utils.find_coincident_events()</span></code></a> to compare two dicts that contain event information by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.find_coincident_events()</span></code></a> to compare two dicts that contain event information by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
 <li><p>Added notebook to demo use of detection algorithms by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
 </ul>
 </div>
@@ -202,8 +202,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
     </p>
   </div>
 </footer>

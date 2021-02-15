@@ -4,15 +4,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.utils.find_coincident_events &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.find_coincident_events &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -20,8 +20,6 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -55,6 +53,7 @@
                 <li><a href="../whats_new.html">News</a></li>
                 <li><a href="../install.html">Install</a></li>
                 <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../use.html">Use</a></li>
                 <li><a href="../api.html">API</a></li>
                 <li><a href="../contribute.html">Contribute!</a></li>
             
@@ -117,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.utils.find_coincident_events</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-utils-find-coincident-events">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.find_coincident_events</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.find_coincident_events</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-find-coincident-events">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.find_coincident_events</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -127,11 +126,11 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-utils-find-coincident-events">
-<h1>mne_hfo.utils.find_coincident_events<a class="headerlink" href="#mne-hfo-utils-find-coincident-events" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-find-coincident-events">
+<h1>mne_hfo.find_coincident_events<a class="headerlink" href="#mne-hfo-find-coincident-events" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.utils.find_coincident_events">
-<code class="sig-prename descclassname">mne_hfo.utils.</code><code class="sig-name descname">find_coincident_events</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hfo_dict1</span></em>, <em class="sig-param"><span class="n">hfo_dict2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/utils.html#find_coincident_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mne_hfo.utils.find_coincident_events" title="Permalink to this definition">¶</a></dt>
+<dt id="mne_hfo.find_coincident_events">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">find_coincident_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hfo_dict1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hfo_dict2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/posthoc.html#find_coincident_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.find_coincident_events" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dictionary of hfo events that overlap between two sets.</p>
 <p>Note: Both input dictionaries should come from the same original
 dataset and therefore contain the same keys.</p>
@@ -149,7 +148,7 @@ and end times.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>coincident_hfo_dict</strong> : Dict</p>
+<dd class="field-even"><p><strong>coincident_hfo_dict</strong> : dict</p>
 <blockquote>
 <div><p>Subset of hfo_dict1 containing just the entries that overlap
 with hfo_dict2.</p>
@@ -158,8 +157,8 @@ with hfo_dict2.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-utils-find-coincident-events">
-<span id="sphx-glr-backreferences-mne-hfo-utils-find-coincident-events"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.find_coincident_events</span></code><a class="headerlink" href="#examples-using-mne-hfo-utils-find-coincident-events" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-find-coincident-events">
+<span id="sphx-glr-backreferences-mne-hfo-find-coincident-events"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.find_coincident_events</span></code><a class="headerlink" href="#examples-using-mne-hfo-find-coincident-events" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 
@@ -176,8 +175,8 @@ with hfo_dict2.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-09.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
     </p>
   </div>
 </footer>

@@ -58,6 +58,7 @@ autodoc_typehints = 'signature'
 
 # prevent jupyter notebooks from being run even if empty cell
 # nbsphinx_execute = 'never'
+nbsphinx_allow_errors = True
 
 # -- numpydoc
 # Below is needed to prevent errors

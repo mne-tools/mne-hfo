@@ -64,7 +64,7 @@ jobs:
 #          name: Check links
 #          command: |
 #            pipenv run make -C doc clean
-#            pipenv run make -C doc linkcheck
+#            pipenv run make -C docs linkcheck
 #            pipenv run make -C doc linkcheck-grep
 
       - save_cache:

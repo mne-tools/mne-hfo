@@ -343,6 +343,8 @@ def match_detections(ytrue_df, ypredict_df, bn, freq_name=None,
     """
     Match gold standard detections with detector detections.
 
+    TODO: refactor
+
     Parameters
     ----------
     ytrue_df: pandas.DataFrame

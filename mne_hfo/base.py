@@ -132,8 +132,15 @@ class Detector(BaseEstimator):
         regressors (except for
         :class:`~sklearn.multioutput.MultiOutputRegressor`).
         """
+        # y_true should be an annotations DataFrame actually
+
         # fit and predict
         y_pred = self.fit_predict(X, y)
+
+        # match predictions with reference dataframe
+        # call `match_detections`. This should
+        # return y_true, y_pred, which are just lists of 0s and 1s
+        # representing overlap detection or not
 
         # compute score
         if self.scoring_func == 'f1':

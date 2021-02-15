@@ -97,7 +97,7 @@ release = version
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db',
-                    '.DS_Store', "**.ipynb_checkpoints"]
+                    '.DS_Store', "**.ipynb_checkpoints", 'auto_examples/*.rst']
 
 # HTML options (e.g., theme)
 # see: https://sphinx-bootstrap-theme.readthedocs.io/en/latest/README.html

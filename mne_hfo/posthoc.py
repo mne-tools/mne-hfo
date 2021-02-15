@@ -10,11 +10,12 @@ from mne_hfo.utils import _append_offset_to_df, _check_df
 
 
 def _to_freq(x, rate: str = 's'):
-    """Convert a dataframe to rate.
+    """Convert a groupby DataFrame to rate.
 
     Parameters
     ----------
-    x : pd.DataFrame
+    x : pd.Series
+        The series of the group to compute frequency of occurrence.
     rate : str
         One of ``s`` (second), ``m`` (minute), ``h`` (hour),
         ``d`` (day) to compute rate of the dataframe.

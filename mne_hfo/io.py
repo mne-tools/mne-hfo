@@ -116,7 +116,8 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     duration = events_df['duration'].tolist()
     description = events_df['trial_type'].tolist()
 
-    sfreq = np.unique(events_df['sample'] / events_df['onset'])
+    sfreqs = events_df['sample'] / events_df['onset']
+    sfreq = sfreqs.values[0]
 
     # extract channels for each HFO event
     annotation_label = []
@@ -131,7 +132,8 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     # create the annotations dataframe
     annot_df = create_annotations_df(onset, duration, ch_names,
                                      annotation_label)
-    annot_df['sample'] = annot['onset'] * sfreq
+    print(sfreq)
+    annot_df['sample'] = annot_df['onset'] * sfreq
     return annot_df
 
 

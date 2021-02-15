@@ -23,7 +23,7 @@ from the Fedele dataset [1].
 
 References
 ----------
-.. [1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J.
+[1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J.
     Resection of high frequency oscillations predicts seizure outcome in the individual
     patient. Scientific Reports. 2017;7(1):13836.
     https://www.nature.com/articles/s41598-017-13064-1. doi:10.1038/s41598-017-13064-1
@@ -84,7 +84,7 @@ raw = read_raw_bids(bids_path)
 # To run any estimator, one instantiates it along with the hyper-parameters,
 # and then calls the ``fit`` function. Afterwards, detected HFOs are available
 # in the various data structures. The recommended usage is the DataFrame, which
-# is accessible via the :method:`mne_hfo.base.Detector.hfo_df` property.
+# is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
 
 kwargs = {
     'threshold': 3,  # threshold for "significance"

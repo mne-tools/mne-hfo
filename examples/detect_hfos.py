@@ -94,7 +94,7 @@ raw.plot()
 # To run any estimator, one instantiates it along with the hyper-parameters,
 # and then calls the ``fit`` function. Afterwards, detected HFOs are available
 # in the various data structures. The recommended usage is the DataFrame, which
-# is accessible via the :method:`mne_hfo.base.Detector.hfo_df` property.
+# is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
 
 kwargs = {
     'threshold': 3,  # threshold for "significance"

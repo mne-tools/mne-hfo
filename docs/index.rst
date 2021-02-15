@@ -5,7 +5,7 @@
 Overview of mne-hfo_
 ====================
 
-.. _mne-hfo: https://graspy.neurodata.io
+.. _mne-hfo: https://readthedocs.org/projects/mne-hfo/
 
 mne-hfo is a Python package for analysis of iEEG data for HFO events.
 

@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 from pathlib import Path
 from typing import List, Dict, Union, Optional
 
@@ -7,10 +8,26 @@ import mne
 import numpy as np
 import pandas
 import pandas as pd
+from mne.utils import run_subprocess
 from mne_bids import read_raw_bids, get_entities_from_fname, BIDSPath
 
-EVENT_COLUMNS = ['onset', 'duration', 'sample', 'trial_type']
-ANNOT_COLUMNS = ['onset', 'duration', 'label', 'channels']
+from mne_hfo.config import EVENT_COLUMNS, ANNOT_COLUMNS
+
+
+def _bids_validate(bids_root):
+    """Run BIDS validator."""
+    vadlidator_args = ['--config.error=41']
+    exe = os.getenv('VALIDATOR_EXECUTABLE', 'bids-validator')
+
+    if platform.system() == 'Windows':
+        shell = True
+    else:
+        shell = False
+
+    bids_validator_exe = [exe, *vadlidator_args]
+
+    cmd = [*bids_validator_exe, bids_root]
+    run_subprocess(cmd, shell=shell)
 
 
 def _create_events_df(onset: List[float], duration: List[float],
@@ -99,6 +116,9 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     duration = events_df['duration'].tolist()
     description = events_df['trial_type'].tolist()
 
+    sfreqs = events_df['sample'] / events_df['onset']
+    sfreq = sfreqs.values[0]
+
     # extract channels for each HFO event
     annotation_label = []
     ch_names = []
@@ -112,6 +132,8 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     # create the annotations dataframe
     annot_df = create_annotations_df(onset, duration, ch_names,
                                      annotation_label)
+    print(sfreq)
+    annot_df['sample'] = annot_df['onset'] * sfreq
     return annot_df
 
 
@@ -221,6 +243,13 @@ def create_annotations_df(onset: List[float], duration: List[float],
     annot_df : DataFrame
         The annotations dataframe according to BIDS-Derivatives [1].
 
+    Notes
+    -----
+    For many post-hoc operations, it will be required to know the sampling
+    rate of the data. In order to compute that, it is recommended to take
+    the sampling rate and multiply it with the ``'onset'`` column to get
+    a new ``'sample'`` column denoting the sample point each HFO occurs at.
+
     References
     ----------
     .. [1] https://bids-specification.readthedocs.io/en/stable/
@@ -258,7 +287,7 @@ def create_annotations_df(onset: List[float], duration: List[float],
                                                   channels]),
                             index=None,
                             columns=ANNOT_COLUMNS)
-    annot_df.astype({
+    annot_df = annot_df.astype({
         'onset': 'float64',
         'duration': 'float64',
         'label': 'str',
@@ -267,7 +296,7 @@ def create_annotations_df(onset: List[float], duration: List[float],
     return annot_df
 
 
-def read_annotations(fname: Union[str, Path], root: Path) \
+def read_annotations(fname: Union[str, Path], root: Path = None) \
         -> pandas.core.frame.DataFrame:
     """Read annotations.tsv Derivative file.
 
@@ -277,9 +306,10 @@ def read_annotations(fname: Union[str, Path], root: Path) \
     Parameters
     ----------
     fname : str | pathlib.Path
-        The BIDS filename for the ``*annotations.tsv|json`` files.
-    root : str | pathlib.Path
-        The root of the BIDS dataset.
+        The BIDS file path for the ``*annotations.tsv|json`` files.
+    root : str | pathlib.Path | None
+        The root of the BIDS dataset. If None (default), will try
+        to infer the BIDS root from the ``fname`` argument.
 
     Returns
     -------
@@ -296,6 +326,18 @@ def read_annotations(fname: Union[str, Path], root: Path) \
     tsv_fname = fname.with_suffix('.tsv')
     json_fname = fname.with_suffix('.json')
 
+    if root is None:
+        fpath = fname
+
+        while fpath != fpath.root:
+            if fpath.name == 'derivatives':
+                break
+            fpath = fpath.parent
+
+        # once derivatives is found, then
+        # BIDS root is its parent
+        root = fpath.parent
+
     # read the annotations.tsv file
     annot_tsv = pd.read_csv(tsv_fname, delimiter='\t')
 
@@ -306,7 +348,15 @@ def read_annotations(fname: Union[str, Path], root: Path) \
     # extract the sample freq
     raw_rel_fpath = annot_json['IntendedFor']
     entities = get_entities_from_fname(raw_rel_fpath)
-    raw_fpath = BIDSPath(**entities, root=root)
+    raw_fpath = BIDSPath(**entities,
+                         datatype='ieeg',
+                         extension=Path(raw_rel_fpath).suffix,
+                         root=root)
+    if not raw_fpath.fpath.exists():
+        raise RuntimeError(
+            f'No raw dataset found for {fpath}. '
+            f'Please set "root" kwarg.'
+        )
 
     # read data
     raw = read_raw_bids(raw_fpath)
@@ -328,7 +378,7 @@ def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
         The annotations DataFrame.
     fname : str | pathlib.Path
         The BIDS filename to write annotations to.
-    intended_for : str | pathlib.Path
+    intended_for : str | pathlib.Path | BIDSPath
         The ``IntendedFor`` BIDS keyword corresponding to the
         ``Raw`` file that the Annotations were created from.
     root : str | pathlib.Path
@@ -348,7 +398,11 @@ def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
 
     # error check that intendeFor exists
     entities = get_entities_from_fname(intended_for)
-    intended_for_path = BIDSPath(**entities, root=root)
+    _, ext = os.path.splitext(intended_for)
+    # write the correct extension for BrainVision
+    if ext == '.eeg':
+        ext = '.vhdr'
+    intended_for_path = BIDSPath(**entities, extension=ext, root=root)
     if not intended_for_path.fpath.exists():
         raise RuntimeError(f'The intended for raw dataset '
                            f'does not exist at {intended_for_path}. '

@@ -1,0 +1,11 @@
+{
+    "Description": "HFO annotated events detected using mne-hfo algorithms.",
+    "IntendedFor": "sub-01_ses-interictalsleep_run-01_ieeg.vhdr",
+    "Author": "mne-hfo",
+    "LabelDescription": {
+        "hfo_<ch_name>": "Generic HFO detected at channel name.",
+        "ripple_<ch_name>": "Ripple HFO detected at channel.",
+        "fastripple_<ch_name>": "Fast ripple HFO detected at channel",
+        "frandr_<ch_name>": "Fast ripple and ripple HFOs co-occurrence at channel"
+    }
+}

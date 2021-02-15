@@ -64,14 +64,8 @@ jobs:
 #          name: Check links
 #          command: |
 #            pipenv run make -C doc clean
-#            pipenv run make -C doc linkcheck
+#            pipenv run make -C docs linkcheck
 #            pipenv run make -C doc linkcheck-grep
-
-      # Store the data cache
-#      - save_cache:
-#          key: data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
-#          paths:
-#            - ~/mne_data
 
       - save_cache:
           key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}

@@ -207,6 +207,11 @@ class Detector(BaseEstimator):
         """Return list of HFO start/end points for each channel."""
         return [vals for vals in self.chs_hfos_dict.values()]
 
+    @property
+    def hfo_df(self):
+        """Return HFO detections as a dataframe."""
+        return self.df_
+
     def predict(self, X):
         """Scikit-learn override predict function.
 
@@ -219,7 +224,7 @@ class Detector(BaseEstimator):
     def _create_event_df(self, chs_hfos_list, hfo_name):
         event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
                                     event_name=hfo_name)
-        self.df = event_df
+        self.df_ = event_df
 
     def fit(self, X, y=None):
         """

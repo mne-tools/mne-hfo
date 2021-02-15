@@ -48,7 +48,8 @@ can be installed via pip, or pipenv.
 
     pipenv install mne-hfo
 
-Note: Installation has been tested on MacOSX and Ubuntu.
+Note: Installation has been tested on MacOSX and Ubuntu, but should 
+probably work on Windows too.
 
 Documentation and Usage
 -----------------------
@@ -96,6 +97,8 @@ Citing
 ------
 For testing and demo purposes, we use the dataset in [1]. If you use the demo/testing dataset, please cite that paper.
 If you use ``mne-hfo`` itself in your research, please cite the paper (TBD).
+
+    Adam Li. (2021, February 1). MNE-HFO: An open-source Python implementation of HFO detection algorithms (Version 0.0.1). Zenodo. http://doi.org/10.5281/zenodo.4485036
 
 References
 ----------

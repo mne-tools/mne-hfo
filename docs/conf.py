@@ -58,6 +58,7 @@ autodoc_typehints = 'signature'
 
 # prevent jupyter notebooks from being run even if empty cell
 # nbsphinx_execute = 'never'
+nbsphinx_allow_errors = True
 
 # -- numpydoc
 # Below is needed to prevent errors
@@ -97,7 +98,7 @@ release = version
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db',
-                    '.DS_Store', "**.ipynb_checkpoints"]
+                    '.DS_Store', "**.ipynb_checkpoints", 'auto_examples/*.rst']
 
 # HTML options (e.g., theme)
 # see: https://sphinx-bootstrap-theme.readthedocs.io/en/latest/README.html
@@ -125,6 +126,7 @@ html_theme_options = {
         ("News", "whats_new"),
         ("Install", "install"),
         ("Tutorial", "tutorial"),
+        ("Use", "use"),
         ("API", "api"),
         ("Contribute!", "contribute")
     ]}

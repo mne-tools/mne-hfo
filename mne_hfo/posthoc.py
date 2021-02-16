@@ -360,25 +360,28 @@ def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1.
         ypredict_df = ypredict_df[ypredict_df['trial_type'].str.contains(label)]
 
     if method.lower() == "match-true":
-        return _match_detections_true()
+        return _match_detections_overlap(ytrue_df, ypredict_df, dc, samp_margin, ('true_index', 'pred_index'))
     elif method.lower() == "match-pred":
-        return _match_detections_pred()
+        return _match_detections_overlap(ypredict_df, ytrue_df, dc, samp_margin, ('pred_index', 'true_index'))
+    elif method.lower() == "match-total":
+        true_match = _match_detections_overlap(ytrue_df, ypredict_df, dc, samp_margin, ('true_index', 'pred_index'))
+        pred_match = _match_detections_overlap(ypredict_df, ytrue_df, dc, samp_margin, ('pred_index', 'true_index'))
+        return pd.concat([true_match, pred_match]).drop_duplicates().reset_index(drop=True)
     else:
-        raise NotImplementedError(f"Method must be either match-true or match-pred");
+        raise NotImplementedError(f"Method must be one of match-true, match-pred, or match-total")
         # Iterate over true labels (gold standard)
 
-
-def _match_detections_true(ytrue_df, ypredict_df, dc, samp_margin):
-    # We want to create another dataframe of matched true indices and predicted indices
-    match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
+def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
+    # We want to create another dataframe of matched gold standard indices and checked indices
+    match_df = pd.DataFrame(columns=cols)
     match_df_idx = 0
-    for row_gs in ytrue_df.iterrows():
+    for row_gs in gs_df.iterrows():
         matched_idcs = []
         # [onset, offset]
         gs = [row_gs[1][dc[0]], row_gs[1][dc[1]]]
-        for row_pred in ypredict_df[(ypredict_df[dc[0]] < gs[0] +
+        for row_pred in check_df[(check_df[dc[0]] < gs[0] +
                                      samp_margin) &
-                                    (ypredict_df[dc[0]] > gs[0] -
+                                    (check_df[dc[0]] > gs[0] -
                                      samp_margin)].iterrows():
             # [onset, offet]
             pred = [row_pred[1][dc[0]], row_pred[1][dc[1]]]
@@ -393,42 +396,9 @@ def _match_detections_true(ytrue_df, ypredict_df, dc, samp_margin):
             match_df.loc[match_df_idx] = [row_gs[0], matched_idcs[0]]
         else:
             dd_idx = (
-                abs(ypredict_df.loc[matched_idcs, dc[0]] -
+                abs(check_df.loc[matched_idcs, dc[0]] -
                     row_gs[1][dc[0]])).idxmin()
             match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
-
-        match_df_idx += 1
-    return match_df
-
-
-def _match_detections_pred(ytrue_df, ypredict_df, dc, samp_margin):
-    # We want to create another dataframe of matched true indices and predicted indices
-    match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
-    match_df_idx = 0
-    for row_pred in ypredict_df.iterrows():
-        matched_idcs = []
-        # [onset, offset]
-        pred = [row_pred[1][dc[0]], row_pred[1][dc[1]]]
-        for row_gs in ytrue_df[(ytrue_df[dc[0]] < pred[0] +
-                                     samp_margin) &
-                                    (ytrue_df[dc[0]] > pred[0] -
-                                     samp_margin)].iterrows():
-            # [onset, offet]
-            gs = [row_gs[1][dc[0]], row_gs[1][dc[1]]]
-            # Check if the events overlap, and append the index of the prediction df
-            if check_detection_overlap(pred, gs):
-                matched_idcs.append(row_gs[0])
-                # No overlap found for this gold standard row
-        if len(matched_idcs) == 0:
-            match_df.loc[match_df_idx] = [row_pred[0], None]
-        # One overlap found for this gold standard row
-        elif len(matched_idcs) == 1:
-            match_df.loc[match_df_idx] = [row_pred[0], matched_idcs[0]]
-        else:
-            gs_idx = (
-                abs(ytrue_df.loc[matched_idcs, dc[0]] -
-                    row_pred[1][dc[0]])).idxmin()
-            match_df.loc[match_df_idx] = [row_pred[0], gs_idx]
 
         match_df_idx += 1
     return match_df

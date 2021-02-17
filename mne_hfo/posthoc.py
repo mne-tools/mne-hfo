@@ -340,13 +340,13 @@ def _find_overlapping_events(list1, list2):
 
 def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1., method="match-true"):
     # Calculate frq from dataframe, then matching window
-    frq = ytrue_df['sample'].iloc[0] / ytrue_df['onset'].iloc[0]
+    frq = ytrue_df['sample'].iloc[-1] / ytrue_df['onset'].iloc[-1]
     samp_margin = frq * sec_margin
 
     # Ensure the desired columns are numeric
     dc = ["onset", "duration"]
-    ytrue_df[dc] = ytrue_df[dc].apply(pd.to_numeric())
-    ypredict_df[dc] = ypredict_df[dc].apply(pd.to_numeric())
+    ytrue_df[dc] = ytrue_df[dc].apply(pd.to_numeric)
+    ypredict_df[dc] = ypredict_df[dc].apply(pd.to_numeric)
 
     # Append offset column to both dfs
     ytrue_df = _append_offset_to_df(ytrue_df, dc)
@@ -401,4 +401,5 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
             match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
 
         match_df_idx += 1
+    match_df = match_df.apply(pd.to_numeric, errors="coerce", downcast="float")
     return match_df

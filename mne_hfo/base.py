@@ -7,6 +7,7 @@ from sklearn.metrics import r2_score, f1_score
 from sklearn.utils.validation import check_is_fitted
 
 from mne_hfo.io import create_events_df
+from mne_hfo.scores import accuracy_true, accuracy_pred
 from mne_hfo.utils import (threshold_std, compute_rms,
                            compute_line_length)
 
@@ -93,45 +94,6 @@ class Detector(BaseEstimator):
         return self.fit(X).predict(X)
 
     def score(self, X, y, sample_weight=None):
-        r"""Return the score of the HFO prediction.
-
-        The coefficient :math:`R^2` is defined as :math:`(1 - \\frac{u}{v})`,
-        where :math:`u` is the residual sum of squares ``((y_true - y_pred)
-        ** 2).sum()`` and :math:`v` is the total sum of squares ``((y_true -
-        y_true.mean()) ** 2).sum()``. The best possible score is 1.0 and it
-        can be negative (because the model can be arbitrarily worse). A
-        constant model that always predicts the expected value of `y`,
-        disregarding the input features, would get a :math:`R^2` score of
-        0.0.
-
-        Parameters
-        ----------
-        X : array-like of shape (n_samples, n_features)
-            Test samples. For some estimators this may be a precomputed
-            kernel matrix or a list of generic objects instead with shape
-            ``(n_samples, n_samples_fitted)``, where ``n_samples_fitted``
-            is the number of samples used in the fitting for the estimator.
-
-        y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-            True values for `X`.
-
-        sample_weight : array-like of shape (n_samples,), default=None
-            Sample weights.
-
-        Returns
-        -------
-        score : float
-            :math:`R^2` of ``self.predict(X)`` wrt. `y`.
-
-        Notes
-        -----
-        The :math:`R^2` score used when calling ``score`` on a regressor uses
-        ``multioutput='uniform_average'`` from version 0.23 to keep consistent
-        with default value of :func:`~sklearn.metrics.r2_score`.
-        This influences the ``score`` method of all the multioutput
-        regressors (except for
-        :class:`~sklearn.multioutput.MultiOutputRegressor`).
-        """
         # y_true should be an annotations DataFrame actually
 
         # fit and predict
@@ -147,6 +109,10 @@ class Detector(BaseEstimator):
             score = f1_score(y, y_pred, sample_weight=sample_weight)
         elif self.scoring_func == 'r2':
             score = r2_score(y, y_pred, sample_weight=sample_weight)
+        elif self.scoring_func == 'accuracy_true':
+            score = accuracy_true(y, y_pred, sample_weight=sample_weight)
+        elif self.scoring_func == 'accuracy_pred':
+            score = accuracy_pred(y, y_pred, sample_weight=sample_weight)
         return score
 
     def _check_input_raw(self, X, y):

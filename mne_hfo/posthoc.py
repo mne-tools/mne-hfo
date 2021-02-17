@@ -339,7 +339,32 @@ def _find_overlapping_events(list1, list2):
 
 
 def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1., method="match-true"):
-    # Calculate frq from dataframe, then matching window
+    """
+    Match overlapping detections from ground truth and predicted datasets.
+
+    Parameters
+    ----------
+    ytrue_df : pd.DataFrame
+        Annotation Dataframe of true labels
+    ypredict_df : pd.DataFrame
+        Annotation Dataframe of predicted labels
+    label : str
+        Specific label to search for. i.e. only match on fast_ripple events.
+    sec_margin : float
+        Number of seconds to consider a valid checking window
+    method : str
+        One of ["match-true", "match-pred", or "match-total"]. If "match-true", will return a dataframe of all true
+        indices and matching predicted indices if they exist. If "match-pred", will return a dataframe of all predicted
+        indices and matching true indices if they exist. If "match-total", will return the concatenation of the two
+
+    Returns
+    -------
+    pd.DataFrame
+        dataframe with columns "true_index" and "pred_index"
+
+    """
+    # Calculate frq from dataframe, then matching window. TODO: This could break, but I'm not sure how to calculate
+    #  frq if it does
     frq = ytrue_df['sample'].iloc[-1] / ytrue_df['onset'].iloc[-1]
     samp_margin = frq * sec_margin
 

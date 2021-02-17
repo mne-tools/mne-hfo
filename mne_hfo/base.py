@@ -94,6 +94,22 @@ class Detector(BaseEstimator):
         return self.fit(X).predict(X)
 
     def score(self, X, y, sample_weight=None):
+        """
+        Return the score of the HFO prediction.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Channel data to detect HFOs on.
+        y : pd.DataFrame
+            Annotation Dataframe of true labels
+        sample_weight :
+
+        Returns
+        -------
+        float
+
+        """
         # y_true should be an annotations DataFrame actually
 
         # fit and predict
@@ -105,14 +121,16 @@ class Detector(BaseEstimator):
         # representing overlap detection or not
 
         # compute score
-        if self.scoring_func == 'f1':
-            score = f1_score(y, y_pred, sample_weight=sample_weight)
-        elif self.scoring_func == 'r2':
-            score = r2_score(y, y_pred, sample_weight=sample_weight)
-        elif self.scoring_func == 'accuracy_true':
-            score = accuracy_true(y, y_pred, sample_weight=sample_weight)
-        elif self.scoring_func == 'accuracy_pred':
-            score = accuracy_pred(y, y_pred, sample_weight=sample_weight)
+        if self.scoring_func == "accuracy":
+            score = accuracy(y, y_pred)
+        elif self.scoring_func == "fnr":
+            score = false_negative_rate(y, y_pred)
+        elif self.scoring_func == "tpr":
+            score = true_positive_rate(y, y_pred)
+        elif self.scoring_func == "precision":
+            score = precision(y, y_pred)
+        elif self.scoring_func == "fdr":
+            score = false_discovery_rate(y, y_pred)
         return score
 
     def _check_input_raw(self, X, y):

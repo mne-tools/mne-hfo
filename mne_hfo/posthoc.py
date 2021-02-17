@@ -401,5 +401,6 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
             match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
 
         match_df_idx += 1
-    match_df = match_df.apply(pd.to_numeric, errors="coerce", downcast="float")
+    if not match_df.empty:
+        match_df = match_df.apply(pd.to_numeric, errors="coerce", downcast="float")
     return match_df

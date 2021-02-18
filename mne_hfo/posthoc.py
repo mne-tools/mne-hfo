@@ -362,6 +362,31 @@ def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1.
     pd.DataFrame
         dataframe with columns "true_index" and "pred_index"
 
+
+    Examples
+    --------
+    >>> # Assume annot_df1 is ground truth and annot_df2 is prediction
+    >>> onset1 = [0.0, 7.3, 12.6, 22.342, 59.9]
+    >>> duration1 = [6.73, 1.2,  2.27, 8.758, 21.3]
+    >>> ch_name = ['A1', 'A1', 'A1', 'A1', 'A1']
+    >>> sfreq = 1000
+    >>> annot_df1 = create_annotations_df(onset1, duration1, ch_name)
+    >>> annot_df1['sample'] = annot_df1['onset'] * sfreq
+    >>> onset2 = [0.2, 12.3, 45.8, 98.3]
+    >>> duration2 = [6.73, 2.82, 19.8, 3.15]
+    >>> ch_name = ['A1', 'A1', 'A1', 'A1']
+    >>> annot_df2 = create_annotations_df(onset2, duration2, ch_name)
+    >>> annot_df2['sample'] = annot_df2['onset'] * sfreq
+    >>> match_true_df = match_detections(annot_df1, annot_df2, method="match-true")
+    >>> # match_true_df is a dataFrame with the following data:
+    >>> # {"true_index" : [0 1 2 3 4 5], "pred_index": [0 None 1 None 2] }
+    >>> match_pred_df = match_detections(annot_df1, annot_df2, method="match-pred")
+    >>> # match_pred_df is a dataFrame with the following data:
+    >>> # {"true_index" : [0 2 4 None], "pred_index": [0 1 2 3] }
+    >>> match_total_df = match_detections(annot_df1, annot_df2, method="match-total")
+    >>> # match_total_df is a dataFrame with the following data:
+    >>> # {"true_index" : [0 1 2 3 4 None], "pred_index": [0 None 1 None 2 3] }
+
     """
     # Calculate frq from dataframe, then matching window. TODO: This could break, but I'm not sure how to calculate
     #  frq if it does

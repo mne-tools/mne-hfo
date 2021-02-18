@@ -158,7 +158,7 @@ def _calculate_match_stats(match_df):
 
     """
     y_true_bool, y_pred_bool = _convert_matchdf_to_pred_array(match_df)
-    label_pairs = zip(y_true_bool, y_pred_bool)
+    label_pairs = tuple(zip(y_true_bool, y_pred_bool))
     tp = np.sum([(t and p) for t, p in label_pairs])
     fp = np.sum([(p and not t) for t, p in label_pairs])
     fn = np.sum([(t and not p) for t, p in label_pairs])

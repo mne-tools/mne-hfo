@@ -3,11 +3,10 @@ from typing import Union
 import mne
 import numpy as np
 from sklearn.base import BaseEstimator
-from sklearn.metrics import r2_score, f1_score
 from sklearn.utils.validation import check_is_fitted
 
 from mne_hfo.io import create_events_df
-from mne_hfo.scores import accuracy_true, accuracy_pred
+from mne_hfo.scores import accuracy, false_negative_rate, true_positive_rate, precision, false_discovery_rate
 from mne_hfo.utils import (threshold_std, compute_rms,
                            compute_line_length)
 

@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 
 from mne_hfo import create_annotations_df
-from mne_hfo.scores import accuracy_pred, accuracy_true
+from mne_hfo.scores import accuracy, true_positive_rate, false_negative_rate, false_discovery_rate, precision
 
 
 def test_match_detections():
@@ -21,13 +21,20 @@ def test_match_detections():
     annot_df2 = create_annotations_df(onset2, duration2, ch_name)
     annot_df2['sample'] = annot_df2['onset'] * sfreq
 
-    # In the above example, we have correctly predicted 3/5 of the hfos from df1, which is ground truth. We expect this
-    # accuracy to be 0.6
+    # In the above example, we have 3 true positives, 2 false negatives, and 1 false positive
+    # Therefore, we expect accuracy = 0.5, tpr = 0.6, fnr = 0.4, fdr = 0.25, and precision = 0.75
 
-    score_true = accuracy_true(annot_df1, annot_df2, sample_weight=None)
-    assert score_true == 0.6
+    acc = accuracy(annot_df1, annot_df2)
+    assert acc == 0.5
 
-    # Also, 3/4 of the predicted hfos correlate to actual hfos. So we expect this accuracy to be 0.75
+    tpr = true_positive_rate(annot_df1, annot_df2)
+    assert tpr == 0.6
 
-    score_true = accuracy_pred(annot_df1, annot_df2, sample_weight=None)
-    assert score_true == 0.75
+    fnr = false_negative_rate(annot_df1, annot_df2)
+    assert fnr == 0.4
+
+    fdr = false_discovery_rate(annot_df1, annot_df2)
+    assert fdr == 0.25
+
+    prec = precision(annot_df1, annot_df2)
+    assert prec == 0.75

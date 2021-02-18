@@ -6,7 +6,8 @@ from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 
 from mne_hfo.io import create_events_df
-from mne_hfo.scores import accuracy, false_negative_rate, true_positive_rate, precision, false_discovery_rate
+from mne_hfo.scores import accuracy, false_negative_rate, \
+    true_positive_rate, precision, false_discovery_rate
 from mne_hfo.utils import (threshold_std, compute_rms,
                            compute_line_length)
 

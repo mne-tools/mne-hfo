@@ -44,6 +44,7 @@ def precision(y, y_pred):
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return tp / (tp + fp)
 
+
 def false_negative_rate(y, y_pred):
     """
     Calculate false negative rate as: fnr = fn / (fn + tp).
@@ -68,7 +69,7 @@ def false_negative_rate(y, y_pred):
 
 def false_discovery_rate(y, y_pred):
     """
-    Calculate false positive rate as: fdr = fp / (fp + tp)
+    Calculate false positive rate as: fdr = fp / (fp + tp).
 
     Parameters
     ----------
@@ -92,7 +93,8 @@ def accuracy(y, y_pred):
     """
     Calculate accuracy as: accuracy = tp / (tp + fp + fn).
 
-    Follows usual formula for accuracy: accuracy = (tp + tn) / (tp + tn + fp + fn)
+    Follows usual formula for accuracy:
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
     but assumes tn = 0.
 
     Parameters
@@ -115,7 +117,8 @@ def accuracy(y, y_pred):
 
 def _convert_matchdf_to_pred_array(match_df):
     """
-    Convert the match df structure to two lists of positives (True) and negatives (False)
+    Convert the match df structure to two lists of positives
+    (True) and negatives (False).
 
     Parameters
     ----------
@@ -127,7 +130,8 @@ def _convert_matchdf_to_pred_array(match_df):
     y_true_bool: list
         Boolean list for true labels. True if an index is present, False if Nan
     y_pred_bool: list
-        Boolean list for predicted labels. True if an index is present, False if Nan
+        Boolean list for predicted labels. True if an index is
+        present, False if Nan
     """
     y_true_series = match_df['true_index']
     y_true_bool = y_true_series.notna().to_list()

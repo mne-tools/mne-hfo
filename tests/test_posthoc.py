@@ -33,8 +33,8 @@ def test_find_coincident_events():
 
 
 def test_match_detections():
-    # First create two annotation dataframes with expected columns. We will consider df1 to be ground truth and df2 to
-    # be the prediction
+    # First create two annotation dataframes with expected columns.
+    # We will consider df1 to be ground truth and df2 to be the prediction
     onset1 = [0.0, 12.6, 22.342, 59.9]
     duration1 = [6.73, 2.27, 8.758, 21.3]
     ch_name = ['A1', 'A1', 'A1', 'A1']
@@ -56,8 +56,10 @@ def test_match_detections():
         "pred_index": [0, 1, None, 2]
     }
     expected_df_true = pd.DataFrame(expected_dict_true)
-    expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce", downcast="float")
-    output_df_true = match_detections(annot_df1, annot_df2, method="match-true")
+    expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce",
+                                              downcast="float")
+    output_df_true = match_detections(annot_df1, annot_df2,
+                                      method="match-true")
     pd.testing.assert_frame_equal(expected_df_true, output_df_true)
 
     # Now lets check what predicted labels correspond to true labels
@@ -66,18 +68,23 @@ def test_match_detections():
         "true_index": [0, 1, 3, None]
     }
     expected_df_pred = pd.DataFrame(expected_dict_pred)
-    expected_df_pred = expected_df_pred.apply(pd.to_numeric, errors="coerce", downcast="float")
-    output_df_pred = match_detections(annot_df1, annot_df2, method="match-pred")
+    expected_df_pred = expected_df_pred.apply(pd.to_numeric, errors="coerce",
+                                              downcast="float")
+    output_df_pred = match_detections(annot_df1, annot_df2,
+                                      method="match-pred")
     pd.testing.assert_frame_equal(expected_df_pred, output_df_pred)
 
-    # Now we can check the total output that will make it easier to compute other stats
+    # Now we can check the total output that will make it easier
+    # to compute other stats
     expected_dict_total = {
         "true_index": [0, 1, 2, 3, None],
         "pred_index": [0, 1, None, 2, 3]
     }
     expected_df_total = pd.DataFrame(expected_dict_total)
-    expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce", downcast="float")
-    output_df_total = match_detections(annot_df1, annot_df2, method="match-total")
+    expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce",
+                                                downcast="float")
+    output_df_total = match_detections(annot_df1, annot_df2,
+                                       method="match-total")
     pd.testing.assert_frame_equal(expected_df_total, output_df_total)
 
     # Error should be thrown for any other passed methods
@@ -86,8 +93,8 @@ def test_match_detections():
 
 
 def test_match_detections_empty():
-    # First create two annotation dataframes with expected columns. We will consider df1 to be ground truth and df2 to
-    # be the prediction
+    # First create two annotation dataframes with expected columns. We will
+    # consider df1 to be ground truth and df2 to be the prediction
     onset1 = [0.0, 12.6, 22.342, 59.9]
     duration1 = [6.73, 2.27, 8.758, 21.3]
     ch_name = ['A1', 'A1', 'A1', 'A1']
@@ -106,23 +113,31 @@ def test_match_detections_empty():
         "pred_index": [None, None, None, None]
     }
     expected_df_true = pd.DataFrame(expected_dict_true)
-    expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce", downcast="float")
-    output_df_true = match_detections(annot_df1, annot_df2, method="match-true")
+    expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce",
+                                              downcast="float")
+    output_df_true = match_detections(annot_df1, annot_df2,
+                                      method="match-true")
     pd.testing.assert_frame_equal(expected_df_true, output_df_true)
 
-    # Now lets check what predicted labels correspond to true labels. Should be empty
-    output_df_pred = match_detections(annot_df1, annot_df2, method="match-pred")
+    # Now lets check what predicted labels correspond to true labels.
+    # Should be empty
+    output_df_pred = match_detections(annot_df1, annot_df2,
+                                      method="match-pred")
     assert output_df_pred.empty
 
-    # Now we can check the total output that will make it easier to compute other stats
+    # Now we can check the total output that will make it easier
+    # to compute other stats
     expected_dict_total = {
-        "true_index": [0, 1, 2, 3,],
+        "true_index": [0, 1, 2, 3],
         "pred_index": [None, None, None, None]
     }
     expected_df_total = pd.DataFrame(expected_dict_total)
-    expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce", downcast="float")
-    output_df_total = match_detections(annot_df1, annot_df2, method="match-total")
+    expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce",
+                                                downcast="float")
+    output_df_total = match_detections(annot_df1, annot_df2,
+                                       method="match-total")
     pd.testing.assert_frame_equal(expected_df_total, output_df_total)
+
 
 def test_merge_overlapping_hfos():
     onset = [1.5, 2.0]

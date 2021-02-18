@@ -338,7 +338,8 @@ def _find_overlapping_events(list1, list2):
     return overlapping_events
 
 
-def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1., method="match-true"):
+def match_detections(ytrue_df, ypredict_df, label: str = None,
+                     sec_margin: float = 1., method="match-true"):
     """
     Match overlapping detections from ground truth and predicted datasets.
 
@@ -353,9 +354,11 @@ def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1.
     sec_margin : float
         Number of seconds to consider a valid checking window
     method : str
-        One of ["match-true", "match-pred", or "match-total"]. If "match-true", will return a dataframe of all true
-        indices and matching predicted indices if they exist. If "match-pred", will return a dataframe of all predicted
-        indices and matching true indices if they exist. If "match-total", will return the concatenation of the two
+        One of ["match-true", "match-pred", or "match-total"]. If "match-true",
+        will return a dataframe of all true indices and matching predicted
+        indices if they exist. If "match-pred", will return a dataframe of
+        all predicted indices and matching true indices if they exist. If
+        "match-total", will return the concatenation of the two
 
     Returns
     -------
@@ -377,19 +380,22 @@ def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1.
     >>> ch_name = ['A1', 'A1', 'A1', 'A1']
     >>> annot_df2 = create_annotations_df(onset2, duration2, ch_name)
     >>> annot_df2['sample'] = annot_df2['onset'] * sfreq
-    >>> match_true_df = match_detections(annot_df1, annot_df2, method="match-true")
+    >>> match_true_df = match_detections(annot_df1, annot_df2,
+    >>> method="match-true")
     >>> # match_true_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 1 2 3 4 5], "pred_index": [0 None 1 None 2] }
-    >>> match_pred_df = match_detections(annot_df1, annot_df2, method="match-pred")
+    >>> match_pred_df = match_detections(annot_df1, annot_df2,
+    >>> method="match-pred")
     >>> # match_pred_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 2 4 None], "pred_index": [0 1 2 3] }
-    >>> match_total_df = match_detections(annot_df1, annot_df2, method="match-total")
+    >>> match_total_df = match_detections(annot_df1, annot_df2,
+    >>> method="match-total")
     >>> # match_total_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 1 2 3 4 None], "pred_index": [0 None 1 None 2 3] }
 
     """
-    # Calculate frq from dataframe, then matching window. TODO: This could break, but I'm not sure how to calculate
-    #  frq if it does
+    # Calculate frq from dataframe, then matching window.
+    # TODO: This could break, but I'm not sure how to calculate frq if it does
     frq = ytrue_df['sample'].iloc[-1] / ytrue_df['onset'].iloc[-1]
     samp_margin = frq * sec_margin
 
@@ -404,25 +410,40 @@ def match_detections(ytrue_df, ypredict_df, label:str=None, sec_margin: float=1.
     dc[1] = "offset"
 
     # Subset the dataframes to certain event types if passed
-    # Subsets with partial matches accepted, so passing label=hfo subsets all channels
+    # Subsets with partial matches accepted, so passing label=hfo
+    # subsets all channels
     if label:
         ytrue_df = ytrue_df[ytrue_df['trial_type'].str.contains(label)]
-        ypredict_df = ypredict_df[ypredict_df['trial_type'].str.contains(label)]
+        ypredict_df = ypredict_df[
+            ypredict_df['trial_type'].str.contains(label)
+        ]
 
     if method.lower() == "match-true":
-        return _match_detections_overlap(ytrue_df, ypredict_df, dc, samp_margin, ('true_index', 'pred_index'))
+        return _match_detections_overlap(ytrue_df, ypredict_df, dc,
+                                         samp_margin,
+                                         ('true_index', 'pred_index'))
     elif method.lower() == "match-pred":
-        return _match_detections_overlap(ypredict_df, ytrue_df, dc, samp_margin, ('pred_index', 'true_index'))
+        return _match_detections_overlap(ypredict_df, ytrue_df, dc,
+                                         samp_margin,
+                                         ('pred_index', 'true_index'))
     elif method.lower() == "match-total":
-        true_match = _match_detections_overlap(ytrue_df, ypredict_df, dc, samp_margin, ('true_index', 'pred_index'))
-        pred_match = _match_detections_overlap(ypredict_df, ytrue_df, dc, samp_margin, ('pred_index', 'true_index'))
-        return pd.concat([true_match, pred_match]).drop_duplicates().reset_index(drop=True)
+        true_match = _match_detections_overlap(ytrue_df, ypredict_df,
+                                               dc, samp_margin,
+                                               ('true_index', 'pred_index'))
+        pred_match = _match_detections_overlap(ypredict_df, ytrue_df,
+                                               dc, samp_margin,
+                                               ('pred_index', 'true_index'))
+        return pd.concat([true_match, pred_match]).drop_duplicates().\
+            reset_index(drop=True)
     else:
-        raise NotImplementedError(f"Method must be one of match-true, match-pred, or match-total")
+        raise NotImplementedError("Method must be one of match-true,"
+                                  " match-pred, or match-total")
         # Iterate over true labels (gold standard)
 
+
 def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
-    # We want to create another dataframe of matched gold standard indices and checked indices
+    # We want to create another dataframe of matched gold
+    # standard indices and checked indices
     match_df = pd.DataFrame(columns=cols)
     match_df_idx = 0
     for row_gs in gs_df.iterrows():
@@ -430,12 +451,13 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
         # [onset, offset]
         gs = [row_gs[1][dc[0]], row_gs[1][dc[1]]]
         for row_pred in check_df[(check_df[dc[0]] < gs[0] +
-                                     samp_margin) &
-                                    (check_df[dc[0]] > gs[0] -
-                                     samp_margin)].iterrows():
+                                  samp_margin) &
+                                 (check_df[dc[0]] > gs[0] -
+                                  samp_margin)].iterrows():
             # [onset, offet]
             pred = [row_pred[1][dc[0]], row_pred[1][dc[1]]]
-            # Check if the events overlap, and append the index of the prediction df
+            # Check if the events overlap, and append the index
+            # of the prediction df
             if check_detection_overlap(gs, pred):
                 matched_idcs.append(row_pred[0])
                 # No overlap found for this gold standard row
@@ -452,5 +474,6 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
 
         match_df_idx += 1
     if not match_df.empty:
-        match_df = match_df.apply(pd.to_numeric, errors="coerce", downcast="float")
+        match_df = match_df.apply(pd.to_numeric, errors="coerce",
+                                  downcast="float")
     return match_df

@@ -155,6 +155,8 @@ class Detector(BaseEstimator):
                                        dtype='float64',
                                        accept_large_sparse=False)
 
+        X = X[~np.isnan(X).any(axis=1)]
+
         self.n_chs, self.n_times = X.shape
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,

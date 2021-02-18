@@ -4,11 +4,17 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import GridSearchCV
+
+import mne
+
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
     compute_chs_hfo_rates, merge_overlapping_events,
-    match_detections, create_events_df)
+    match_detections, create_events_df, LineLengthDetector)
 from mne_hfo.config import TIME_SCALE_TO_SECS
+from mne_hfo.scores import accuracy, precision, true_positive_rate, false_negative_rate, false_discovery_rate
 
 
 def test_find_coincident_events():
@@ -143,6 +149,27 @@ def test_match_detections_empty():
                                        method="match-total")
     pd.testing.assert_frame_equal(expected_df_total, output_df_total,
                                   check_dtype=False)
+
+
+@pytest.mark.parametrize("scorer", [accuracy, precision, true_positive_rate, false_negative_rate, false_discovery_rate])
+def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
+    parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
+    detector = LineLengthDetector()
+    scorer = make_scorer(scorer)
+    dummycv = [(slice(None), slice(None))]
+    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=dummycv)
+
+    data, hfo_samps  = create_testing_eeg_data
+    n_hfos = len(hfo_samps) - 1
+    nan_array = np.empty((n_hfos, len(data)))
+    data_nd = np.reshape(data, (1, len(data)))
+    data_full = np.vstack((data_nd, nan_array))
+    fs = 5000
+    n_ch = 1 + n_hfos
+    info = mne.create_info(n_ch, sfreq=fs)
+    raw = mne.io.RawArray(data_full, info=info)
+    true_hfo_df = create_events_df({'0': hfo_samps}, sfreq=fs, event_name="hfo")
+    gs.fit(raw, true_hfo_df)
 
 
 def test_merge_overlapping_hfos():

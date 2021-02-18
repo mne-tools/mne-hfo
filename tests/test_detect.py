@@ -39,9 +39,10 @@ def test_sklearn_compat(estimator, check):
 
 
 def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
+    data, hfo_samps = create_testing_eeg_data
     fs = 5000
     b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
-    filt_data = filtfilt(b, a, create_testing_eeg_data)[np.newaxis, :]
+    filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
     compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size,
@@ -51,8 +52,8 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
 
     compute_instance.fit(filt_data)
 
-    expected_vals = [(5040, 5198),
-                     (34992, 35134)]
+    expected_vals = hfo_samps#[(5040, 5198),
+                     #(34992, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
@@ -65,9 +66,10 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
 
     Assumes simulated data has already been "bandpass" filtered.
     """
+    data, hfo_samps = create_testing_eeg_data
     fs = 5000
     b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
-    filt_data = filtfilt(b, a, create_testing_eeg_data)[np.newaxis, :]
+    filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
     compute_instance = RMSDetector(sfreq=fs, win_size=window_size,
@@ -75,8 +77,8 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     dets = benchmark(compute_instance.fit,
                      filt_data)
 
-    expected_vals = [(5040, 5198),
-                     (35008, 35134)]
+    expected_vals = hfo_samps #[(5040, 5198),
+                     #(35008, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
@@ -86,6 +88,7 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
 
 @pytest.mark.skip(reason='need to implement...')
 def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
+    data, hfo_samps = create_testing_eeg_data
     fs = 5000
 
     compute_instance = HilbertDetector(sfreq=fs)
@@ -94,12 +97,12 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
                                'high_fc': 600,
                                'threshold': 7}
     dets = benchmark(compute_instance.fit,
-                     create_testing_eeg_data)
+                     data)
 
-    compute_instance.fit(create_testing_eeg_data)
+    compute_instance.fit(data)
 
-    expected_vals = [(5056, 5123),
-                     (35028, 35063)]
+    expected_vals = hfo_samps #[(5056, 5123),
+                     #(35028, 35063)]
 
     for exp_val, det in zip(expected_vals, dets):
         assert det[0] == exp_val[0]
@@ -108,6 +111,7 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
 
 @pytest.mark.skip(reason='need to implement...')
 def test_detect_hfo_cs_beta(create_testing_eeg_data, benchmark):
+    data, hfo_samps = create_testing_eeg_data
     fs = 5000
     compute_instance = CSDetector()
     compute_instance.params = {'fs': fs,
@@ -117,13 +121,13 @@ def test_detect_hfo_cs_beta(create_testing_eeg_data, benchmark):
                                'cycs_per_detect': 4.0}
 
     dets = benchmark(compute_instance.fit,
-                     create_testing_eeg_data)
+                     data)
 
-    compute_instance.fit(create_testing_eeg_data)
+    compute_instance.fit(data)
 
     # Only the second HFO is caught by CS (due to signal artificiality)
-    expected_vals = [(34992, 35090),  # Band detection
-                     (34992, 35090)]  # Conglomerate detection
+    expected_vals = [hfo_samps[1], hfo_samps[1]] #[(34992, 35090),  # Band detection
+                     #(34992, 35090)]  # Conglomerate detection
 
     for exp_val, det in zip(expected_vals, dets):
         assert det[0] == exp_val[0]

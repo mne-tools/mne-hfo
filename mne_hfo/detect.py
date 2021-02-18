@@ -438,6 +438,7 @@ class LineLengthDetector(Detector):
 
     def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
+        print("RUNNING FIT")
         X, y = self._check_input_raw(X, y)
 
         sfreq = self.sfreq

@@ -102,7 +102,7 @@ class Detector(BaseEstimator):
         X : np.ndarray
             Channel data to detect HFOs on.
         y : pd.DataFrame
-            Annotation Dataframe of true labels
+            Event Dataframe of true labels
         sample_weight :
 
         Returns

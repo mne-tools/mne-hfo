@@ -1,5 +1,7 @@
 import numpy as np
 
+from mne_hfo.utils import _check_df
+
 
 def true_positive_rate(y, y_pred):
     """
@@ -8,9 +10,9 @@ def true_positive_rate(y, y_pred):
     Parameters
     ----------
     y : pd.DataFrame
-        Annotation Dataframe with actual labels
+        Event Dataframe with actual labels
     y_pred : pd.DataFrame
-        Annotation Dataframe with predicted labels
+        Event Dataframe with predicted labels
 
     Returns
     -------
@@ -18,6 +20,8 @@ def true_positive_rate(y, y_pred):
 
     """
     from mne_hfo import match_detections
+    y = _check_df(y, df_type='events')
+    y_pred = _check_df(y_pred, df_type='events')
     overlap_df = match_detections(y, y_pred, method="match-total")
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return tp / (tp + fn)
@@ -30,9 +34,9 @@ def precision(y, y_pred):
     Parameters
     ----------
     y : pd.DataFrame
-        Annotation Dataframe with actual labels
+        Event Dataframe with actual labels
     y_pred : pd.DataFrame
-        Annotation Dataframe with predicted labels
+        Event Dataframe with predicted labels
 
     Returns
     -------
@@ -40,6 +44,8 @@ def precision(y, y_pred):
 
     """
     from mne_hfo import match_detections
+    y = _check_df(y, df_type='events')
+    y_pred = _check_df(y_pred, df_type='events')
     overlap_df = match_detections(y, y_pred, method="match-total")
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return tp / (tp + fp)
@@ -52,9 +58,9 @@ def false_negative_rate(y, y_pred):
     Parameters
     ----------
     y : pd.DataFrame
-        Annotation Dataframe with actual labels
+        Event Dataframe with actual labels
     y_pred : pd.DataFrame
-        Annotation Dataframe with predicted labels
+        Event Dataframe with predicted labels
 
     Returns
     -------
@@ -62,6 +68,8 @@ def false_negative_rate(y, y_pred):
 
     """
     from mne_hfo import match_detections
+    y = _check_df(y, df_type='events')
+    y_pred = _check_df(y_pred, df_type='events')
     overlap_df = match_detections(y, y_pred, method="match-total")
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return fn / (fn + tp)
@@ -74,9 +82,9 @@ def false_discovery_rate(y, y_pred):
     Parameters
     ----------
     y : pd.DataFrame
-        Annotation Dataframe with actual labels
+        Event Dataframe with actual labels
     y_pred : pd.DataFrame
-        Annotation Dataframe with predicted labels
+        Event Dataframe with predicted labels
 
     Returns
     -------
@@ -84,6 +92,8 @@ def false_discovery_rate(y, y_pred):
 
     """
     from mne_hfo import match_detections
+    y = _check_df(y, df_type='events')
+    y_pred = _check_df(y_pred, df_type='events')
     overlap_df = match_detections(y, y_pred, method="match-total")
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return fp / (fp + tp)
@@ -110,6 +120,8 @@ def accuracy(y, y_pred):
 
     """
     from mne_hfo import match_detections
+    y = _check_df(y, df_type='events')
+    y_pred = _check_df(y_pred, df_type='events')
     overlap_df = match_detections(y, y_pred, method="match-total")
     tp, fp, fn = _calculate_match_stats(overlap_df)
     return tp / (tp + fp + fn)

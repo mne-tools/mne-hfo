@@ -7,7 +7,7 @@ import pytest
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
     compute_chs_hfo_rates, merge_overlapping_events,
-    match_detections)
+    match_detections, create_events_df)
 from mne_hfo.config import TIME_SCALE_TO_SECS
 
 
@@ -35,17 +35,18 @@ def test_find_coincident_events():
 def test_match_detections():
     # First create two annotation dataframes with expected columns.
     # We will consider df1 to be ground truth and df2 to be the prediction
-    onset1 = [0.0, 12.6, 22.342, 59.9]
-    duration1 = [6.73, 2.27, 8.758, 21.3]
-    ch_name = ['A1', 'A1', 'A1', 'A1']
+    onset1 = [0, 12600, 22342, 59900]
+    offset1 = [67300, 14870, 31100, 81200]
+    event_list = [(onset, offset) for onset, offset in zip(onset1, offset1)]
+    event_dict1 = {'A1':event_list}
     sfreq = 1000
-    annot_df1 = create_annotations_df(onset1, duration1, ch_name)
-    annot_df1['sample'] = annot_df1['onset'] * sfreq
+    event_df1 = create_events_df(event_dict1, event_name='hfo', sfreq=sfreq)
 
-    onset2 = [0.2, 12.3, 45.8, 98.3]
-    duration2 = [6.73, 2.82, 19.8, 3.15]
-    annot_df2 = create_annotations_df(onset2, duration2, ch_name)
-    annot_df2['sample'] = annot_df2['onset'] * sfreq
+    onset2 = [2000, 12300, 45800, 98300]
+    offset2 = [6930, 15120, 65600, 101450]
+    event_list = [(onset, offset) for onset, offset in zip(onset2, offset2)]
+    event_dict2 = {'A1':event_list}
+    event_df2 = create_events_df(event_dict2, event_name='hfo', sfreq=sfreq)
 
     # We see overlap in the following pairs, listed with index from df1, df2:
     # (0, 0), (1,1), (3,2)
@@ -58,9 +59,10 @@ def test_match_detections():
     expected_df_true = pd.DataFrame(expected_dict_true)
     expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce",
                                               downcast="float")
-    output_df_true = match_detections(annot_df1, annot_df2,
+    output_df_true = match_detections(event_df1, event_df2,
                                       method="match-true")
-    pd.testing.assert_frame_equal(expected_df_true, output_df_true)
+    pd.testing.assert_frame_equal(expected_df_true, output_df_true,
+                                  check_dtype=False)
 
     # Now lets check what predicted labels correspond to true labels
     expected_dict_pred = {
@@ -70,9 +72,10 @@ def test_match_detections():
     expected_df_pred = pd.DataFrame(expected_dict_pred)
     expected_df_pred = expected_df_pred.apply(pd.to_numeric, errors="coerce",
                                               downcast="float")
-    output_df_pred = match_detections(annot_df1, annot_df2,
+    output_df_pred = match_detections(event_df1, event_df2,
                                       method="match-pred")
-    pd.testing.assert_frame_equal(expected_df_pred, output_df_pred)
+    pd.testing.assert_frame_equal(expected_df_pred, output_df_pred,
+                                  check_dtype=False)
 
     # Now we can check the total output that will make it easier
     # to compute other stats
@@ -83,30 +86,32 @@ def test_match_detections():
     expected_df_total = pd.DataFrame(expected_dict_total)
     expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce",
                                                 downcast="float")
-    output_df_total = match_detections(annot_df1, annot_df2,
+    output_df_total = match_detections(event_df1, event_df2,
                                        method="match-total")
-    pd.testing.assert_frame_equal(expected_df_total, output_df_total)
+    pd.testing.assert_frame_equal(expected_df_total, output_df_total,
+                                  check_dtype=False)
 
     # Error should be thrown for any other passed methods
     with pytest.raises(NotImplementedError, match=''):
-        match_detections(annot_df1, annot_df2, method="match-average")
+        match_detections(event_df1, event_df2, method="match-average")
 
 
 def test_match_detections_empty():
     # First create two annotation dataframes with expected columns. We will
     # consider df1 to be ground truth and df2 to be the prediction
-    onset1 = [0.0, 12.6, 22.342, 59.9]
-    duration1 = [6.73, 2.27, 8.758, 21.3]
-    ch_name = ['A1', 'A1', 'A1', 'A1']
+    onset1 = [0, 12600, 22342, 59900]
+    offset1 = [67300, 14870, 31100, 81200]
+    event_list = [(onset, offset) for onset, offset in zip(onset1, offset1)]
+    event_dict1 = {'A1':event_list}
     sfreq = 1000
-    annot_df1 = create_annotations_df(onset1, duration1, ch_name)
-    annot_df1['sample'] = annot_df1['onset'] * sfreq
+    event_df1 = create_events_df(event_dict1, event_name='hfo', sfreq=sfreq)
 
     onset2 = []
-    duration2 = []
-    ch_name = []
-    annot_df2 = create_annotations_df(onset2, duration2, ch_name)
-    annot_df2['sample'] = annot_df2['onset'] * sfreq
+    offset2 = []
+    event_list = [(onset, offset) for onset, offset in zip(onset2, offset2)]
+    event_dict2 = {'A1':event_list}
+    event_df2 = create_events_df(event_dict2, event_name='hfo', sfreq=sfreq)
+
 
     expected_dict_true = {
         "true_index": [0, 1, 2, 3],
@@ -115,13 +120,14 @@ def test_match_detections_empty():
     expected_df_true = pd.DataFrame(expected_dict_true)
     expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce",
                                               downcast="float")
-    output_df_true = match_detections(annot_df1, annot_df2,
+    output_df_true = match_detections(event_df1, event_df2,
                                       method="match-true")
-    pd.testing.assert_frame_equal(expected_df_true, output_df_true)
+    pd.testing.assert_frame_equal(expected_df_true, output_df_true,
+                                  check_dtype=False)
 
     # Now lets check what predicted labels correspond to true labels.
     # Should be empty
-    output_df_pred = match_detections(annot_df1, annot_df2,
+    output_df_pred = match_detections(event_df1, event_df2,
                                       method="match-pred")
     assert output_df_pred.empty
 
@@ -134,9 +140,10 @@ def test_match_detections_empty():
     expected_df_total = pd.DataFrame(expected_dict_total)
     expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce",
                                                 downcast="float")
-    output_df_total = match_detections(annot_df1, annot_df2,
+    output_df_total = match_detections(event_df1, event_df2,
                                        method="match-total")
-    pd.testing.assert_frame_equal(expected_df_total, output_df_total)
+    pd.testing.assert_frame_equal(expected_df_total, output_df_total,
+                                  check_dtype=False)
 
 
 def test_merge_overlapping_hfos():

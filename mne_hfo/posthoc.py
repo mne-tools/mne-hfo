@@ -346,9 +346,9 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
     Parameters
     ----------
     ytrue_df : pd.DataFrame
-        Annotation Dataframe of true labels
+        Event Dataframe of true labels
     ypredict_df : pd.DataFrame
-        Annotation Dataframe of predicted labels
+        Event Dataframe of predicted labels
     label : str
         Specific label to search for. i.e. only match on fast_ripple events.
     sec_margin : float
@@ -369,34 +369,58 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
     Examples
     --------
     >>> # Assume annot_df1 is ground truth and annot_df2 is prediction
-    >>> onset1 = [0.0, 7.3, 12.6, 22.342, 59.9]
-    >>> duration1 = [6.73, 1.2,  2.27, 8.758, 21.3]
-    >>> ch_name = ['A1', 'A1', 'A1', 'A1', 'A1']
+    >>> onset1 = [0, 7300, 12600, 22342, 59900]
+    >>> offset1 = [67300, 8500, 14870, 31100, 81200]
+    >>> event_list = [(onset, offset) for onset, offset in\
+    >>> zip(onset1, offset1)]
+    >>> event_dict1 = {'A1':event_list}
     >>> sfreq = 1000
-    >>> annot_df1 = create_annotations_df(onset1, duration1, ch_name)
-    >>> annot_df1['sample'] = annot_df1['onset'] * sfreq
-    >>> onset2 = [0.2, 12.3, 45.8, 98.3]
-    >>> duration2 = [6.73, 2.82, 19.8, 3.15]
-    >>> ch_name = ['A1', 'A1', 'A1', 'A1']
-    >>> annot_df2 = create_annotations_df(onset2, duration2, ch_name)
-    >>> annot_df2['sample'] = annot_df2['onset'] * sfreq
-    >>> match_true_df = match_detections(annot_df1, annot_df2,
+    >>> event_df1 = create_events_df(event_dict1, sfreq=sfreq,
+    >>> event_name="hfo")
+    >>> onset2 = [2000, 12300, 45800, 98300]
+    >>> offset2 = [6930, 15120, 65600, 101450]
+    >>> event_list = [(onset, offset) for onset, offset in\
+    >>> zip(onset2, offset2)]
+    >>> event_dict2 = {'A1':event_list}
+    >>> event_df2 = create_events_df(event_dict2, event_name='hfo',
+    >>> sfreq=sfreq)
+    >>> match_true_df = match_detections(event_df1, event_df2,
     >>> method="match-true")
     >>> # match_true_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 1 2 3 4 5], "pred_index": [0 None 1 None 2] }
-    >>> match_pred_df = match_detections(annot_df1, annot_df2,
+    >>> match_pred_df = match_detections(event_df1, event_df2,
     >>> method="match-pred")
     >>> # match_pred_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 2 4 None], "pred_index": [0 1 2 3] }
-    >>> match_total_df = match_detections(annot_df1, annot_df2,
+    >>> match_total_df = match_detections(event_df1, event_df2,
     >>> method="match-total")
     >>> # match_total_df is a dataFrame with the following data:
     >>> # {"true_index" : [0 1 2 3 4 None], "pred_index": [0 None 1 None 2 3] }
 
     """
-    # Calculate frq from dataframe, then matching window.
-    # TODO: This could break, but I'm not sure how to calculate frq if it does
-    frq = ytrue_df['sample'].iloc[-1] / ytrue_df['onset'].iloc[-1]
+    # if prediction yields no events, return dataframe with just true indices
+    if ypredict_df.empty and method=="match-pred":
+        return pd.DataFrame(columns=('true_index', 'pred_index'))
+    elif ypredict_df.empty:
+        match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
+        for ind, row in ytrue_df.iterrows():
+            match_df.loc[ind] = [ind, None]
+        match_df.apply(pd.to_numeric, errors="coerce",
+                       downcast="float")
+        return match_df
+    # Check passed in event dataframes
+    ytrue_df = _check_df(ytrue_df, df_type="event")
+    ypredict_df = _check_df(ypredict_df, df_type="event")
+    # Check that passed dataframes have same sfreq
+    sfreq_true = ytrue_df['sample'].divide(ytrue_df['onset']).round(2)
+    sfreq_pred = ypredict_df['sample'].divide(ypredict_df['onset']).round(2)
+    sfreq = pd.concat([sfreq_true, sfreq_pred], ignore_index=True)
+    # onset=0 will cause sfreq to be inf, drop these rows to prevent additional sfreqs
+    sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()
+    if sfreq.nunique() != 1:
+        raise ValueError(f'Passed dataframes must have the same sfreq.'
+                         f'There are {sfreq.nunique()} frequencies.')
+    frq = sfreq.iloc[0]
     samp_margin = frq * sec_margin
 
     # Ensure the desired columns are numeric

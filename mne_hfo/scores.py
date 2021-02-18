@@ -117,7 +117,8 @@ def accuracy(y, y_pred):
 
 def _convert_matchdf_to_pred_array(match_df):
     """
-    Convert the match df structure to two lists of positives
+    Convert the match df structure to two lists of positives.
+
     (True) and negatives (False).
 
     Parameters

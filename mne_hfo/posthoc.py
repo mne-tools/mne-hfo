@@ -454,7 +454,7 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
                                   samp_margin) &
                                  (check_df[dc[0]] > gs[0] -
                                   samp_margin)].iterrows():
-            # [onset, offet]
+            # [onset, offset]
             pred = [row_pred[1][dc[0]], row_pred[1][dc[1]]]
             # Check if the events overlap, and append the index
             # of the prediction df

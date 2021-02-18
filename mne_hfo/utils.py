@@ -26,7 +26,8 @@ def _check_df(df: pd.DataFrame, df_type: str,
 
     # first compute sampling rate from sample / onset columns
     sfreq = df['sample'].divide(df['onset']).round(2)
-    # onset=0 will cause sfreq to be inf, drop these rows to prevent additional sfreqs
+    # onset=0 will cause sfreq to be inf, drop these rows to
+    # prevent additional sfreqs
     sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()
     if sfreq.nunique() != 1:
         raise ValueError(f'All rows in the annotations dataframe '

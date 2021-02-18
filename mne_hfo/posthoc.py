@@ -399,7 +399,7 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
 
     """
     # if prediction yields no events, return dataframe with just true indices
-    if ypredict_df.empty and method=="match-pred":
+    if ypredict_df.empty and method == "match-pred":
         return pd.DataFrame(columns=('true_index', 'pred_index'))
     elif ypredict_df.empty:
         match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
@@ -415,7 +415,8 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
     sfreq_true = ytrue_df['sample'].divide(ytrue_df['onset']).round(2)
     sfreq_pred = ypredict_df['sample'].divide(ypredict_df['onset']).round(2)
     sfreq = pd.concat([sfreq_true, sfreq_pred], ignore_index=True)
-    # onset=0 will cause sfreq to be inf, drop these rows to prevent additional sfreqs
+    # onset=0 will cause sfreq to be inf, drop these rows to prevent
+    # additional sfreqs
     sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()
     if sfreq.nunique() != 1:
         raise ValueError(f'Passed dataframes must have the same sfreq.'

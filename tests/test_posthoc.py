@@ -38,14 +38,14 @@ def test_match_detections():
     onset1 = [0, 12600, 22342, 59900]
     offset1 = [67300, 14870, 31100, 81200]
     event_list = [(onset, offset) for onset, offset in zip(onset1, offset1)]
-    event_dict1 = {'A1':event_list}
+    event_dict1 = {'A1': event_list}
     sfreq = 1000
     event_df1 = create_events_df(event_dict1, event_name='hfo', sfreq=sfreq)
 
     onset2 = [2000, 12300, 45800, 98300]
     offset2 = [6930, 15120, 65600, 101450]
     event_list = [(onset, offset) for onset, offset in zip(onset2, offset2)]
-    event_dict2 = {'A1':event_list}
+    event_dict2 = {'A1': event_list}
     event_df2 = create_events_df(event_dict2, event_name='hfo', sfreq=sfreq)
 
     # We see overlap in the following pairs, listed with index from df1, df2:
@@ -102,16 +102,15 @@ def test_match_detections_empty():
     onset1 = [0, 12600, 22342, 59900]
     offset1 = [67300, 14870, 31100, 81200]
     event_list = [(onset, offset) for onset, offset in zip(onset1, offset1)]
-    event_dict1 = {'A1':event_list}
+    event_dict1 = {'A1': event_list}
     sfreq = 1000
     event_df1 = create_events_df(event_dict1, event_name='hfo', sfreq=sfreq)
 
     onset2 = []
     offset2 = []
     event_list = [(onset, offset) for onset, offset in zip(onset2, offset2)]
-    event_dict2 = {'A1':event_list}
+    event_dict2 = {'A1': event_list}
     event_df2 = create_events_df(event_dict2, event_name='hfo', sfreq=sfreq)
-
 
     expected_dict_true = {
         "true_index": [0, 1, 2, 3],

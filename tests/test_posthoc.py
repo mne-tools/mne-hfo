@@ -192,8 +192,8 @@ def test_match_detections_empty():
 
 @pytest.mark.parametrize("scorer", [
     accuracy,
-    precision, true_positive_rate,
-    false_negative_rate, false_discovery_rate
+    # precision, true_positive_rate,
+    # false_negative_rate, false_discovery_rate
 ])
 def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
@@ -231,6 +231,10 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
 
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)
+    print(gs.cv_results_)
+
+    # uncomment this to see that gridsearch results
+    # raise Exception('check out the print statements')
 
 
 def test_merge_overlapping_hfos():

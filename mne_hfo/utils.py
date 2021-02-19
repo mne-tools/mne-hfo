@@ -90,6 +90,7 @@ def make_Xy_sklearn(raw, df):
     -------
     raw_df : pd.DataFrame
         The Raw dataframe generated from :func:`mne.io.Raw.to_data_frame`.
+        It should be structured as channels X time.
     ch_results : list[list[tuple]]
         List of channel HFO events, ordered by the channel names from the
         ``raw`` dataset. Each channel corresponds to a list of "onset"

@@ -40,27 +40,27 @@ def test_find_coincident_events():
 
 
 def test_match_hfo_annotations():
-    """Test matching HFO detections encoded in annotations DataFrame.
-
-    TODO: make this pass and add all your other tests.
-    """
+    """Test matching HFO detections encoded in annotations DataFrame."""
+    sfreq = 1000
     # create dummy reference annotations
-    onset1 = [0, 12600, 22342, 59900]
-    offset1 = [67300, 14870, 31100, 81200]
-    duration1 = offset1 - onset1
+    onset1 = [1.5, 12.6, 22.342, 59.9]
+    offset1 = [6.7300, 14.870, 31.1, 81.2]
+    duration1 = [offset-onset for onset,offset in zip(onset1, offset1)]
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
                                       annotation_label)
+    annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy predicted HFO annotations
-    onset2 = [2000, 12300, 45800, 98300]
-    offset2 = [6930, 15120, 65600, 101450]
-    duration2 = offset2 - onset2
+    onset2 = [2, 12.3, 60.1, 98.3]
+    offset2 = [6.93, 15.12, 65.6, 101.45]
+    duration2 = [offset-onset for onset,offset in zip(onset2, offset2)]
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
                                       annotation_label)
+    annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     # We first want to see what true labels are correctly predicted
     expected_dict_true = {
@@ -74,6 +74,37 @@ def test_match_hfo_annotations():
                                                 method="match-true")
     pd.testing.assert_frame_equal(expected_df_true, output_df_true,
                                   check_dtype=False)
+
+    # Now lets check what predicted labels correspond to true labels
+    expected_dict_pred = {
+        "pred_index": [0, 1, 2, 3],
+        "true_index": [0, 1, 3, None]
+    }
+    expected_df_pred = pd.DataFrame(expected_dict_pred)
+    expected_df_pred = expected_df_pred.apply(pd.to_numeric, errors="coerce",
+                                              downcast="float")
+    output_df_pred = match_detections(annot_df1, annot_df2,
+                                      method="match-pred")
+    pd.testing.assert_frame_equal(expected_df_pred, output_df_pred,
+                                  check_dtype=False)
+
+    # Now we can check the total output that will make it easier
+    # to compute other stats
+    expected_dict_total = {
+        "true_index": [0, 1, 2, 3, None],
+        "pred_index": [0, 1, None, 2, 3]
+    }
+    expected_df_total = pd.DataFrame(expected_dict_total)
+    expected_df_total = expected_df_total.apply(pd.to_numeric, errors="coerce",
+                                                downcast="float")
+    output_df_total = match_detections(annot_df1, annot_df2,
+                                       method="match-total")
+    pd.testing.assert_frame_equal(expected_df_total, output_df_total,
+                                  check_dtype=False)
+
+    # Error should be thrown for any other passed methods
+    with pytest.raises(NotImplementedError, match=''):
+        match_detections(annot_df1, annot_df2, method="match-average")
 
 
 def test_match_detections():

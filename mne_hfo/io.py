@@ -63,6 +63,7 @@ def _create_events_df(onset: List[float], duration: List[float],
                             index=None,
                             columns=EVENT_COLUMNS)
 
+
     event_df = event_df.astype({
         'onset': 'float64',
         'duration': 'float64',
@@ -215,7 +216,7 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
                 description.append(f'{event_name}_{ch_name}')
     else:
         raise ValueError('Unaccepted data structure for input.')
-
+    sample = [int(s) for s in sample]
     # now create the dataframe
     event_df = _create_events_df(onset=onset, duration=duration, sample=sample,
                                  description=description)

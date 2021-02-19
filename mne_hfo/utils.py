@@ -26,6 +26,34 @@ class DisabledCV:
         return self.n_splits
 
 
+def _make_sklearn_ydf(y, sfreq, ch_names):
+    """Convert scikit-learn y output into HFO annotations DataFrame.
+
+    Parameters
+    ----------
+    y : list[list[tuple]]
+        Each channel corresponds to a list of "onset" and "offset"
+        time points (in seconds) that an HFO was detected.
+    sfreq: int
+        Sampling frequency of the data
+    ch_names : list
+        A list of channel names in the raw data.
+
+    Returns
+    -------
+    annot_df : pd.Dataframe
+        Annotations DataFrame containing HFO events.
+
+    """
+    from mne_hfo import create_events_df, events_to_annotations
+    hfo_dict = {}
+    for ch_name, hfo_list in zip(ch_names, y):
+        hfo_dict[ch_name] = hfo_list
+    event_df = create_events_df(hfo_dict, sfreq=sfreq)
+    annot_df = events_to_annotations(event_df)
+    return annot_df
+
+
 def _make_ydf_sklearn(ydf, ch_names):
     """Convert HFO annotations DataFrame into scikit-learn y input.
 

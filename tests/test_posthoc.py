@@ -227,16 +227,18 @@ def test_match_detections_empty():
     # false_negative_rate, false_discovery_rate
 ])
 def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
+    sfreq = 5000
+    ch_names = ['0']
+
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
-    detector = LineLengthDetector()
-    scorer = make_scorer(scorer)
+    detector = LineLengthDetector(filter_band=(200, 300))
+    scorer = make_scorer(scorer, sfreq=sfreq, ch_names=ch_names)
     # dummycv = [(slice(None), slice(None))]
     cv = DisabledCV()
     gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=cv,
                       verbose=True)
 
     # create dummy EEG data with "true" HFO samples
-    sfreq = 5000
     data, hfo_samps = create_testing_eeg_data
     data_2d = data[np.newaxis, :]
     data_2d = np.vstack((data_2d, data_2d))
@@ -259,6 +261,7 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
+
 
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)

@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 
-from mne_hfo.utils import _check_df
+from mne_hfo.posthoc import match_detected_annotations
+from mne_hfo.utils import _check_df, _make_sklearn_ydf
 
 
 def true_positive_rate(y, y_pred):
@@ -95,7 +97,7 @@ def false_discovery_rate(y, y_pred):
     # return fp / (fp + tp)
 
 
-def accuracy(y, y_pred):
+def accuracy(y, y_pred, sfreq, ch_names):
     """
     Calculate accuracy as: accuracy = tp / (tp + fp + fn).
 
@@ -115,28 +117,27 @@ def accuracy(y, y_pred):
     float
 
     """
-    return 1
-    # compute score statistics
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, sfreq, ch_names, method='match-total')
 
     # return actual metric
     return tp / (tp + fp + fn)
 
 
-def _compute_score_data(y, y_pred, method):
+def _compute_score_data(y, y_pred, sfreq, ch_names, method):
     """Compute basic HFO scoring metrics."""
     from mne_hfo import match_detections
-    # if isinstance(y, pd.DataFrame):
-    #     y = _check_df(y, df_type='annotations')
-    # else:
-    # assume y is now in the form of list of (onset, offset) per channel
-    # y = _make_ydf_sklearn(y, ch_names=)
+    if isinstance(y, pd.DataFrame):
+        y = _check_df(y, df_type='annotations')
+    else:
+        # assume y is now in the form of list of (onset, offset) per channel
+        y = _make_sklearn_ydf(y, sfreq=sfreq, ch_names=ch_names)
 
     # convert both list of list of tuples into a DataFrame
-
+    y_pred =  _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
+    print(f"Y-pred: {y_pred}")
     # y predictions from HFO detectors should always be a dataframe
     y_pred = _check_df(y_pred, df_type='annotations')
-    overlap_df = match_detections(y, y_pred, method=method)
+    overlap_df = match_detected_annotations(y, y_pred, method=method)
 
     # get the indices from the match event overlap output
     y_true_series = overlap_df['true_index']

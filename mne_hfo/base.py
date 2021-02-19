@@ -120,9 +120,12 @@ class Detector(BaseEstimator):
         # return y_true, y_pred, which are just lists of 0s and 1s
         # representing overlap detection or not
 
+        sfreq = self.sfreq
+        ch_names = self.ch_names
+
         # compute score
         if self.scoring_func == "accuracy":
-            score = accuracy(y, y_pred)
+            score = accuracy(y, y_pred, sfreq, ch_names)
         elif self.scoring_func == "fnr":
             score = false_negative_rate(y, y_pred)
         elif self.scoring_func == "tpr":

@@ -116,7 +116,10 @@ def accuracy(y, y_pred):
 
     """
     return 1
+    # compute score statistics
     tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    # return actual metric
     return tp / (tp + fp + fn)
 
 

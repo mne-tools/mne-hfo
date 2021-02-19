@@ -412,6 +412,45 @@ def match_detected_annotations(
             ypred_annot_df['channels'].isin(ch_names)
         ]
 
+    # if prediction yields no events and method is match-pred, return empty structured dataframe
+    if ypred_annot_df.empty and method == "match-pred":
+        return pd.DataFrame(columns=('true_index', 'pred_index'))
+    # else if prediction yields no events, return structured dataframe containing just true indices
+    elif ypred_annot_df.empty:
+        match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
+        for ind, row in ytrue_annot_df.iterrows():
+            match_df.loc[ind] = [ind, None]
+        match_df.apply(pd.to_numeric, errors="coerce",
+                       downcast="float")
+        return match_df
+
+
+    # desired columns (dc) for the annotations dataframe are onset and duration
+    dc = ['onset', 'duration']
+
+    if method.lower() == "match-true":
+        return _match_detections_overlap(ytrue_annot_df, ypred_annot_df, dc,
+                                         sec_margin,
+                                         ('true_index', 'pred_index'))
+    elif method.lower() == "match-pred":
+        return _match_detections_overlap(ypred_annot_df, ytrue_annot_df, dc,
+                                         sec_margin,
+                                         ('pred_index', 'true_index'))
+    elif method.lower() == "match-total":
+        true_match = _match_detections_overlap(ytrue_annot_df, ypred_annot_df,
+                                               dc, sec_margin,
+                                               ('true_index', 'pred_index'))
+        pred_match = _match_detections_overlap(ypred_annot_df, ytrue_annot_df,
+                                               dc, sec_margin,
+                                               ('pred_index', 'true_index'))
+        return pd.concat([true_match, pred_match]).drop_duplicates(). \
+            reset_index(drop=True)
+    else:
+        raise NotImplementedError("Method must be one of match-true,"
+                                  " match-pred, or match-total")
+        # Iterate over true labels (gold standard)
+
+
     # TODO: determine matching HFO events depending on method
     # note if it's simple, you could transform these dataframes into the ones
     # accepted by `match_detections` down below.
@@ -510,11 +549,6 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
     ytrue_df[dc] = ytrue_df[dc].apply(pd.to_numeric)
     ypredict_df[dc] = ypredict_df[dc].apply(pd.to_numeric)
 
-    # Append offset column to both dfs
-    ytrue_df = _append_offset_to_df(ytrue_df, dc)
-    ypredict_df = _append_offset_to_df(ypredict_df, dc)
-    dc[1] = "offset"
-
     # Subset the dataframes to certain event types if passed
     # Subsets with partial matches accepted, so passing label=hfo
     # subsets all channels
@@ -547,7 +581,48 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
         # Iterate over true labels (gold standard)
 
 
-def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
+def _match_detections_overlap(gs_df, check_df, dc, margin, cols):
+    """
+    Find the overlapping detections in the two passed dataframes.
+
+    gs_df and check_df need to be the same type (i.e. both annotation
+    dataframes or event dataframes). If they are annotation dataframes,
+    margin should be in seconds, and if they are event dataframes,
+    margin should be in samples. dc can be either ['onset', duration']
+    or ['onset', 'offset'].
+
+    Parameters
+    ----------
+    gs_df : pd.DataFrame
+        The reference DataFrame containing the HFO events that are
+        considered "ground-truth" in this comparison.
+    check_df : pd.DataFrame
+        The estimated DataFrame containing the HFO events that
+        are estimated using a ``Detector``.
+    dc : list[str]
+        List of columns that define an event. Should be either
+        ['onset', 'duration'] or ['onset', 'offset'].
+    margin : int
+        Margin to check. Should be in the same unit as the data
+        in the desired columns
+    cols : list[str]
+        Name of the columns corresponding to gs indices and check indices
+
+    Returns
+    -------
+    match_df: pd.DataFrame
+        A DataFrame with the columns from cols input,
+        which corresponds to indices
+
+    """
+    # Check column types
+    if dc[1] not in ['duration', 'offset']:
+        raise ValueError(f'dc must have either an offset or '
+                         f'duration column. Passed {dc[1]}.')
+    if dc[1] == "duration":
+        gs_df = _append_offset_to_df(gs_df, dc)
+        check_df = _append_offset_to_df(check_df, dc)
+        dc[1] = "offset"
     # We want to create another dataframe of matched gold
     # standard indices and checked indices
     match_df = pd.DataFrame(columns=cols)
@@ -557,9 +632,9 @@ def _match_detections_overlap(gs_df, check_df, dc, samp_margin, cols):
         # [onset, offset]
         gs = [row_gs[1][dc[0]], row_gs[1][dc[1]]]
         for row_pred in check_df[(check_df[dc[0]] < gs[0] +
-                                  samp_margin) &
+                                  margin) &
                                  (check_df[dc[0]] > gs[0] -
-                                  samp_margin)].iterrows():
+                                  margin)].iterrows():
             # [onset, offset]
             pred = [row_pred[1][dc[0]], row_pred[1][dc[1]]]
             # Check if the events overlap, and append the index

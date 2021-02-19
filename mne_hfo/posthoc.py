@@ -413,7 +413,9 @@ def match_detected_annotations(
         ]
 
     # TODO: determine matching HFO events depending on method
-
+    # note if it's simple, you could transform these dataframes into the ones
+    # accepted by `match_detections` down below.
+    # or you could just refactor the functionality of `match_detections`.
     # TODO:
 
 

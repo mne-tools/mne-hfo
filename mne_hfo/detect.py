@@ -438,7 +438,6 @@ class LineLengthDetector(Detector):
 
     def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
-        print("RUNNING FIT")
         X, y = self._check_input_raw(X, y)
 
         sfreq = self.sfreq
@@ -459,7 +458,7 @@ class LineLengthDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
+        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
         return self
 
 
@@ -597,5 +596,5 @@ class RMSDetector(Detector):
 
         self.chs_hfos_ = chs_hfos
         self.hfo_event_arr_ = hfo_event_arr
-        self._create_event_df(self.chs_hfos_dict, self.hfo_name)
+        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
         return self

@@ -19,12 +19,11 @@ def true_positive_rate(y, y_pred):
     float
 
     """
-    from mne_hfo import match_detections
-    y = _check_df(y, df_type='events')
-    y_pred = _check_df(y_pred, df_type='events')
-    overlap_df = match_detections(y, y_pred, method="match-total")
-    tp, fp, fn = _calculate_match_stats(overlap_df)
-    return tp / (tp + fn)
+    # y = _check_df(y, df_type='events')
+    # y_pred = _check_df(y_pred, df_type='events')
+    # overlap_df = match_detections(y, y_pred, method="match-total")
+    # tp, fp, fn = _calculate_match_stats(overlap_df)
+    # return tp / (tp + fn)
 
 
 def precision(y, y_pred):
@@ -43,12 +42,11 @@ def precision(y, y_pred):
     float
 
     """
-    from mne_hfo import match_detections
-    y = _check_df(y, df_type='events')
-    y_pred = _check_df(y_pred, df_type='events')
-    overlap_df = match_detections(y, y_pred, method="match-total")
-    tp, fp, fn = _calculate_match_stats(overlap_df)
-    return tp / (tp + fp)
+    # y = _check_df(y, df_type='events')
+    # y_pred = _check_df(y_pred, df_type='events')
+    # overlap_df = match_detections(y, y_pred, method="match-total")
+    # tp, fp, fn = _calculate_match_stats(overlap_df)
+    # return tp / (tp + fp)
 
 
 def false_negative_rate(y, y_pred):
@@ -67,12 +65,11 @@ def false_negative_rate(y, y_pred):
     float
 
     """
-    from mne_hfo import match_detections
-    y = _check_df(y, df_type='events')
-    y_pred = _check_df(y_pred, df_type='events')
-    overlap_df = match_detections(y, y_pred, method="match-total")
-    tp, fp, fn = _calculate_match_stats(overlap_df)
-    return fn / (fn + tp)
+    # y = _check_df(y, df_type='events')
+    # y_pred = _check_df(y_pred, df_type='events')
+    # overlap_df = match_detections(y, y_pred, method="match-total")
+    # tp, fp, fn = _calculate_match_stats(overlap_df)
+    # return fn / (fn + tp)
 
 
 def false_discovery_rate(y, y_pred):
@@ -91,12 +88,11 @@ def false_discovery_rate(y, y_pred):
     float
 
     """
-    from mne_hfo import match_detections
-    y = _check_df(y, df_type='events')
-    y_pred = _check_df(y_pred, df_type='events')
-    overlap_df = match_detections(y, y_pred, method="match-total")
-    tp, fp, fn = _calculate_match_stats(overlap_df)
-    return fp / (fp + tp)
+    # y = _check_df(y, df_type='events')
+    # y_pred = _check_df(y_pred, df_type='events')
+    # overlap_df = match_detections(y, y_pred, method="match-total")
+    # tp, fp, fn = _calculate_match_stats(overlap_df)
+    # return fp / (fp + tp)
 
 
 def accuracy(y, y_pred):
@@ -119,41 +115,34 @@ def accuracy(y, y_pred):
     float
 
     """
-    from mne_hfo import match_detections
-    y = _check_df(y, df_type='events')
-    y_pred = _check_df(y_pred, df_type='events')
-    overlap_df = match_detections(y, y_pred, method="match-total")
-    tp, fp, fn = _calculate_match_stats(overlap_df)
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
     return tp / (tp + fp + fn)
 
 
-def _convert_matchdf_to_pred_array(match_df):
-    """
-    Convert the match df structure to two lists of positives.
+def _compute_score_data(y, y_pred, method):
+    """Compute basic HFO scoring metrics."""
+    from mne_hfo import match_detections
+    # if isinstance(y, pd.DataFrame):
+    #     y = _check_df(y, df_type='annotations')
+    # else:
+    # assume y is now in the form of list of (onset, offset) per channel
+    # y = _make_ydf_sklearn(y, ch_names=)
 
-    (True) and negatives (False).
+    # convert both list of list of tuples into a DataFrame
 
-    Parameters
-    ----------
-    match_df : pd.DataFrame
-        pandas dataframe with columns true_index and pred_index
+    # y predictions from HFO detectors should always be a dataframe
+    y_pred = _check_df(y_pred, df_type='annotations')
+    overlap_df = match_detections(y, y_pred, method=method)
 
-    Returns
-    -------
-    y_true_bool: list
-        Boolean list for true labels. True if an index is present, False if Nan
-    y_pred_bool: list
-        Boolean list for predicted labels. True if an index is
-        present, False if Nan
-    """
-    y_true_series = match_df['true_index']
-    y_true_bool = y_true_series.notna().to_list()
-    y_pred_series = match_df['pred_index']
-    y_pred_bool = y_pred_series.notna().to_list()
-    return y_true_bool, y_pred_bool
+    # get the indices from the match event overlap output
+    y_true_series = overlap_df['true_index']
+    y_pred_series = overlap_df['pred_index']
+    tp, fp, fn = _calculate_match_stats(ytrue_indices=y_true_series,
+                                        ypred_indices=y_pred_series)
+    return tp, fp, fn
 
 
-def _calculate_match_stats(match_df):
+def _calculate_match_stats(ytrue_indices, ypred_indices):
     """
     Calculate true positives, false positives, and false negatives.
 
@@ -161,8 +150,12 @@ def _calculate_match_stats(match_df):
 
     Parameters
     ----------
-    match_df : pd.DataFrame
-        pandas dataframe with columns true_index and pred_index
+    ytrue_indices : pd.Series
+        Pandas Series with a number corresponding to an index and a
+        ``nan`` if there is no match.
+    ypred_indices : pd.Series
+        Pandas Series with a number corresponding to an index and a
+        ``nan`` if there is no match.
 
     Returns
     -------
@@ -172,9 +165,14 @@ def _calculate_match_stats(match_df):
         number of false positives - i.e. prediction is true and actual is false
     fn: int
         number of false negatives - i.e. prediction is false and actual is true
-
     """
-    y_true_bool, y_pred_bool = _convert_matchdf_to_pred_array(match_df)
+    # Convert the match df structure to two lists of booleans.
+    # (True) and negatives (False).
+    # True if an index is present, False if Nan
+    y_true_bool = ytrue_indices.notna().to_list()
+    y_pred_bool = ypred_indices.notna().to_list()
+
+    # compute true positive, false positive and false negative
     label_pairs = tuple(zip(y_true_bool, y_pred_bool))
     tp = np.sum([(t and p) for t, p in label_pairs])
     fp = np.sum([(p and not t) for t, p in label_pairs])

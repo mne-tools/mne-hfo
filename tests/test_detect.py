@@ -52,8 +52,9 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
 
     compute_instance.fit(filt_data)
 
-    expected_vals = hfo_samps#[(5040, 5198),
-                     #(34992, 35134)]
+    # copied from epycom
+    expected_vals = [(5040, 5198),
+                     (34992, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
@@ -77,8 +78,9 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     dets = benchmark(compute_instance.fit,
                      filt_data)
 
-    expected_vals = hfo_samps #[(5040, 5198),
-                     #(35008, 35134)]
+    # copied from epycom
+    expected_vals = [(5040, 5198),
+                     (35008, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
@@ -101,8 +103,8 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
 
     compute_instance.fit(data)
 
-    expected_vals = hfo_samps #[(5056, 5123),
-                     #(35028, 35063)]
+    expected_vals = [(5056, 5123),
+                     (35028, 35063)]
 
     for exp_val, det in zip(expected_vals, dets):
         assert det[0] == exp_val[0]
@@ -126,8 +128,9 @@ def test_detect_hfo_cs_beta(create_testing_eeg_data, benchmark):
     compute_instance.fit(data)
 
     # Only the second HFO is caught by CS (due to signal artificiality)
-    expected_vals = [hfo_samps[1], hfo_samps[1]] #[(34992, 35090),  # Band detection
-                     #(34992, 35090)]  # Conglomerate detection
+    expected_vals = [(34992, 35090),  # Band detection
+                     (34992, 35090)]  # Conglomerate detection
+    # [hfo_samps[1], hfo_samps[1]]  #
 
     for exp_val, det in zip(expected_vals, dets):
         assert det[0] == exp_val[0]

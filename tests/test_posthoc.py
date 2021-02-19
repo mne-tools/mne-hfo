@@ -1,20 +1,21 @@
 import itertools
 
+import mne
 import numpy as np
 import pandas as pd
 import pytest
-
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import GridSearchCV
-
-import mne
 
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
     compute_chs_hfo_rates, merge_overlapping_events,
     match_detections, create_events_df, LineLengthDetector)
 from mne_hfo.config import TIME_SCALE_TO_SECS
-from mne_hfo.scores import accuracy, precision, true_positive_rate, false_negative_rate, false_discovery_rate
+from mne_hfo.posthoc import match_detected_annotations
+from mne_hfo.scores import (accuracy, precision, true_positive_rate,
+                            false_negative_rate, false_discovery_rate)
+from mne_hfo.utils import make_Xy_sklearn, DisabledCV
 
 
 def test_find_coincident_events():
@@ -38,7 +39,45 @@ def test_find_coincident_events():
         find_coincident_events(df1, df2)
 
 
+def test_match_hfo_annotations():
+    """Test matching HFO detections encoded in annotations DataFrame.
+
+    TODO: make this pass and add all your other tests.
+    """
+    # create dummy reference annotations
+    onset1 = [0, 12600, 22342, 59900]
+    offset1 = [67300, 14870, 31100, 81200]
+    duration1 = offset1 - onset1
+    ch_name = ['A1'] * len(onset1)
+    annotation_label = ['hfo'] * len(onset1)
+    annot_df1 = create_annotations_df(onset1, duration1, ch_name,
+                                      annotation_label)
+
+    # create dummy predicted HFO annotations
+    onset2 = [2000, 12300, 45800, 98300]
+    offset2 = [6930, 15120, 65600, 101450]
+    duration2 = offset2 - onset2
+    ch_name = ['A1'] * len(onset2)
+    annotation_label = ['hfo'] * len(onset2)
+    annot_df2 = create_annotations_df(onset2, duration2, ch_name,
+                                      annotation_label)
+
+    # We first want to see what true labels are correctly predicted
+    expected_dict_true = {
+        "true_index": [0, 1, 2, 3],
+        "pred_index": [0, 1, None, 2]
+    }
+    expected_df_true = pd.DataFrame(expected_dict_true)
+    expected_df_true = expected_df_true.apply(pd.to_numeric, errors="coerce",
+                                              downcast="float")
+    output_df_true = match_detected_annotations(annot_df1, annot_df2,
+                                                method="match-true")
+    pd.testing.assert_frame_equal(expected_df_true, output_df_true,
+                                  check_dtype=False)
+
+
 def test_match_detections():
+    """TODO: take out later."""
     # First create two annotation dataframes with expected columns.
     # We will consider df1 to be ground truth and df2 to be the prediction
     onset1 = [0, 12600, 22342, 59900]
@@ -151,25 +190,47 @@ def test_match_detections_empty():
                                   check_dtype=False)
 
 
-@pytest.mark.parametrize("scorer", [accuracy, precision, true_positive_rate, false_negative_rate, false_discovery_rate])
+@pytest.mark.parametrize("scorer", [
+    accuracy,
+    precision, true_positive_rate,
+    false_negative_rate, false_discovery_rate
+])
 def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
     detector = LineLengthDetector()
     scorer = make_scorer(scorer)
-    dummycv = [(slice(None), slice(None))]
-    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=dummycv)
+    # dummycv = [(slice(None), slice(None))]
+    cv = DisabledCV()
+    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=cv,
+                      verbose=True)
 
-    data, hfo_samps  = create_testing_eeg_data
-    n_hfos = len(hfo_samps) - 1
-    nan_array = np.empty((n_hfos, len(data)))
-    data_nd = np.reshape(data, (1, len(data)))
-    data_full = np.vstack((data_nd, nan_array))
-    fs = 5000
-    n_ch = 1 + n_hfos
-    info = mne.create_info(n_ch, sfreq=fs)
-    raw = mne.io.RawArray(data_full, info=info)
-    true_hfo_df = create_events_df({'0': hfo_samps}, sfreq=fs, event_name="hfo")
-    gs.fit(raw, true_hfo_df)
+    # create dummy EEG data with "true" HFO samples
+    sfreq = 5000
+    data, hfo_samps = create_testing_eeg_data
+    data_2d = data[np.newaxis, :]
+    data_2d = np.vstack((data_2d, data_2d))
+    onset_samp = np.array([samp[0] for samp in hfo_samps])
+    offset_samp = np.array([samp[1] for samp in hfo_samps])
+    onset = onset_samp / sfreq
+    offset = offset_samp / sfreq
+    duration = offset - onset
+    ch_names = ['0'] * len(onset)
+
+    print(data.shape)
+    print(hfo_samps)
+    # create actual Raw input data
+    info = mne.create_info(ch_names=['0', '1'], sfreq=sfreq, ch_types='ecog')
+    raw = mne.io.RawArray(data_2d, info=info)
+
+    # create the annotations dataframe
+    annot_df = create_annotations_df(onset, duration, ch_names)
+    annot_df['sample'] = annot_df['onset'] * sfreq
+
+    # make sklearn compatible
+    raw_df, y = make_Xy_sklearn(raw, annot_df)
+
+    # run Gridsearch
+    gs.fit(raw_df, y, groups=None)
 
 
 def test_merge_overlapping_hfos():

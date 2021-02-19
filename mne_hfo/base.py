@@ -2,14 +2,15 @@ from typing import Union
 
 import mne
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 
-from mne_hfo.io import create_events_df
+from mne_hfo.io import create_events_df, events_to_annotations
 from mne_hfo.scores import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
 from mne_hfo.utils import (threshold_std, compute_rms,
-                           compute_line_length)
+                           compute_line_length, _make_ydf_sklearn)
 
 ACCEPTED_THRESHOLD_METHODS = ['std']
 ACCEPTED_HFO_METHODS = ['line_length', 'rms']
@@ -111,7 +112,6 @@ class Detector(BaseEstimator):
 
         """
         # y_true should be an annotations DataFrame actually
-
         # fit and predict
         y_pred = self.fit_predict(X, y)
 
@@ -135,17 +135,37 @@ class Detector(BaseEstimator):
 
     def _check_input_raw(self, X, y):
         if isinstance(X, mne.io.BaseRaw):
+            X.shape = (len(X.ch_names), len(X))
             self.sfreq = X.info['sfreq']
             self.ch_names = X.ch_names
             X = X.get_data()
-        elif self.sfreq is not None:
-            # Just name the channels their index
-            self.ch_names = [str(i) for i in range(X.shape[0])]
-            pass
-        else:
-            raise RuntimeError('If "X" passed in is not a `mne.io.BaseRaw` '
-                               'object, then "sfreq" must be set on '
-                               'instantation of detector.')
+        elif isinstance(X, pd.DataFrame):
+            '''Handle the case of SearchCV'''
+            ch_names = X.index
+
+            # Dataframe was transposed
+            time_index = X.T.index
+
+            # compute the time indices and get the pairwise
+            # differences
+            time_indices = time_index.to_series().to_numpy()
+            diff = np.diff(time_indices)
+
+            # compute periods and the sampling rate
+            periods = [x.total_seconds() for x in diff]
+            if not np.all(np.isclose(periods, np.median(periods),
+                                     rtol=1e-3, atol=1e-5)):
+                raise RuntimeError('Not all sampling periods of the '
+                                   'raw data are similar...')
+            sfreq = 1. / periods[0]
+
+            self.ch_names = ch_names
+            self.sfreq = sfreq
+            X = X.to_numpy()
+        # else:
+            # pass
+            # raise ValueError(f'Only dataframe and mne.io.Raw input is '
+            #                  f'accepted into HFO detectors.')
 
         # use sklearn's validation of data
         if y is None:
@@ -153,9 +173,8 @@ class Detector(BaseEstimator):
         else:
             X, y = self._validate_data(X, y, accept_sparse=False,
                                        dtype='float64',
+                                       multi_output=True,
                                        accept_large_sparse=False)
-
-        X = X[~np.isnan(X).any(axis=1)]
 
         self.n_chs, self.n_times = X.shape
         n_windows = self._compute_n_wins(self.win_size,
@@ -209,15 +228,30 @@ class Detector(BaseEstimator):
         """Scikit-learn override predict function.
 
         Just directly computes HFOs using ``fit`` function.
+
+        Parameters
+        ----------
+        X : mne.io.Raw | pd.DataFrame
+            Input data.
+
+        Returns
+        -------
+        ypred : list[list[tuple]]
+            List of HFO events per channel in order of ``ch_names`` of
+            input data. HFO events are stored as list of tuples: onset
+            and offset of the HFO event.
         """
         check_is_fitted(self)
         X, y = self._check_input_raw(X, None)
-        return self.fit(X, None)
+        self.fit(X, None)
+        ypred = _make_ydf_sklearn(self.hfo_df, ch_names=self.ch_names)
+        return ypred
 
-    def _create_event_df(self, chs_hfos_list, hfo_name):
+    def _create_annotation_df(self, chs_hfos_list, hfo_name):
         event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
                                     event_name=hfo_name)
-        self.df_ = event_df
+        annot_df = events_to_annotations(event_df)
+        self.df_ = annot_df
 
     def fit(self, X, y=None):
         """

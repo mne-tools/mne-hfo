@@ -2,12 +2,112 @@
 # License: BSD (3-clause)
 import json
 import os
+from datetime import datetime, timezone
 from os import path as op
 
 import numpy as np
 import pandas as pd
 
 from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
+
+
+class DisabledCV:
+    """Dummy CV class for SearchCV scikit-learn functions."""
+
+    def __init__(self):
+        self.n_splits = 1
+
+    def split(self, X, y, groups=None):
+        """Disabled split."""
+        yield (np.arange(len(X)), np.arange(len(y)))
+
+    def get_n_splits(self, X, y, groups=None):
+        """Disabled split."""
+        return self.n_splits
+
+
+def _make_ydf_sklearn(ydf, ch_names):
+    """Convert HFO annotations DataFrame into scikit-learn y input.
+
+    Parameters
+    ----------
+    ydf : pd.Dataframe
+        Annotations DataFrame containing HFO events.
+    ch_names : list
+        A list of channel names in the raw data.
+
+    Returns
+    -------
+    ch_results : list[list[tuple]]
+        List of channel HFO events, ordered by the channel names from the
+        ``raw`` dataset. Each channel corresponds to a list of "onset"
+        and "offset" time points (in seconds) that an HFO was detected.
+    """
+    # create channel results
+    ch_results = []
+
+    # make sure offset in column
+    if 'offset' not in ydf.columns:
+        ydf['offset'] = ydf['onset'] + ydf['duration']
+
+    ch_groups = ydf.groupby(['channels'])
+    if any([ch not in ch_names for ch in ch_groups.groups]):  # type: ignore
+        raise RuntimeError(f'Channel {ch_groups.groups} contain '
+                           f'channels not in '
+                           f'actual data channel names: '
+                           f'{ch_names}.')
+
+    # group by channels
+    for idx, ch in enumerate(ch_names):
+        if ch not in ch_groups.groups:
+            ch_results.append(())
+            continue
+        # get channel name
+        ch_df = ch_groups.get_group(ch)
+
+        # obtain list of HFO onset, offset for this channel
+        ch_results.append(list(zip(ch_df['onset'], ch_df['offset'])))
+
+    ch_results = np.asarray(ch_results, dtype='object')
+    return ch_results
+
+
+def make_Xy_sklearn(raw, df):
+    """Make X/y for HFO detector compliant with scikit-learn.
+
+    To render a dataframe "sklearn" compatible, by
+    turning it into a list of list of tuples.
+
+    Parameters
+    ----------
+    raw : mne.io.Raw
+        The raw iEEG data.
+    df : pd.DataFrame
+        The HFO labeled dataframe, in the form of ``*_annotations.tsv``.
+        Should be read in through ``read_annotations`` function.
+
+    Returns
+    -------
+    raw_df : pd.DataFrame
+        The Raw dataframe generated from :func:`mne.io.Raw.to_data_frame`.
+    ch_results : list[list[tuple]]
+        List of channel HFO events, ordered by the channel names from the
+        ``raw`` dataset. Each channel corresponds to a list of "onset"
+        and "offset" time points (in seconds) that an HFO was detected.
+    """
+    ch_names = raw.ch_names
+
+    ch_results = _make_ydf_sklearn(df, ch_names)
+
+    # set arbitrary measurement date to allow time format as a datetime
+    if raw.info['meas_date'] is None:
+        raw.set_meas_date(datetime.now(tz=timezone.utc))
+
+    # keep as C x T
+    raw_df = raw.to_data_frame(index='time',
+                               time_format='datetime').T
+
+    return raw_df, ch_results
 
 
 def _check_df(df: pd.DataFrame, df_type: str,
@@ -26,6 +126,7 @@ def _check_df(df: pd.DataFrame, df_type: str,
 
     # first compute sampling rate from sample / onset columns
     sfreq = df['sample'].divide(df['onset']).round(2)
+
     # onset=0 will cause sfreq to be inf, drop these rows to
     # prevent additional sfreqs
     sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()

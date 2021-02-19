@@ -1,6 +1,6 @@
 import collections
 from datetime import datetime, timezone, timedelta
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -338,6 +338,85 @@ def _find_overlapping_events(list1, list2):
     return overlapping_events
 
 
+def match_detected_annotations(
+        ytrue_annot_df: pd.DataFrame, ypred_annot_df: pd.DataFrame,
+        ch_names: Union[List[str], str] = None,
+        label: str = None, sec_margin: float = 1., method='match-true'):
+    """Given two annotations.tsv DataFrames, match HFO detection overlaps.
+
+    Parameters
+    ----------
+    ytrue_annot_df : pd.DataFrame
+        The reference annotations DataFrame containing the HFO events that are
+        considered "ground-truth" in this comparison.
+    ypred_annot_df : pd.DataFrame
+        The estimated annotations DataFrame containing the HFO events that
+        are estimated using a ``Detector``.
+    ch_names : list | str | None
+        Which channels to match. If None (default), then will match all
+        available channels in both dataframes. If str, then must be a single
+        channel name available in the ``ytrue_annot_df``. If list of
+        strings, then must be a list of channel names available in the
+        ``ytrue_annot_df``.
+    label : str | None
+        The HFO label to use. If None (default) will consider all rows in
+        both input DataFrames as an HFO event. If a string, then it must
+        match to an element of ``label`` column in the dataframes.
+    sec_margin : float
+        Number of seconds to consider a valid checking window.
+        Default = 1.
+    method : str
+        Type of strategy for matching HFO events. Must be one of
+        ``match-true``, ``match-pred``, or ``match-total``.
+        If "match-true", will return a dataframe of all true indices
+        and matching predicted indices if they exist. If "match-pred",
+        will return a dataframe of all predicted indices and matching
+        true indices if they exist. If "match-total", will return the
+        concatenation of the two. See Notes for more information.
+
+    Returns
+    -------
+    matched_df : pd.DataFrame
+        A DataFrame with the columns ``pred_index`` and ``true_index``,
+        which corresponds to indices,
+    """
+    # check adherence of the annotations dataframe structure
+    ytrue_annot_df = _check_df(ytrue_annot_df, df_type='annotations')
+    ypred_annot_df = _check_df(ypred_annot_df, df_type='annotations')
+
+    # select only certain labels
+    if label is not None:
+        if label not in ytrue_annot_df['label'] or \
+                label not in ypred_annot_df['label']:
+            raise ValueError(f'Label {label} is not inside the input '
+                             f'DataFrames.')
+
+        ytrue_annot_df = ytrue_annot_df.loc[ytrue_annot_df['label'] == label]
+        ypred_annot_df = ypred_annot_df.loc[ypred_annot_df['label'] == label]
+
+    # select only certain channels
+    if ch_names is not None:
+        if isinstance(ch_names, str):
+            ch_names = [ch_names]
+        if any([ch not in ytrue_annot_df['channels'] for ch in ch_names]):
+            raise ValueError(f'Channels {ch_names} are not all inside '
+                             f'ground-truth HFO DataFrame.')
+        if any([ch not in ypred_annot_df['channels'] for ch in ch_names]):
+            raise ValueError(f'Channels {ch_names} are not all inside '
+                             f'predicted HFO DataFrame.')
+
+        ytrue_annot_df = ytrue_annot_df.loc[
+            ytrue_annot_df['channels'].isin(ch_names)
+        ]
+        ypred_annot_df = ypred_annot_df.loc[
+            ypred_annot_df['channels'].isin(ch_names)
+        ]
+
+    # TODO: determine matching HFO events depending on method
+
+    # TODO:
+
+
 def match_detections(ytrue_df, ypredict_df, label: str = None,
                      sec_margin: float = 1., method="match-true"):
     """
@@ -458,7 +537,7 @@ def match_detections(ytrue_df, ypredict_df, label: str = None,
         pred_match = _match_detections_overlap(ypredict_df, ytrue_df,
                                                dc, samp_margin,
                                                ('pred_index', 'true_index'))
-        return pd.concat([true_match, pred_match]).drop_duplicates().\
+        return pd.concat([true_match, pred_match]).drop_duplicates(). \
             reset_index(drop=True)
     else:
         raise NotImplementedError("Method must be one of match-true,"

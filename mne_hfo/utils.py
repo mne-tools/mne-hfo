@@ -26,34 +26,6 @@ class DisabledCV:
         return self.n_splits
 
 
-def _make_sklearn_ydf(y, sfreq, ch_names):
-    """Convert scikit-learn y output into HFO annotations DataFrame.
-
-    Parameters
-    ----------
-    y : list[list[tuple]]
-        Each channel corresponds to a list of "onset" and "offset"
-        time points (in seconds) that an HFO was detected.
-    sfreq: int
-        Sampling frequency of the data
-    ch_names : list
-        A list of channel names in the raw data.
-
-    Returns
-    -------
-    annot_df : pd.Dataframe
-        Annotations DataFrame containing HFO events.
-
-    """
-    from mne_hfo import create_events_df, events_to_annotations
-    hfo_dict = {}
-    for ch_name, hfo_list in zip(ch_names, y):
-        hfo_dict[ch_name] = hfo_list
-    event_df = create_events_df(hfo_dict, sfreq=sfreq)
-    annot_df = events_to_annotations(event_df)
-    return annot_df
-
-
 def _make_ydf_sklearn(ydf, ch_names):
     """Convert HFO annotations DataFrame into scikit-learn y input.
 
@@ -66,10 +38,29 @@ def _make_ydf_sklearn(ydf, ch_names):
 
     Returns
     -------
-    ch_results : list[list[tuple]]
-        List of channel HFO events, ordered by the channel names from the
-        ``raw`` dataset. Each channel corresponds to a list of "onset"
-        and "offset" time points (in seconds) that an HFO was detected.
+    ch_results : List of list[tuple]
+        Ordered dictionary of channel HFO events, ordered by the channel
+        names from the ``raw`` dataset. Each channel corresponds to a
+        list of "onset" and "offset" time points (in seconds) that an
+        HFO was detected. The channel is also appended to the third
+        element of each HFO event. For example::
+
+            # ch_results has length of ch_names
+            ch_results = [
+                [
+                    (0, 10, 'A1'),
+                    (20, 30, 'A1'),
+                    ...
+                ],
+                [
+                    (None, None, 'A2'),
+                ],
+                [
+                    (20, 30, 'A3'),
+                    ...
+                ],
+                ...
+            ]
     """
     # create channel results
     ch_results = []
@@ -88,16 +79,57 @@ def _make_ydf_sklearn(ydf, ch_names):
     # group by channels
     for idx, ch in enumerate(ch_names):
         if ch not in ch_groups.groups:
-            ch_results.append(())
+            ch_results.append([(None, None, ch, None, None)])
             continue
         # get channel name
         ch_df = ch_groups.get_group(ch)
 
         # obtain list of HFO onset, offset for this channel
-        ch_results.append(list(zip(ch_df['onset'], ch_df['offset'])))
+        ch_name_as_list = [ch] * len(ch_df['onset'])
+        sfreqs = ch_df['sample'].divide(ch_df['onset'])
+        ch_results.append(list(zip(ch_df['onset'],
+                                   ch_df['offset'],
+                                   ch_name_as_list,
+                                   ch_df['label'],
+                                   sfreqs)))
 
     ch_results = np.asarray(ch_results, dtype='object')
     return ch_results
+
+
+def _convert_y_sklearn_to_annot_df(ylist):
+    """Convert y sklearn list to Annotations DataFrame."""
+    from .io import create_annotations_df
+
+    # store basic data points needed for annotations dataframe
+    onset_sec = []
+    duration_sec = []
+    ch_names = []
+    labels = []
+    sfreqs = []
+
+    # loop over all channel HFO results
+    for idx, ch_results in enumerate(ylist):
+        for jdx, res in enumerate(ch_results):
+            onset, offset, ch_name, label, sfreq = res
+
+            # if onset/offset is None, then there is
+            # on HFO for this channel
+            if onset is not None:
+                onset_sec.append(onset)
+                duration_sec.append(offset - onset)
+                sfreqs.append(sfreq)
+                ch_names.append(ch_name)
+                labels.append(label)
+
+    assert len(np.unique(sfreqs)) == 1
+    sfreq = sfreqs[0]
+
+    # create the output annotations dataframe
+    annot_df = create_annotations_df(onset=onset_sec, duration=duration_sec,
+                                     ch_name=ch_names, annotation_label=labels)
+    annot_df['sample'] = annot_df['onset'].multiply(sfreq)
+    return annot_df
 
 
 def make_Xy_sklearn(raw, df):

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from mne_hfo.posthoc import match_detected_annotations
-from mne_hfo.utils import _check_df, _make_sklearn_ydf
+from mne_hfo.utils import _check_df, _convert_y_sklearn_to_annot_df
 
 
 def true_positive_rate(y, y_pred):
@@ -130,13 +130,19 @@ def _compute_score_data(y, y_pred, sfreq, ch_names, method):
         y = _check_df(y, df_type='annotations')
     else:
         # assume y is now in the form of list of (onset, offset) per channel
-        y = _make_sklearn_ydf(y, sfreq=sfreq, ch_names=ch_names)
+        y = _convert_y_sklearn_to_annot_df(y)
+
+    if isinstance(y_pred, pd.DataFrame):
+        y_pred = _check_df(y_pred, df_type='annotations')
+    else:
+        # assume y is now in the form of list of (onset, offset) per channel
+        y_pred = _convert_y_sklearn_to_annot_df(y_pred)
 
     # convert both list of list of tuples into a DataFrame
-    y_pred = _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
-    print(f"Y-pred: {y_pred}")
-    # y predictions from HFO detectors should always be a dataframe
-    y_pred = _check_df(y_pred, df_type='annotations')
+    # y_pred = _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
+    # print(f"Y-pred: {y_pred}")
+    # # y predictions from HFO detectors should always be a dataframe
+    # y_pred = _check_df(y_pred, df_type='annotations')
     overlap_df = match_detected_annotations(y, y_pred, method=method)
 
     # get the indices from the match event overlap output

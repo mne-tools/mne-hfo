@@ -168,7 +168,9 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     ch_names = ['0']
 
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
-    detector = LineLengthDetector(filter_band=(200, 300))
+    detector = LineLengthDetector(
+        filter_band=(200, 300)
+    )
     scorer = make_scorer(scorer, sfreq=sfreq, ch_names=ch_names)
     # dummycv = [(slice(None), slice(None))]
     cv = DisabledCV()
@@ -278,7 +280,6 @@ def test_metrics_df(end_sec, rate):
     # error if specifying channel names are not inside dataframe
     with pytest.raises(ValueError, match=''):
         compute_chs_hfo_rates(annot_df, rate=rate, ch_names=['A0', 'A1'])
-
 
 # @pytest.mark.skip()
 # def test_match_detections():

@@ -4,6 +4,8 @@ import numpy as np
 import pytest
 from scipy.signal import butter, filtfilt
 from sklearn.utils.estimator_checks import parametrize_with_checks
+from mne.io import RawArray
+from mne import create_info
 
 from mne_hfo import LineLengthDetector, RMSDetector, \
     HilbertDetector, CSDetector
@@ -45,12 +47,16 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
+    # create input data structure
+    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    raw = RawArray(filt_data, info=info)
+
     compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size,
                                           filter_band=None)
     dets = benchmark(compute_instance.fit,
-                     filt_data)
+                     raw)
 
-    compute_instance.fit(filt_data)
+    compute_instance.fit(raw)
 
     # copied from epycom
     expected_vals = [(5040, 5198),
@@ -73,10 +79,14 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
+    # create input data structure
+    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    raw = RawArray(filt_data, info=info)
+
     compute_instance = RMSDetector(sfreq=fs, win_size=window_size,
                                    filter_band=None)
     dets = benchmark(compute_instance.fit,
-                     filt_data)
+                     raw)
 
     # copied from epycom
     expected_vals = [(5040, 5198),

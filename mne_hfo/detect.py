@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from mne_hfo.base import Detector
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ, ACCEPTED_BAND_METHODS
-from mne_hfo.posthoc import check_detection_overlap
+from mne_hfo.posthoc import _check_detection_overlap
 
 
 def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,
@@ -124,9 +124,9 @@ def _run_detect_branch(detects, det_idx, HFO_outline):
     else:
         # Get overllaping detects
         for next_det_idx in next_band_idcs[0]:
-            if check_detection_overlap([detects[det_idx, 1], detects[det_idx,
-                                                                     2]],
-                                       [detects[next_det_idx, 1],
+            if _check_detection_overlap([detects[det_idx, 1], detects[det_idx,
+                                                                      2]],
+                                        [detects[next_det_idx, 1],
                                         detects[next_det_idx,
                                                 2]]):
                 # Go up the tree

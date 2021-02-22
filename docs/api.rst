@@ -38,33 +38,24 @@ BIDS-IO functions
 
     create_events_df
     create_annotations_df
-    read_annotations
     events_to_annotations
+    read_annotations
+    write_annotations
 
-Simulation
-----------
+Post-processing HFO Detections
+------------------------------
 
-:py:mod:`mne_hfo.simulate`:
-
-.. automodule:: mne_hfo.simulate
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: mne_hfo.simulate
+.. currentmodule:: mne_hfo
 
 .. autosummary::
    :toctree: generated/
 
-    simulate_pink_noise
-    simulate_brown_noise
-    simulate_line_noise
-    simulate_delta
-    simulate_artifact_spike
-    simulate_spike
-    simulate_hfo
+    match_detections
+    find_coincident_events
+    compute_chs_hfo_rates
 
-Post-processing HFO Detections
-------------------------------
+Help transform data to be scikit-learn compatible (for SearchCV)
+----------------------------------------------------------------
 
 .. currentmodule:: mne_hfo
 
@@ -93,3 +84,25 @@ Metrics
     compute_line_length
     threshold_std
     threshold_tukey
+
+Simulation
+----------
+
+:py:mod:`mne_hfo.simulate`:
+
+.. automodule:: mne_hfo.simulate
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: mne_hfo.simulate
+
+.. autosummary::
+   :toctree: generated/
+
+    simulate_pink_noise
+    simulate_brown_noise
+    simulate_line_noise
+    simulate_delta
+    simulate_artifact_spike
+    simulate_spike
+    simulate_hfo

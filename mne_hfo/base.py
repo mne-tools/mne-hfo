@@ -165,7 +165,8 @@ class Detector(BaseEstimator):
             self.ch_names = ch_names
             self.sfreq = sfreq
             X = X.to_numpy()
-        # else:
+        else:
+            self.ch_names = np.arange(len(X)).astype(str)
             # pass
             # raise ValueError(f'Only dataframe and mne.io.Raw input is '
             #                  f'accepted into HFO detectors.')

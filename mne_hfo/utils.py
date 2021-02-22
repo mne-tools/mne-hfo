@@ -336,27 +336,3 @@ def threshold_quian(signal, threshold):
     """
     ths_value = threshold * np.median(np.abs(signal)) / 0.6745
     return ths_value
-
-
-def _append_offset_to_df(df, cols=["onset", "duration"]):
-    """
-    Append an offset column to the provided dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        DataFrame without an offset column
-    cols : Tuple
-        Tuple of column names (onset_col_name, duration_col_name)
-
-    Returns
-    -------
-    List
-        List of dataframes with additional column
-
-    """
-    # Get indices of onset and duration columns
-    df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
-    # Sum the two columns to create offset column
-    df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
-    return df

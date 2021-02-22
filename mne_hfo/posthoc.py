@@ -412,10 +412,12 @@ def match_detected_annotations(
             ypred_annot_df['channels'].isin(ch_names)
         ]
 
-    # if prediction yields no events and method is match-pred, return empty structured dataframe
+    # if prediction yields no events and method is match-pred,
+    # return empty structured dataframe
     if ypred_annot_df.empty and method == "match-pred":
         return pd.DataFrame(columns=('true_index', 'pred_index'))
-    # else if prediction yields no events, return structured dataframe containing just true indices
+    # else if prediction yields no events, return structured dataframe
+    # containing just true indices
     elif ypred_annot_df.empty:
         match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
         for ind, row in ytrue_annot_df.iterrows():
@@ -424,8 +426,8 @@ def match_detected_annotations(
                        downcast="float")
         return match_df
 
-
-    # desired columns (dc) for the annotations dataframe are onset and duration
+    # desired columns (dc) for the annotations dataframe are
+    # onset and duration
     dc = ['onset', 'duration']
 
     if method.lower() == "match-true":
@@ -449,7 +451,6 @@ def match_detected_annotations(
         raise NotImplementedError("Method must be one of match-true,"
                                   " match-pred, or match-total")
         # Iterate over true labels (gold standard)
-
 
     # TODO: determine matching HFO events depending on method
     # note if it's simple, you could transform these dataframes into the ones

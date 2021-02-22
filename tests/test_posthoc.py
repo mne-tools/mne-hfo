@@ -13,8 +13,7 @@ from mne_hfo import (
     match_detections, create_events_df, LineLengthDetector)
 from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.posthoc import match_detected_annotations
-from mne_hfo.scores import (accuracy, precision, true_positive_rate,
-                            false_negative_rate, false_discovery_rate)
+from mne_hfo.scores import (accuracy)
 from mne_hfo.utils import make_Xy_sklearn, DisabledCV
 
 
@@ -45,7 +44,7 @@ def test_match_hfo_annotations():
     # create dummy reference annotations
     onset1 = [1.5, 12.6, 22.342, 59.9]
     offset1 = [6.7300, 14.870, 31.1, 81.2]
-    duration1 = [offset-onset for onset,offset in zip(onset1, offset1)]
+    duration1 = [offset - onset for onset, offset in zip(onset1, offset1)]
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
@@ -55,7 +54,7 @@ def test_match_hfo_annotations():
     # create dummy predicted HFO annotations
     onset2 = [2, 12.3, 60.1, 98.3]
     offset2 = [6.93, 15.12, 65.6, 101.45]
-    duration2 = [offset-onset for onset,offset in zip(onset2, offset2)]
+    duration2 = [offset - onset for onset, offset in zip(onset2, offset2)]
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
@@ -261,7 +260,6 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
-
 
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)

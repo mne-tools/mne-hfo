@@ -63,7 +63,6 @@ def _create_events_df(onset: List[float], duration: List[float],
                             index=None,
                             columns=EVENT_COLUMNS)
 
-
     event_df = event_df.astype({
         'onset': 'float64',
         'duration': 'float64',

@@ -117,7 +117,8 @@ def accuracy(y, y_pred, sfreq, ch_names):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, sfreq, ch_names, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, sfreq, ch_names,
+                                     method='match-total')
 
     # return actual metric
     return tp / (tp + fp + fn)
@@ -125,7 +126,6 @@ def accuracy(y, y_pred, sfreq, ch_names):
 
 def _compute_score_data(y, y_pred, sfreq, ch_names, method):
     """Compute basic HFO scoring metrics."""
-    from mne_hfo import match_detections
     if isinstance(y, pd.DataFrame):
         y = _check_df(y, df_type='annotations')
     else:
@@ -133,7 +133,7 @@ def _compute_score_data(y, y_pred, sfreq, ch_names, method):
         y = _make_sklearn_ydf(y, sfreq=sfreq, ch_names=ch_names)
 
     # convert both list of list of tuples into a DataFrame
-    y_pred =  _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
+    y_pred = _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
     print(f"Y-pred: {y_pred}")
     # y predictions from HFO detectors should always be a dataframe
     y_pred = _check_df(y_pred, df_type='annotations')

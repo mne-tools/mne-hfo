@@ -118,6 +118,11 @@ def _convert_y_sklearn_to_annot_df(ylist):
             if onset is not None:
                 onset_sec.append(onset)
                 duration_sec.append(offset - onset)
+                if sfreq is not None:
+                    # Sampling frequencies should always be integers
+                    # Solves issues with unique check due to float
+                    # division
+                    sfreq = int(np.round(sfreq))
                 sfreqs.append(sfreq)
                 ch_names.append(ch_name)
                 labels.append(label)

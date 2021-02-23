@@ -21,11 +21,10 @@ def true_positive_rate(y, y_pred):
     float
 
     """
-    # y = _check_df(y, df_type='events')
-    # y_pred = _check_df(y_pred, df_type='events')
-    # overlap_df = match_detections(y, y_pred, method="match-total")
-    # tp, fp, fn = _calculate_match_stats(overlap_df)
-    # return tp / (tp + fn)
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    # return actual metric
+    return tp / (tp + fn)
 
 
 def precision(y, y_pred):
@@ -44,11 +43,10 @@ def precision(y, y_pred):
     float
 
     """
-    # y = _check_df(y, df_type='events')
-    # y_pred = _check_df(y_pred, df_type='events')
-    # overlap_df = match_detections(y, y_pred, method="match-total")
-    # tp, fp, fn = _calculate_match_stats(overlap_df)
-    # return tp / (tp + fp)
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    # return actual metric
+    return tp / (tp + fp)
 
 
 def false_negative_rate(y, y_pred):
@@ -67,11 +65,10 @@ def false_negative_rate(y, y_pred):
     float
 
     """
-    # y = _check_df(y, df_type='events')
-    # y_pred = _check_df(y_pred, df_type='events')
-    # overlap_df = match_detections(y, y_pred, method="match-total")
-    # tp, fp, fn = _calculate_match_stats(overlap_df)
-    # return fn / (fn + tp)
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    # return actual metric
+    return fn / (fn + tp)
 
 
 def false_discovery_rate(y, y_pred):
@@ -90,14 +87,13 @@ def false_discovery_rate(y, y_pred):
     float
 
     """
-    # y = _check_df(y, df_type='events')
-    # y_pred = _check_df(y_pred, df_type='events')
-    # overlap_df = match_detections(y, y_pred, method="match-total")
-    # tp, fp, fn = _calculate_match_stats(overlap_df)
-    # return fp / (fp + tp)
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    # return the actual metric
+    return fp / (fp + tp)
 
 
-def accuracy(y, y_pred, sfreq, ch_names):
+def accuracy(y, y_pred):
     """
     Calculate accuracy as: accuracy = tp / (tp + fp + fn).
 
@@ -117,14 +113,14 @@ def accuracy(y, y_pred, sfreq, ch_names):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, sfreq, ch_names,
-                                     method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
 
+    print(f"Found {tp} true positives, {fp} false positives, and {fn} false negatives")
     # return actual metric
     return tp / (tp + fp + fn)
 
 
-def _compute_score_data(y, y_pred, sfreq, ch_names, method):
+def _compute_score_data(y, y_pred, method):
     """Compute basic HFO scoring metrics."""
     if isinstance(y, pd.DataFrame):
         y = _check_df(y, df_type='annotations')
@@ -138,11 +134,6 @@ def _compute_score_data(y, y_pred, sfreq, ch_names, method):
         # assume y is now in the form of list of (onset, offset) per channel
         y_pred = _convert_y_sklearn_to_annot_df(y_pred)
 
-    # convert both list of list of tuples into a DataFrame
-    # y_pred = _make_sklearn_ydf(y_pred, sfreq=sfreq, ch_names=ch_names)
-    # print(f"Y-pred: {y_pred}")
-    # # y predictions from HFO detectors should always be a dataframe
-    # y_pred = _check_df(y_pred, df_type='annotations')
     overlap_df = match_detected_annotations(y, y_pred, method=method)
 
     # get the indices from the match event overlap output

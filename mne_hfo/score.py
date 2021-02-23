@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 
 from mne_hfo.posthoc import match_detected_annotations
-from mne_hfo.utils import _check_df, _convert_y_sklearn_to_annot_df
+from mne_hfo.sklearn import _convert_y_sklearn_to_annot_df
+from mne_hfo.utils import _check_df
 
 
 def true_positive_rate(y, y_pred):
@@ -44,6 +45,9 @@ def precision(y, y_pred):
 
     """
     tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    if tp == 0:
+        return 0.
 
     # return actual metric
     return tp / (tp + fp)
@@ -88,6 +92,9 @@ def false_discovery_rate(y, y_pred):
 
     """
     tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+
+    if fp == 0:
+        return 0.
 
     # return the actual metric
     return fp / (fp + tp)

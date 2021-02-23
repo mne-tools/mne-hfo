@@ -7,10 +7,11 @@ from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 
 from mne_hfo.io import create_events_df, events_to_annotations
-from mne_hfo.scores import accuracy, false_negative_rate, \
+from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
+from mne_hfo.sklearn import _make_ydf_sklearn
 from mne_hfo.utils import (threshold_std, compute_rms,
-                           compute_line_length, _make_ydf_sklearn)
+                           compute_line_length)
 
 ACCEPTED_THRESHOLD_METHODS = ['std']
 ACCEPTED_HFO_METHODS = ['line_length', 'rms']
@@ -228,6 +229,11 @@ class Detector(BaseEstimator):
         """Return HFO detections as a dataframe."""
         return self.df_
 
+    @property
+    def hfo_event_df(self):
+        """Return HFO detections as an event.tsv DataFrame."""
+        return self.event_df_
+
     def predict(self, X):
         """Scikit-learn override predict function.
 
@@ -254,6 +260,7 @@ class Detector(BaseEstimator):
     def _create_annotation_df(self, chs_hfos_list, hfo_name):
         event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
                                     event_name=hfo_name)
+        self.event_df_ = event_df
         annot_df = events_to_annotations(event_df)
         self.df_ = annot_df
 

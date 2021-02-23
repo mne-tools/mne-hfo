@@ -13,8 +13,9 @@ from mne_hfo import (
     LineLengthDetector)
 from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.posthoc import match_detected_annotations
-from mne_hfo.scores import (accuracy)
-from mne_hfo.utils import make_Xy_sklearn, DisabledCV
+from mne_hfo.score import (accuracy, false_negative_rate, false_discovery_rate,
+                           true_positive_rate, precision)
+from mne_hfo.sklearn import make_Xy_sklearn, DisabledCV
 
 
 def test_find_coincident_events():
@@ -166,8 +167,8 @@ def test_match_detections_empty():
 
 @pytest.mark.parametrize("scorer", [
     accuracy,
-    # precision, true_positive_rate,
-    # false_negative_rate, false_discovery_rate
+    precision, true_positive_rate,
+    false_negative_rate, false_discovery_rate
 ])
 def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     sfreq = 5000

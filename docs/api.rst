@@ -57,14 +57,13 @@ Post-processing HFO Detections
 Help transform data to be scikit-learn compatible (for SearchCV)
 ----------------------------------------------------------------
 
-.. currentmodule:: mne_hfo
+.. currentmodule:: mne_hfo.sklearn
 
 .. autosummary::
    :toctree: generated/
 
-    match_detections
-    find_coincident_events
-    compute_chs_hfo_rates
+    make_Xy_sklearn
+    DisabledCV
 
 Metrics
 -------

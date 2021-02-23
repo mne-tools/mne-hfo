@@ -127,8 +127,8 @@ def _run_detect_branch(detects, det_idx, HFO_outline):
             if _check_detection_overlap([detects[det_idx, 1], detects[det_idx,
                                                                       2]],
                                         [detects[next_det_idx, 1],
-                                        detects[next_det_idx,
-                                                2]]):
+                                         detects[next_det_idx,
+                                                 2]]):
                 # Go up the tree
                 _run_detect_branch(detects, next_det_idx, HFO_outline)
 

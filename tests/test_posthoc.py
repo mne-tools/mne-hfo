@@ -110,20 +110,26 @@ def test_match_hfo_annotations():
 def test_match_detections_empty():
     # First create two annotation dataframes with expected columns. We will
     # consider df1 to be ground truth and df2 to be the prediction
-    onset1 = [0, 12600, 22342, 59900]
-    offset1 = [67300, 14870, 31100, 81200]
-    event_list = [(onset, offset) for onset, offset in zip(onset1, offset1)]
-    event_dict1 = {'A1': event_list}
     sfreq = 1000
-    event_df1 = create_events_df(event_dict1, event_name='hfo', sfreq=sfreq)
-    annot_df1 = events_to_annotations(event_df1)
+    # create dummy reference annotations
+    onset1 = [1.5, 12.6, 22.342, 59.9]
+    offset1 = [6.7300, 14.870, 31.1, 81.2]
+    duration1 = [offset - onset for onset, offset in zip(onset1, offset1)]
+    ch_name = ['A1'] * len(onset1)
+    annotation_label = ['hfo'] * len(onset1)
+    annot_df1 = create_annotations_df(onset1, duration1, ch_name,
+                                      annotation_label)
+    annot_df1['sample'] = annot_df1['onset'] * sfreq
 
+    # create dummy reference annotations
     onset2 = []
     offset2 = []
-    event_list = [(onset, offset) for onset, offset in zip(onset2, offset2)]
-    event_dict2 = {'A1': event_list}
-    event_df2 = create_events_df(event_dict2, event_name='hfo', sfreq=sfreq)
-    annot_df2 = events_to_annotations(event_df2)
+    duration2 = [offset - onset for onset, offset in zip(onset2, offset2)]
+    ch_name = ['A1'] * len(onset2)
+    annotation_label = ['hfo'] * len(onset2)
+    annot_df2 = create_annotations_df(onset2, duration2, ch_name,
+                                      annotation_label)
+    annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     expected_dict_true = {
         "true_index": [0, 1, 2, 3],
@@ -168,10 +174,8 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     ch_names = ['0']
 
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
-    detector = LineLengthDetector(
-        filter_band=(200, 300)
-    )
-    scorer = make_scorer(scorer, sfreq=sfreq, ch_names=ch_names)
+    detector = LineLengthDetector()
+    scorer = make_scorer(scorer)
     # dummycv = [(slice(None), slice(None))]
     cv = DisabledCV()
     gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=cv,
@@ -197,9 +201,12 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     # create the annotations dataframe
     annot_df = create_annotations_df(onset, duration, ch_names)
     annot_df['sample'] = annot_df['onset'] * sfreq
+    print(annot_df)
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
+    print(raw_df.shape)
+    print(y)
 
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)

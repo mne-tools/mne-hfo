@@ -114,8 +114,6 @@ def accuracy(y, y_pred):
 
     """
     tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
-
-    print(f"Found {tp} true positives, {fp} false positives, and {fn} false negatives")
     # return actual metric
     return tp / (tp + fp + fn)
 

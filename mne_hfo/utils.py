@@ -127,6 +127,13 @@ def _convert_y_sklearn_to_annot_df(ylist):
                 ch_names.append(ch_name)
                 labels.append(label)
 
+    # If no hfos detected, return an empty annotation df
+    if not sfreqs:
+        empty_annotation_df = pd.DataFrame(
+            columns=['onset', 'duration', 'channels', 'label',
+                     'sample'])
+        return empty_annotation_df
+    # If hfos are detected, assert they all have the same frq
     assert len(np.unique(sfreqs)) == 1
     sfreq = sfreqs[0]
 

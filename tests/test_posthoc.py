@@ -10,7 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from mne_hfo import (
     create_annotations_df, find_coincident_events,
     compute_chs_hfo_rates, merge_overlapping_events,
-    create_events_df, LineLengthDetector, events_to_annotations)
+    LineLengthDetector)
 from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.posthoc import match_detected_annotations
 from mne_hfo.scores import (accuracy)

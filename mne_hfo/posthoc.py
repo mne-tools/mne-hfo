@@ -633,7 +633,8 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
         check_window_start = gs[0] - margin
         check_window_end = gs[0] + margin
         for row_pred in check_df[(check_df['onset'] < check_window_end) &
-                                 (check_df['onset'] > check_window_start)].iterrows():
+                                 (check_df['onset'] >
+                                  check_window_start)].iterrows():
             # [onset, offset]
             pred = [row_pred[1]['onset'], row_pred[1]['offset']]
             # Check if the events overlap, and append the index

@@ -1,4 +1,4 @@
-from mne_hfo import create_events_df, events_to_annotations, create_annotations_df
+from mne_hfo import create_annotations_df
 from mne_hfo.scores import accuracy, true_positive_rate, \
     false_negative_rate, false_discovery_rate, precision
 from mne_hfo.utils import _make_ydf_sklearn

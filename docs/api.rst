@@ -50,9 +50,10 @@ Post-processing HFO Detections
 .. autosummary::
    :toctree: generated/
 
-    match_detections
+    match_detected_annotations
     find_coincident_events
     compute_chs_hfo_rates
+    merge_overlapping_events
 
 Help transform data to be scikit-learn compatible (for SearchCV)
 ----------------------------------------------------------------

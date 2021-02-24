@@ -496,39 +496,82 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
                          f'"offset" columns (in seconds).It '
                          f'has columns: {check_df.columns}')
 
-    # We want to create another dataframe of matched gold
-    # standard indices and checked indices
-    match_df = pd.DataFrame(columns=cols)
-    match_df_idx = 0
-    for row_gs in gs_df.iterrows():
-        matched_idcs = []
-        # [onset, offset]
-        gs = [row_gs[1]['onset'], row_gs[1]['offset']]
-        check_window_start = gs[0] - margin
-        check_window_end = gs[0] + margin
-        for row_pred in check_df[(check_df['onset'] < check_window_end) &
-                                 (check_df['onset'] >
-                                  check_window_start)].iterrows():
-            # [onset, offset]
-            pred = [row_pred[1]['onset'], row_pred[1]['offset']]
-            # Check if the events overlap, and append the index
-            # of the prediction df
-            if _check_detection_overlap(gs, pred):
-                matched_idcs.append(row_pred[0])
-                # No overlap found for this gold standard row
-        if len(matched_idcs) == 0:
-            match_df.loc[match_df_idx] = [row_gs[0], None]
-        # One overlap found for this gold standard row
-        elif len(matched_idcs) == 1:
-            match_df.loc[match_df_idx] = [row_gs[0], matched_idcs[0]]
-        else:
-            dd_idx = (
-                abs(check_df.loc[matched_idcs, 'onset'] -
-                    row_gs[1]['onset'])).idxmin()
-            match_df.loc[match_df_idx] = [row_gs[0], dd_idx]
+    # List of tuples to populate the output DataFrame
+    match_indices = []
 
-        match_df_idx += 1
-    if not match_df.empty:
-        match_df = match_df.apply(pd.to_numeric, errors="coerce",
-                                  downcast="float")
+    # Convert the DataFrames that are expensive to manipulate into a list
+    # of tuples (index, onset, offset, ch_name)
+    # Pandas does not care about column order, but since we are changing
+    # the DataFrames to numpy, we need to track the column order
+    gs_cols = gs_df.columns
+    check_cols = check_df.columns
+    gs_keep_inds = (gs_cols.get_loc("onset"),
+                    gs_cols.get_loc("offset"),
+                    gs_cols.get_loc("channels"))
+    check_keep_inds = (check_cols.get_loc("onset"),
+                       check_cols.get_loc("offset"),
+                       check_cols.get_loc("channels"))
+    gs_numpy = gs_df.to_numpy()[:, gs_keep_inds]
+    gs_numpy = [[i, onset, offset, ch_name] for
+                i, (onset, offset, ch_name)
+                in enumerate(gs_numpy)]
+    check_numpy = check_df.to_numpy()[:, check_keep_inds]
+    check_numpy = [[i, onset, offset, ch_name] for
+                   i, (onset, offset, ch_name)
+                   in enumerate(check_numpy)]
+
+    # TODO: If there is a way to subset by channel, we can speed
+    #  up the loop
+
+    # Now we can iterate
+    for gs_hfo in gs_numpy:
+        gs_ind, gs_onset, gs_offset, gs_ch_name = gs_hfo
+        check_window = (gs_onset - margin, gs_onset + margin)
+        # Subset to the same channel and has onset within the expected window
+        check_numpy_channel = [x for x in check_numpy
+                               if (x[3] == gs_ch_name and
+                                   (x[1] > check_window[0] or
+                                    x[1] < check_window[1]))]
+        # check if nothing meets this criteria
+        if not check_numpy_channel:
+            match_indices.append((gs_ind, None))
+            continue
+        potential_matches = []
+        # else, see if there is overlap
+        for check_hfo in check_numpy_channel:
+            check_ind, check_onset, check_offset, check_ch_name = check_hfo
+            gs_win = (gs_onset, gs_offset)
+            check_win = (check_onset, check_offset)
+            if _check_detection_overlap(gs_win, check_win):
+                potential_matches.append(check_hfo)
+        if not potential_matches:
+            match_indices.append((gs_ind, None))
+        elif len(potential_matches) == 1:
+            match_indices.append((gs_ind, potential_matches[0][0]))
+        else:
+            # more than one match, find closest
+            match_indices.append(_find_best_overlap(gs_hfo, potential_matches))
+
+    if not match_indices:
+        match_df = pd.DataFrame(columns=cols)
+    else:
+        match_df = pd.DataFrame(match_indices, columns=cols).apply(
+            pd.to_numeric, errors="coerce", downcast="float")
     return match_df
+
+
+def _find_best_overlap(gs, check_list):
+    """Find best overlap from an ideal (gs) and a possible list."""
+    gs_ind, gs_onset, gs_offset, _ = gs
+    gs_point = np.array([gs_onset, gs_offset])
+    dist = np.inf
+    best_inds = (gs_ind, None)
+    for check_hfo in check_list:
+        check_ind, check_onset, check_offset, _ = check_hfo
+        check_point = np.array([check_onset, check_offset])
+        # Using distance of the points as the metric
+        new_dist = np.linalg.norm(gs_point - check_point)
+        if new_dist < dist:
+            dist = new_dist
+            best_inds = (gs_ind, check_ind)
+    return best_inds

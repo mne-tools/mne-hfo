@@ -121,12 +121,9 @@ class Detector(BaseEstimator):
         # return y_true, y_pred, which are just lists of 0s and 1s
         # representing overlap detection or not
 
-        sfreq = self.sfreq
-        ch_names = self.ch_names
-
         # compute score
         if self.scoring_func == "accuracy":
-            score = accuracy(y, y_pred, sfreq, ch_names)
+            score = accuracy(y, y_pred)
         elif self.scoring_func == "fnr":
             score = false_negative_rate(y, y_pred)
         elif self.scoring_func == "tpr":
@@ -167,7 +164,8 @@ class Detector(BaseEstimator):
             self.sfreq = sfreq
             X = X.to_numpy()
         else:
-            self.ch_names = np.arange(len(X)).astype(str)
+            if not hasattr(self, 'ch_names'):
+                self.ch_names = np.arange(len(X)).astype(str)
             # pass
             # raise ValueError(f'Only dataframe and mne.io.Raw input is '
             #                  f'accepted into HFO detectors.')
@@ -252,7 +250,7 @@ class Detector(BaseEstimator):
             and offset of the HFO event.
         """
         check_is_fitted(self)
-        X, y = self._check_input_raw(X, None)
+        # X, y = self._check_input_raw(X, None)
         self.fit(X, None)
         ypred = _make_ydf_sklearn(self.hfo_df, ch_names=self.ch_names)
         return ypred

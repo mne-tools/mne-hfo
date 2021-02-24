@@ -177,10 +177,9 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
     detector = LineLengthDetector()
     scorer = make_scorer(scorer)
-    # dummycv = [(slice(None), slice(None))]
     cv = DisabledCV()
-    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer, cv=cv,
-                      verbose=True)
+    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer,
+                      cv=cv, refit=False, verbose=True)
 
     # create dummy EEG data with "true" HFO samples
     data, hfo_samps = create_testing_eeg_data
@@ -191,27 +190,23 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     onset = onset_samp / sfreq
     offset = offset_samp / sfreq
     duration = offset - onset
-    ch_names = ['0'] * len(onset)
+    ch_names = ['A0'] * len(onset)
 
-    print(data.shape)
-    print(hfo_samps)
     # create actual Raw input data
-    info = mne.create_info(ch_names=['0', '1'], sfreq=sfreq, ch_types='ecog')
+    info = mne.create_info(ch_names=['A0', 'A1'], sfreq=sfreq, ch_types='ecog')
     raw = mne.io.RawArray(data_2d, info=info)
 
     # create the annotations dataframe
     annot_df = create_annotations_df(onset, duration, ch_names)
     annot_df['sample'] = annot_df['onset'] * sfreq
-    print(annot_df)
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
-    print(raw_df.shape)
-    print(y)
-
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)
-    print(gs.cv_results_)
+    # print(pd.concat([pd.DataFrame(gs.cv_results_["params"]),
+    #                 pd.DataFrame(gs.cv_results_["mean_test_score"],
+    #                              columns=["Accuracy"])],axis=1))
 
     # uncomment this to see that gridsearch results
     # raise Exception('check out the print statements')

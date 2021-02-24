@@ -17,23 +17,25 @@ def _convert_y_sklearn_to_annot_df(ylist):
 
     # loop over all channel HFO results
     for idx, ch_results in enumerate(ylist):
+        # sklearn is returning a single HFO with onset and duration of 0
         for jdx, res in enumerate(ch_results):
             onset, offset, ch_name, label, sfreq = res
 
             # if onset/offset is None, then there is
             # on HFO for this channel
             if onset is not None:
-                onset_sec.append(onset)
-                duration_sec.append(offset - onset)
-                if sfreq is not None:
+                if (sfreq is not None) and \
+                        (not np.isnan(np.array([sfreq], dtype=np.float64))):
                     # Sampling frequencies should always be integers
                     # Solves issues with unique check due to float
                     # division
                     sfreq = int(np.round(sfreq))
-                sfreqs.append(sfreq)
-                ch_names.append(ch_name)
-                labels.append(label)
+                    sfreqs.append(sfreq)
+                    onset_sec.append(onset)
+                    duration_sec.append(offset - onset)
 
+                    ch_names.append(ch_name)
+                    labels.append(label)
     # If no hfos detected, return an empty annotation df
     if not sfreqs:
         empty_annotation_df = pd.DataFrame(
@@ -142,7 +144,7 @@ def _make_ydf_sklearn(ydf, ch_names):
 
     # group by channels
     for idx, ch in enumerate(ch_names):
-        if ch not in ch_groups.groups:
+        if ch not in ch_groups.groups.keys():
             ch_results.append([(None, None, ch, None, None)])
             continue
         # get channel name

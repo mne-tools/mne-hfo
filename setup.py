@@ -1,6 +1,24 @@
 #! /usr/bin/env python
-"""Setup MNE-HFO."""
+"""Setup MNE-HFO.
+
+To re-setup:
+
+    python setup.py sdist bdist_wheel
+
+    pip install -r requirements.txt --process-dependency-links
+
+To test on test pypi:
+
+    twine upload --repository testpypi dist/*
+
+    # test upload
+    pip install -i https://test.pypi.org/simple/ --no-deps seek_localize
+
+    twine upload dist/*
+"""
+
 import os
+
 from setuptools import setup, find_packages
 
 # get the version
@@ -13,9 +31,8 @@ with open(os.path.join('mne_hfo', '__init__.py'), 'r') as fid:
 if version is None:
     raise RuntimeError('Could not determine version')
 
-
 descr = ('MNE-HFO: Facilitates estimation/detection of high-frequency oscillation'
-         'events on iEEG data with MNE-Python and MNE-BIDS.')
+         'events on iEEG data with MNE-Python, MNE-BIDS and scikit-learn.')
 
 DISTNAME = 'mne-hfo'
 DESCRIPTION = descr

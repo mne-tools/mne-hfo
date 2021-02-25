@@ -9,26 +9,21 @@ CODESPELL_DIRS ?= mne_hfo/ docs/ examples/ tests/
 
 all: clean inplace test
 
-clean-pyc:
-	find . -name "*.pyc" | xargs rm -f
-
 clean-so:
 	find . -name "*.so" | xargs rm -f
 	find . -name "*.pyd" | xargs rm -f
 
 clean-build:
 	rm -rf _build
+	rm -rf _build
+	rm -rf dist
+	rm -rf mne_hfo.egg-info
 
 clean-ctags:
 	rm -f tags
+	rm junit-results.xml
 
-clean-cache:
-	find . -name "__pycache__" | xargs rm -rf
-
-clean-e:
-	find . -name "*-e" | xargs rm -rf
-
-clean: clean-build clean-pyc clean-so clean-ctags clean-cache clean-e
+clean: clean-build clean-so clean-ctags
 
 inplace:
 	$(PYTHON) setup.py develop

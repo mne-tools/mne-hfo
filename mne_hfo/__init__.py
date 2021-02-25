@@ -1,6 +1,6 @@
 """MNE software for computing HFOs from iEEG data."""
 
-__version__ = '0.1'
+__version__ = '0.2dev'
 
 from mne_hfo.detect import RMSDetector, LineLengthDetector, HilbertDetector
 from mne_hfo.hodetect import MorphologyDetector, CSDetector

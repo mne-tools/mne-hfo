@@ -260,7 +260,7 @@ is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
 
  .. code-block:: none
 
-      0%|          | 0/50 [00:00<?, ?it/s]    100%|##########| 50/50 [00:00<00:00, 655.39it/s]
+      0%|          | 0/50 [00:00<?, ?it/s]     80%|########  | 40/50 [00:00<00:00, 304.93it/s]    100%|##########| 50/50 [00:00<00:00, 380.02it/s]
         onset  ...  trial_type
     0  4.6250  ...    hfo_IAR2
     1  1.1750  ...    hfo_IAR3
@@ -375,7 +375,7 @@ In addition, you can check for overlapping HFOs.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.674 seconds)
+   **Total running time of the script:** ( 0 minutes  2.095 seconds)
 
 
 .. _sphx_glr_download_auto_examples_working_with_bids.py:

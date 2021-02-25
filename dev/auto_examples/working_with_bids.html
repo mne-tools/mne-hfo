@@ -146,7 +146,7 @@ MNE-HFO to detect HFOs. Specifically, we will follow these steps:</p>
 from the Fedele dataset [1].</p>
 <ol class="arabic simple" start="2">
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+845.g8837b36eea)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+847.g7b5f93e1a3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk according to <a class="reference external" href="https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#">BEP-021</a> and read it in again.</p></li>
 </ol>
 <div class="section" id="references">
@@ -280,7 +280,8 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/50 [00:00&lt;?, ?it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 655.39it/s]
+ 80%|########  | 40/50 [00:00&lt;00:00, 304.93it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 380.02it/s]
     onset  ...  trial_type
 0  4.6250  ...    hfo_IAR2
 1  1.1750  ...    hfo_IAR3
@@ -358,7 +359,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 [5 rows x 5 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.674 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.095 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-working-with-bids-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b91a5f552e41ab2cf6ac33f460a74b78/working_with_bids.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">working_with_bids.py</span></code></a></p>

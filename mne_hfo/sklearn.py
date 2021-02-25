@@ -70,13 +70,14 @@ def make_Xy_sklearn(raw, df):
     Returns
     -------
     raw_df : pd.DataFrame
-        The Raw dataframe generated from :func:`mne.io.Raw.to_data_frame`.
+        The Raw dataframe generated from :meth:`mne.io.Raw.to_data_frame`.
         It should be structured as channels X time.
     ch_results : list[list[tuple]]
         List of channel HFO events, ordered by the channel names from the
         ``raw`` dataset. Each channel corresponds to a list of "onset"
         and "offset" time points (in seconds) that an HFO was detected.
     """
+    raw.to_data_frame
     ch_names = raw.ch_names
 
     ch_results = _make_ydf_sklearn(df, ch_names)

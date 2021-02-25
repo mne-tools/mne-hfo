@@ -123,13 +123,13 @@
   <h1>Source code for mne_hfo.posthoc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">TIME_SCALE_TO_SECS</span>
-<span class="kn">from</span> <span class="nn">mne_hfo.utils</span> <span class="kn">import</span> <span class="n">_append_offset_to_df</span><span class="p">,</span> <span class="n">_check_df</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.utils</span> <span class="kn">import</span> <span class="n">_check_df</span>
 
 
 <span class="k">def</span> <span class="nf">_to_freq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span><span class="p">):</span>
@@ -314,7 +314,7 @@
     <span class="k">return</span> <span class="n">res</span>
 
 
-<span class="k">def</span> <span class="nf">merge_overlapping_events</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="merge_overlapping_events"><a class="viewcode-back" href="../../generated/mne_hfo.merge_overlapping_events.html#mne_hfo.merge_overlapping_events">[docs]</a><span class="k">def</span> <span class="nf">merge_overlapping_events</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Merge overlapping events detected.</span>
 
 <span class="sd">    Parameters</span>
@@ -365,7 +365,7 @@
                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">merged_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="n">orig_cols</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">merged_df</span>
+    <span class="k">return</span> <span class="n">merged_df</span></div>
 
 
 <div class="viewcode-block" id="find_coincident_events"><a class="viewcode-back" href="../../generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events">[docs]</a><span class="k">def</span> <span class="nf">find_coincident_events</span><span class="p">(</span><span class="n">hfo_dict1</span><span class="p">,</span> <span class="n">hfo_dict2</span><span class="p">):</span>
@@ -400,7 +400,7 @@
     <span class="k">return</span> <span class="n">coincident_hfo_dict</span></div>
 
 
-<span class="k">def</span> <span class="nf">check_detection_overlap</span><span class="p">(</span><span class="n">y_true</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y_predict</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">_check_detection_overlap</span><span class="p">(</span><span class="n">y_true</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y_predict</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate if two detections overlap.</span>
 
@@ -456,97 +456,248 @@
         <span class="k">for</span> <span class="n">event_time2</span> <span class="ow">in</span> <span class="n">list2</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event_time2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">event_time1</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">break</span>
-            <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">event_time1</span><span class="p">,</span> <span class="n">event_time2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">(</span><span class="n">event_time1</span><span class="p">,</span> <span class="n">event_time2</span><span class="p">):</span>
                 <span class="n">overlapping_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">overlapping_events</span>
 
 
-<div class="viewcode-block" id="match_detections"><a class="viewcode-back" href="../../generated/mne_hfo.match_detections.html#mne_hfo.match_detections">[docs]</a><span class="k">def</span> <span class="nf">match_detections</span><span class="p">(</span><span class="n">ytrue_df</span><span class="p">,</span> <span class="n">ypredict_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">,</span> <span class="n">freq_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                     <span class="n">sec_unit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sec_margin</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># noqa</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Match gold standard detections with detector detections.</span>
-
-<span class="sd">    TODO: refactor</span>
+<div class="viewcode-block" id="match_detected_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.match_detected_annotations.html#mne_hfo.match_detected_annotations">[docs]</a><span class="k">def</span> <span class="nf">match_detected_annotations</span><span class="p">(</span>
+        <span class="n">ytrue_annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">ch_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;match-true&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given two annotations.tsv DataFrames, match HFO detection overlaps.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ytrue_df: pandas.DataFrame</span>
-<span class="sd">        Gold standard detections</span>
-<span class="sd">    ypredict_df: pandas.DataFrame</span>
-<span class="sd">        Detector detections</span>
-<span class="sd">    bn: list</span>
-<span class="sd">        Names of event start stop [start_name, stop_name], e.g</span>
-<span class="sd">        [&#39;onset&#39;, &#39;offset&#39;].</span>
-<span class="sd">    freq_name: str</span>
-<span class="sd">        Name of frequency column</span>
-<span class="sd">    sec_unit: int</span>
-<span class="sd">        Number representing one second of signal - this can</span>
-<span class="sd">        significantly improve the speed of this function</span>
-<span class="sd">    sec_margin: int</span>
-<span class="sd">        Margin for creating subsets of compared data - should be set according</span>
-<span class="sd">        to the length of compared events (1s for HFO should be enough)</span>
+<span class="sd">    ytrue_annot_df : pd.DataFrame</span>
+<span class="sd">        The reference annotations DataFrame containing the HFO events that are</span>
+<span class="sd">        considered &quot;ground-truth&quot; in this comparison.</span>
+<span class="sd">    ypred_annot_df : pd.DataFrame</span>
+<span class="sd">        The estimated annotations DataFrame containing the HFO events that</span>
+<span class="sd">        are estimated using a ``Detector``.</span>
+<span class="sd">    ch_names : list | str | None</span>
+<span class="sd">        Which channels to match. If None (default), then will match all</span>
+<span class="sd">        available channels in both dataframes. If str, then must be a single</span>
+<span class="sd">        channel name available in the ``ytrue_annot_df``. If list of</span>
+<span class="sd">        strings, then must be a list of channel names available in the</span>
+<span class="sd">        ``ytrue_annot_df``.</span>
+<span class="sd">    label : str | None</span>
+<span class="sd">        The HFO label to use. If None (default) will consider all rows in</span>
+<span class="sd">        both input DataFrames as an HFO event. If a string, then it must</span>
+<span class="sd">        match to an element of ``label`` column in the dataframes.</span>
+<span class="sd">    sec_margin : float</span>
+<span class="sd">        Number of seconds to consider a valid checking window.</span>
+<span class="sd">        Default = 1.</span>
+<span class="sd">    method : str</span>
+<span class="sd">        Type of strategy for matching HFO events. Must be one of</span>
+<span class="sd">        ``match-true``, ``match-pred``, or ``match-total``.</span>
+<span class="sd">        If &quot;match-true&quot;, will return a dataframe of all true indices</span>
+<span class="sd">        and matching predicted indices if they exist. If &quot;match-pred&quot;,</span>
+<span class="sd">        will return a dataframe of all predicted indices and matching</span>
+<span class="sd">        true indices if they exist. If &quot;match-total&quot;, will return the</span>
+<span class="sd">        concatenation of the two. See Notes for more information.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    match_df: pandas.DataFrame</span>
-<span class="sd">        Dataframe with matched indices (pandas DataFrame)</span>
+<span class="sd">    matched_df : pd.DataFrame</span>
+<span class="sd">        A DataFrame with the columns ``pred_index`` and ``true_index``,</span>
+<span class="sd">        which corresponds to indices,</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Ensure the desired columns are numeric</span>
-    <span class="n">ytrue_df</span><span class="p">[</span><span class="n">bn</span><span class="p">]</span> <span class="o">=</span> <span class="n">ytrue_df</span><span class="p">[</span><span class="n">bn</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">())</span>
-    <span class="n">ypredict_df</span><span class="p">[</span><span class="n">bn</span><span class="p">]</span> <span class="o">=</span> <span class="n">ypredict_df</span><span class="p">[</span><span class="n">bn</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">())</span>
+    <span class="c1"># check adherence of the annotations dataframe structure</span>
+    <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
+    <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
 
-    <span class="c1"># If df has duration instead of end time, add a new column</span>
-    <span class="k">if</span> <span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;duration&quot;</span><span class="p">:</span>
-        <span class="n">ytrue_df</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">ytrue_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">)</span>
-        <span class="n">ypredict_df</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">ypredict_df</span><span class="p">,</span> <span class="n">bn</span><span class="p">)</span>
-        <span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;offset&quot;</span>
-    <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;gs_index&#39;</span><span class="p">,</span> <span class="s1">&#39;dd_index&#39;</span><span class="p">))</span>
-    <span class="n">match_df_idx</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">row_gs</span> <span class="ow">in</span> <span class="n">ytrue_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">matched_idcs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">gs</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
-        <span class="k">if</span> <span class="n">sec_unit</span><span class="p">:</span>  <span class="c1"># We can create subset - significant speed improvement</span>
-            <span class="c1"># Only look at detector detection rows that have onsets</span>
-            <span class="c1"># within the window of time provided</span>
-            <span class="k">for</span> <span class="n">row_dd</span> <span class="ow">in</span> <span class="n">ypredict_df</span><span class="p">[(</span><span class="n">ypredict_df</span><span class="p">[</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
-                                       <span class="n">sec_unit</span> <span class="o">*</span> <span class="n">sec_margin</span><span class="p">)</span> <span class="o">&amp;</span>
-                                      <span class="p">(</span><span class="n">ypredict_df</span><span class="p">[</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span>
-                                       <span class="n">sec_unit</span> <span class="o">*</span> <span class="n">sec_margin</span><span class="p">)]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                <span class="n">dd</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
-                <span class="c1"># Check if the events overlap</span>
-                <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">dd</span><span class="p">):</span>
-                    <span class="n">matched_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># select only certain labels</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="ow">or</span> \
+                <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Label </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> is not inside the input &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;DataFrames.&#39;</span><span class="p">)</span>
+
+        <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+        <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+
+    <span class="c1"># select only certain channels</span>
+    <span class="k">if</span> <span class="n">ch_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ch_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">ch_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch_names</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Channels </span><span class="si">{</span><span class="n">ch_names</span><span class="si">}</span><span class="s1"> are not all inside &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;ground-truth HFO DataFrame.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Channels </span><span class="si">{</span><span class="n">ch_names</span><span class="si">}</span><span class="s1"> are not all inside &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;predicted HFO DataFrame.&#39;</span><span class="p">)</span>
+
+        <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">ch_names</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">ch_names</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># if prediction yields no events and method is match-pred,</span>
+    <span class="c1"># return empty structured dataframe</span>
+    <span class="k">if</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;match-pred&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+    <span class="c1"># else if prediction yields no events, return structured dataframe</span>
+    <span class="c1"># containing just true indices</span>
+    <span class="k">elif</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">match_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span>
+                       <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">match_df</span>
+
+    <span class="c1"># make sure columns match what is needed</span>
+    <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+    <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-true&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-pred&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;pred_index&#39;</span><span class="p">,</span> <span class="s1">&#39;true_index&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-total&quot;</span><span class="p">:</span>
+        <span class="n">true_match</span> <span class="o">=</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+        <span class="n">pred_match</span> <span class="o">=</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;pred_index&#39;</span><span class="p">,</span> <span class="s1">&#39;true_index&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">true_match</span><span class="p">,</span> <span class="n">pred_match</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method must be one of match-true,&quot;</span>
+                                  <span class="s2">&quot; match-pred, or match-total&quot;</span><span class="p">)</span></div>
+        <span class="c1"># Iterate over true labels (gold standard)</span>
+
+
+<span class="k">def</span> <span class="nf">_match_detections_overlap</span><span class="p">(</span><span class="n">gs_df</span><span class="p">,</span> <span class="n">check_df</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the overlapping detections in the two passed dataframes.</span>
+
+<span class="sd">    gs_df and check_df need to be the same type (i.e. both annotation</span>
+<span class="sd">    dataframes or event dataframes). If they are annotation dataframes,</span>
+<span class="sd">    margin should be in seconds, and if they are event dataframes,</span>
+<span class="sd">    margin should be in samples.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gs_df : pd.DataFrame</span>
+<span class="sd">        The reference DataFrame containing the HFO events that are</span>
+<span class="sd">        considered &quot;ground-truth&quot; in this comparison.</span>
+<span class="sd">    check_df : pd.DataFrame</span>
+<span class="sd">        The estimated DataFrame containing the HFO events that</span>
+<span class="sd">        are estimated using a ``Detector``.</span>
+<span class="sd">    margin : int</span>
+<span class="sd">        Margin to check. Should be in the same unit as the data</span>
+<span class="sd">        in the desired columns</span>
+<span class="sd">    cols : list[str]</span>
+<span class="sd">        Name of the columns corresponding to gs indices and check indices</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    match_df: pd.DataFrame</span>
+<span class="sd">        A DataFrame with the columns from cols input,</span>
+<span class="sd">        which corresponds to indices</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">col</span> <span class="ow">in</span> <span class="n">gs_df</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">]]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Gold standard reference Annotations &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;DataFrame must have both &quot;onset&quot; and &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;&quot;offset&quot; columns (in seconds). It &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;has columns: </span><span class="si">{</span><span class="n">gs_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">col</span> <span class="ow">in</span> <span class="n">check_df</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">]]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimated Annotations &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;DataFrame must have both &quot;onset&quot; and &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;&quot;offset&quot; columns (in seconds).It &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;has columns: </span><span class="si">{</span><span class="n">check_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># List of tuples to populate the output DataFrame</span>
+    <span class="n">match_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Convert the DataFrames that are expensive to manipulate into a list</span>
+    <span class="c1"># of tuples (index, onset, offset, ch_name)</span>
+    <span class="c1"># Pandas does not care about column order, but since we are changing</span>
+    <span class="c1"># the DataFrames to numpy, we need to track the column order</span>
+    <span class="n">gs_cols</span> <span class="o">=</span> <span class="n">gs_df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">check_cols</span> <span class="o">=</span> <span class="n">check_df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">gs_keep_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;onset&quot;</span><span class="p">),</span>
+                    <span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">),</span>
+                    <span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">))</span>
+    <span class="n">check_keep_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;onset&quot;</span><span class="p">),</span>
+                       <span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">),</span>
+                       <span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">))</span>
+    <span class="n">gs_numpy</span> <span class="o">=</span> <span class="n">gs_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:,</span> <span class="n">gs_keep_inds</span><span class="p">]</span>
+    <span class="n">gs_numpy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">]</span> <span class="k">for</span>
+                <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">)</span>
+                <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gs_numpy</span><span class="p">)]</span>
+    <span class="n">check_numpy</span> <span class="o">=</span> <span class="n">check_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:,</span> <span class="n">check_keep_inds</span><span class="p">]</span>
+    <span class="n">check_numpy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">]</span> <span class="k">for</span>
+                   <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">)</span>
+                   <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">check_numpy</span><span class="p">)]</span>
+
+    <span class="c1"># TODO: If there is a way to subset by channel, we can speed</span>
+    <span class="c1">#  up the loop</span>
+
+    <span class="c1"># Now we can iterate</span>
+    <span class="k">for</span> <span class="n">gs_hfo</span> <span class="ow">in</span> <span class="n">gs_numpy</span><span class="p">:</span>
+        <span class="n">gs_ind</span><span class="p">,</span> <span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">,</span> <span class="n">gs_ch_name</span> <span class="o">=</span> <span class="n">gs_hfo</span>
+        <span class="n">check_window</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_onset</span> <span class="o">-</span> <span class="n">margin</span><span class="p">,</span> <span class="n">gs_onset</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span>
+        <span class="c1"># Subset to the same channel and has onset within the expected window</span>
+        <span class="n">check_numpy_channel</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">check_numpy</span>
+                               <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">gs_ch_name</span> <span class="ow">and</span>
+                                   <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">check_window</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>
+                                    <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">check_window</span><span class="p">[</span><span class="mi">1</span><span class="p">]))]</span>
+        <span class="c1"># check if nothing meets this criteria</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_numpy_channel</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="n">potential_matches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># else, see if there is overlap</span>
+        <span class="k">for</span> <span class="n">check_hfo</span> <span class="ow">in</span> <span class="n">check_numpy_channel</span><span class="p">:</span>
+            <span class="n">check_ind</span><span class="p">,</span> <span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">,</span> <span class="n">check_ch_name</span> <span class="o">=</span> <span class="n">check_hfo</span>
+            <span class="n">gs_win</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">)</span>
+            <span class="n">check_win</span> <span class="o">=</span> <span class="p">(</span><span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">(</span><span class="n">gs_win</span><span class="p">,</span> <span class="n">check_win</span><span class="p">):</span>
+                <span class="n">potential_matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">check_hfo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">potential_matches</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">potential_matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="n">potential_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Look at all detector detection rows</span>
-            <span class="k">for</span> <span class="n">row_dd</span> <span class="ow">in</span> <span class="n">ypredict_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-                <span class="n">dd</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">row_dd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
-                <span class="c1"># Check if the events overlap</span>
-                <span class="k">if</span> <span class="n">check_detection_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">dd</span><span class="p">):</span>
-                    <span class="n">matched_idcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_dd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># more than one match, find closest</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_find_best_overlap</span><span class="p">(</span><span class="n">gs_hfo</span><span class="p">,</span> <span class="n">potential_matches</span><span class="p">))</span>
 
-        <span class="c1"># No overlap found for this gold standard row</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
-        <span class="c1"># One overlap found for this gold standard row</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matched_idcs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">matched_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># In rare event of multiple overlaps get the closest frequency</span>
-            <span class="k">if</span> <span class="n">freq_name</span><span class="p">:</span>
-                <span class="n">dd_idx</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="nb">abs</span><span class="p">(</span><span class="n">ypredict_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matched_idcs</span><span class="p">,</span> <span class="n">freq_name</span><span class="p">]</span> <span class="o">-</span>
-                        <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">freq_name</span><span class="p">]))</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
-                <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dd_idx</span><span class="p">]</span>
-            <span class="c1"># Closest event start - less precision than frequency</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">dd_idx</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="nb">abs</span><span class="p">(</span><span class="n">ypredict_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">matched_idcs</span><span class="p">,</span> <span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span>
-                        <span class="n">row_gs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">bn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
-                <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">match_df_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_gs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dd_idx</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">match_indices</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">match_indices</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">match_df</span>
 
-        <span class="n">match_df_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="k">return</span> <span class="n">match_df</span></div>
+<span class="k">def</span> <span class="nf">_find_best_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">check_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find best overlap from an ideal (gs) and a possible list.&quot;&quot;&quot;</span>
+    <span class="n">gs_ind</span><span class="p">,</span> <span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">gs</span>
+    <span class="n">gs_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">])</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">best_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">check_hfo</span> <span class="ow">in</span> <span class="n">check_list</span><span class="p">:</span>
+        <span class="n">check_ind</span><span class="p">,</span> <span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">check_hfo</span>
+        <span class="n">check_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">])</span>
+        <span class="c1"># Using distance of the points as the metric</span>
+        <span class="n">new_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gs_point</span> <span class="o">-</span> <span class="n">check_point</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_dist</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">new_dist</span>
+            <span class="n">best_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_ind</span><span class="p">,</span> <span class="n">check_ind</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">best_inds</span>
 </pre></div>
 
     </div>
@@ -561,8 +712,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

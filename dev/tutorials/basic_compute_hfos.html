@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tutorial on Computing HFOs &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>Tutorial on Computing HFOs (Part 1) &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,11 +116,7 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">Tutorial on Computing HFOs</a><ul>
-<li><a class="reference internal" href="#Dataset-Preprocessing">Dataset Preprocessing</a></li>
-<li><a class="reference internal" href="#References">References</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Tutorial on Computing HFOs (Part 1)</a></li>
 <li><a class="reference internal" href="#1-Simulated-Data">1 Simulated Data</a><ul>
 <li><a class="reference internal" href="#1.1-Simulate-the-HFO-data">1.1 Simulate the HFO data</a><ul>
 <li><a class="reference internal" href="#1.1.1-Create-and-plot-the-simulated-HFOs">1.1.1 Create and plot the simulated HFOs</a></li>
@@ -134,24 +130,6 @@
 <li><a class="reference internal" href="#1.2.3-Repeat-for-RMS-Detector">1.2.3 Repeat for RMS Detector</a></li>
 <li><a class="reference internal" href="#1.2.4-Repeat-for-the-fast-ripple-dataset">1.2.4 Repeat for the fast ripple dataset</a></li>
 <li><a class="reference internal" href="#1.2.5-More-complex-Example">1.2.5 More complex Example</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#2-Working-with-Real-Data">2 Working with Real Data</a><ul>
-<li><a class="reference internal" href="#2.1-Load-in-Real-Data">2.1 Load in Real Data</a><ul>
-<li><a class="reference internal" href="#2.1.1-Define-dataset-paths-and-load-the-data">2.1.1 Define dataset paths and load the data</a></li>
-<li><a class="reference internal" href="#2.1.2-Load-Annotated-HFOs">2.1.2 Load Annotated HFOs</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#2.2-Detect-HFOs">2.2 Detect HFOs</a><ul>
-<li><a class="reference internal" href="#2.2.1-Line-Length-Detector">2.2.1 Line Length Detector</a></li>
-<li><a class="reference internal" href="#2.2.2-RMS-Detector">2.2.2 RMS Detector</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#2.3-Compare-Results">2.3 Compare Results</a><ul>
-<li><a class="reference internal" href="#2.3.1-Normalize-the-Dataframes">2.3.1 Normalize the Dataframes</a></li>
-<li><a class="reference internal" href="#2.3.2-Find-matches">2.3.2 Find matches</a></li>
 </ul>
 </li>
 </ul>
@@ -410,25 +388,16 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Tutorial-on-Computing-HFOs">
-<h1>Tutorial on Computing HFOs<a class="headerlink" href="#Tutorial-on-Computing-HFOs" title="Permalink to this headline">¶</a></h1>
-<p>In this tutorial, we will walk through how to compute HFOs on a sample dataset that is defined in [1].</p>
+<div class="section" id="Tutorial-on-Computing-HFOs-(Part-1)">
+<h1>Tutorial on Computing HFOs (Part 1)<a class="headerlink" href="#Tutorial-on-Computing-HFOs-(Part-1)" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will walk through how to compute HFOs on simulated toy data</p>
 <p>We will demonstrate usage of the following detectors:</p>
 <ul class="simple">
 <li><p>Line Length detector</p></li>
 <li><p>RMS detector</p></li>
-<li><p>Morphology detector (used in the paper)</p></li>
 </ul>
-<div class="section" id="Dataset-Preprocessing">
-<h2>Dataset Preprocessing<a class="headerlink" href="#Dataset-Preprocessing" title="Permalink to this headline">¶</a></h2>
-<p>Note that the data has been converted to BIDS to facilitate easy loading using <code class="docutils literal notranslate"><span class="pre">mne-bids</span></code> package. Another thing to note is that the authors in this dataset reported HFOs detected using bipolar montage. In addition, they only analyzed HFOs for a subset of the recording channels.</p>
-<p>In order to compare results to a monopolar reference, we define an HFO to be “found” if there was an HFO in either of the corresponding bipolar contacts.</p>
-</div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
-<p>[1] Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, Sarnthein J. Resection of high frequency oscillations predicts seizure outcome in the individual patient. Scientific Reports. 2017;7(1):13836. <a class="reference external" href="https://www.nature.com/articles/s41598-017-13064-1">https://www.nature.com/articles/s41598-017-13064-1</a> doi:10.1038/s41598-017-13064-1</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -440,10 +409,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">mne_bids</span> <span class="kn">import</span> <span class="p">(</span><span class="n">read_raw_bids</span><span class="p">,</span> <span class="n">BIDSPath</span><span class="p">,</span>
-                      <span class="n">get_entity_vals</span><span class="p">,</span> <span class="n">get_datatypes</span><span class="p">,</span>
-                      <span class="n">make_report</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">mne_bids.stats</span> <span class="kn">import</span> <span class="n">count_events</span>
 
 <span class="kn">import</span> <span class="nn">mne</span>
 <span class="kn">from</span> <span class="nn">mne</span> <span class="kn">import</span> <span class="n">make_ad_hoc_cov</span>
@@ -453,9 +418,7 @@ div.rendered_html tbody tr:hover {
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">basepath</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">mne_hfo</span> <span class="kn">import</span> <span class="n">LineLengthDetector</span><span class="p">,</span> <span class="n">RMSDetector</span>
 <span class="kn">from</span> <span class="nn">mne_hfo.simulate</span> <span class="kn">import</span> <span class="n">simulate_hfo</span><span class="p">,</span> <span class="n">simulate_line_noise</span>
-<span class="kn">from</span> <span class="nn">mne_hfo.utils</span> <span class="kn">import</span> <span class="n">match_detections</span><span class="p">,</span> <span class="n">_enforce_numeric_cols</span><span class="p">,</span> <span class="n">_append_offset_to_df</span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -467,7 +430,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="1.1.1-Create-and-plot-the-simulated-HFOs">
 <h3>1.1.1 Create and plot the simulated HFOs<a class="headerlink" href="#1.1.1-Create-and-plot-the-simulated-HFOs" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -479,7 +442,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -496,7 +459,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -523,7 +486,7 @@ Text(0.5, 1.0, &#39;Simulated Fast Ripple&#39;)
 <h3>1.1.2 Add other “simulated” EEG data<a class="headerlink" href="#1.1.2-Add-other-“simulated”-EEG-data" title="Permalink to this headline">¶</a></h3>
 <p>These detectors work by finding patterns that deviate from the normal, so we need some “normal” EEG attached to the simulated HFO signal for the detectors to work. We can do this by grabbing a small segment of real EEG data from mne’s samples.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -546,7 +509,7 @@ Text(0.5, 1.0, &#39;Simulated Fast Ripple&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -565,7 +528,7 @@ Text(0.5, 1.0, &#39;Simulated Fast Ripple&#39;)
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -592,7 +555,7 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 <h3>1.1.3 Combine the simulated data with sample data<a class="headerlink" href="#1.1.3-Combine-the-simulated-data-with-sample-data" title="Permalink to this headline">¶</a></h3>
 <p>Append the data to the front and back of the simulated HFOs</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -602,7 +565,7 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -620,7 +583,7 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -637,7 +600,7 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -655,7 +618,7 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -678,7 +641,7 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -696,7 +659,7 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 <div class="section" id="1.2.1-Line-Length-Detector">
 <h3>1.2.1 Line Length Detector<a class="headerlink" href="#1.2.1-Line-Length-Detector" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -712,12 +675,13 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Detect HFOs in the raw data using the LineLengthDetector method.</span>
+<span></span><span class="o">%%capture</span>
+<span class="c1"># Detect HFOs in the raw data using the LineLengthDetector method.</span>
 <span class="c1"># Return the class object with HFOs added</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ripple_data_total</span><span class="p">)</span>
 
@@ -726,24 +690,16 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 <span class="c1"># nCh x nWin ndarray where each value is the line-length of the data window per channel</span>
 <span class="n">hfo_event_array</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">hfo_event_arr_</span>
 <span class="c1"># Pandas dataframe containing onset, duration, sample trial, and trial type per HFO</span>
-<span class="n">hfo_df</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">df</span>
+<span class="n">hfo_df</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">df_</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-100%|██████████| 1/1 [00:00&lt;00:00, 88.86it/s]
-</pre></div></div>
 </div>
 </div>
 <div class="section" id="1.2.2-Check-Results">
 <h3>1.2.2 Check Results<a class="headerlink" href="#1.2.2-Check-Results" title="Permalink to this headline">¶</a></h3>
 <p>We should see a single HFO starting around 2 seconds and ending a small amount after</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -762,19 +718,20 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Detected a ripple HFO starting at 2.038269550748752s and ending at 2.329450915141431s
+Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="1.2.3-Repeat-for-RMS-Detector">
 <h3>1.2.3 Repeat for RMS Detector<a class="headerlink" href="#1.2.3-Repeat-for-RMS-Detector" title="Permalink to this headline">¶</a></h3>
 <p>We should get almost the exact same result</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Set Key Word Arguments for the Line Length Detector and generate the class object</span>
+<span></span><span class="o">%%capture</span>
+<span class="c1"># Set Key Word Arguments for the Line Length Detector and generate the class object</span>
 <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;filter_band&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span>
     <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -785,8 +742,15 @@ Detected a ripple HFO starting at 2.038269550748752s and ending at 2.32945091514
 <span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ripple_data_total</span><span class="p">)</span>
 <span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
     <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -796,32 +760,25 @@ Detected a ripple HFO starting at 2.038269550748752s and ending at 2.32945091514
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-100%|██████████| 1/1 [00:00&lt;00:00, 1079.89it/s]
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Detected a ripple HFO starting at 2.038269550748752s and ending at 2.329450915141431s
+Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="1.2.4-Repeat-for-the-fast-ripple-dataset">
 <h3>1.2.4 Repeat for the fast ripple dataset<a class="headerlink" href="#1.2.4-Repeat-for-the-fast-ripple-dataset" title="Permalink to this headline">¶</a></h3>
 <p>We should expect similar results</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Line length Detector</span>
+<span></span><span class="o">%%capture</span>
+<span class="c1"># Line length Detector</span>
 <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;filter_band&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
     <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -831,9 +788,21 @@ Detected a ripple HFO starting at 2.038269550748752s and ending at 2.32945091514
 <span class="p">}</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">LineLengthDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fast_ripple_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
+<span class="n">ll_chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
 
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="c1"># RMS detector</span>
+<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fast_ripple_data_total</span><span class="p">)</span>
+<span class="n">rms_chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">ll_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
     <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -841,12 +810,7 @@ Detected a ripple HFO starting at 2.038269550748752s and ending at 2.32945091514
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a fast ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the LineLength Detector&quot;</span><span class="p">)</span>
 
-<span class="c1"># RMS detector</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fast_ripple_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">rms_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
     <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -856,36 +820,12 @@ Detected a ripple HFO starting at 2.038269550748752s and ending at 2.32945091514
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-100%|██████████| 1/1 [00:00&lt;00:00, 1132.37it/s]
-100%|██████████| 1/1 [00:00&lt;00:00, 1078.78it/s]
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.2462562396006653s using the LineLength Detector
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.2462562396006653s using the LineLength Detector
 Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.2462562396006653s using the RMS detector
 </pre></div></div>
 </div>
@@ -895,7 +835,7 @@ Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.24625
 <p>Now let’s combine the two datasets to show how the detectors differentiate the ripple types.</p>
 <p>The detectors set to the ripple frequency band (80-250Hz) should only detect a single HFO (ripple) around the 2 second mark. The detectors set to the fast ripple frequency band (250-500Hz) should only detect a single HFO (fast ripple) around the 6 second mark (will vary based on the length of the ripple wave added).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -915,7 +855,7 @@ Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.24625
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -927,15 +867,16 @@ Text(0.5, 1.0, &#39;Simulated data with Ripple and Fast Ripple&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_basic_compute_hfos_27_1.png" src="../_images/tutorials_basic_compute_hfos_27_1.png" />
+<img alt="../_images/tutorials_basic_compute_hfos_29_1.png" src="../_images/tutorials_basic_compute_hfos_29_1.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># First look for ripples</span>
+<span></span><span class="o">%%capture</span>
+<span class="c1"># First look for ripples</span>
 <span class="c1"># Line length Detector</span>
 <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;filter_band&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span>
@@ -946,28 +887,12 @@ Text(0.5, 1.0, &#39;Simulated data with Ripple and Fast Ripple&#39;)
 <span class="p">}</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">LineLengthDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hfo_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
-    <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the LineLength Detector&quot;</span><span class="p">)</span>
+<span class="n">ll_chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
 
 <span class="c1"># RMS detector</span>
 <span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hfo_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
-    <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the RMS detector&quot;</span><span class="p">)</span>
+<span class="n">rms_chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
 
 <span class="c1"># Then look for fast ripples</span>
 <span class="c1"># Line length Detector</span>
@@ -980,9 +905,40 @@ Text(0.5, 1.0, &#39;Simulated data with Ripple and Fast Ripple&#39;)
 <span class="p">}</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">LineLengthDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <span class="n">ll_detector</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hfo_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
+<span class="n">ll_fr_chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
 
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="c1"># RMS detector</span>
+<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hfo_data_total</span><span class="p">)</span>
+<span class="n">rms_fr_chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">ll_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
+    <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the LineLength Detector&quot;</span><span class="p">)</span>
+
+
+
+<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">rms_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
+    <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the RMS detector&quot;</span><span class="p">)</span>
+
+<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">ll_fr_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
     <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -990,12 +946,8 @@ Text(0.5, 1.0, &#39;Simulated data with Ripple and Fast Ripple&#39;)
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_samp</span> <span class="o">/</span> <span class="n">sfreq</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected a fast ripple HFO starting at </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and ending at </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s using the LineLength Detector&quot;</span><span class="p">)</span>
 
-<span class="c1"># RMS detector</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">hfo_data_total</span><span class="p">)</span>
-<span class="n">chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
 
-<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+<span class="n">detected_hfos</span> <span class="o">=</span> <span class="n">rms_fr_chs_hfo_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">hfo</span> <span class="ow">in</span> <span class="n">detected_hfos</span><span class="p">:</span>
     <span class="n">start_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">end_samp</span> <span class="o">=</span> <span class="n">hfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1005,631 +957,16 @@ Text(0.5, 1.0, &#39;Simulated data with Ripple and Fast Ripple&#39;)
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-100%|██████████| 1/1 [00:00&lt;00:00, 1436.90it/s]
-100%|██████████| 1/1 [00:00&lt;00:00, 1078.78it/s]
-100%|██████████| 1/1 [00:00&lt;00:00, 844.60it/s]
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Detected a ripple HFO starting at 2.038269550748752s and ending at 2.329450915141431s using the LineLength Detector
-Detected a ripple HFO starting at 2.038269550748752s and ending at 2.3710482529118138s using the RMS detector
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-
-100%|██████████| 1/1 [00:00&lt;00:00, 1333.22it/s]
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Detected a fast ripple HFO starting at 6.239600665557404s and ending at 6.4891846921797s using the LineLength Detector
-Detected a fast ripple HFO starting at 6.239600665557404s and ending at 6.4891846921797s using the RMS detector
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-
-</pre></div></div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="2-Working-with-Real-Data">
-<h1>2 Working with Real Data<a class="headerlink" href="#2-Working-with-Real-Data" title="Permalink to this headline">¶</a></h1>
-<p>We are now going to work with the dataset from Fedele et al. linked above</p>
-<div class="section" id="2.1-Load-in-Real-Data">
-<h2>2.1 Load in Real Data<a class="headerlink" href="#2.1-Load-in-Real-Data" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="2.1.1-Define-dataset-paths-and-load-the-data">
-<h3>2.1.1 Define dataset paths and load the data<a class="headerlink" href="#2.1.1-Define-dataset-paths-and-load-the-data" title="Permalink to this headline">¶</a></h3>
-<p>The data is assumed to be in BIDS format. We have converted the dataset into BIDS, which you can load using <a class="reference external" href="https://github.com/mne-tools/mne-bids">mne-bids</a>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># this may change depending on where you store the data</span>
-<span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;/Users/patrick/Dropbox/fedele_hfo_data&#39;</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># print a boiler plate summary report using mne-bids</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">make_report</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Summarizing participants.tsv /Users/patrick/Dropbox/fedele_hfo_data/participants.tsv...
-The iEEG Interictal Asleep HFO Dataset dataset was created with BIDS version
-1.4.0 by Fedele T, Burnos S, Boran E, Krayenbühl N, Hilfiker P, Grunwald T, and
-Sarnthein J.. This report was generated with MNE-BIDS
-(https://doi.org/10.21105/joss.01896). The dataset consists of 20 participants
-(comprised of 13 men and 6 women; handedness were all unknown; ages ranged from
-17.0 to 52.0 (mean = 32.47, std = 11.43; 1 with unknown age))and 1 recording
-sessions: interictalsleep. Data was recorded using a iEEG system (Neuralynx
-manufacturer) sampled at 2000.0 Hz with line noise at 50.0 Hz using Sampling
-with parameters 2000 Downsampled (Hz). There were 385 scans in total. Recording
-durations ranged from 204.0 to 720.0 seconds (mean = 302.44, std = 37.85), for a
-total of 116438.81 seconds of data recorded over all scans. For each dataset,
-there were on average 51.88 (std = 15.55) recording channels per scan, out of
-which 51.88 (std = 15.55) were used in analysis (0.0 +/- 0.0 were removed from
-analysis).
+Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s using the LineLength Detector
+Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s using the RMS detector
+Detected a fast ripple HFO starting at 6.364392678868552s and ending at 6.613976705490849s using the LineLength Detector
+Detected a fast ripple HFO starting at 6.364392678868552s and ending at 6.613976705490849s using the RMS detector
 </pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># there are iEEG datatypes throughout the dataset</span>
-<span class="n">datatypes</span> <span class="o">=</span> <span class="n">get_datatypes</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">datatypes</span><span class="p">)</span>
-
-<span class="c1"># get all the subjects, sessions</span>
-<span class="n">subjects</span> <span class="o">=</span> <span class="n">get_entity_vals</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;subject&#39;</span><span class="p">)</span>
-<span class="n">sessions</span> <span class="o">=</span> <span class="n">get_entity_vals</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;session&#39;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[&#39;ieeg&#39;]
-[&#39;01&#39;, &#39;02&#39;, &#39;03&#39;, &#39;04&#39;, &#39;05&#39;, &#39;06&#39;, &#39;07&#39;, &#39;08&#39;, &#39;09&#39;, &#39;10&#39;, &#39;11&#39;, &#39;12&#39;, &#39;13&#39;, &#39;14&#39;, &#39;15&#39;, &#39;16&#39;, &#39;17&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;]
-[&#39;interictalsleep&#39;]
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># construct BIDSPath for dataset we will demo</span>
-<span class="n">subjectID</span> <span class="o">=</span> <span class="n">subjects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sessionID</span> <span class="o">=</span> <span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">bids_path</span> <span class="o">=</span> <span class="n">BIDSPath</span><span class="p">(</span><span class="n">subject</span><span class="o">=</span><span class="n">subjectID</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">sessionID</span><span class="p">,</span>
-                     <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;ieeg&#39;</span><span class="p">,</span>
-                     <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;ieeg&#39;</span><span class="p">,</span>
-                     <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.vhdr&#39;</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
-
-<span class="c1"># get all matching datasets</span>
-<span class="n">fpaths</span> <span class="o">=</span> <span class="n">bids_path</span><span class="o">.</span><span class="n">match</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fpaths</span><span class="p">)</span><span class="si">}</span><span class="s1"> matching filepaths for this subject and session.&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Found 28 matching filepaths for this subject and session.
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># analyze the first run</span>
-<span class="n">dataset_path</span> <span class="o">=</span> <span class="n">fpaths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
-
-<span class="c1"># count the different HFO types (fr, ripple, frandr) that were detected using</span>
-<span class="c1"># the published Morphology detector</span>
-<span class="n">counts_df</span> <span class="o">=</span> <span class="n">count_events</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">counts_df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-/Users/patrick/Dropbox/fedele_hfo_data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_ieeg.vhdr
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead tr th {
-        text-align: left;
-    }
-
-    .dataframe thead tr:last-of-type th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th colspan="21" halign="left">NaN</th>
-    </tr>
-    <tr>
-      <th></th>
-      <th></th>
-      <th>trial_type</th>
-      <th>fr_AHR1-2</th>
-      <th>fr_AHR2-3</th>
-      <th>fr_AHR3-4</th>
-      <th>fr_AL1-2</th>
-      <th>fr_AL2-3</th>
-      <th>fr_AL3-4</th>
-      <th>fr_AR1-2</th>
-      <th>fr_AR2-3</th>
-      <th>fr_AR3-4</th>
-      <th>fr_HL1-2</th>
-      <th>...</th>
-      <th>ripple_IAR2-3</th>
-      <th>ripple_IAR3-4</th>
-      <th>ripple_IAR4-5</th>
-      <th>ripple_IAR5-6</th>
-      <th>ripple_IPR1-2</th>
-      <th>ripple_IPR2-3</th>
-      <th>ripple_IPR3-4</th>
-      <th>ripple_PHR1-2</th>
-      <th>ripple_PHR2-3</th>
-      <th>ripple_PHR3-4</th>
-    </tr>
-    <tr>
-      <th>subject</th>
-      <th>session</th>
-      <th>run</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>01</th>
-      <th>interictalsleep</th>
-      <th>01</th>
-      <td>15</td>
-      <td>23</td>
-      <td>12</td>
-      <td>15</td>
-      <td>19</td>
-      <td>20</td>
-      <td>25</td>
-      <td>28</td>
-      <td>11</td>
-      <td>9</td>
-      <td>...</td>
-      <td>351</td>
-      <td>223</td>
-      <td>179</td>
-      <td>238</td>
-      <td>12</td>
-      <td>32</td>
-      <td>128</td>
-      <td>121</td>
-      <td>111</td>
-      <td>64</td>
-    </tr>
-  </tbody>
-</table>
-<p>1 rows × 60 columns</p>
-</div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%capture</span>
-<span class="c1"># load dataset into mne Raw object</span>
-<span class="n">raw</span> <span class="o">=</span> <span class="n">read_raw_bids</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Optional - Change backend to interactive for below plot</span>
-<span class="c1"># Allows you to scroll dataset, highlight (or grey out) certain channels, zoom in/out, etc.</span>
-<span class="o">%</span><span class="k">matplotlib</span> notebook
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Plot the raw data with vertical colorbars to denote where HFOs were detected</span>
-<span class="n">raw_plot</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">raw_plot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;plotting channels with HFO events detected in &#39;</span>
-      <span class="s1">&#39;the original publication in color.&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/tutorials_basic_compute_hfos_39_0.png" src="../_images/tutorials_basic_compute_hfos_39_0.png" />
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-plotting channels with HFO events detected in the original publication in color.
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-&lt;ipython-input-24-85590d0d121e&gt;:3: UserWarning: Matplotlib is currently using module://ipykernel.pylab.backend_inline, which is a non-GUI backend, so cannot show the figure.
-  raw_plot.show()
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Optional - Change back to regular plots</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="2.1.2-Load-Annotated-HFOs">
-<h3>2.1.2 Load Annotated HFOs<a class="headerlink" href="#2.1.2-Load-Annotated-HFOs" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># All annotated HFO events for this file</span>
-<span class="n">annotations</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">annotations</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Convert to convenient data structure (pandas DF)</span>
-<span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;trial_type&quot;</span><span class="p">]</span>
-
-<span class="n">sfreq</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;sfreq&quot;</span><span class="p">]</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
-    <span class="n">onset</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;onset&quot;</span><span class="p">))</span>
-    <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">))</span>
-    <span class="n">sample</span> <span class="o">=</span> <span class="n">onset</span> <span class="o">*</span> <span class="n">sfreq</span>
-    <span class="n">trial_type</span> <span class="o">=</span> <span class="n">annot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
-    <span class="n">annot_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">trial_type</span><span class="p">]</span>
-    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annot_row</span><span class="p">)</span>
-
-<span class="n">gs_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">row</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">],</span>
-          <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># for now, lets just look at ripple events:</span>
-<span class="n">gs_df_ripple</span> <span class="o">=</span> <span class="n">gs_df</span><span class="p">[</span><span class="n">gs_df</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;ripple&quot;</span><span class="p">)]</span>
-<span class="n">new_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gs_df_ripple</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">gs_df_ripple</span> <span class="o">=</span> <span class="n">gs_df_ripple</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">new_indices</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="2.2-Detect-HFOs">
-<h2>2.2 Detect HFOs<a class="headerlink" href="#2.2-Detect-HFOs" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="2.2.1-Line-Length-Detector">
-<h3>2.2.1 Line Length Detector<a class="headerlink" href="#2.2.1-Line-Length-Detector" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Set Key Word Arguments for the Line Length Detector and generate the class object</span>
-<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;filter_band&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span> <span class="c1"># (l_freq, h_freq)</span>
-    <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="c1"># Number of st. deviations</span>
-    <span class="s1">&#39;win_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="c1"># Sliding window size in samples</span>
-    <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="c1"># Fraction of window overlap [0, 1]</span>
-    <span class="s1">&#39;hfo_name&#39;</span><span class="p">:</span> <span class="s2">&quot;ripple&quot;</span>
-<span class="p">}</span>
-<span class="n">ll_detector</span> <span class="o">=</span> <span class="n">LineLengthDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Detect HFOs in the raw data using the LineLengthDetector method.</span>
-<span class="c1"># Return the class object with HFOs added</span>
-<span class="n">ll_detector</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
-
-<span class="c1"># Dictionary where keys are channel index and values are a list of tuples in the form of (start_samp, end_samp)</span>
-<span class="n">ll_chs_hfo_dict</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-<span class="c1"># nCh x nWin ndarray where each value is the line-length of the data window per channel</span>
-<span class="n">ll_hfo_event_array</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">hfo_event_arr_</span>
-<span class="c1"># Pandas dataframe containing onset, duration, sample trial, and trial type per HFO</span>
-<span class="n">ll_hfo_df</span> <span class="o">=</span> <span class="n">ll_detector</span><span class="o">.</span><span class="n">df</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-100%|██████████| 50/50 [00:11&lt;00:00,  4.49it/s]
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="2.2.2-RMS-Detector">
-<h3>2.2.2 RMS Detector<a class="headerlink" href="#2.2.2-RMS-Detector" title="Permalink to this headline">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Set Key Word Arguments for the RMS Detector and generate the class object</span>
-<span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;filter_band&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">250</span><span class="p">),</span>
-    <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s1">&#39;win_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
-    <span class="s1">&#39;hfo_name&#39;</span><span class="p">:</span> <span class="s1">&#39;ripple&#39;</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">RMSDetector</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Detect HFOs in the raw data using the RMSDetector method.</span>
-<span class="n">rms_detector</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
-
-<span class="n">rms_chs_hfo_dict</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">chs_hfos_</span>
-<span class="n">rms_hfo_event_array</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">hfo_event_arr_</span>
-<span class="n">rms_hfo_df</span> <span class="o">=</span> <span class="n">rms_detector</span><span class="o">.</span><span class="n">df</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
- 64%|██████▍   | 32/50 [00:03&lt;00:02,  7.09it/s]
-</pre></div></div>
-</div>
-</div>
-</div>
-<div class="section" id="2.3-Compare-Results">
-<h2>2.3 Compare Results<a class="headerlink" href="#2.3-Compare-Results" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="2.3.1-Normalize-the-Dataframes">
-<h3>2.3.1 Normalize the Dataframes<a class="headerlink" href="#2.3.1-Normalize-the-Dataframes" title="Permalink to this headline">¶</a></h3>
-<p>The Fedele paper reports HFO events in channel pairs. We are assuming that an event with trial_type ripple_HL2-3 had a ripple at this window at BOTH HL2 and HL3. Therefore, the output dataframes from the LineLength Detector and RMS Detector need to be modified to meet this criteria.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">_check_neighbor_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return whether a neighbor channel shares an onset time.</span>
-
-<span class="sd">    row and df need to contain the same column names, specifically trial_type</span>
-<span class="sd">    TODO: We probably want some tolerance here, if the onsets are ever so slightly off</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">row_trial</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">trial_type</span>
-    <span class="n">trial_type</span> <span class="o">=</span> <span class="n">row_trial</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">row_channel</span> <span class="o">=</span> <span class="n">row_trial</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">channel_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">row_channel</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()]))</span>
-    <span class="n">channel_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row_channel</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()])</span>
-    <span class="n">neighbor_trial</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trial_type</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">channel_name</span><span class="si">}{</span><span class="n">channel_number</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">neighbor_row</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;trial_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">neighbor_trial</span><span class="p">]</span>
-    <span class="n">combined_trial</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row_trial</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">channel_number</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">if</span> <span class="n">neighbor_row</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="n">combined_trial</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;trial_type&quot;</span><span class="p">]</span>
-<span class="n">ll_hfo_array</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">ll_onsets</span> <span class="o">=</span> <span class="n">ll_hfo_df</span><span class="o">.</span><span class="n">onset</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">onset_val</span> <span class="ow">in</span> <span class="n">ll_onsets</span><span class="p">:</span>
-    <span class="n">onset_df</span> <span class="o">=</span> <span class="n">ll_hfo_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ll_hfo_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">onset_val</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">row_group</span> <span class="ow">in</span> <span class="n">onset_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">row_group</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">new_trial</span> <span class="o">=</span> <span class="n">_check_neighbor_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">onset_df</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_trial</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">trial_type</span> <span class="o">=</span> <span class="n">new_trial</span>
-            <span class="n">ll_hfo_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="n">ll_hfo_df_mod</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">row</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ll_hfo_array</span><span class="p">],</span>
-          <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">rms_hfo_array</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">rms_onsets</span> <span class="o">=</span> <span class="n">rms_hfo_df</span><span class="o">.</span><span class="n">onset</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">onset_val</span> <span class="ow">in</span> <span class="n">ll_onsets</span><span class="p">:</span>
-    <span class="n">onset_df</span> <span class="o">=</span> <span class="n">rms_hfo_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rms_hfo_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">onset_val</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">row_group</span> <span class="ow">in</span> <span class="n">onset_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">row_group</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">new_trial</span> <span class="o">=</span> <span class="n">_check_neighbor_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">onset_df</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_trial</span><span class="p">:</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">trial_type</span> <span class="o">=</span> <span class="n">new_trial</span>
-            <span class="n">rms_hfo_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="n">rms_hfo_df_mod</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">row</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">column_names</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rms_hfo_array</span><span class="p">],</span>
-          <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Make sure all column types are numeric</span>
-
-<span class="n">ll_hfo_df_mod</span><span class="p">,</span> <span class="n">rms_hfo_df_mod</span> <span class="o">=</span>  <span class="n">_enforce_numeric_cols</span><span class="p">([</span><span class="n">ll_hfo_df_mod</span><span class="p">,</span> <span class="n">rms_hfo_df_mod</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">])</span>
-<span class="c1"># Add an offset column to each df</span>
-<span class="n">gs_df_ripple</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">gs_df_ripple</span><span class="p">)</span>
-<span class="n">ll_hfo_df_mod</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">ll_hfo_df_mod</span><span class="p">)</span>
-<span class="n">rms_hdo_df_mod</span> <span class="o">=</span> <span class="n">_append_offset_to_df</span><span class="p">(</span><span class="n">rms_hfo_df_mod</span><span class="p">)</span>
-
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="2.3.2-Find-matches">
-<h3>2.3.2 Find matches<a class="headerlink" href="#2.3.2-Find-matches" title="Permalink to this headline">¶</a></h3>
-<p>Now that our dataframes are in the same format, we can compare them. We will do that by iterating over trial types (i.e. combo of hfo types and channel name) on the “gold standard” dataset and see if the two detectors have matching</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;trial_type&quot;</span><span class="p">]</span>
-<span class="n">gs_ll_match</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">gs_rms_match</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="n">unique_trials</span> <span class="o">=</span> <span class="n">gs_df_ripple</span><span class="o">.</span><span class="n">trial_type</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-
-<span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">unique_trials</span><span class="p">:</span>
-    <span class="n">gs_trial_df</span> <span class="o">=</span> <span class="n">gs_df_ripple</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gs_df_ripple</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">trial</span><span class="p">]</span>
-    <span class="n">ll_trial_df</span> <span class="o">=</span> <span class="n">ll_hfo_df_mod</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ll_hfo_df_mod</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">trial</span><span class="p">]</span>
-    <span class="n">rms_trial_df</span> <span class="o">=</span> <span class="n">rms_hfo_df_mod</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rms_hfo_df_mod</span><span class="p">[</span><span class="s1">&#39;trial_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">trial</span><span class="p">]</span>
-    <span class="n">gs_ll_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_detections</span><span class="p">(</span><span class="n">gs_trial_df</span><span class="p">,</span> <span class="n">ll_trial_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">],</span> <span class="n">sec_unit</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
-    <span class="n">gs_rms_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_detections</span><span class="p">(</span><span class="n">gs_trial_df</span><span class="p">,</span> <span class="n">rms_trial_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">],</span> <span class="n">sec_unit</span><span class="o">=</span><span class="mf">1.0</span><span class="p">))</span>
-
-<span class="n">gs_ll_match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gs_ll_match</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">gs_rms_match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gs_rms_match</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">calculate_events_per_min</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
-    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;sfreq&#39;</span><span class="p">]</span>
-    <span class="n">total_samps</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">n_times</span>
-    <span class="n">total_minutes</span> <span class="o">=</span> <span class="n">total_samps</span> <span class="o">/</span> <span class="p">(</span><span class="n">sfreq</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_minutes</span>
-</pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -1648,8 +985,8 @@ plotting channels with HFO events detected in the original publication in color.
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

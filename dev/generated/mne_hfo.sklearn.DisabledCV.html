@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.simulate.simulate_spike &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.sklearn.DisabledCV &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.simulate.simulate_spike</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-simulate-simulate-spike">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.sklearn.DisabledCV</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-sklearn-disabledcv">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.sklearn.DisabledCV</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,34 +126,43 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-simulate-simulate-spike">
-<h1>mne_hfo.simulate.simulate_spike<a class="headerlink" href="#mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
-<dt id="mne_hfo.simulate.simulate_spike">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.simulate.</span></code><code class="sig-name descname"><span class="pre">simulate_spike</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/simulate.html#simulate_spike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.simulate.simulate_spike" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a simple gaussian spike.</p>
-<dl class="field-list">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fs: float</strong></p>
-<blockquote>
-<div><p>Sampling rate (default=5000)</p>
-</div></blockquote>
-<p><strong>dur: float</strong></p>
-<blockquote>
-<div><p>Spike duration in seconds</p>
-</div></blockquote>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>spike numpy array</p>
-<blockquote>
-<div><p>1D numpy array with a sipke</p>
-</div></blockquote>
-</dd>
-</dl>
+  <div class="section" id="mne-hfo-sklearn-disabledcv">
+<h1>mne_hfo.sklearn.DisabledCV<a class="headerlink" href="#mne-hfo-sklearn-disabledcv" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="mne_hfo.sklearn.DisabledCV">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">mne_hfo.sklearn.</span></code><code class="sig-name descname"><span class="pre">DisabledCV</span></code><a class="reference internal" href="../_modules/mne_hfo/sklearn.html#DisabledCV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.sklearn.DisabledCV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dummy CV class for SearchCV scikit-learn functions.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.sklearn.DisabledCV.get_n_splits" title="mne_hfo.sklearn.DisabledCV.get_n_splits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_n_splits</span></code></a>(X, y[, groups])</p></td>
+<td><p>Disabled split.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.sklearn.DisabledCV.split" title="mne_hfo.sklearn.DisabledCV.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(X, y[, groups])</p></td>
+<td><p>Disabled split.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="mne_hfo.sklearn.DisabledCV.get_n_splits">
+<code class="sig-name descname"><span class="pre">get_n_splits</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/sklearn.html#DisabledCV.get_n_splits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.sklearn.DisabledCV.get_n_splits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disabled split.</p>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-simulate-simulate-spike">
-<span id="sphx-glr-backreferences-mne-hfo-simulate-simulate-spike"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code><a class="headerlink" href="#examples-using-mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h2>
+<dl class="py method">
+<dt id="mne_hfo.sklearn.DisabledCV.split">
+<code class="sig-name descname"><span class="pre">split</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/sklearn.html#DisabledCV.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.sklearn.DisabledCV.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disabled split.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="examples-using-mne-hfo-sklearn-disabledcv">
+<span id="sphx-glr-backreferences-mne-hfo-sklearn-disabledcv"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.sklearn.DisabledCV</span></code><a class="headerlink" href="#examples-using-mne-hfo-sklearn-disabledcv" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 

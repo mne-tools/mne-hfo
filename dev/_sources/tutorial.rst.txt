@@ -15,3 +15,4 @@ This tutorial presents several HFO detectors: the Line Length detector, Root Mea
    :maxdepth: 1
 
    tutorials/basic_compute_hfos
+   tutorials/compute_hfos_on_fedele_dataset

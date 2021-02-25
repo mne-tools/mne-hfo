@@ -164,12 +164,15 @@
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.create_events_df()</span></code></a> to generate a DataFrame of HFO events from <code class="docutils literal notranslate"><span class="pre">Raw</span></code> object, or dictionary of lists of HFO endpoints, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/7">#7</a>)</p></li>
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.find_coincident_events()</span></code></a> to compare two dicts that contain event information by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
 <li><p>Added notebook to demo use of detection algorithms by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Vectorized detection overlap check to enhance scoring speed by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+<li><p>Added notebook to demo use of GridSearchCV to optimize detector performance by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
 </ul>
 </div>
 <div class="section" id="api-changes">
 <h4>API changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.events_to_annotations()</span></code></a> to go from <code class="docutils literal notranslate"><span class="pre">*events.tsv</span></code> to <code class="docutils literal notranslate"><span class="pre">*annotations.tsv</span></code> files, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.sklearn.make_Xy_sklearn.html#mne_hfo.sklearn.make_Xy_sklearn" title="mne_hfo.sklearn.make_Xy_sklearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.sklearn.make_Xy_sklearn()</span></code></a> to format data into scikit-learn compatible data structures for the sake of running hyper-parameter searches with <code class="docutils literal notranslate"><span class="pre">SearchCV</span></code> functions, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
 </ul>
 </div>
 <div class="section" id="requirements">
@@ -181,6 +184,7 @@
 <div class="section" id="bug-fixes">
 <h4>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
+<li><p>Fixed channel name issue introduced by redundant type checks when using <em class="xref py py-obj">fit_and_predict</em> by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
 <li><p>xxx</p></li>
 </ul>
 <p><a class="reference internal" href="whats_new_previous_releases.html"><span class="doc">Find out what was new in previous releases</span></a></p>
@@ -202,8 +206,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

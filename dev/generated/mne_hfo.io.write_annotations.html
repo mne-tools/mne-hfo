@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.match_detections &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.io.write_annotations &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.match_detections</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-match-detections">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detections</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.io.write_annotations</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-io-write-annotations">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.io.write_annotations</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,54 +126,45 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-match-detections">
-<h1>mne_hfo.match_detections<a class="headerlink" href="#mne-hfo-match-detections" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-io-write-annotations">
+<h1>mne_hfo.io.write_annotations<a class="headerlink" href="#mne-hfo-io-write-annotations" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.match_detections">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">match_detections</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ytrue_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ypredict_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/posthoc.html#match_detections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.match_detections" title="Permalink to this definition">¶</a></dt>
-<dd><p>Match gold standard detections with detector detections.</p>
-<p>TODO: refactor</p>
+<dt id="mne_hfo.io.write_annotations">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.io.</span></code><code class="sig-name descname"><span class="pre">write_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annot_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intended_for</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/io.html#write_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.io.write_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write annotations dataframe to disc.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ytrue_df: pandas.DataFrame</strong></p>
+<dd class="field-odd"><p><strong>annot_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>Gold standard detections</p>
+<div><p>The annotations DataFrame.</p>
 </div></blockquote>
-<p><strong>ypredict_df: pandas.DataFrame</strong></p>
+<p><strong>fname</strong> : str | pathlib.Path</p>
 <blockquote>
-<div><p>Detector detections</p>
+<div><p>The BIDS filename to write annotations to.</p>
 </div></blockquote>
-<p><strong>bn: list</strong></p>
+<p><strong>intended_for</strong> : str | pathlib.Path | BIDSPath</p>
 <blockquote>
-<div><p>Names of event start stop [start_name, stop_name], e.g
-[‘onset’, ‘offset’].</p>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">IntendedFor</span></code> BIDS keyword corresponding to the
+<code class="docutils literal notranslate"><span class="pre">Raw</span></code> file that the Annotations were created from.</p>
 </div></blockquote>
-<p><strong>freq_name: str</strong></p>
+<p><strong>root</strong> : str | pathlib.Path</p>
 <blockquote>
-<div><p>Name of frequency column</p>
+<div><p>The root of the BIDS dataset.</p>
 </div></blockquote>
-<p><strong>sec_unit: int</strong></p>
+<p><strong>description</strong> : str | None</p>
 <blockquote>
-<div><p>Number representing one second of signal - this can
-significantly improve the speed of this function</p>
+<div><p>The description of the Annotations file. If None (default),
+will describe it as HFO events detected using mne-hfo.</p>
 </div></blockquote>
-<p><strong>sec_margin: int</strong></p>
-<blockquote>
-<div><p>Margin for creating subsets of compared data - should be set according
-to the length of compared events (1s for HFO should be enough)</p>
-</div></blockquote>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>match_df: pandas.DataFrame</p>
-<blockquote>
-<div><p>Dataframe with matched indices (pandas DataFrame)</p>
-</div></blockquote>
+<dl class="simple">
+<dt><strong>:rtype: :py:obj:`None`</strong></dt><dd></dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-match-detections">
-<span id="sphx-glr-backreferences-mne-hfo-match-detections"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detections</span></code><a class="headerlink" href="#examples-using-mne-hfo-match-detections" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-io-write-annotations">
+<span id="sphx-glr-backreferences-mne-hfo-io-write-annotations"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.io.write_annotations</span></code><a class="headerlink" href="#examples-using-mne-hfo-io-write-annotations" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 
@@ -190,8 +181,8 @@ to the length of compared events (1s for HFO should be enough)</p>
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

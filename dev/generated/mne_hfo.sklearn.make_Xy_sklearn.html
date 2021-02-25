@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.simulate.simulate_spike &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.sklearn.make_Xy_sklearn &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.simulate.simulate_spike</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-simulate-simulate-spike">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.sklearn.make_Xy_sklearn</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-sklearn-make-xy-sklearn">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.sklearn.make_Xy_sklearn</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,34 +126,44 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-simulate-simulate-spike">
-<h1>mne_hfo.simulate.simulate_spike<a class="headerlink" href="#mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-sklearn-make-xy-sklearn">
+<h1>mne_hfo.sklearn.make_Xy_sklearn<a class="headerlink" href="#mne-hfo-sklearn-make-xy-sklearn" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.simulate.simulate_spike">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.simulate.</span></code><code class="sig-name descname"><span class="pre">simulate_spike</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/simulate.html#simulate_spike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.simulate.simulate_spike" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a simple gaussian spike.</p>
+<dt id="mne_hfo.sklearn.make_Xy_sklearn">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.sklearn.</span></code><code class="sig-name descname"><span class="pre">make_Xy_sklearn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/sklearn.html#make_Xy_sklearn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.sklearn.make_Xy_sklearn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make X/y for HFO detector compliant with scikit-learn.</p>
+<p>To render a dataframe “sklearn” compatible, by
+turning it into a list of list of tuples.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fs: float</strong></p>
+<dd class="field-odd"><p><strong>raw</strong> : mne.io.Raw</p>
 <blockquote>
-<div><p>Sampling rate (default=5000)</p>
+<div><p>The raw iEEG data.</p>
 </div></blockquote>
-<p><strong>dur: float</strong></p>
+<p><strong>df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>Spike duration in seconds</p>
+<div><p>The HFO labeled dataframe, in the form of <code class="docutils literal notranslate"><span class="pre">*_annotations.tsv</span></code>.
+Should be read in through <code class="docutils literal notranslate"><span class="pre">read_annotations</span></code> function.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>spike numpy array</p>
+<dd class="field-even"><p><strong>raw_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>1D numpy array with a sipke</p>
+<div><p>The Raw dataframe generated from <a class="reference external" href="https://mne.tools/dev/generated/mne.io.Raw.html#mne.io.Raw.to_data_frame" title="(in MNE v0.23.dev0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mne.io.Raw.to_data_frame()</span></code></a>.
+It should be structured as channels X time.</p>
+</div></blockquote>
+<p><strong>ch_results</strong> : list[list[tuple]]</p>
+<blockquote>
+<div><p>List of channel HFO events, ordered by the channel names from the
+<code class="docutils literal notranslate"><span class="pre">raw</span></code> dataset. Each channel corresponds to a list of “onset”
+and “offset” time points (in seconds) that an HFO was detected.</p>
 </div></blockquote>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-simulate-simulate-spike">
-<span id="sphx-glr-backreferences-mne-hfo-simulate-simulate-spike"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code><a class="headerlink" href="#examples-using-mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-sklearn-make-xy-sklearn">
+<span id="sphx-glr-backreferences-mne-hfo-sklearn-make-xy-sklearn"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.sklearn.make_Xy_sklearn</span></code><a class="headerlink" href="#examples-using-mne-hfo-sklearn-make-xy-sklearn" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 

@@ -147,13 +147,20 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Events dataframe columns must contain &#39;</span>
                                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">EVENT_COLUMNS</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 
-    <span class="c1"># first compute sampling rate from sample / onset columns</span>
-    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;All rows in the annotations dataframe &#39;</span>
-                         <span class="sa">f</span><span class="s1">&#39;should have the same sampling rate. &#39;</span>
-                         <span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s1"> different &#39;</span>
-                         <span class="sa">f</span><span class="s1">&#39;sampling rates.&#39;</span><span class="p">)</span>
+    <span class="c1"># Only want to do this check if there are multiple rows. Handles edge case</span>
+    <span class="c1"># of 1 HFO starting at 0. TODO: handle this more elegantly</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># first compute sampling rate from sample / onset columns</span>
+        <span class="n">sfreq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># onset=0 will cause sfreq to be inf, drop these rows to</span>
+        <span class="c1"># prevent additional sfreqs</span>
+        <span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreq</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;All rows in the annotations dataframe &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;should have the same sampling rate. &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s1"> different &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;sampling rates.&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -323,30 +330,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ths_value</span> <span class="o">=</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span> <span class="o">/</span> <span class="mf">0.6745</span>
     <span class="k">return</span> <span class="n">ths_value</span>
-
-
-<span class="k">def</span> <span class="nf">_append_offset_to_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Append an offset column to the provided dataframe.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df : pd.DataFrame</span>
-<span class="sd">        DataFrame without an offset column</span>
-<span class="sd">    cols : Tuple</span>
-<span class="sd">        Tuple of column names (onset_col_name, duration_col_name)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    List</span>
-<span class="sd">        List of dataframes with additional column</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Get indices of onset and duration columns</span>
-    <span class="n">df_col_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
-    <span class="c1"># Sum the two columns to create offset column</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">df_col_indices</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df</span>
 </pre></div>
 
     </div>
@@ -361,8 +344,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

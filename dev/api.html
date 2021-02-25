@@ -119,9 +119,10 @@
 <li><a class="reference internal" href="#">API Documentation</a><ul>
 <li><a class="reference internal" href="#detectors">Detectors</a></li>
 <li><a class="reference internal" href="#bids-io-functions">BIDS-IO functions</a></li>
-<li><a class="reference internal" href="#simulation">Simulation</a></li>
 <li><a class="reference internal" href="#post-processing-hfo-detections">Post-processing HFO Detections</a></li>
+<li><a class="reference internal" href="#help-transform-data-to-be-scikit-learn-compatible-for-searchcv">Help transform data to be scikit-learn compatible (for SearchCV)</a></li>
 <li><a class="reference internal" href="#metrics">Metrics</a></li>
+<li><a class="reference internal" href="#simulation">Simulation</a></li>
 </ul>
 </li>
 </ul>
@@ -166,11 +167,79 @@
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.create_annotations_df.html#mne_hfo.io.create_annotations_df" title="mne_hfo.io.create_annotations_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_annotations_df</span></code></a>(onset, duration, ch_name)</p></td>
 <td><p>Create a BIDS-derivative annotations dataframe for HFO events.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations" title="mne_hfo.io.read_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_annotations</span></code></a>(fname[, root])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">events_to_annotations</span></code></a>(events_df)</p></td>
+<td><p>Backwards-compatible function to convert events to annotations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.read_annotations.html#mne_hfo.io.read_annotations" title="mne_hfo.io.read_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_annotations</span></code></a>(fname[, root])</p></td>
 <td><p>Read annotations.tsv Derivative file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">events_to_annotations</span></code></a>(events_df)</p></td>
-<td><p>Backwards-compatible function to convert events to annotations.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.io.write_annotations.html#mne_hfo.io.write_annotations" title="mne_hfo.io.write_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_annotations</span></code></a>(annot_df, fname, …[, …])</p></td>
+<td><p>Write annotations dataframe to disc.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="post-processing-hfo-detections">
+<h2>Post-processing HFO Detections<a class="headerlink" href="#post-processing-hfo-detections" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.match_detected_annotations.html#mne_hfo.match_detected_annotations" title="mne_hfo.match_detected_annotations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_detected_annotations</span></code></a>(ytrue_annot_df, …)</p></td>
+<td><p>Given two annotations.tsv DataFrames, match HFO detection overlaps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_coincident_events</span></code></a>(hfo_dict1, hfo_dict2)</p></td>
+<td><p>Get a dictionary of hfo events that overlap between two sets.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_chs_hfo_rates</span></code></a>(annot_df, rate[, …])</p></td>
+<td><p>Compute channel HFO rates from annotations DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.merge_overlapping_events.html#mne_hfo.merge_overlapping_events" title="mne_hfo.merge_overlapping_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_overlapping_events</span></code></a>(df)</p></td>
+<td><p>Merge overlapping events detected.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="help-transform-data-to-be-scikit-learn-compatible-for-searchcv">
+<h2>Help transform data to be scikit-learn compatible (for SearchCV)<a class="headerlink" href="#help-transform-data-to-be-scikit-learn-compatible-for-searchcv" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.sklearn.make_Xy_sklearn.html#mne_hfo.sklearn.make_Xy_sklearn" title="mne_hfo.sklearn.make_Xy_sklearn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_Xy_sklearn</span></code></a>(raw, df)</p></td>
+<td><p>Make X/y for HFO detector compliant with scikit-learn.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.sklearn.DisabledCV.html#mne_hfo.sklearn.DisabledCV" title="mne_hfo.sklearn.DisabledCV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DisabledCV</span></code></a>()</p></td>
+<td><p>Dummy CV class for SearchCV scikit-learn functions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="metrics">
+<h2>Metrics<a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-mne_hfo.utils" title="mne_hfo.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo.utils</span></code></a>:</p>
+<span class="target" id="module-mne_hfo.utils"></span><p>Utility and helper functions for MNE-HFO.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms" title="mne_hfo.utils.compute_rms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_rms</span></code></a>(signal[, win_size])</p></td>
+<td><p>Calculate the Root Mean Square (RMS) energy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length" title="mne_hfo.utils.compute_line_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_line_length</span></code></a>(signal[, win_size])</p></td>
+<td><p>Calculate line length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_std.html#mne_hfo.utils.threshold_std" title="mne_hfo.utils.threshold_std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_std</span></code></a>(signal, threshold)</p></td>
+<td><p>Calculate threshold by Standard Deviations above the mean.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey" title="mne_hfo.utils.threshold_tukey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_tukey</span></code></a>(signal, threshold)</p></td>
+<td><p>Calculate threshold by Tukey method.</p></td>
 </tr>
 </tbody>
 </table>
@@ -210,51 +279,6 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="post-processing-hfo-detections">
-<h2>Post-processing HFO Detections<a class="headerlink" href="#post-processing-hfo-detections" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.match_detections.html#mne_hfo.match_detections" title="mne_hfo.match_detections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_detections</span></code></a>(ytrue_df, ypredict_df, bn)</p></td>
-<td><p>Match gold standard detections with detector detections.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_coincident_events</span></code></a>(hfo_dict1, hfo_dict2)</p></td>
-<td><p>Get a dictionary of hfo events that overlap between two sets.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_chs_hfo_rates</span></code></a>(annot_df, rate[, …])</p></td>
-<td><p>Compute channel HFO rates from annotations DataFrame.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="metrics">
-<h2>Metrics<a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#module-mne_hfo.utils" title="mne_hfo.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mne_hfo.utils</span></code></a>:</p>
-<span class="target" id="module-mne_hfo.utils"></span><p>Utility and helper functions for MNE-HFO.</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms" title="mne_hfo.utils.compute_rms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_rms</span></code></a>(signal[, win_size])</p></td>
-<td><p>Calculate the Root Mean Square (RMS) energy.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length" title="mne_hfo.utils.compute_line_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_line_length</span></code></a>(signal[, win_size])</p></td>
-<td><p>Calculate line length.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_std.html#mne_hfo.utils.threshold_std" title="mne_hfo.utils.threshold_std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_std</span></code></a>(signal, threshold)</p></td>
-<td><p>Calculate threshold by Standard Deviations above the mean.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey" title="mne_hfo.utils.threshold_tukey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_tukey</span></code></a>(signal, threshold)</p></td>
-<td><p>Calculate threshold by Tukey method.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 </div>
 
 
@@ -270,8 +294,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

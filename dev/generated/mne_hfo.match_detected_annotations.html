@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.simulate.simulate_spike &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.match_detected_annotations &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.simulate.simulate_spike</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-simulate-simulate-spike">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.match_detected_annotations</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-match-detected-annotations">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detected_annotations</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,34 +126,66 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-simulate-simulate-spike">
-<h1>mne_hfo.simulate.simulate_spike<a class="headerlink" href="#mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-match-detected-annotations">
+<h1>mne_hfo.match_detected_annotations<a class="headerlink" href="#mne-hfo-match-detected-annotations" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.simulate.simulate_spike">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.simulate.</span></code><code class="sig-name descname"><span class="pre">simulate_spike</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/simulate.html#simulate_spike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.simulate.simulate_spike" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a simple gaussian spike.</p>
+<dt id="mne_hfo.match_detected_annotations">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">match_detected_annotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ytrue_annot_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ypred_annot_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ch_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sec_margin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'match-true'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/posthoc.html#match_detected_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.match_detected_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two annotations.tsv DataFrames, match HFO detection overlaps.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fs: float</strong></p>
+<dd class="field-odd"><p><strong>ytrue_annot_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>Sampling rate (default=5000)</p>
+<div><p>The reference annotations DataFrame containing the HFO events that are
+considered “ground-truth” in this comparison.</p>
 </div></blockquote>
-<p><strong>dur: float</strong></p>
+<p><strong>ypred_annot_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>Spike duration in seconds</p>
+<div><p>The estimated annotations DataFrame containing the HFO events that
+are estimated using a <code class="docutils literal notranslate"><span class="pre">Detector</span></code>.</p>
+</div></blockquote>
+<p><strong>ch_names</strong> : list | str | None</p>
+<blockquote>
+<div><p>Which channels to match. If None (default), then will match all
+available channels in both dataframes. If str, then must be a single
+channel name available in the <code class="docutils literal notranslate"><span class="pre">ytrue_annot_df</span></code>. If list of
+strings, then must be a list of channel names available in the
+<code class="docutils literal notranslate"><span class="pre">ytrue_annot_df</span></code>.</p>
+</div></blockquote>
+<p><strong>label</strong> : str | None</p>
+<blockquote>
+<div><p>The HFO label to use. If None (default) will consider all rows in
+both input DataFrames as an HFO event. If a string, then it must
+match to an element of <code class="docutils literal notranslate"><span class="pre">label</span></code> column in the dataframes.</p>
+</div></blockquote>
+<p><strong>sec_margin</strong> : float</p>
+<blockquote>
+<div><p>Number of seconds to consider a valid checking window.
+Default = 1.</p>
+</div></blockquote>
+<p><strong>method</strong> : str</p>
+<blockquote>
+<div><p>Type of strategy for matching HFO events. Must be one of
+<code class="docutils literal notranslate"><span class="pre">match-true</span></code>, <code class="docutils literal notranslate"><span class="pre">match-pred</span></code>, or <code class="docutils literal notranslate"><span class="pre">match-total</span></code>.
+If “match-true”, will return a dataframe of all true indices
+and matching predicted indices if they exist. If “match-pred”,
+will return a dataframe of all predicted indices and matching
+true indices if they exist. If “match-total”, will return the
+concatenation of the two. See Notes for more information.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>spike numpy array</p>
+<dd class="field-even"><p><strong>matched_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>1D numpy array with a sipke</p>
+<div><p>A DataFrame with the columns <code class="docutils literal notranslate"><span class="pre">pred_index</span></code> and <code class="docutils literal notranslate"><span class="pre">true_index</span></code>,
+which corresponds to indices,</p>
 </div></blockquote>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-simulate-simulate-spike">
-<span id="sphx-glr-backreferences-mne-hfo-simulate-simulate-spike"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code><a class="headerlink" href="#examples-using-mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-match-detected-annotations">
+<span id="sphx-glr-backreferences-mne-hfo-match-detected-annotations"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.match_detected_annotations</span></code><a class="headerlink" href="#examples-using-mne-hfo-match-detected-annotations" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 

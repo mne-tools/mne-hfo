@@ -38,8 +38,52 @@ BIDS-IO functions
 
     create_events_df
     create_annotations_df
-    read_annotations
     events_to_annotations
+    read_annotations
+    write_annotations
+
+Post-processing HFO Detections
+------------------------------
+
+.. currentmodule:: mne_hfo
+
+.. autosummary::
+   :toctree: generated/
+
+    match_detected_annotations
+    find_coincident_events
+    compute_chs_hfo_rates
+    merge_overlapping_events
+
+Help transform data to be scikit-learn compatible (for SearchCV)
+----------------------------------------------------------------
+
+.. currentmodule:: mne_hfo.sklearn
+
+.. autosummary::
+   :toctree: generated/
+
+    make_Xy_sklearn
+    DisabledCV
+
+Metrics
+-------
+
+:py:mod:`mne_hfo.utils`:
+
+.. automodule:: mne_hfo.utils
+   :no-members:
+   :no-inherited-members:
+
+.. currentmodule:: mne_hfo.utils
+
+.. autosummary::
+   :toctree: generated/
+
+    compute_rms
+    compute_line_length
+    threshold_std
+    threshold_tukey
 
 Simulation
 ----------
@@ -62,34 +106,3 @@ Simulation
     simulate_artifact_spike
     simulate_spike
     simulate_hfo
-
-Post-processing HFO Detections
-------------------------------
-
-.. currentmodule:: mne_hfo
-
-.. autosummary::
-   :toctree: generated/
-
-    match_detections
-    find_coincident_events
-    compute_chs_hfo_rates
-
-Metrics
--------
-
-:py:mod:`mne_hfo.utils`:
-
-.. automodule:: mne_hfo.utils
-   :no-members:
-   :no-inherited-members:
-
-.. currentmodule:: mne_hfo.utils
-
-.. autosummary::
-   :toctree: generated/
-
-    compute_rms
-    compute_line_length
-    threshold_std
-    threshold_tukey

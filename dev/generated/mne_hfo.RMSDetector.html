@@ -20,8 +20,6 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
 <meta charset='utf-8'>
@@ -197,6 +195,10 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 <blockquote>
 <div><p>HFO event array.</p>
 </div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.RMSDetector.hfo_event_df" title="mne_hfo.RMSDetector.hfo_event_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hfo_event_df</span></code></a></p>
+<blockquote>
+<div><p>Return HFO detections as an event.tsv DataFrame.</p>
+</div></blockquote>
 <p><a class="reference internal" href="#mne_hfo.RMSDetector.l_freq" title="mne_hfo.RMSDetector.l_freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">l_freq</span></code></a></p>
 <blockquote>
 <div><p>Lower frequency band for HFO definition.</p>
@@ -325,6 +327,12 @@ value of <code class="docutils literal notranslate"><span class="pre">1</span></
 </dd></dl>
 
 <dl class="py method">
+<dt id="mne_hfo.RMSDetector.hfo_event_df">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_event_df</span></code><a class="headerlink" href="#mne_hfo.RMSDetector.hfo_event_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return HFO detections as an event.tsv DataFrame.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="mne_hfo.RMSDetector.l_freq">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">l_freq</span></code><a class="headerlink" href="#mne_hfo.RMSDetector.l_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lower frequency band for HFO definition.</p>
@@ -335,52 +343,48 @@ value of <code class="docutils literal notranslate"><span class="pre">1</span></
 <code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scikit-learn override predict function.</p>
 <p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : mne.io.Raw | pd.DataFrame</p>
+<blockquote>
+<div><p>Input data.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ypred</strong> : list[list[tuple]]</p>
+<blockquote>
+<div><p>List of HFO events per channel in order of <code class="docutils literal notranslate"><span class="pre">ch_names</span></code> of
+input data. HFO events are stored as list of tuples: onset
+and offset of the HFO event.</p>
+</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="mne_hfo.RMSDetector.score">
 <code class="sig-name descname"><span class="pre">score</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the score of the HFO prediction.</p>
-<p>The coefficient <span class="math notranslate nohighlight">\(R^2\)</span> is defined as <span class="math notranslate nohighlight">\((1 - \\frac{u}{v})\)</span>,
-where <span class="math notranslate nohighlight">\(u\)</span> is the residual sum of squares <code class="docutils literal notranslate"><span class="pre">((y_true</span> <span class="pre">-</span> <span class="pre">y_pred)</span>
-<span class="pre">**</span> <span class="pre">2).sum()</span></code> and <span class="math notranslate nohighlight">\(v\)</span> is the total sum of squares <code class="docutils literal notranslate"><span class="pre">((y_true</span> <span class="pre">-</span>
-<span class="pre">y_true.mean())</span> <span class="pre">**</span> <span class="pre">2).sum()</span></code>. The best possible score is 1.0 and it
-can be negative (because the model can be arbitrarily worse). A
-constant model that always predicts the expected value of <em class="xref py py-obj">y</em>,
-disregarding the input features, would get a <span class="math notranslate nohighlight">\(R^2\)</span> score of
-0.0.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>X</strong> : array-like of shape (n_samples, n_features)</p>
+<dd class="field-odd"><p><strong>X</strong> : np.ndarray</p>
 <blockquote>
-<div><p>Test samples. For some estimators this may be a precomputed
-kernel matrix or a list of generic objects instead with shape
-<code class="docutils literal notranslate"><span class="pre">(n_samples,</span> <span class="pre">n_samples_fitted)</span></code>, where <code class="docutils literal notranslate"><span class="pre">n_samples_fitted</span></code>
-is the number of samples used in the fitting for the estimator.</p>
+<div><p>Channel data to detect HFOs on.</p>
 </div></blockquote>
-<p><strong>y</strong> : array-like of shape (n_samples,) or (n_samples, n_outputs)</p>
+<p><strong>y</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>True values for <em class="xref py py-obj">X</em>.</p>
+<div><p>Event Dataframe of true labels</p>
 </div></blockquote>
-<p><strong>sample_weight</strong> : array-like of shape (n_samples,), default=None</p>
-<blockquote>
-<div><p>Sample weights.</p>
-</div></blockquote>
+<dl class="simple">
+<dt><strong>sample_weight :</strong></dt><dd></dd>
+</dl>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>score</strong> : float</p>
-<blockquote>
-<div><p><span class="math notranslate nohighlight">\(R^2\)</span> of <code class="docutils literal notranslate"><span class="pre">self.predict(X)</span></code> wrt. <em class="xref py py-obj">y</em>.</p>
-</div></blockquote>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd></dd>
+</dl>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>The <span class="math notranslate nohighlight">\(R^2\)</span> score used when calling <code class="docutils literal notranslate"><span class="pre">score</span></code> on a regressor uses
-<code class="docutils literal notranslate"><span class="pre">multioutput='uniform_average'</span></code> from version 0.23 to keep consistent
-with default value of <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.r2_score.html#sklearn.metrics.r2_score" title="(in scikit-learn v0.24)"><code class="xref py py-func docutils literal notranslate"><span class="pre">r2_score()</span></code></a>.
-This influences the <code class="docutils literal notranslate"><span class="pre">score</span></code> method of all the multioutput
-regressors (except for
-<a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.multioutput.MultiOutputRegressor.html#sklearn.multioutput.MultiOutputRegressor" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiOutputRegressor</span></code></a>).</p>
 </dd></dl>
 
 <dl class="py method">
@@ -442,8 +446,8 @@ possible to update each component of a nested object.</p>
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

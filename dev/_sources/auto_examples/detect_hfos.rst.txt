@@ -203,7 +203,7 @@ is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
     detector.fit(X=raw)
 
     # get the event dataframe
-    event_df = detector.hfo_df
+    event_df = detector.hfo_event_df
     print(event_df.head())
 
 
@@ -216,7 +216,7 @@ is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
 
  .. code-block:: none
 
-      0%|          | 0/1 [00:00<?, ?it/s]    100%|##########| 1/1 [00:00<00:00, 73.85it/s]
+      0%|          | 0/1 [00:00<?, ?it/s]    100%|##########| 1/1 [00:00<00:00, 90.91it/s]
        onset  ...  trial_type
     0    1.0  ...      hfo_A1
     1    7.0  ...      hfo_A1
@@ -255,7 +255,6 @@ according to the BIDS-Derivatives specification.
 
  .. code-block:: none
 
-    2000.0
        onset  ...   sample
     0    1.0  ...   2000.0
     1    7.0  ...  14000.0
@@ -285,8 +284,8 @@ compute HFO rate as HFOs per second
 
  .. code-block:: none
 
-    Beginning timestamp: 2021-02-15 20:18:31.139161+00:00
-    Got end timestamp of: 2021-02-15 20:18:38.139161+00:00
+    Beginning timestamp: 2021-02-25 15:51:16.667779+00:00
+    Got end timestamp of: 2021-02-25 15:51:23.667779+00:00
     Found HFO rate per s for A1 as 0.2857142857142857
     defaultdict(<class 'list'>, {'A1': 0.2857142857142857})
 
@@ -296,7 +295,7 @@ compute HFO rate as HFOs per second
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  2.383 seconds)
+   **Total running time of the script:** ( 0 minutes  2.236 seconds)
 
 
 .. _sphx_glr_download_auto_examples_detect_hfos.py:

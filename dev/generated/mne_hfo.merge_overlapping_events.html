@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.simulate.simulate_spike &#8212; mne_hfo 0.1.dev0 documentation</title>
+    <title>mne_hfo.merge_overlapping_events &#8212; mne_hfo 0.1.dev0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -116,8 +116,8 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">mne_hfo.simulate.simulate_spike</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-simulate-simulate-spike">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.merge_overlapping_events</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-merge-overlapping-events">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.merge_overlapping_events</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -126,34 +126,38 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="mne-hfo-simulate-simulate-spike">
-<h1>mne_hfo.simulate.simulate_spike<a class="headerlink" href="#mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mne-hfo-merge-overlapping-events">
+<h1>mne_hfo.merge_overlapping_events<a class="headerlink" href="#mne-hfo-merge-overlapping-events" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.simulate.simulate_spike">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.simulate.</span></code><code class="sig-name descname"><span class="pre">simulate_spike</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/simulate.html#simulate_spike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.simulate.simulate_spike" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a simple gaussian spike.</p>
+<dt id="mne_hfo.merge_overlapping_events">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">merge_overlapping_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/posthoc.html#merge_overlapping_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.merge_overlapping_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge overlapping events detected.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fs: float</strong></p>
+<dd class="field-odd"><p><strong>df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>Sampling rate (default=5000)</p>
-</div></blockquote>
-<p><strong>dur: float</strong></p>
-<blockquote>
-<div><p>Spike duration in seconds</p>
+<div><p>Events dataframe generated from HFO events detected.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>spike numpy array</p>
+<dd class="field-even"><p><strong>merged_df</strong> : pd.DataFrame</p>
 <blockquote>
-<div><p>1D numpy array with a sipke</p>
+<div><p>New events dataframe with merged HFOs depending on
+overlap criterion.</p>
 </div></blockquote>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mne_hfo.io.create_events_df</span></code></a></dt><dd><p>Create events DataFrame from HFO detections.</p>
+</dd>
+</dl>
+</div>
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-simulate-simulate-spike">
-<span id="sphx-glr-backreferences-mne-hfo-simulate-simulate-spike"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_spike</span></code><a class="headerlink" href="#examples-using-mne-hfo-simulate-simulate-spike" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="examples-using-mne-hfo-merge-overlapping-events">
+<span id="sphx-glr-backreferences-mne-hfo-merge-overlapping-events"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.merge_overlapping_events</span></code><a class="headerlink" href="#examples-using-mne-hfo-merge-overlapping-events" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></div>
 </div>
 

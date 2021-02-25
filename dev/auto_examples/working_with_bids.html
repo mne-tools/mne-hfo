@@ -146,7 +146,7 @@ MNE-HFO to detect HFOs. Specifically, we will follow these steps:</p>
 from the Fedele dataset [1].</p>
 <ol class="arabic simple" start="2">
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+718.ga9cacd9ef)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+844.gcf8c7d5a18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk according to <a class="reference external" href="https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#">BEP-021</a> and read it in again.</p></li>
 </ol>
 <div class="section" id="references">
@@ -273,14 +273,15 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 <span class="c1"># run detector</span>
 <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">fit</span></a><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
 
-<span class="c1"># get the event dataframe</span>
-<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.hfo_df" title="mne_hfo.RMSDetector.hfo_df" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">hfo_df</span></a>
+<span class="c1"># get the HFO results as an events.tsv DataFrame</span>
+<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.hfo_event_df" title="mne_hfo.RMSDetector.hfo_event_df" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">hfo_event_df</span></a>
 <span class="nb">print</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method"><span class="n">event_df</span><span class="o">.</span><span class="n">head</span></a><span class="p">())</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/50 [00:00&lt;?, ?it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 624.63it/s]
+ 80%|########  | 40/50 [00:00&lt;00:00, 392.68it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 488.57it/s]
     onset  ...  trial_type
 0  4.6250  ...    hfo_IAR2
 1  1.1750  ...    hfo_IAR3
@@ -315,8 +316,7 @@ according to the BIDS-Derivatives specification.</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2000.0
-    onset  ...  sample
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>    onset  ...  sample
 0  4.6250  ...  9250.0
 1  1.1750  ...  2350.0
 2  2.1875  ...  4375.0
@@ -341,11 +341,11 @@ In addition, you can check for overlapping HFOs.</p>
 Setting channel info structure...
 Reading events from ../data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_events.tsv.
 Reading channel info from ../data/sub-01/ses-interictalsleep/ieeg/sub-01_ses-interictalsleep_run-01_channels.tsv.
-/home/circleci/project/mne_hfo/io.py:362: RuntimeWarning: Did not find any electrodes.tsv associated with sub-01_ses-interictalsleep_run-01.
+/home/circleci/project/mne_hfo/io.py:364: RuntimeWarning: Did not find any electrodes.tsv associated with sub-01_ses-interictalsleep_run-01.
 
 The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*electrodes.tsv&quot;
   raw = read_raw_bids(raw_fpath)
-/home/circleci/project/mne_hfo/io.py:362: RuntimeWarning: Did not find any coordsystem.json associated with sub-01_ses-interictalsleep_run-01.
+/home/circleci/project/mne_hfo/io.py:364: RuntimeWarning: Did not find any coordsystem.json associated with sub-01_ses-interictalsleep_run-01.
 
 The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsystem.json&quot;
   raw = read_raw_bids(raw_fpath)
@@ -359,7 +359,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 [5 rows x 5 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.876 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.721 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-working-with-bids-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b91a5f552e41ab2cf6ac33f460a74b78/working_with_bids.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">working_with_bids.py</span></code></a></p>
@@ -385,8 +385,8 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-15.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.0.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-02-25.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.1.<br/>
     </p>
   </div>
 </footer>

@@ -89,3 +89,13 @@ pep:
 build-doc:
 	cd docs; make clean
 	cd docs; make html
+
+build-pipy:
+	python setup.py sdist bdist_wheel
+
+test-pipy:
+	twine check dist/*
+	twine upload --repository testpypi dist/*
+
+upload-pipy:
+	twine upload dist/*

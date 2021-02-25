@@ -6,9 +6,7 @@
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mne-hfo)
 [![Documentation Status](https://readthedocs.org/projects/mne-hfo/badge/?version=latest)](https://mne-hfo.readthedocs.io/en/latest/?badge=latest)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4485036.svg)](https://doi.org/10.5281/zenodo.4485036)
-
-[comment]: <> ([![PyPI Download count]&#40;https://pepy.tech/badge/mne-bids&#41;]&#40;https://pepy.tech/project/mne-bids&#41;)
+[![PyPI Download count](https://pepy.tech/badge/mne-hfo)](https://pepy.tech/project/mne-hfo)
 
 MNE-HFO
 =======

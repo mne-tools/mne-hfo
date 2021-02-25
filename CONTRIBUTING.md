@@ -67,7 +67,7 @@ install ``ipykernel`` and run:
 For some of the tutorials, we use a test dataset that is already in BIDS format. The ground-truth is from publication (
 reference in README).
 
-## Notes on Detector Design
+# Notes on Detector Design
 
 The amount of HFO code and algorithms out there is quite staggering. In order to make an easy to use package, with a
 standard API, we conform each of the HFO ``Detector`` to

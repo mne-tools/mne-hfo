@@ -9,7 +9,7 @@ from scipy.signal import hilbert
 from tqdm import tqdm
 
 from mne_hfo.base import Detector
-from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ, ACCEPTED_BAND_METHODS
+from mne_hfo.config import ACCEPTED_BAND_METHODS
 from mne_hfo.posthoc import _check_detection_overlap
 
 
@@ -436,31 +436,6 @@ class LineLengthDetector(Detector):
 
         return hfo_event_arr
 
-    def fit(self, X, y=None):
-        """Override ``Detector.fit`` function."""
-        X, y = self._check_input_raw(X, y)
-
-        sfreq = self.sfreq
-        if sfreq < MINIMUM_SUGGESTED_SFREQ:
-            warn(f'Sampling frequency of {sfreq} is '
-                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
-                 f'Please use with caution.')
-
-        # compute HFOs as a binary occurrence array over time
-        hfo_event_arr = self._compute_hfo(X)
-
-        # post-process hfo events
-        # store hfo event endpoints per channel
-        chs_hfos = {ch_name: self._post_process_ch_hfos(
-            hfo_event_arr[idx, :], n_times=self.n_times,
-            threshold_method='std'
-        ) for idx, ch_name in enumerate(self.ch_names)}
-
-        self.chs_hfos_ = chs_hfos
-        self.hfo_event_arr_ = hfo_event_arr
-        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
-        return self
-
 
 class RMSDetector(Detector):
     """Root mean square (RMS) detection algorithm (Staba Detector).
@@ -573,28 +548,3 @@ class RMSDetector(Detector):
                 hfo_event_arr[idx, :] = results[idx]
 
         return hfo_event_arr
-
-    def fit(self, X, y=None):
-        """Override ``Detector.fit`` function."""
-        X, y = self._check_input_raw(X, y)
-
-        sfreq = self.sfreq
-        if sfreq < MINIMUM_SUGGESTED_SFREQ:
-            warn(f'Sampling frequency of {sfreq} is '
-                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
-                 f'Please use with caution.')
-
-        # compute HFOs as a binary occurrence array over time
-        hfo_event_arr = self._compute_hfo(X)
-
-        # post-process hfo events
-        # store hfo event endpoints per channel
-        chs_hfos = {ch_name: self._post_process_ch_hfos(
-            hfo_event_arr[idx, :], n_times=self.n_times,
-            threshold_method='std'
-        ) for idx, ch_name in enumerate(self.ch_names)}
-
-        self.chs_hfos_ = chs_hfos
-        self.hfo_event_arr_ = hfo_event_arr
-        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
-        return self

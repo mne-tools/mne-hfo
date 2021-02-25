@@ -3,9 +3,11 @@ from typing import Union
 import mne
 import numpy as np
 import pandas as pd
+from mne.utils import warn
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 
+from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ
 from mne_hfo.io import create_events_df, events_to_annotations
 from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
@@ -65,7 +67,8 @@ class Detector(BaseEstimator):
         Returns
         -------
         hfo_event_arr : np.ndarray
-            HFO event array that is (n_chs, n_windows).
+            HFO event array that is (n_chs, n_windows). It is a boolean mask
+            that consists of either 1's and 0's, or True's and False's.
         """
         raise NotImplementedError('Private function that computes the HFOs '
                                   'needs to be implemented.')
@@ -232,6 +235,61 @@ class Detector(BaseEstimator):
         """Return HFO detections as an event.tsv DataFrame."""
         return self.event_df_
 
+    @property
+    def step_size(self):
+        """Step size of each window.
+
+        Window increment over the samples of signal.
+        """
+        # Calculate window values for easier operation
+        return int(np.ceil(self.win_size * self.overlap))
+
+    def fit(self, X, y=None):
+        """Fit the model according to the optionally given training data.
+
+        Parameters
+        ----------
+        X : mne.io.Raw of shape (n_samples, n_features) | pd.DataFrame
+            Training vector, where n_samples is the number of samples and
+            n_features is the number of features. In MNE-HFO, n_features
+            are the number of time points in the EEG data, and n_samples
+            are the number of channels.
+
+        y : array-like of shape (n_samples, n_output)
+            Target vector relative to X.
+
+        Returns
+        -------
+        self
+            Fitted estimator.
+
+        Notes
+        -----
+        All detectors use a sliding window to compute HFOs in windows.
+        """
+        X, y = self._check_input_raw(X, y)
+
+        sfreq = self.sfreq
+        if sfreq < MINIMUM_SUGGESTED_SFREQ:
+            warn(f'Sampling frequency of {sfreq} is '
+                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
+                 f'Please use with caution.')
+
+        # compute HFOs as a binary occurrence array over time
+        hfo_event_arr = self._compute_hfo(X)
+
+        # post-process hfo events
+        # store hfo event endpoints per channel
+        chs_hfos = {ch_name: self._post_process_ch_hfos(
+            hfo_event_arr[idx, :], n_times=self.n_times,
+            threshold_method='std'
+        ) for idx, ch_name in enumerate(self.ch_names)}
+
+        self.chs_hfos_ = chs_hfos
+        self.hfo_event_arr_ = hfo_event_arr
+        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
+        return self
+
     def predict(self, X):
         """Scikit-learn override predict function.
 
@@ -261,44 +319,6 @@ class Detector(BaseEstimator):
         self.event_df_ = event_df
         annot_df = events_to_annotations(event_df)
         self.df_ = annot_df
-
-    def fit(self, X, y=None):
-        """
-        Fit the model according to the given training data.
-
-        Parameters
-        ----------
-        X : {array-like, sparse matrix} of shape (n_samples, n_features)
-            Training vector, where n_samples is the number of samples and
-            n_features is the number of features. In MNE-HFO, n_features
-            are the number of time points in the EEG data, and n_samples
-            are the number of channels.
-
-        y : array-like of shape (n_samples, n_output)
-            Target vector relative to X.
-
-        picks : array-like of shape (n_samples,) default=None
-            Corresponds to ``mne-python`` picks.
-
-        Returns
-        -------
-        self
-            Fitted estimator.
-
-        Notes
-        -----
-        All detectors use a sliding window to compute HFOs in windows.
-        """
-        raise NotImplementedError('')
-
-    @property
-    def step_size(self):
-        """Step size of each window.
-
-        Window increment over the samples of signal.
-        """
-        # Calculate window values for easier operation
-        return int(np.ceil(self.win_size * self.overlap))
 
     def _compute_sliding_window_detection(self, sig, method):
         if method not in ACCEPTED_HFO_METHODS:

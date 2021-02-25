@@ -46,6 +46,10 @@ Installation
 Installation is RECOMMENDED via a python virtual environment, using ``pipenv``. The package is hosted on ``pypi``, which
 can be installed via pip, or pipenv.
 
+    pip install mne-hfo
+
+or
+
     pipenv install mne-hfo
 
 Note: Installation has been tested on MacOSX and Ubuntu, but should 
@@ -59,13 +63,25 @@ The documentation can be found under the following links:
 - for the [stable release](https://mne-hfo.readthedocs.io/en/stable/index.html)
 - for the [latest (development) version](https://mne-hfo.readthedocs.io/en/latest/index.html)
 
-A basic working example is listed here, assuming one has loaded in a mne-Python ``Raw`` object already.
+Note: Functionality has been tested on MacOSX and Ubuntu.
 
+Basic Working Example
+---------------------
+
+A basic working example is listed here, assuming one has loaded in a mne-Python ``Raw`` object already.
+    
     from mne_hfo import RMSDetector
     detector = RMSDetector()
+
+    # assume user has loaded in raw iEEG data using mne-python
     detector.fit(raw)
 
-Note: Functionality has been tested on MacOSX and Ubuntu.
+    # get the HFO events as an *events.tsv style dataframe
+    hfo_event_df = detector.hfo_event_df
+
+    # get the HFO events as an *events.tsv style dataframe
+    hfo_annot_df = detector.hfo_df
+
 
 All output to ``*events.tsv`` BIDS-compliant files will look like the following:
 
@@ -78,7 +94,8 @@ at 1 second with duration of 3 seconds. The onset sample occurs at sample 1000 (
 monopolar referencing is used, then the ``trial_type`` might be ``hfo_A2`` to imply that an HFO was detected at
 channel ``A2``.
 
-Outputting data according to BIDS Extension Proposal 21, instead would result in 
+Alternatively, one can output the data in the form of a derivatives ``Annotations`` 
+DataFrame, which is the RECOMMENDED way. Outputting data according to BIDS Extension Proposal 21, instead would result in 
 an ``*annotations.tsv`` file. 
 
 | onset      | duration | label | channels |

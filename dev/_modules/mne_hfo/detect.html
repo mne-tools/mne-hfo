@@ -132,7 +132,7 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">mne_hfo.base</span> <span class="kn">import</span> <span class="n">Detector</span>
-<span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="p">,</span> <span class="n">ACCEPTED_BAND_METHODS</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">ACCEPTED_BAND_METHODS</span>
 <span class="kn">from</span> <span class="nn">mne_hfo.posthoc</span> <span class="kn">import</span> <span class="n">_check_detection_overlap</span>
 
 
@@ -557,32 +557,7 @@
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
                 <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">hfo_event_arr</span>
-
-<div class="viewcode-block" id="LineLengthDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.LineLengthDetector.html#mne_hfo.LineLengthDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override ``Detector.fit`` function.&quot;&quot;&quot;</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-        <span class="n">sfreq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span>
-        <span class="k">if</span> <span class="n">sfreq</span> <span class="o">&lt;</span> <span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="p">:</span>
-            <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sampling frequency of </span><span class="si">{</span><span class="n">sfreq</span><span class="si">}</span><span class="s1"> is &#39;</span>
-                 <span class="sa">f</span><span class="s1">&#39;below the suggested rate of </span><span class="si">{</span><span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="si">}</span><span class="s1">. &#39;</span>
-                 <span class="sa">f</span><span class="s1">&#39;Please use with caution.&#39;</span><span class="p">)</span>
-
-        <span class="c1"># compute HFOs as a binary occurrence array over time</span>
-        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-        <span class="c1"># post-process hfo events</span>
-        <span class="c1"># store hfo event endpoints per channel</span>
-        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">ch_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
-            <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">n_times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">,</span>
-            <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_names</span><span class="p">)}</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span> <span class="o">=</span> <span class="n">chs_hfos</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span> <span class="o">=</span> <span class="n">hfo_event_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_annotation_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div></div>
+        <span class="k">return</span> <span class="n">hfo_event_arr</span></div>
 
 
 <div class="viewcode-block" id="RMSDetector"><a class="viewcode-back" href="../../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector">[docs]</a><span class="k">class</span> <span class="nc">RMSDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
@@ -695,32 +670,7 @@
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
                 <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">hfo_event_arr</span>
-
-<div class="viewcode-block" id="RMSDetector.fit"><a class="viewcode-back" href="../../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override ``Detector.fit`` function.&quot;&quot;&quot;</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_raw</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-        <span class="n">sfreq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span>
-        <span class="k">if</span> <span class="n">sfreq</span> <span class="o">&lt;</span> <span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="p">:</span>
-            <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Sampling frequency of </span><span class="si">{</span><span class="n">sfreq</span><span class="si">}</span><span class="s1"> is &#39;</span>
-                 <span class="sa">f</span><span class="s1">&#39;below the suggested rate of </span><span class="si">{</span><span class="n">MINIMUM_SUGGESTED_SFREQ</span><span class="si">}</span><span class="s1">. &#39;</span>
-                 <span class="sa">f</span><span class="s1">&#39;Please use with caution.&#39;</span><span class="p">)</span>
-
-        <span class="c1"># compute HFOs as a binary occurrence array over time</span>
-        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hfo</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-        <span class="c1"># post-process hfo events</span>
-        <span class="c1"># store hfo event endpoints per channel</span>
-        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="p">{</span><span class="n">ch_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_process_ch_hfos</span><span class="p">(</span>
-            <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">n_times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">,</span>
-            <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
-        <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ch_names</span><span class="p">)}</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span> <span class="o">=</span> <span class="n">chs_hfos</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span> <span class="o">=</span> <span class="n">hfo_event_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_annotation_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div></div>
+        <span class="k">return</span> <span class="n">hfo_event_arr</span></div>
 </pre></div>
 
     </div>

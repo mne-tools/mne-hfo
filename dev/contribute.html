@@ -119,6 +119,7 @@
 <li><a class="reference internal" href="#">Contributing to MNE-HFO</a><ul>
 <li><a class="reference internal" href="#bug-reports">Bug reports</a></li>
 <li><a class="reference internal" href="#contributing-code-or-documentation">Contributing code or documentation</a></li>
+<li><a class="reference internal" href="#contributing-your-own-sliding-window-based-detector">Contributing your own sliding window-based detector</a></li>
 </ul>
 </li>
 </ul>
@@ -144,6 +145,32 @@ to report bugs.</p>
 <h2>Contributing code or documentation<a class="headerlink" href="#contributing-code-or-documentation" title="Permalink to this headline">¶</a></h2>
 <p>Please see our <a class="reference external" href="https://github.com/adam2392/mne-hfo/blob/master/CONTRIBUTING.md">contributing guide</a>
 to find out how to get started.</p>
+</div>
+<div class="section" id="contributing-your-own-sliding-window-based-detector">
+<h2>Contributing your own sliding window-based detector<a class="headerlink" href="#contributing-your-own-sliding-window-based-detector" title="Permalink to this headline">¶</a></h2>
+<p>1. First step is opening up a <a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Github issue</a> to describe
+the new HFO detector.</p>
+<p>2. Secondly, one should follow our API for all Detectors, namely the <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> class.
+The basic hyperparameters of any Detector are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>threshold: The threshold point used in computation of HFOs. This could be a threshold on a certain metric, like line</dt><dd><p>length, if the <code class="docutils literal notranslate"><span class="pre">LineLengthDetector</span></code> is used.</p>
+</dd>
+</dl>
+</li>
+<li><p>window size: The size of the windows in terms of samples</p></li>
+<li><p>overlap: The amount of overlap between consecutive windows</p></li>
+</ul>
+</div></blockquote>
+<p>One must also implement their own <em class="xref py py-obj">_compute_hfo</em> function, which returns an HFO event array, consisting
+of an array of <code class="docutils literal notranslate"><span class="pre">(n_chs,</span> <span class="pre">n_windows)</span></code> that is a binary existence of HFO detected or not. It is within
+this function that all HFO detection algorithm should be implemented.</p>
+<p>3. Finally, if your detector has extra hyperparameters then what may be inherited from <code class="docutils literal notranslate"><span class="pre">Detector</span></code>, then
+one can just add these to your own <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> function.</p>
+<p>Once you have implemented your detector, then it is always good to provide unit tests for determining
+correct functionality of the HFO algorithm. This can be done using simulated HFOs using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulation</span></code>
+module, or using real data that you provide.</p>
 </div>
 </div>
 

@@ -217,7 +217,7 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
-<td><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p></td>
+<td><p>Fit the model according to the optionally given training data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.RMSDetector.fit_predict" title="mne_hfo.RMSDetector.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
 <td><p>Perform fit on X and returns labels for X.</p></td>
@@ -250,8 +250,31 @@ J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.</p>
 
 <dl class="py method">
 <dt id="mne_hfo.RMSDetector.fit">
-<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#RMSDetector.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.RMSDetector.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Override <code class="docutils literal notranslate"><span class="pre">Detector.fit</span></code> function.</p>
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.RMSDetector.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the optionally given training data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : mne.io.Raw of shape (n_samples, n_features) | pd.DataFrame</p>
+<blockquote>
+<div><p>Training vector, where n_samples is the number of samples and
+n_features is the number of features. In MNE-HFO, n_features
+are the number of time points in the EEG data, and n_samples
+are the number of channels.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like of shape (n_samples, n_output)</p>
+<blockquote>
+<div><p>Target vector relative to X.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+<blockquote>
+<div><p>Fitted estimator.</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>All detectors use a sliding window to compute HFOs in windows.</p>
 </dd></dl>
 
 <dl class="py method">

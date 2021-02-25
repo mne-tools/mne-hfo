@@ -109,6 +109,54 @@ with a corresponding ``*annotations.json`` file.
         'Description': 'Automatic annotations of HFO events using mne-hfo.',
     }
 
+Optimizing Hyperparameters
+--------------------------
+
+In all ``MNE-HFO`` HFO detectors, we assume that there are hyper-parameters 
+specified by the proposed algorithm. These hyper-parameters can be tuned automatically 
+using the ``scikit-learn`` API for [GridSearchCV](https://scikit-learn.org/stable/modules/grid_search.html#grid-search).
+
+
+    from sklearn.metrics import make_scorer
+    from sklearn.model_selection import GridSearchCV
+    from mne_hfo.score import accuracy
+    from mne_hfo.sklearn import make_Xy_sklearn, DisabledCV
+    
+    # define hyperparameter grid to search over
+    parameters = {'threshold': [1, 2, 3], 'win_size': [50, 100, 250]}
+    
+    # define HFO detector
+    detector = LineLengthDetector()
+
+    # define a scoring function 
+    scorer = make_scorer(accuracy)
+
+    # we don't use cross-validation since the
+    # HFO algorithm is deterministic
+    cv = DisabledCV()
+
+    # instantiate the GridSearch object
+    gs = GridSearchCV(detector, param_grid=parameters, scoring=scorer,
+                      cv=cv, refit=False, verbose=True)
+
+    # load in raw data
+    # raw = <load_in_raw_data>
+
+    # load in HFO annotations
+    # annot_df = <load_in_annotations>
+
+    # make sklearn compatible
+    raw_df, y = make_Xy_sklearn(raw, annot_df)
+
+    # run hyperparameter tuning based on accuracy score
+    gs.fit(raw_df, y, groups=None)
+
+    # show the results
+    print(gs.cv_results_["mean_test_score"])
+
+In the above example, to load in raw data, one can use [``mne-bids``](https://github.com/mne-tools/mne-bids)
+and to load in the annotations dataframe, one can check out our API 
+for different ways of doing so.
 
 Citing
 ------

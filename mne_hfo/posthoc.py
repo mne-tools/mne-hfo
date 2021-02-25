@@ -191,7 +191,7 @@ def _join_times(df: pd.DataFrame) -> pd.DataFrame:
     return res
 
 
-def merge_overlapping_events(df: pd.DataFrame) -> pd.DataFrame:
+def merge_overlapping_events(df: pd.DataFrame):
     """Merge overlapping events detected.
 
     Parameters

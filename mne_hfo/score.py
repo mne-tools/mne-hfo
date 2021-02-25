@@ -93,7 +93,7 @@ def false_discovery_rate(y, y_pred):
     """
     tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
 
-    if fp == 0:
+    if fp == 0.:
         return 0.
 
     # return the actual metric

@@ -2,11 +2,14 @@ from typing import Union
 
 import mne
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator
-from sklearn.metrics import r2_score, f1_score
 from sklearn.utils.validation import check_is_fitted
 
-from mne_hfo.io import create_events_df
+from mne_hfo.io import create_events_df, events_to_annotations
+from mne_hfo.score import accuracy, false_negative_rate, \
+    true_positive_rate, precision, false_discovery_rate
+from mne_hfo.sklearn import _make_ydf_sklearn
 from mne_hfo.utils import (threshold_std, compute_rms,
                            compute_line_length)
 
@@ -93,47 +96,23 @@ class Detector(BaseEstimator):
         return self.fit(X).predict(X)
 
     def score(self, X, y, sample_weight=None):
-        r"""Return the score of the HFO prediction.
-
-        The coefficient :math:`R^2` is defined as :math:`(1 - \\frac{u}{v})`,
-        where :math:`u` is the residual sum of squares ``((y_true - y_pred)
-        ** 2).sum()`` and :math:`v` is the total sum of squares ``((y_true -
-        y_true.mean()) ** 2).sum()``. The best possible score is 1.0 and it
-        can be negative (because the model can be arbitrarily worse). A
-        constant model that always predicts the expected value of `y`,
-        disregarding the input features, would get a :math:`R^2` score of
-        0.0.
+        """
+        Return the score of the HFO prediction.
 
         Parameters
         ----------
-        X : array-like of shape (n_samples, n_features)
-            Test samples. For some estimators this may be a precomputed
-            kernel matrix or a list of generic objects instead with shape
-            ``(n_samples, n_samples_fitted)``, where ``n_samples_fitted``
-            is the number of samples used in the fitting for the estimator.
-
-        y : array-like of shape (n_samples,) or (n_samples, n_outputs)
-            True values for `X`.
-
-        sample_weight : array-like of shape (n_samples,), default=None
-            Sample weights.
+        X : np.ndarray
+            Channel data to detect HFOs on.
+        y : pd.DataFrame
+            Event Dataframe of true labels
+        sample_weight :
 
         Returns
         -------
-        score : float
-            :math:`R^2` of ``self.predict(X)`` wrt. `y`.
+        float
 
-        Notes
-        -----
-        The :math:`R^2` score used when calling ``score`` on a regressor uses
-        ``multioutput='uniform_average'`` from version 0.23 to keep consistent
-        with default value of :func:`~sklearn.metrics.r2_score`.
-        This influences the ``score`` method of all the multioutput
-        regressors (except for
-        :class:`~sklearn.multioutput.MultiOutputRegressor`).
         """
         # y_true should be an annotations DataFrame actually
-
         # fit and predict
         y_pred = self.fit_predict(X, y)
 
@@ -143,25 +122,53 @@ class Detector(BaseEstimator):
         # representing overlap detection or not
 
         # compute score
-        if self.scoring_func == 'f1':
-            score = f1_score(y, y_pred, sample_weight=sample_weight)
-        elif self.scoring_func == 'r2':
-            score = r2_score(y, y_pred, sample_weight=sample_weight)
+        if self.scoring_func == "accuracy":
+            score = accuracy(y, y_pred)
+        elif self.scoring_func == "fnr":
+            score = false_negative_rate(y, y_pred)
+        elif self.scoring_func == "tpr":
+            score = true_positive_rate(y, y_pred)
+        elif self.scoring_func == "precision":
+            score = precision(y, y_pred)
+        elif self.scoring_func == "fdr":
+            score = false_discovery_rate(y, y_pred)
         return score
 
     def _check_input_raw(self, X, y):
         if isinstance(X, mne.io.BaseRaw):
+            X.shape = (len(X.ch_names), len(X))
             self.sfreq = X.info['sfreq']
             self.ch_names = X.ch_names
             X = X.get_data()
-        elif self.sfreq is not None:
-            # Just name the channels their index
-            self.ch_names = [str(i) for i in range(X.shape[0])]
-            pass
+        elif isinstance(X, pd.DataFrame):
+            '''Handle the case of SearchCV'''
+            ch_names = X.index
+
+            # Dataframe was transposed
+            time_index = X.T.index
+
+            # compute the time indices and get the pairwise
+            # differences
+            time_indices = time_index.to_series().to_numpy()
+            diff = np.diff(time_indices)
+
+            # compute periods and the sampling rate
+            periods = [x.total_seconds() for x in diff]
+            if not np.all(np.isclose(periods, np.median(periods),
+                                     rtol=1e-3, atol=1e-5)):
+                raise RuntimeError('Not all sampling periods of the '
+                                   'raw data are similar...')
+            sfreq = 1. / periods[0]
+
+            self.ch_names = ch_names
+            self.sfreq = sfreq
+            X = X.to_numpy()
         else:
-            raise RuntimeError('If "X" passed in is not a `mne.io.BaseRaw` '
-                               'object, then "sfreq" must be set on '
-                               'instantation of detector.')
+            if not hasattr(self, 'ch_names'):
+                self.ch_names = np.arange(len(X)).astype(str)
+            # pass
+            # raise ValueError(f'Only dataframe and mne.io.Raw input is '
+            #                  f'accepted into HFO detectors.')
 
         # use sklearn's validation of data
         if y is None:
@@ -169,6 +176,7 @@ class Detector(BaseEstimator):
         else:
             X, y = self._validate_data(X, y, accept_sparse=False,
                                        dtype='float64',
+                                       multi_output=True,
                                        accept_large_sparse=False)
 
         self.n_chs, self.n_times = X.shape
@@ -219,19 +227,40 @@ class Detector(BaseEstimator):
         """Return HFO detections as a dataframe."""
         return self.df_
 
+    @property
+    def hfo_event_df(self):
+        """Return HFO detections as an event.tsv DataFrame."""
+        return self.event_df_
+
     def predict(self, X):
         """Scikit-learn override predict function.
 
         Just directly computes HFOs using ``fit`` function.
+
+        Parameters
+        ----------
+        X : mne.io.Raw | pd.DataFrame
+            Input data.
+
+        Returns
+        -------
+        ypred : list[list[tuple]]
+            List of HFO events per channel in order of ``ch_names`` of
+            input data. HFO events are stored as list of tuples: onset
+            and offset of the HFO event.
         """
         check_is_fitted(self)
-        X, y = self._check_input_raw(X, None)
-        return self.fit(X, None)
+        # X, y = self._check_input_raw(X, None)
+        self.fit(X, None)
+        ypred = _make_ydf_sklearn(self.hfo_df, ch_names=self.ch_names)
+        return ypred
 
-    def _create_event_df(self, chs_hfos_list, hfo_name):
+    def _create_annotation_df(self, chs_hfos_list, hfo_name):
         event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
                                     event_name=hfo_name)
-        self.df_ = event_df
+        self.event_df_ = event_df
+        annot_df = events_to_annotations(event_df)
+        self.df_ = annot_df
 
     def fit(self, X, y=None):
         """

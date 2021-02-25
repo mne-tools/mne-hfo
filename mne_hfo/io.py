@@ -110,13 +110,16 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
                            f'one of required columns {required_cols}. '
                            f'Please double check that the events dataframe '
                            f'is BIDS-compliant.')
+    if events_df.empty:
+        annot_df = pd.DataFrame(columns=ANNOT_COLUMNS)
+        return annot_df
 
     # extract data points from events dataframe
     onset = events_df['onset'].tolist()
     duration = events_df['duration'].tolist()
     description = events_df['trial_type'].tolist()
 
-    sfreqs = events_df['sample'] / events_df['onset']
+    sfreqs = events_df['sample'].divide(events_df['onset'])
     sfreq = sfreqs.values[0]
 
     # extract channels for each HFO event
@@ -132,7 +135,6 @@ def events_to_annotations(events_df: pd.DataFrame) -> pd.DataFrame:
     # create the annotations dataframe
     annot_df = create_annotations_df(onset, duration, ch_names,
                                      annotation_label)
-    print(sfreq)
     annot_df['sample'] = annot_df['onset'] * sfreq
     return annot_df
 
@@ -213,7 +215,7 @@ def create_events_df(input: Union[Dict[str, List], mne.io.Raw],
                 description.append(f'{event_name}_{ch_name}')
     else:
         raise ValueError('Unaccepted data structure for input.')
-
+    sample = [int(s) for s in sample]
     # now create the dataframe
     event_df = _create_events_df(onset=onset, duration=duration, sample=sample,
                                  description=description)

@@ -60,6 +60,7 @@ def create_testing_eeg_data():
     fs = 5000
     n = fs * 10
     data = np.zeros(n)
+    hfo_samps = []
     # basic_amp = 10
 
     x = np.arange(n)
@@ -75,6 +76,7 @@ def create_testing_eeg_data():
     sim = simulate_hfo(fs, freq, numcycles)[0]
     ev_start = 5000
     data[ev_start: ev_start + len(sim)] += sim * 10
+    hfo_samps.append((ev_start, ev_start + len(sim)))
 
     fs = 5000
     dur = 0.1
@@ -88,8 +90,9 @@ def create_testing_eeg_data():
     sim = simulate_hfo(fs, freq, numcycles)[0]
     ev_start = 7 * 5000
     data[ev_start: ev_start + len(sim)] += sim * 10
+    hfo_samps.append((ev_start, ev_start + len(sim)))
 
-    return data
+    return data, hfo_samps
 
 
 @pytest.fixture(scope="module")

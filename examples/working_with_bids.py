@@ -96,8 +96,8 @@ detector = RMSDetector(**kwargs)
 # run detector
 detector.fit(X=raw)
 
-# get the event dataframe
-event_df = detector.hfo_df
+# get the HFO results as an events.tsv DataFrame
+event_df = detector.hfo_event_df
 print(event_df.head())
 
 ###############################################################################

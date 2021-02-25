@@ -24,13 +24,20 @@ def _check_df(df: pd.DataFrame, df_type: str,
             raise RuntimeError(f'Events dataframe columns must contain '
                                f'{EVENT_COLUMNS}.')
 
-    # first compute sampling rate from sample / onset columns
-    sfreq = df['sample'] / df['onset']
-    if sfreq.nunique() != 1:
-        raise ValueError(f'All rows in the annotations dataframe '
-                         f'should have the same sampling rate. '
-                         f'Found {sfreq.nunique()} different '
-                         f'sampling rates.')
+    # Only want to do this check if there are multiple rows. Handles edge case
+    # of 1 HFO starting at 0. TODO: handle this more elegantly
+    if df.shape[0] > 1:
+        # first compute sampling rate from sample / onset columns
+        sfreq = df['sample'].divide(df['onset']).round(2)
+
+        # onset=0 will cause sfreq to be inf, drop these rows to
+        # prevent additional sfreqs
+        sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()
+        if sfreq.nunique() != 1:
+            raise ValueError(f'All rows in the annotations dataframe '
+                             f'should have the same sampling rate. '
+                             f'Found {sfreq.nunique()} different '
+                             f'sampling rates.')
 
     if copy:
         return df.copy()
@@ -200,27 +207,3 @@ def threshold_quian(signal, threshold):
     """
     ths_value = threshold * np.median(np.abs(signal)) / 0.6745
     return ths_value
-
-
-def _append_offset_to_df(df, cols=["onset", "duration"]):
-    """
-    Append an offset column to the provided dataframe.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        DataFrame without an offset column
-    cols : Tuple
-        Tuple of column names (onset_col_name, duration_col_name)
-
-    Returns
-    -------
-    List
-        List of dataframes with additional column
-
-    """
-    # Get indices of onset and duration columns
-    df_col_indices = [df.columns.get_loc(c) for c in cols if c in cols]
-    # Sum the two columns to create offset column
-    df['offset'] = df.iloc[:, df_col_indices].sum(axis=1)
-    return df

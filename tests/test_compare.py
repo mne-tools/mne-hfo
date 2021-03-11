@@ -16,8 +16,8 @@ def test_compare():
     # from rms2
     sfreq = 1000
     # create dummy reference annotations
-    onset1 = [8, 12.6, 22.342, 59.9, 99.2, 150.4]
-    offset1 = [9.7300, 14.870, 31.1, 66.1, 101.22, 156.1]
+    onset1 = [8, 12.6, 59.9, 99.2, 150.4]
+    offset1 = [9.7300, 14.870, 66.1, 101.22, 156.1]
     duration1 = [offset - onset for onset, offset in zip(onset1, offset1)]
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
@@ -48,8 +48,10 @@ def test_compare():
 
     # Calculate mutual info and assert almost equal
     mutual_info = compare(rms1, rms2, method="mutual-info")
-    assert_almost_equal(mutual_info, expected_mutual_info, decimal=5)
+    mi = mutual_info['A1']
+    assert_almost_equal(mi, expected_mutual_info, decimal=5)
 
     # Calculate kappa score and assert almost equal
     kappa = compare(rms1, rms2, method="cohen-kappa")
-    assert_almost_equal(kappa, expected_kappa_score, decimal=5)
+    k = kappa['A1']
+    assert_almost_equal(k, expected_kappa_score, decimal=5)

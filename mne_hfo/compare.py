@@ -29,9 +29,9 @@ def compare(clf_1, clf_2, method='cohen-kappa'):
 
     """
     if not hasattr(clf_1, 'df_'):
-        raise RuntimeError(f"clf_1 must be fit to data before using compare")
+        raise RuntimeError("clf_1 must be fit to data before using compare")
     if not hasattr(clf_2, 'df_'):
-        raise RuntimeError(f"clf_2 must be fit to data before using compare")
+        raise RuntimeError("clf_2 must be fit to data before using compare")
     if method == 'cohen-kappa':
         comp = _cohen_kappa
     elif method == "mutual-info":
@@ -61,11 +61,12 @@ def compare(clf_1, clf_2, method='cohen-kappa'):
         df1_indices = list(df1_channel.index.values)
         df2_indices = list(df2_channel.index.values)
 
-        # Get the matching rows from the overlap dataframe and merge these results
+        # Get the matching rows from the overlap dataframe
+        # and merge these results
         df1_matches = overlap_df[overlap_df['true_index'].isin(df1_indices)]
         df2_matches = overlap_df[overlap_df['pred_index'].isin(df2_indices)]
-        df_match_total = pd.concat([df1_matches, df2_matches]).drop_duplicates(). \
-            reset_index(drop=True)
+        df_match_total = pd.concat([df1_matches, df2_matches]).\
+            drop_duplicates().reset_index(drop=True)
 
         # Get the detections as a list
         df1_predictions = list(df_match_total['true_index'])

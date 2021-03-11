@@ -26,7 +26,7 @@ def test_compare():
     annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy predicted HFO annotations
-    onset2 = [2,  60.1, 98.3, 110.23]
+    onset2 = [2, 60.1, 98.3, 110.23]
     offset2 = [6.93, 65.6, 101.45, 112.89]
     duration2 = [offset - onset for onset, offset in zip(onset2, offset2)]
     ch_name = ['A1'] * len(onset2)
@@ -39,8 +39,10 @@ def test_compare():
     rms1.df_ = annot_df1
     rms2.df_ = annot_df2
 
-    # We expect the labels from rms1 to be [False, True, True, True, True, False, True]
-    # and the labels from rms2 to be [True, False, False, True, True, True, False]
+    # We expect the labels from rms1 to be [False, True, True, True,
+    # True, False, True]
+    # and the labels from rms2 to be [True, False, False, True, True,
+    # True, False]
     # which gives the following mutual info and kappa scores
 
     expected_mutual_info = 0.20218548540814557

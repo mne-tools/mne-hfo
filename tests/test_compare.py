@@ -1,12 +1,12 @@
 import pytest
 
 from mne_hfo import create_annotations_df
-from mne_hfo.compare import compare
+from mne_hfo.compare import compare_detectors
 from mne_hfo.detect import RMSDetector
 from numpy.testing import assert_almost_equal
 
 
-def test_compare():
+def test_compare_detectors():
     """Test comparison metrics."""
 
     # Create two dummy RMSDetector objects.
@@ -16,7 +16,7 @@ def test_compare():
     # Make sure you can't run compare when Detectors haven't been fit
     with pytest.raises(RuntimeError, match='clf_1 must be fit'
                                            ' to data before using compare'):
-        compare(rms1, rms2, method="mutual-info")
+        compare_detectors(rms1, rms2, method="mutual-info")
 
     # Create two event dataframes with expected columns. We will
     # consider df1 to be predictions from rms1 and df2 to be predictions
@@ -48,7 +48,7 @@ def test_compare():
     # Make sure you can't run compare when Detectors haven't been fit
     with pytest.raises(RuntimeError, match='clf_2 must be fit'
                                            ' to data before using compare'):
-        compare(rms1, rms2, method="mutual-info")
+        compare_detectors(rms1, rms2, method="mutual-info")
 
     rms2.df_ = annot_df2
 
@@ -62,15 +62,15 @@ def test_compare():
     expected_kappa_score = -0.5217391304347827
 
     # Calculate mutual info and assert almost equal
-    mutual_info = compare(rms1, rms2, method="mutual-info")
+    mutual_info = compare_detectors(rms1, rms2, method="mutual-info")
     mi = mutual_info['A1']
     assert_almost_equal(mi, expected_mutual_info, decimal=5)
 
     # Calculate kappa score and assert almost equal
-    kappa = compare(rms1, rms2, method="cohen-kappa")
+    kappa = compare_detectors(rms1, rms2, method="cohen-kappa")
     k = kappa['A1']
     assert_almost_equal(k, expected_kappa_score, decimal=5)
 
     # Make sure you can't run a random method
     with pytest.raises(NotImplementedError):
-        compare(rms1, rms2, method="average")
+        compare_detectors(rms1, rms2, method="average")

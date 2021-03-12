@@ -7,7 +7,7 @@ from mne_hfo import match_detected_annotations
 implemented_comparisons = ["cohen-kappa", "mutual-info"]
 
 
-def compare(clf_1, clf_2, method='cohen-kappa'):
+def compare_detectors(clf_1, clf_2, method='cohen-kappa'):
     """
     Compare fits for two classifiers per channel.
 

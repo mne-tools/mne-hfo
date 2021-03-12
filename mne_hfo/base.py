@@ -13,10 +13,10 @@ from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
 from mne_hfo.sklearn import _make_ydf_sklearn
 from mne_hfo.utils import (threshold_std, compute_rms,
-                           compute_line_length)
+                           compute_line_length, threshold_hilbert, compute_hilbert)
 
 ACCEPTED_THRESHOLD_METHODS = ['std']
-ACCEPTED_HFO_METHODS = ['line_length', 'rms']
+ACCEPTED_HFO_METHODS = ['line_length', 'rms', 'hilbert']
 
 
 class Detector(BaseEstimator):
@@ -49,7 +49,7 @@ class Detector(BaseEstimator):
         self.verbose = verbose
         self.n_jobs = n_jobs
 
-    def _compute_hfo(self, X, picks):
+    def _compute_hfo_event(self, X, picks):
         """Compute HFO event array.
 
         Takes a sliding window approach and computes the existence
@@ -275,8 +275,8 @@ class Detector(BaseEstimator):
                  f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
                  f'Please use with caution.')
 
-        # compute HFOs as a binary occurrence array over time
-        hfo_event_arr = self._compute_hfo(X)
+        # compute HFO related statistic for the detector
+        hfo_event_arr = self._compute_hfo_event(X)
 
         # post-process hfo events
         # store hfo event endpoints per channel
@@ -328,8 +328,15 @@ class Detector(BaseEstimator):
 
         if method == 'rms':
             hfo_detect_func = compute_rms
+            extra_params = dict(win_size=self.win_size)
         elif method == 'line_length':
             hfo_detect_func = compute_line_length
+            extra_params = dict(win_size=self.win_size)
+        elif method == 'hilbert':
+            hfo_detect_func = compute_hilbert
+            extra_params=dict(freq_cutoffs=self.freq_cutoffs,
+                              freq_span=self.freq_span,
+                              sfreq=self.sfreq)
 
         # Overlapping window
         win_start = 0
@@ -347,7 +354,7 @@ class Detector(BaseEstimator):
 
             # compute the RMS of filtered signal in this window
             signal_win_rms[win_idx] = hfo_detect_func(
-                sig[int(win_start):int(win_stop)], win_size=self.win_size)[0]
+                sig[int(win_start):int(win_stop)], extra_params=extra_params)[0]
 
             if win_stop == self.n_times:
                 break
@@ -387,6 +394,21 @@ class Detector(BaseEstimator):
                              f'methods.')
         if threshold_method == 'std':
             threshold_func = threshold_std
+            threshold_dict = dict(std=self.threshold)
+            kwargs = None
+            skip_merging = False
+        elif threshold_method == 'hilbert':
+            threshold_func = threshold_hilbert
+            threshold_dict = dict(z_score=self.threshold,
+                                  cycles=self.cycle_threshold,
+                                  gaps=self.gap_threshold)
+            kwargs = dict(n_times=n_times,
+                          sfreq=self.sfreq,
+                          filter_band=self.filter_band,
+                          freq_cutoffs=self.freq_cutoffs,
+                          freq_span=self.freq_span,
+                          n_jobs=self.n_jobs)
+            skip_merging = True
 
         if self.verbose:
             print(f'Using {threshold_method} to perform HFO '
@@ -399,8 +421,10 @@ class Detector(BaseEstimator):
 
         # only keep RMS values above a certain number
         # stdevs above baseline (threshold)
-        det_th = threshold_func(metric_vals_list, self.threshold)
+        det_th = threshold_func(metric_vals_list, threshold_dict, kwargs)
 
+        if skip_merging:
+            return det_th
         # Detect and now group events if they are within a
         # step size of each other
         win_idx = 0

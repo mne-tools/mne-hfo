@@ -177,12 +177,16 @@ class HilbertDetector(Detector):  # noqa
     Jun. 2014.
     """
 
-    def __init__(self, sfreq: float, l_freq: float, h_freq: float,
-                 threshold: float = 3, band_method: str = 'linear',
-                 n_bands: int = 300, cycle_threshold: float = 1,
-                 gap_threshold: float = 1, n_jobs: int = 1,
-                 offset: int = 0, scoring_func: str = 'f1',
-                 verbose: bool = False):
+
+    def __init__(self,
+                 sfreq: float,
+                 threshold: Union[int, float] = 3,
+                 filter_band: Tuple[int, int] = (30, 100),
+                 band_method: str = 'linear', n_bands: int = 300,
+                 cycle_threshold: float = 1, gap_threshold: float = 1,
+                 n_jobs: int = -1, offset: int = 0,
+                 scoring_func: str = 'f1',
+                 hfo_name: str = "hfo", verbose: bool = False):
         if band_method not in ACCEPTED_BAND_METHODS:
             raise ValueError(f'Band method {band_method} is not '
                              f'an acceptable parameter. Please use '
@@ -192,15 +196,73 @@ class HilbertDetector(Detector):  # noqa
             threshold, win_size=None, overlap=None,
             scoring_func=scoring_func, n_jobs=n_jobs, verbose=verbose)
 
+        if band_method == 'log':
+            low_fc = float(filter_band[0])
+            high_fc = float(filter_band[1])
+            freq_cutoffs = np.logspace(0, np.log10(high_fc), n_bands)
+            self.freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) &
+                                             (freq_cutoffs < high_fc)]
+            self.freq_span = len(freq_cutoffs) - 1
+        elif band_method == 'linear':
+            self.freq_cutoffs = np.arange(filter_band[0], filter_band[1])
+            self.freq_span = (filter_band[1] - filter_band[0]) - 1
         self.sfreq = sfreq
-        self.l_freq = l_freq
-        self.h_freq = h_freq
-        self.band_method = band_method
-        self.n_bands = n_bands
+        self.filter_band = filter_band
+        self.hfo_name = hfo_name
         self.cycle_threshold = cycle_threshold
         self.gap_threshold = gap_threshold
         self.n_jobs = n_jobs
         self.offset = offset
+
+    @property
+    def l_freq(self):
+        """Lower frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[0]
+
+    @property
+    def h_freq(self):
+        """Higher frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[1]
+
+    def _compute_hfo_event(self, X):
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        hfo_event_arr = np.empty((self.n_chs, n_windows))
+
+        if self.filter_band is not None:
+            X = mne.filter.filter_data(X, sfreq=self.sfreq,
+                                       l_freq=self.l_freq,
+                                       h_freq=self.h_freq,
+                                       method='iir', verbose=self.verbose)
+
+        if self.n_jobs == 1:
+            for idx in tqdm(range(self.n_chs)):
+                sig = X[idx, :]
+
+                hfo_event_arr[idx, :] = \
+                    self._compute_sliding_window_detection(
+                        sig, method='hilbert'
+                    )
+        else:
+            if self.n_jobs == -1:
+                n_jobs = cpu_count()
+            else:
+                n_jobs = self.n_jobs
+
+            results = Parallel(n_jobs=n_jobs)(
+                delayed(self._compute_sliding_window_detection)(
+                    X[idx, :], 'hilbert'
+                ) for idx in tqdm(range(self.n_chs))
+            )
+            for idx in range(len(results)):
+                hfo_event_arr[idx, :] = results[idx]
+
+        return hfo_event_arr
 
     def fit(self, X):
         """Override ``Detector.fit`` function."""
@@ -395,7 +457,7 @@ class LineLengthDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo(self, X):
+    def _compute_hfo_event(self, X):
         """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of channels X windows
         n_windows = self._compute_n_wins(self.win_size,
@@ -504,7 +566,7 @@ class RMSDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo(self, X):
+    def _compute_hfo_event(self, X):
         """Override ``Detector._compute_hfo`` function.
 
         Returns

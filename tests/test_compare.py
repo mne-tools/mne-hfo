@@ -1,3 +1,5 @@
+import pytest
+
 from mne_hfo import create_annotations_df
 from mne_hfo.compare import compare
 from mne_hfo.detect import RMSDetector
@@ -10,6 +12,11 @@ def test_compare():
     # Create two dummy RMSDetector objects.
     rms1 = RMSDetector()
     rms2 = RMSDetector()
+
+    # Make sure you can't run compare when Detectors haven't been fit
+    with pytest.raises(RuntimeError, match='clf_1 must be fit'
+                                           ' to data before using compare'):
+        compare(rms1, rms2, method="mutual-info")
 
     # Create two event dataframes with expected columns. We will
     # consider df1 to be predictions from rms1 and df2 to be predictions
@@ -37,6 +44,12 @@ def test_compare():
 
     # Attach the annotation dataframes to the dummy detectors
     rms1.df_ = annot_df1
+
+    # Make sure you can't run compare when Detectors haven't been fit
+    with pytest.raises(RuntimeError, match='clf_2 must be fit'
+                                           ' to data before using compare'):
+        compare(rms1, rms2, method="mutual-info")
+
     rms2.df_ = annot_df2
 
     # We expect the labels from rms1 to be [False, True, True, True,
@@ -57,3 +70,7 @@ def test_compare():
     kappa = compare(rms1, rms2, method="cohen-kappa")
     k = kappa['A1']
     assert_almost_equal(k, expected_kappa_score, decimal=5)
+
+    # Make sure you can't run a random method
+    with pytest.raises(NotImplementedError):
+        compare(rms1, rms2, method="average")

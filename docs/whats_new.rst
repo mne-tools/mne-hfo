@@ -38,6 +38,7 @@ Enhancements
 - Added notebook to demo use of detection algorithms by `Patrick Myers`_ (:gh:`10`)
 - Vectorized detection overlap check to enhance scoring speed by `Patrick Myers`_ (:gh:`15`)
 - Added notebook to demo use of GridSearchCV to optimize detector performance by `Patrick Myers`_ (:gh:`15`)
+- Added module to compare detections and notebook to demo usage `Patrick Myers`_ (:gh:`22`)
 
 API changes
 ^^^^^^^^^^^

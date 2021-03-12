@@ -240,7 +240,6 @@ class HilbertDetector(Detector):  # noqa
 
             output = []
 
-
             # run detection algorithm possibly in parallel on this channel
             tdetects_concat = []
             if self.n_jobs > 1 or self.n_jobs == -1:

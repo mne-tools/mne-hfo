@@ -10,3 +10,4 @@ from mne_hfo.io import (create_events_df, read_annotations,
 from mne_hfo.posthoc import (
     find_coincident_events, compute_chs_hfo_rates,
     match_detected_annotations, merge_overlapping_events)
+from mne_hfo.compare import compare_detectors

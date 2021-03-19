@@ -155,7 +155,8 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
                         if cycs > cycles_threshold:
                             # Valid, so append to detections
                             tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(signal[start_idx:stop_idx])])
+                                             max(signal[start_idx:stop_idx]),
+                                             [l_freq, h_freq]])
                 else:
                     # If there is no gap between this and the next index,
                     # it is still part of this envelope. Increment the
@@ -172,53 +173,13 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
                         if cycs > cycles_threshold:
                             # Valid, so append to detections
                             tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(signal[start_idx:stop_idx])])
+                                             max(signal[start_idx:stop_idx]),
+                                             [l_freq, h_freq]])
                         idx += 1
                         break
         else:
             idx += 1
     return tdetects
-
-
-def _run_detect_branch(detects, det_idx, HFO_outline):
-    """
-    Create HFO outlines from Hilbert detections.
-
-    Parameters
-    ----------
-    detects :
-    det_idx : int
-        Index of detect to compare against
-    HFO_outline : List[Tuple[int, int, int]]
-        N tuples corresponding to N HFO events. Each tuple has the following
-        structure:
-        [0] - band in which the detection occurred
-        [1] - start of the band
-        [2] - stop of the band
-
-    Returns
-    -------
-    HFO_outline: List[Tuple[int, int, int]]
-        Populated version of input.
-
-    """
-    HFO_outline.append(np.copy(detects[det_idx, :]))
-
-    # Create a subset for next band
-    next_band_idcs = np.where(detects[:, 0] == detects[det_idx, 0] + 1)
-    if not len((next_band_idcs)[0]):
-        # No detects in band - finish the branch
-        detects[det_idx, 0] = 0
-        return HFO_outline
-    else:
-        # Get overlapping detects
-        for next_det_idx in next_band_idcs[0]:
-            if _check_detection_overlap([detects[det_idx, 1], detects[det_idx, 2]],
-                                        [detects[next_det_idx, 1], detects[next_det_idx], 2]):
-                # Go up the tree
-                _run_detect_branch(detects, next_det_idx, HFO_outline)
-        detects[det_idx, 0] = 0
-        return HFO_outline
 
 
 def compute_rms(signal, extra_params=None):
@@ -327,65 +288,51 @@ def compute_hilbert(signal, extra_params):
     return hfx_bands
 
 
-def threshold_std(signal, threshold_dict, kwargs):
-    """
-    Calculate threshold by Standard Deviations above the mean.
+def apply_hilbert(metric, threshold_dict, kwargs):
+    """Apply the Hilbert z-score thresholding scheme.
 
     Parameters
     ----------
-    signal: numpy array
-        1D signal for threshold determination
-    threshold: dict
-        Key is threshold type, value is the threshold value (float)
-
-    Returns
-    -------
-    ths_value: float
-        Value of the threshold
-
-    """
-    threshold = threshold_dict["std"]
-    ths_value = np.mean(signal) + threshold * np.std(signal)
-    return ths_value
-
-def threshold_hilbert(signal, threshold_dict, kwargs):
-    """
-    Find detected HFOs from Hilbert Transform envelopes.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Hilbert Transform envelopes per freq band.
+    metric : np.ndarray
+        The values to apply the threshold rules to.
     threshold_dict : dict
-        Dictionary containing threshold values for 'z_score',
-        'cycles' and 'gaps'
+        Dictionary of  threshold parameters to apply to metric.
+        Must have zscore, gap, and cycles keys
     kwargs : dict
-        Additional kwargs needed to apply threshold. Must
-        include 'n_times', 'sfreq', 'freq_cutoffs', 'freq_span',
-        and 'n_jobs'
+        Additional model parameters needed to apply hilbert threshold.
+        Must have n_times, sfreq, filter_band, freq_cutoffs, freq_span, and n_jobs.
 
     Returns
     -------
+    tdetects: List(tuples)
+        Detected hfo events with the structure [band_idx, start, stop, max_amplitude, freq_band]
 
     """
-    # Get threshold arguments
-    zscore_threshold = threshold_dict["z_score"]
+    # get threshold vals
+    zscore_threshold = threshold_dict["zscore"]
+    gap_threshold = threshold_dict["gap"]
     cycles_threshold = threshold_dict["cycles"]
-    gap_threshold = threshold_dict["gaps"]
-    # Get other necessary arguments
+    if None in [zscore_threshold, gap_threshold, cycles_threshold]:
+        raise RuntimeError(f"threshold_dict must have values for zscore,"
+                           f" gap, and cycles. You passed {threshold_dict}")
     n_times = kwargs["n_times"]
     sfreq = kwargs["sfreq"]
+    filter_band = kwargs["filter_band"]
     freq_cutoffs = kwargs["freq_cutoffs"]
     freq_span = kwargs["freq_span"]
-    n_jobs = kwargs["njobs"]
+    n_jobs = kwargs["n_jobs"]
+    if None in [n_times, sfreq, filter_band, freq_cutoffs, freq_span, n_jobs]:
+        raise RuntimeError(f"kwargs must have values for n_times, sfreq,"
+                           f" filter_band, freq_cutoffs, freq_span, n_jobs."
+                           f" You passed {kwargs}")
 
     tdetects = []
     # If multiple jobs listed, call `_band_zscore_detect` in parallel
     # across the multiple freq bands
     if n_jobs > 1 or n_jobs == -1:
-        iter_mat = [(signal[i], sfreq, i,
+        iter_mat = [(metric[i], sfreq, i,
                      freq_cutoffs[i],
-                     freq_cutoffs[i+1],
+                     freq_cutoffs[i + 1],
                      n_times,
                      cycles_threshold,
                      gap_threshold,
@@ -403,44 +350,157 @@ def threshold_hilbert(signal, threshold_dict, kwargs):
         for i in tqdm(range(freq_span), unit="HFO-first-phase"):
             # Find bottom and top of the frequency band
             bot = freq_cutoffs[i]
-            top = freq_cutoffs[i+1]
+            top = freq_cutoffs[i + 1]
             # Make sure you only look at Hilbert envelope values
             # for the specific freq band
-            args = [signal[i], sfreq, i, bot, top, n_times,
+            args = [metric[i], sfreq, i, bot, top, n_times,
                     cycles_threshold, gap_threshold,
                     zscore_threshold]
             tdetects.append(_band_zscore_detect(args))
+    return tdetects
 
-    # From these detections, calculate the outlines of the envelopes
-    # corresponding to start and stop times
+
+def apply_std(metric, threshold_dict, kwargs):
+    """Calculate and apply the threshold based on number of standard deviations.
+
+    Parameters
+    ----------
+    metric : np.ndarray
+        Values to apply the threshold to
+    threshold_dict : dict
+        Dictionary of threshold values. Should just have thresh, which is the number of standard deviations
+        to check against
+    kwargs : dict
+        Additional key-word args from the detector needed to apply the threshold.
+        Step_size, win_size, and n_times are required keys.
+
+    Returns
+    -------
+    output: List(tuples)
+        List of detected events that pass the threshold
+
+    """
+    # determine threshold value
+    threshold = threshold_dict["thresh"]
+    if threshold is None:
+        raise RuntimeError(f"threshold_dict must have a value for 'thresh'."
+                           f" You passed {threshold_dict}")
+    det_th = _get_threshold_std(metric, threshold)
+
+    n_windows = len(metric)
+    step_size = kwargs["step_size"]
+    win_size = kwargs["win_size"]
+    n_times = kwargs["n_times"]
+    if None in [step_size, win_size, n_times]:
+        raise RuntimeError(f"kwargs must have step_size, win_size, "
+                           f"and n_times. You passed {kwargs}")
+
+    # store thresholded hfo events as a list
+    output = []
+    # Detect and now group events if they are within a
+    # step size of each other
+    win_idx = 0
+    while win_idx < n_windows:
+        # log events if they pass our threshold criterion
+        if metric[win_idx] >= det_th:
+            event_start = win_idx * step_size
+
+            # group events together if they occur in
+            # contiguous windows
+            # TODO: We could factor this out into an independent step, but that will just add comp time
+            while win_idx < n_windows and \
+                    metric[win_idx] >= det_th:
+                win_idx += 1
+            event_stop = (win_idx * step_size) + win_size
+
+            if event_stop > n_times:
+                event_stop = n_times
+
+            # TODO: Optional feature calculations
+
+            # Write into output
+            output.append((event_start, event_stop))
+            win_idx += 1
+        else:
+            win_idx += 1
+
+    return output
+
+
+def _get_threshold_std(signal, threshold):
+    """
+    Calculate threshold by Standard Deviations above the mean.
+
+    Parameters
+    ----------
+    signal: numpy array
+        1D signal for threshold determination
+    threshold: int
+        Number of standard deviations to consider.
+
+    Returns
+    -------
+    ths_value: float
+        Value of the threshold
+
+    """
+    ths_value = np.mean(signal) + threshold * np.std(signal)
+    return ths_value
+
+
+def merge_contiguous_freq_bands(detections):
+    """Merge detected events in contiguous freq bands and time windows.
+
+    Parameters
+    ----------
+    detections : List(tuple)
+        List of detections, which have the form [band_idx, start, stop, max_amplitude, freq_band]
+
+    Returns
+    -------
+    hfo_events: List(tuple)
+        List of distinct hfo events, which have the form [start, stop]
+    max_hilbert: List(int)
+        List of max values in each event
+    freq_bands: List(tuple)
+        List of the freq_band for each event
+
+    """
     outlines = []
-    if len(tdetects):
-        while sum(tdetects[:, 0] != 0):
-            det_idx = np.where(tdetects[:, 0] != 0)[0][0]
-            HFO_outline = []
-            outlines.append(np.array(_run_detect_branch(tdetects,
-                                                        det_idx,
-                                                        HFO_outline)))
+    for detection in detections:
+        band_idx = detection[0]
+        # If first freq band, always unique so append
+        if band_idx == 0:
+            outlines.append(detection)
+        else:
+            for ind, outline in enumerate(outlines):
+                # only try to merge contiguous freq bands
+                if outline[0] == band_idx + 1:
+                    # Check if the events overlap in time
+                    if _check_detection_overlap([detection[1], detection[2]],
+                                                [outline[1], outline[2]]):
+                        # merge the overlapping events
+                        outlines[ind] = _merge_outline(outlines, detection)
+                    else:
+                        # Events dont overlap so append it
+                        outlines.append(detection)
+                else:
+                    # Events are contiguous so append it
+                    outlines.append(detection)
+    # extract start and stop times
+    hfo_events = [[o[1], o[2]] for o in outlines]
+    max_hilbert = [o[3] for o in outlines]
+    freq_bands = [[o[4][0], o[4][1]] for o in outlines]
+    return hfo_events, max_hilbert, freq_bands
 
-    ch_hfos = []
-    # Convert outlines into detected HFO events
-    for outline in outlines:
-        # Start is the smallest start index in an outline
-        start = min(outline[:, 1])
-        # Stop is the largest stop index in an outline
-        stop = max(outline[:, 2])
-        # Get the band where the detection occurred
-        freq_min = freq_cutoffs[int(outline[0, 0])]
-        freq_max = freq_cutoffs[int(outline[-1, 0])]
-        # Get max frequency during the detection
-        frq_at_max = freq_cutoffs[
-            int(outline[np.argmax(outline[:, 3]), 0])]
-        max_amplitude = max(outline[:, 3])
-        ch_hfos.append((start, stop, freq_min, freq_max,
-                        frq_at_max, max_amplitude))
 
-
-    return ch_hfos
+def _merge_outline(outline, detection):
+    band_idx = detection[0]
+    start = min(outline[1], detection[1])
+    stop = max(outline[2], detection[2])
+    max_frq = max(outline[3], detection[3])
+    freq_band = [outline[4][0], detection[4][1]]
+    return [band_idx, start, stop, max_frq, freq_band]
 
 
 def threshold_tukey(signal, threshold):

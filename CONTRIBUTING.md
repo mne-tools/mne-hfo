@@ -6,6 +6,35 @@ Once the implementation of a piece of functionality is considered to be bug free
 and an example script), it can be incorporated into the master branch.
 
 To help developing `mne-hfo`, you will need a few adjustments to your installation as shown below.
+We heavily rely on ``mne``, so one can even peruse their [contributing guide](https://mne.tools/stable/install/contributing.html#:~:text=MNE%2DPython%20is%20maintained%20by,(even%20just%20typo%20corrections)).
+
+## Basic Setup
+
+The basic setup for development will be: i) [Git](https://github.com/git-guides/install-git), which is 
+a command-line tool that enables version control, ii) Python virtual environment.
+
+For a Python virtual environment, one can use [miniconda](https://docs.conda.io/en/latest/miniconda.html),
+or [pip](https://pip.pypa.io/en/stable/installing/).
+
+### Forking Repository
+
+Once you have git installed, you should create a fork of the ``mne-hfo``
+repository.
+
+### Clone Repository
+
+Next, you should clone your repository locally. Afterwards, you can see where git is 
+pulling from by typing in ``git remote -v``. For example, my local copy will say:
+
+    (base) adam2392@Adams-MacBook-Pro mne-hfo % git remote -v
+    origin	https://github.com/adam2392/mne-hfo.git (fetch)
+    origin	https://github.com/adam2392/mne-hfo.git (push)
+
+Meaning that my remote version is called ``origin`` and the url that it is 
+fetching and pushing to is `https://github.com/adam2392/mne-hfo.git`. Since you are 
+on a fork, you should also add the ``upstream`` version:
+
+    git remote add upstream https://github.com/adam2392/mne-hfo.git
 
 ## Running tests
 

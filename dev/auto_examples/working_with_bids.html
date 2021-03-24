@@ -142,11 +142,11 @@ It currently depends on the data structures defined by <code class="docutils lit
 <code class="docutils literal notranslate"><span class="pre">MNE-BIDS</span></code>.</p>
 <p>In this example, we use MNE-BIDS to load real raw data and then use
 MNE-HFO to detect HFOs. Specifically, we will follow these steps:</p>
-<p>1. Load data via <a class="reference external" href="https://mne.tools/mne-bids/dev/generated/mne_bids.read_raw_bids.html#mne_bids.read_raw_bids" title="(in mne_bids v0.7.dev0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_bids.read_raw_bids()</span></code></a>. We will load a sample subject
+<p>1. Load data via <a class="reference external" href="https://mne.tools/mne-bids/dev/generated/mne_bids.read_raw_bids.html#mne_bids.read_raw_bids" title="(in mne_bids v0.8.dev0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_bids.read_raw_bids()</span></code></a>. We will load a sample subject
 from the Fedele dataset [1].</p>
 <ol class="arabic simple" start="2">
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1030.g9612aec55d)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1151.ga20c169f8a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk according to <a class="reference external" href="https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#">BEP-021</a> and read it in again.</p></li>
 </ol>
 <div class="section" id="references">
@@ -280,7 +280,7 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/50 [00:00&lt;?, ?it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 638.59it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 568.47it/s]
     onset  ...  trial_type
 0  4.6250  ...    hfo_IAR2
 1  1.1750  ...    hfo_IAR3
@@ -358,7 +358,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 [5 rows x 5 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.560 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.043 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-working-with-bids-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b91a5f552e41ab2cf6ac33f460a74b78/working_with_bids.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">working_with_bids.py</span></code></a></p>
@@ -384,8 +384,8 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
       
     </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-03-12.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.2.<br/>
+        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-03-24.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>
 </footer>

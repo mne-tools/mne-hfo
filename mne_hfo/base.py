@@ -27,6 +27,15 @@ class Detector(BaseEstimator):
     Note: Detection will occur on all channels present.
     Subset your dataset before detecting.
 
+    Detectors fit follow the following general flow by implementing
+    private functions:
+        1. Compute a statistic on the raw data in _compute_hfo_statistic.
+            i.e. the LineLength of a time-window
+        2. Apply a threshold to the statistic computed in (1) in
+            _threshold_statistic. i.e. std of LineLength
+        3. Merge contiguous/overlapping events into unique detections
+            in _post_process_chs_hfo. i.e. contiguous time windows
+
     Parameters
     ----------
     threshold: float
@@ -335,12 +344,12 @@ class Detector(BaseEstimator):
 
 
     def _apply_threshold(self, metric, threshold_method):
-        """Apply the threshold(s) to the calculated metric
+        """Apply the threshold(s) to the calculated metric for a single channel
 
         Parameters
         ----------
         metric : np.ndarray
-            The values to check against a threshold
+            The single channel values to check against a threshold
         threshold_method : str
             The type of threshold to use
         Returns
@@ -411,6 +420,24 @@ class Detector(BaseEstimator):
         self.df_ = annot_df
 
     def _compute_sliding_window_detection(self, sig, method):
+        """Compute detections on an individual channel data.
+
+        If the method does not use sliding windows, make win_size
+        equal to the length of the dataset.
+
+        Parameters
+        ----------
+        sig: np.array
+            Data from a single channel
+        method: str
+            Method used to compute the detection
+
+        Returns
+        -------
+        signal_win_stat: np.ndarray
+            Statistic calculated per window
+
+        """
         if method not in ACCEPTED_HFO_METHODS:
             raise ValueError(f'Sliding window HFO detection method '
                              f'{method} is not implemented. Please '
@@ -442,8 +469,9 @@ class Detector(BaseEstimator):
             if win_stop > self.n_times:
                 win_stop = self.n_times
 
-            # compute the RMS of filtered signal in this window
-            signal_win_rms[win_idx] = hfo_detect_func(
+            # compute the statistic based on 'method' on filtered signal
+            # in this window
+            signal_win_stat[win_idx] = hfo_detect_func(
                 sig[int(win_start):int(win_stop)], extra_params=extra_params)[0]
 
             if win_stop == self.n_times:
@@ -452,7 +480,7 @@ class Detector(BaseEstimator):
             win_start += self.step_size
             win_stop += self.step_size
             win_idx += 1
-        return signal_win_rms
+        return signal_win_stat
 
     def _merge_contiguous_ch_detections(self, detections, method):
         """Merge contiguous hfo detections into distinct events.

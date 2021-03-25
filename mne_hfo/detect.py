@@ -13,129 +13,6 @@ from mne_hfo.config import ACCEPTED_BAND_METHODS
 from mne_hfo.posthoc import _check_detection_overlap
 
 
-def _band_z_score_detect(x_cond, sfreq, band_idx, l_freq, h_freq,
-                         cycle_threshold, gap_threshold, threshold):
-    """Iterate bandpass and z-score a channel's signal.
-
-    Creates a bandpass filter (order=3) between ``l_freq`` and ``h_freq``.
-    Then it z-scores the data
-
-    Parameters
-    ----------
-    x_cond :
-    sfreq :
-    band_idx :
-    l_freq :
-    h_freq :
-    cycle_threshold :
-    gap_threshold :
-    threshold :
-
-    Returns
-    -------
-    tdetects : list of tuples
-        All HFO events that passed the bandpass, zscore. It will store
-        the band index (``band_idx``), timepoint of start, endpoint of start,
-        and the maximum value of the Hilbert envelope in this event window.
-    """
-    tdetects = []
-
-    # create highpass and lowpass filters
-    x_cond = mne.filter.filter_data(
-        x_cond, sfreq=sfreq,
-        l_freq=l_freq, h_freq=h_freq, method='iir')
-    # b, a = butter(N=3, Wn=l_freq / (sfreq / 2), btype='highpass')
-    # x_cond = filtfilt(b, a, x_cond)
-    # b, a = butter(N=3, Wn=h_freq / (sfreq / 2), btype='lowpass')
-    # x_cond = filtfilt(b, a, x_cond)
-
-    # Compute the z-scores
-    x_cond = (x_cond - np.mean(x_cond)) / np.std(x_cond)
-
-    # compute the absolute value of the Hilbert transform
-    # (i.e. the envelope)
-    hfx = np.abs(hilbert(x_cond))
-
-    # threshold the Hilbert envelope to create a
-    # thresholded mask
-    thresh_sig = np.zeros(len(x_cond), dtype='bool')
-    thresh_sig[hfx > threshold] = 1
-
-    # Now get the lengths of each detected HFO
-    idx = 0
-
-    # indices where the threshold was met
-    thresh_idxs = np.where(thresh_sig == 1)[0]
-    gap_samp = round(gap_threshold * sfreq / l_freq)
-
-    # loop through all significant zscore time points
-    while idx < len(thresh_idxs) - 1:
-        if (thresh_idxs[idx + 1] - thresh_idxs[idx]) == 1:
-            start_idx = thresh_idxs[idx]
-            while idx < len(thresh_idxs) - 1:
-                if (thresh_idxs[idx + 1] - thresh_idxs[idx]) == 1:
-                    idx += 1  # Move to the end of the detection
-                    if idx == len(thresh_idxs) - 1:
-                        stop_idx = thresh_idxs[idx]
-                        # Check for number of cycles
-                        dur = (stop_idx - start_idx) / sfreq
-                        cycs = l_freq * dur
-                        if cycs > cycle_threshold:
-                            # Carry the amplitude and frequency info
-                            tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(hfx[start_idx:stop_idx])])
-                else:  # Check for gap
-                    if (thresh_idxs[idx + 1] - thresh_idxs[idx]) < gap_samp:
-                        idx += 1
-                    else:
-                        stop_idx = thresh_idxs[idx]
-                        # Check for number of cycles
-                        dur = (stop_idx - start_idx) / sfreq
-                        cycs = l_freq * dur
-                        if cycs > cycle_threshold:
-                            tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(hfx[start_idx:stop_idx])])
-                        idx += 1
-                        break
-        else:
-            idx += 1
-
-    return tdetects
-
-
-def _run_detect_branch(detects, det_idx, HFO_outline):
-    """
-    Process detections from hilbert detector.
-
-    HFO_outline structure:
-    [0] - bands in which the detection happened
-    [1] - starts for each band
-    [2] - stop for each band
-    [3] -
-    """
-    HFO_outline.append(np.copy(detects[det_idx, :]))
-
-    # Create a subset for next band
-    next_band_idcs = np.where(detects[:, 0] == detects[det_idx, 0] + 1)
-    if not len((next_band_idcs)[0]):
-        # No detects in band - finish the branch
-        detects[det_idx, 0] = 0  # Set the processed detect to zero
-        return HFO_outline
-    else:
-        # Get overllaping detects
-        for next_det_idx in next_band_idcs[0]:
-            if _check_detection_overlap([detects[det_idx, 1], detects[det_idx,
-                                                                      2]],
-                                        [detects[next_det_idx, 1],
-                                         detects[next_det_idx,
-                                                 2]]):
-                # Go up the tree
-                _run_detect_branch(detects, next_det_idx, HFO_outline)
-
-        detects[det_idx, 0] = 0
-        return HFO_outline
-
-
 class HilbertDetector(Detector):  # noqa
     """2D HFO hilbert detection used in Kucewicz et al. 2014.
 
@@ -195,16 +72,8 @@ class HilbertDetector(Detector):  # noqa
             threshold, win_size=None, overlap=None,
             scoring_func=scoring_func, n_jobs=n_jobs, verbose=verbose)
 
-        if band_method == 'log':
-            low_fc = float(filter_band[0])
-            high_fc = float(filter_band[1])
-            freq_cutoffs = np.logspace(0, np.log10(high_fc), n_bands)
-            self.freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) &
-                                             (freq_cutoffs < high_fc)]
-            self.freq_span = len(freq_cutoffs) - 1
-        elif band_method == 'linear':
-            self.freq_cutoffs = np.arange(filter_band[0], filter_band[1])
-            self.freq_span = (filter_band[1] - filter_band[0]) - 1
+        self.band_method = band_method
+        self.n_bands = n_bands
         self.filter_band = filter_band
         self.hfo_name = hfo_name
         self.cycle_threshold = cycle_threshold
@@ -227,12 +96,27 @@ class HilbertDetector(Detector):  # noqa
         return self.filter_band[1]
 
     def _compute_hfo_statistic(self, X):
-        # Override the attribute set by fit
+        """Override ``Detector._compute_hfo_statistic`` function."""
+
+        # Override the attribute set by fit so we ignore sliding windows
         self.n_windows = 1
         n_windows = self.n_windows
         self.win_size = X.shape[0]
         hfo_event_arr = np.empty((self.n_chs, n_windows))
 
+        # Determine the splits for freq bands
+        if self.band_method == 'log':
+            low_fc = float(self.filter_band[0])
+            high_fc = float(self.filter_band[1])
+            freq_cutoffs = np.logspace(0, np.log10(high_fc), self.n_bands)
+            self.freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) &
+                                             (freq_cutoffs < high_fc)]
+            self.freq_span = len(freq_cutoffs) - 1
+        elif self.band_method == 'linear':
+            self.freq_cutoffs = np.arange(self.filter_band[0], self.filter_band[1])
+            self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
+
+        # call the detector per channel in series
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
@@ -241,7 +125,7 @@ class HilbertDetector(Detector):  # noqa
                     self._compute_sliding_window_detection(
                         sig, method='hilbert'
                     )
-        else:
+        else: # call the detector per channel in parallel based on n_jobs
             if self.n_jobs == -1:
                 n_jobs = cpu_count()
             else:
@@ -258,6 +142,7 @@ class HilbertDetector(Detector):  # noqa
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
+        """Override ``Detector._threshold_statistic`` function."""
         hfo_threshold_arr = np.empty(X.shape)
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
@@ -280,6 +165,7 @@ class HilbertDetector(Detector):  # noqa
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
+        """Override ``Detector._post_process_ch_hfos`` function."""
         hfo_events, hfo_max_freqs, hfo_freq_bands = self._merge_contiguous_ch_detections(detections, method="freq-bands")
         self.hfo_max_freqs_[idx] = hfo_max_freqs
         self.hfo_freq_bands_[idx] = hfo_freq_bands
@@ -369,7 +255,7 @@ class LineLengthDetector(Detector):
         return self.filter_band[1]
 
     def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo`` function."""
+        """Override ``Detector._compute_hfo_statistic`` function."""
         # store all hfo occurrences as an array of channels X windows
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
@@ -410,6 +296,7 @@ class LineLengthDetector(Detector):
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
+        """Override ``Detector._threshold_statistic`` function."""
         hfo_threshold_arr = np.empty(X.shape)
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
@@ -432,6 +319,7 @@ class LineLengthDetector(Detector):
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
+        """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(detections, method="time-windows")
 
 
@@ -503,13 +391,7 @@ class RMSDetector(Detector):
         return self.filter_band[1]
 
     def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo`` function.
-
-        Returns
-        -------
-        hfo_event_arr : np.ndarray (channels x windows)
-            The HFO metric value within each window per channel.
-        """
+        """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of channels X windows
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
@@ -548,6 +430,7 @@ class RMSDetector(Detector):
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
+        """Override ``Detector._threshold_statistic`` function."""
         hfo_threshold_arr = np.empty(X.shape)
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
@@ -570,4 +453,5 @@ class RMSDetector(Detector):
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
+        """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(detections, method="time-windows")

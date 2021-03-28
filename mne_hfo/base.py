@@ -371,10 +371,10 @@ class Detector(BaseEstimator):
                           n_times=self.n_times)
         elif threshold_method == 'hilbert':
             threshold_func = apply_hilbert
-            threshold_dict = dict(z_score=self.threshold,
+            threshold_dict = dict(zscore=self.threshold,
                                   cycles=self.cycle_threshold,
-                                  gaps=self.gap_threshold)
-            kwargs = dict(n_times=n_times,
+                                  gap=self.gap_threshold)
+            kwargs = dict(n_times=self.n_times,
                           sfreq=self.sfreq,
                           filter_band=self.filter_band,
                           freq_cutoffs=self.freq_cutoffs,

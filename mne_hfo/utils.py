@@ -4,6 +4,7 @@ import json
 import os
 from os import path as op
 import mne
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
@@ -346,10 +347,9 @@ def apply_hilbert(metric, threshold_dict, kwargs):
             top = freq_cutoffs[i + 1]
             # Make sure you only look at Hilbert envelope values
             # for the specific freq band
-            args = [metric[i], sfreq, i, bot, top, n_times,
+            tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot, top, n_times,
                     cycles_threshold, gap_threshold,
-                    zscore_threshold]
-            tdetects.append(_band_zscore_detect(args))
+                    zscore_threshold))
     return tdetects
 
 
@@ -461,7 +461,7 @@ def merge_contiguous_freq_bands(detections):
     """
     from mne_hfo.posthoc import _check_detection_overlap
     outlines = []
-    for detection in detections:
+    for detection in detections[0]:
         band_idx = detection[0]
         # If first freq band, always unique so append
         if band_idx == 0:

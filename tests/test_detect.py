@@ -125,9 +125,9 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     expected_vals = [(5056, 5123),
                      (35028, 35063)]
 
-    for exp_val, det in zip(expected_vals, dets):
-        assert det[0] == exp_val[0]
-        assert det[1] == exp_val[1]
+    for idx, (exp_val) in enumerate(expected_vals):
+        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
+        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
 @pytest.mark.skip(reason='need to implement...')

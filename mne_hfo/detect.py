@@ -104,7 +104,7 @@ class HilbertDetector(Detector):  # noqa
         n_windows = self.n_windows
         self.win_size = 1
         self.n_times = X.shape[1]
-        hfo_event_arr = np.empty((self.n_chs, self.n_bands, self.n_times))
+
 
         # Determine the splits for freq bands
         if self.band_method == 'log':
@@ -117,6 +117,8 @@ class HilbertDetector(Detector):  # noqa
         elif self.band_method == 'linear':
             self.freq_cutoffs = np.arange(self.filter_band[0], self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
+
+        hfo_event_arr = np.empty((self.n_chs, self.freq_span, self.n_times))
 
         # call the detector per channel in series
         if self.n_jobs == 1:
@@ -145,14 +147,14 @@ class HilbertDetector(Detector):  # noqa
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = np.empty(X.shape)
+        hfo_threshold_arr = np.empty((X.shape[0],X.shape[1]), dtype='object')
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
-                hfo_threshold_arr[idx, :] =\
-                    self._apply_threshold(
+                hfo = np.transpose(np.array(self._apply_threshold(
                         sig, threshold_method='hilbert'
-                    )
+                    ), dtype='object'))
+                hfo_threshold_arr[idx, :] = hfo
         else:
             if self.n_jobs == -1:
                 n_jobs = cpu_count()
@@ -168,9 +170,9 @@ class HilbertDetector(Detector):  # noqa
 
     def _post_process_ch_hfos(self, detections, idx):
         """Override ``Detector._post_process_ch_hfos`` function."""
-        hfo_events, hfo_max_freqs, hfo_freq_bands = self._merge_contiguous_ch_detections(detections, method="freq-bands")
-        self.hfo_max_freqs_[idx] = hfo_max_freqs
-        self.hfo_freq_bands_[idx] = hfo_freq_bands
+        hfo_events = self._merge_contiguous_ch_detections(detections, method="freq-bands")
+        #self.hfo_max_freqs_[idx] = hfo_max_freqs
+        #self.hfo_freq_bands_[idx] = hfo_freq_bands
         return hfo_events
 
 
@@ -398,7 +400,7 @@ class RMSDetector(Detector):
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
-        hfo_event_arr = np.empty((self.n_chs, n_windows))
+        hfo_event_arr = np.empty((self.n_chs, n_windows, self.win_size))
 
         if self.l_freq is not None or self.h_freq is not None:
             # bandpass the signal using FIR filter

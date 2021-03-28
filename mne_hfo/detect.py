@@ -92,7 +92,6 @@ class HilbertDetector(Detector):  # noqa
 
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
-
         # Override the attribute set by fit so we actually slide on freq
         # bands not time windows
         self.n_windows = self.n_bands

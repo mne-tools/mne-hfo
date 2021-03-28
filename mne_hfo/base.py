@@ -342,7 +342,7 @@ class Detector(BaseEstimator):
         return self
 
     def _apply_threshold(self, metric, threshold_method):
-        """Apply the threshold(s) to the calculated metric for a single channel
+        """Apply the threshold(s) to the calculated metric for a single channel.
 
         Parameters
         ----------

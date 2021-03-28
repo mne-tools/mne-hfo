@@ -243,8 +243,7 @@ def compute_line_length(signal, win_size=6):
 
 
 def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
-    """
-    Compute the Hilbert envelope for a single channel.
+    """Compute the Hilbert envelope for a single channel.
 
     Parameters
     ----------

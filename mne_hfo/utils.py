@@ -259,7 +259,6 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         Hilbert transforms per freq band
 
     """
-
     hfx_bands = []
     # Iterate over freq bands
     for ind in range(freq_span):

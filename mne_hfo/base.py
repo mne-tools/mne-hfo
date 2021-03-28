@@ -334,7 +334,7 @@ class Detector(BaseEstimator):
         # merge contiguous detections into discrete hfo events
         # store hfo event endpoints per channel
         chs_hfos = {ch_name: self._post_process_ch_hfos(
-            hfo_detection_arr[idx, :], idx
+            hfo_detection_arr[idx], idx
         ) for idx, ch_name in enumerate(self.ch_names)}
 
         self.chs_hfos_ = chs_hfos
@@ -445,21 +445,18 @@ class Detector(BaseEstimator):
 
         if method == 'rms':
             hfo_detect_func = compute_rms
-            extra_params = dict(win_size=self.win_size)
         elif method == 'line_length':
             hfo_detect_func = compute_line_length
-            extra_params = dict(win_size=self.win_size)
 
         # Overlapping window
         win_start = 0
         win_stop = self.win_size
-        print(self.win_size)
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
 
         # store the statistic of each window
-        signal_win_stat = np.empty((n_windows, self.win_size))
+        signal_win_stat = np.empty(n_windows)
         win_idx = 0
         while win_start < self.n_times:
             if win_stop > self.n_times:
@@ -468,9 +465,8 @@ class Detector(BaseEstimator):
             # compute the statistic based on 'method' on filtered signal
             # in this window
             stat = hfo_detect_func(
-                sig[int(win_start):int(win_stop)], extra_params=extra_params)[0]
-            #print(f"Stat: {stat} \n with type: {type(stat)}")
-            signal_win_stat[win_idx, :] = stat
+                sig[int(win_start):int(win_stop)], win_size=self.win_size)[0]
+            signal_win_stat[win_idx] = stat
 
             if win_stop == self.n_times:
                 break
@@ -478,6 +474,7 @@ class Detector(BaseEstimator):
             win_start += self.step_size
             win_stop += self.step_size
             win_idx += 1
+        print(f"Sig win stat: {signal_win_stat}, shape: {signal_win_stat.shape}")
         return signal_win_stat
 
     def _compute_frq_band_detection(self, sig, method):

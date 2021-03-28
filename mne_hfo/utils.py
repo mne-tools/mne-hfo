@@ -182,7 +182,7 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
     return tdetects
 
 
-def compute_rms(signal, extra_params=None):
+def compute_rms(signal, win_size=6):
     """
     Calculate the Root Mean Square (RMS) energy.
 
@@ -198,13 +198,12 @@ def compute_rms(signal, extra_params=None):
     rms: numpy array
         Root mean square transformed signal
     """
-    win_size = extra_params.get("win_size", 6)
     aux = np.power(signal, 2)
     window = np.ones(win_size) / float(win_size)
     return np.sqrt(np.convolve(aux, window, 'same'))
 
 
-def compute_line_length(signal, extra_params=None):
+def compute_line_length(signal, win_size=6):
     """Calculate line length.
 
     Parameters
@@ -234,7 +233,6 @@ def compute_line_length(signal, extra_params=None):
 
     .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.
     """
-    win_size = extra_params.get("win_size", 6)
     aux = np.abs(np.subtract(signal[1:], signal[:-1]))
     window = np.ones(win_size) / float(win_size)
     data = np.convolve(aux, window)
@@ -373,6 +371,7 @@ def apply_std(metric, threshold_dict, kwargs):
         List of detected events that pass the threshold
 
     """
+    print(f"Metric: {metric}, shape: {metric.shape}")
     # determine threshold value
     threshold = threshold_dict["thresh"]
     if threshold is None:

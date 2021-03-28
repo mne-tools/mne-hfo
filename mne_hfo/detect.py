@@ -301,25 +301,13 @@ class LineLengthDetector(Detector):
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = np.empty(X.shape)
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
-                hfo_threshold_arr[idx, :] =\
-                    self._apply_threshold(
-                        sig, threshold_method='std'
-                    )
-        else:
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._apply_threshold)(
-                    X[idx, :], 'std') for idx in tqdm(range(self.n_chs))
+        hfo_threshold_arr = []
+        for idx in tqdm(range(self.n_chs)):
+            sig = X[idx, :]
+            arr = self._apply_threshold(
+                sig, threshold_method='std'
             )
-            for idx in range(len(results)):
-                hfo_threshold_arr[idx, :] = results[idx]
+            hfo_threshold_arr.append(arr)
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
@@ -400,7 +388,7 @@ class RMSDetector(Detector):
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
-        hfo_event_arr = np.empty((self.n_chs, n_windows, self.win_size))
+        hfo_event_arr = np.empty((self.n_chs, n_windows))
 
         if self.l_freq is not None or self.h_freq is not None:
             # bandpass the signal using FIR filter
@@ -435,26 +423,13 @@ class RMSDetector(Detector):
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = np.empty(X.shape)
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
-                arr = self._apply_threshold(
-                        sig, threshold_method='std'
-                    )
-                hfo_threshold_arr[idx, :]  = arr
-
-        else:
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._apply_threshold)(
-                    X[idx, :], 'std') for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                hfo_threshold_arr[idx, :] = results[idx]
+        hfo_threshold_arr = []
+        for idx in tqdm(range(self.n_chs)):
+            sig = X[idx, :]
+            arr = self._apply_threshold(
+                    sig, threshold_method='std'
+                )
+            hfo_threshold_arr.append(arr)
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):

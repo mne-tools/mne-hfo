@@ -107,7 +107,6 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     fs = 5000
     b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
-    window_size = int((1 / 80) * fs)
 
     # create input data structure
     info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
@@ -120,7 +119,6 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
                                'threshold': 7}
     dets = benchmark(compute_instance.fit,
                      raw)
-
 
     expected_vals = [(5056, 5123),
                      (35028, 35063)]

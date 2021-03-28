@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from scipy.signal import hilbert
 
-from joblib import Parallel, delayed, cpu_count
+from joblib import Parallel, delayed
 
 from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
 
@@ -84,8 +84,9 @@ def _write_json(fname, dictionary, overwrite=False, verbose=False):
         print(os.linesep + f"Writing '{fname}'..." + os.linesep)
         print(json_output)
 
+
 def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
-                         cycles_threshold, gap_threshold, zscore_threshold):
+                        cycles_threshold, gap_threshold, zscore_threshold):
     """
     Find detections that meet the Hilbert envelope criteria.
 
@@ -264,12 +265,12 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
     # Iterate over freq bands
     for ind in range(freq_span):
         l_freq = freq_cutoffs[ind]
-        h_freq = freq_cutoffs[ind+1]
+        h_freq = freq_cutoffs[ind + 1]
 
         # Filter the data for this frequency band
         signal = mne.filter.filter_data(signal, sfreq=sfreq,
-                                  l_freq=l_freq, h_freq=h_freq,
-                                  method='iir', verbose=False)
+                                        l_freq=l_freq, h_freq=h_freq,
+                                        method='iir', verbose=False)
         # compute z-score of data
         signal = (signal - np.mean(signal)) / np.std(signal)
 
@@ -292,19 +293,22 @@ def apply_hilbert(metric, threshold_dict, kwargs):
         Must have zscore, gap, and cycles keys
     kwargs : dict
         Additional model parameters needed to apply hilbert threshold.
-        Must have n_times, sfreq, filter_band, freq_cutoffs, freq_span, and n_jobs.
+        Must have n_times, sfreq, filter_band, freq_cutoffs,
+         freq_span, and n_jobs.
 
     Returns
     -------
     tdetects: List(tuples)
-        Detected hfo events with the structure [band_idx, start, stop, max_amplitude, freq_band]
+        Detected hfo events with the structure [band_idx, start,
+        stop, max_amplitude, freq_band]
 
     """
     # get threshold vals
     zscore_threshold = threshold_dict["zscore"]
     gap_threshold = threshold_dict["gap"]
     cycles_threshold = threshold_dict["cycles"]
-    if any(elem is None for elem in [zscore_threshold, gap_threshold, cycles_threshold]):
+    if any(elem is None for elem in [zscore_threshold, gap_threshold,
+                                     cycles_threshold]):
         raise RuntimeError(f"threshold_dict must have values for zscore,"
                            f" gap, and cycles. You passed {threshold_dict}")
     n_times = kwargs["n_times"]
@@ -313,7 +317,8 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     freq_cutoffs = kwargs["freq_cutoffs"]
     freq_span = kwargs["freq_span"]
     n_jobs = kwargs["n_jobs"]
-    if any(elem is None for elem in [n_times, sfreq, filter_band, freq_cutoffs, freq_span, n_jobs]):
+    if any(elem is None for elem in [n_times, sfreq, filter_band,
+                                     freq_cutoffs, freq_span, n_jobs]):
         raise RuntimeError(f"kwargs must have values for n_times, sfreq,"
                            f" filter_band, freq_cutoffs, freq_span, n_jobs."
                            f" You passed {kwargs}")
@@ -345,9 +350,9 @@ def apply_hilbert(metric, threshold_dict, kwargs):
             top = freq_cutoffs[i + 1]
             # Make sure you only look at Hilbert envelope values
             # for the specific freq band
-            tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot, top, n_times,
-                    cycles_threshold, gap_threshold,
-                    zscore_threshold))
+            tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot,
+                                                top, n_times, cycles_threshold,
+                                                gap_threshold, zscore_threshold))
     return tdetects
 
 
@@ -359,10 +364,11 @@ def apply_std(metric, threshold_dict, kwargs):
     metric : np.ndarray
         Values to apply the threshold to
     threshold_dict : dict
-        Dictionary of threshold values. Should just have thresh, which is the number of standard deviations
-        to check against
+        Dictionary of threshold values. Should just have thresh,
+         which is the number of standard deviations to check against
     kwargs : dict
-        Additional key-word args from the detector needed to apply the threshold.
+        Additional key-word args from the detector needed to
+         apply the threshold.
         Step_size, win_size, and n_times are required keys.
 
     Returns
@@ -399,7 +405,8 @@ def apply_std(metric, threshold_dict, kwargs):
 
             # group events together if they occur in
             # contiguous windows
-            # TODO: We could factor this out into an independent step, but that will just add comp time
+            # TODO: We could factor this out into an independent step,
+            #  but that will just add comp time
             while win_idx < n_windows and \
                     metric[win_idx] >= det_th:
                 win_idx += 1
@@ -446,7 +453,8 @@ def merge_contiguous_freq_bands(detections):
     Parameters
     ----------
     detections : List(tuple)
-        List of detections, which have the form [band_idx, start, stop, max_amplitude, freq_band]
+        List of detections, which have the form [band_idx, start,
+         stop, max_amplitude, freq_band]
 
     Returns
     -------

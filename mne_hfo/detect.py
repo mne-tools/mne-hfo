@@ -1,16 +1,12 @@
-import collections
 from typing import Tuple, Union
 
 import mne
 import numpy as np
 from joblib import Parallel, delayed, cpu_count
-from mne.utils import warn
-from scipy.signal import hilbert
 from tqdm import tqdm
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS
-from mne_hfo.posthoc import _check_detection_overlap
 
 
 class HilbertDetector(Detector):  # noqa
@@ -53,7 +49,6 @@ class HilbertDetector(Detector):  # noqa
     cognitive processing in human recognition memory.,” Brain, pp. 1–14,
     Jun. 2014.
     """
-
 
     def __init__(self,
                  threshold: Union[int, float] = 3,
@@ -101,10 +96,8 @@ class HilbertDetector(Detector):  # noqa
         # Override the attribute set by fit so we actually slide on freq
         # bands not time windows
         self.n_windows = self.n_bands
-        n_windows = self.n_windows
         self.win_size = 1
         self.n_times = X.shape[1]
-
 
         # Determine the splits for freq bands
         if self.band_method == 'log':
@@ -115,7 +108,8 @@ class HilbertDetector(Detector):  # noqa
                                              (freq_cutoffs < high_fc)]
             self.freq_span = len(freq_cutoffs) - 1
         elif self.band_method == 'linear':
-            self.freq_cutoffs = np.arange(self.filter_band[0], self.filter_band[1])
+            self.freq_cutoffs = np.arange(self.filter_band[0],
+                                          self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
 
         hfo_event_arr = np.empty((self.n_chs, self.freq_span, self.n_times))
@@ -129,7 +123,7 @@ class HilbertDetector(Detector):  # noqa
                     self._compute_frq_band_detection(
                         sig, method='hilbert'
                     )
-        else: # call the detector per channel in parallel based on n_jobs
+        else:  # call the detector per channel in parallel based on n_jobs
             if self.n_jobs == -1:
                 n_jobs = cpu_count()
             else:
@@ -147,13 +141,14 @@ class HilbertDetector(Detector):  # noqa
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = np.empty((X.shape[0],X.shape[1]), dtype='object')
+        hfo_threshold_arr = np.empty((X.shape[0], X.shape[1]),
+                                     dtype='object')
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
                 hfo = np.transpose(np.array(self._apply_threshold(
-                        sig, threshold_method='hilbert'
-                    ), dtype='object'))
+                    sig, threshold_method='hilbert'
+                ), dtype='object'))
                 hfo_threshold_arr[idx, :] = hfo
         else:
             if self.n_jobs == -1:
@@ -170,9 +165,8 @@ class HilbertDetector(Detector):  # noqa
 
     def _post_process_ch_hfos(self, detections, idx):
         """Override ``Detector._post_process_ch_hfos`` function."""
-        hfo_events = self._merge_contiguous_ch_detections(detections, method="freq-bands")
-        #self.hfo_max_freqs_[idx] = hfo_max_freqs
-        #self.hfo_freq_bands_[idx] = hfo_freq_bands
+        hfo_events = self._merge_contiguous_ch_detections(
+            detections, method="freq-bands")
         return hfo_events
 
 
@@ -312,7 +306,8 @@ class LineLengthDetector(Detector):
 
     def _post_process_ch_hfos(self, detections, idx):
         """Override ``Detector._post_process_ch_hfos`` function."""
-        return self._merge_contiguous_ch_detections(detections, method="time-windows")
+        return self._merge_contiguous_ch_detections(
+            detections, method="time-windows")
 
 
 class RMSDetector(Detector):
@@ -427,11 +422,12 @@ class RMSDetector(Detector):
         for idx in tqdm(range(self.n_chs)):
             sig = X[idx, :]
             arr = self._apply_threshold(
-                    sig, threshold_method='std'
-                )
+                sig, threshold_method='std'
+            )
             hfo_threshold_arr.append(arr)
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
         """Override ``Detector._post_process_ch_hfos`` function."""
-        return self._merge_contiguous_ch_detections(detections, method="time-windows")
+        return self._merge_contiguous_ch_detections(
+            detections, method="time-windows")

@@ -84,7 +84,6 @@ class Detector(BaseEstimator):
         raise NotImplementedError('Private function that computes the HFOs '
                                   'needs to be implemented.')
 
-
     def _threshold_statistic(self, hfo_statistic_arr):
         """Apply threshold(s) to the calculated statistic to generate hfo events.
 
@@ -342,7 +341,6 @@ class Detector(BaseEstimator):
         self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
         return self
 
-
     def _apply_threshold(self, metric, threshold_method):
         """Apply the threshold(s) to the calculated metric for a single channel
 
@@ -387,7 +385,6 @@ class Detector(BaseEstimator):
 
         thresholded_metric = threshold_func(metric, threshold_dict, kwargs)
         return thresholded_metric
-
 
     def predict(self, X):
         """Scikit-learn override predict function.
@@ -474,7 +471,6 @@ class Detector(BaseEstimator):
             win_start += self.step_size
             win_stop += self.step_size
             win_idx += 1
-        print(f"Sig win stat: {signal_win_stat}, shape: {signal_win_stat.shape}")
         return signal_win_stat
 
     def _compute_frq_band_detection(self, sig, method):
@@ -484,9 +480,9 @@ class Detector(BaseEstimator):
                              f'use one of {ACCEPTED_HFO_METHODS}.')
         if method == 'hilbert':
             hfo_detect_func = compute_hilbert
-        signal_stat = hfo_detect_func(sig, self.freq_cutoffs, self.freq_span, self.sfreq)
+        signal_stat = hfo_detect_func(sig, self.freq_cutoffs,
+                                      self.freq_span, self.sfreq)
         return signal_stat
-
 
     def _merge_contiguous_ch_detections(self, detections, method):
         """Merge contiguous hfo detections into distinct events.
@@ -521,4 +517,3 @@ class Detector(BaseEstimator):
             self.hfo_freq_bands_ = freq_bands
 
         return events
-

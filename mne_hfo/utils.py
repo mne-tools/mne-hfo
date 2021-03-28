@@ -352,7 +352,8 @@ def apply_hilbert(metric, threshold_dict, kwargs):
             # for the specific freq band
             tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot,
                                                 top, n_times, cycles_threshold,
-                                                gap_threshold, zscore_threshold))
+                                                gap_threshold,
+                                                zscore_threshold))
     return tdetects
 
 

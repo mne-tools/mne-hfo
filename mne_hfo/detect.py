@@ -121,8 +121,7 @@ class HilbertDetector(Detector):  # noqa
 
                 hfo_event_arr[idx, :, :] = \
                     self._compute_frq_band_detection(
-                        sig, method='hilbert'
-                    )
+                        sig, method='hilbert')
         else:  # call the detector per channel in parallel based on n_jobs
             if self.n_jobs == -1:
                 n_jobs = cpu_count()

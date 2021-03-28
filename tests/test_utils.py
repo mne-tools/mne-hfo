@@ -1,8 +1,8 @@
 import numpy as np
 
 from mne_hfo.utils import (compute_rms, compute_line_length,
-                           threshold_std, threshold_tukey,
-                           threshold_quian)
+                           threshold_tukey, threshold_quian,
+                           _get_threshold_std)
 
 
 def test_compute_rms(create_testing_data):
@@ -17,7 +17,7 @@ def test_compute_line_length(create_testing_data):
 
 # ----- Thresholds -----
 def test_threshold_std(create_testing_data):
-    assert (round(threshold_std(create_testing_data, 3), 5) ==
+    assert (round(_get_threshold_std(create_testing_data, 3), 5) ==
             round(6.708203932499344, 5))
 
 

@@ -449,11 +449,6 @@ class Detector(BaseEstimator):
         elif method == 'line_length':
             hfo_detect_func = compute_line_length
             extra_params = dict(win_size=self.win_size)
-        elif method == 'hilbert':
-            hfo_detect_func = compute_hilbert
-            extra_params=dict(freq_cutoffs=self.freq_cutoffs,
-                              freq_span=self.freq_span,
-                              sfreq=self.sfreq)
 
         # Overlapping window
         win_start = 0
@@ -464,7 +459,7 @@ class Detector(BaseEstimator):
                                          self.n_times)
 
         # store the statistic of each window
-        signal_win_stat = np.empty(n_windows)
+        signal_win_stat = np.empty((n_windows, self.win_size))
         win_idx = 0
         while win_start < self.n_times:
             if win_stop > self.n_times:
@@ -475,7 +470,7 @@ class Detector(BaseEstimator):
             stat = hfo_detect_func(
                 sig[int(win_start):int(win_stop)], extra_params=extra_params)[0]
             #print(f"Stat: {stat} \n with type: {type(stat)}")
-            signal_win_stat[win_idx] = stat
+            signal_win_stat[win_idx, :] = stat
 
             if win_stop == self.n_times:
                 break
@@ -484,6 +479,17 @@ class Detector(BaseEstimator):
             win_stop += self.step_size
             win_idx += 1
         return signal_win_stat
+
+    def _compute_frq_band_detection(self, sig, method):
+        if method not in ACCEPTED_HFO_METHODS:
+            raise ValueError(f'Sliding window HFO detection method '
+                             f'{method} is not implemented. Please '
+                             f'use one of {ACCEPTED_HFO_METHODS}.')
+        if method == 'hilbert':
+            hfo_detect_func = compute_hilbert
+        signal_stat = hfo_detect_func(sig, self.freq_cutoffs, self.freq_span, self.sfreq)
+        return signal_stat
+
 
     def _merge_contiguous_ch_detections(self, detections, method):
         """Merge contiguous hfo detections into distinct events.

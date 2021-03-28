@@ -242,7 +242,7 @@ def compute_line_length(signal, extra_params=None):
     return data[start:-stop]
 
 
-def compute_hilbert(signal, extra_params):
+def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
     """
     Compute the Hilbert envelope for a single channel.
 
@@ -260,12 +260,6 @@ def compute_hilbert(signal, extra_params):
         Hilbert transforms per freq band
 
     """
-    freq_cutoffs = extra_params["freq_cutoffs"]
-    freq_span = extra_params["freq_span"]
-    sfreq=extra_params["sfreq"]
-    if any(elem is None for elem in [freq_cutoffs, freq_span, sfreq]):
-        raise RuntimeError(f"extra_params must have values for 'freq_cutoffs',"
-                           f"'freq_span', and 'sfreq'. You passed {extra_params}")
 
     hfx_bands = []
     # Iterate over freq bands
@@ -274,7 +268,7 @@ def compute_hilbert(signal, extra_params):
         h_freq = freq_cutoffs[ind+1]
 
         # Filter the data for this frequency band
-        signal =  mne.filter.filter_data(signal, sfreq=sfreq,
+        signal = mne.filter.filter_data(signal, sfreq=sfreq,
                                   l_freq=l_freq, h_freq=h_freq,
                                   method='iir', verbose=False)
         # compute z-score of data

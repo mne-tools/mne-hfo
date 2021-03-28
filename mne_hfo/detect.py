@@ -98,11 +98,13 @@ class HilbertDetector(Detector):  # noqa
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
 
-        # Override the attribute set by fit so we ignore sliding windows
-        self.n_windows = 1
+        # Override the attribute set by fit so we actually slide on freq
+        # bands not time windows
+        self.n_windows = self.n_bands
         n_windows = self.n_windows
-        self.win_size = X.shape[1]
-        hfo_event_arr = np.empty((self.n_chs, n_windows))
+        self.win_size = 1
+        self.n_times = X.shape[1]
+        hfo_event_arr = np.empty((self.n_chs, self.n_bands, self.n_times))
 
         # Determine the splits for freq bands
         if self.band_method == 'log':
@@ -121,8 +123,8 @@ class HilbertDetector(Detector):  # noqa
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
 
-                hfo_event_arr[idx, :] = \
-                    self._compute_sliding_window_detection(
+                hfo_event_arr[idx, :, :] = \
+                    self._compute_frq_band_detection(
                         sig, method='hilbert'
                     )
         else: # call the detector per channel in parallel based on n_jobs

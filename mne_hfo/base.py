@@ -12,7 +12,7 @@ from mne_hfo.io import create_events_df, events_to_annotations
 from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
 from mne_hfo.sklearn import _make_ydf_sklearn
-from mne_hfo.utils import (threshold_std, compute_rms,
+from mne_hfo.utils import (apply_std, compute_rms,
                            compute_line_length, compute_hilbert, apply_hilbert,
                            merge_contiguous_freq_bands)
 
@@ -385,7 +385,7 @@ class Detector(BaseEstimator):
             print(f'Using {threshold_method} to perform HFO '
                   f'thresholding.')
 
-        thresholded_metric = threshold_func(metric, *threshold_dict, **kwargs)
+        thresholded_metric = threshold_func(metric, threshold_dict, kwargs)
         return thresholded_metric
 
 
@@ -458,12 +458,13 @@ class Detector(BaseEstimator):
         # Overlapping window
         win_start = 0
         win_stop = self.win_size
+        print(self.win_size)
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
 
-        # store the RMS of each window
-        signal_win_rms = np.empty(n_windows)
+        # store the statistic of each window
+        signal_win_stat = np.empty(n_windows)
         win_idx = 0
         while win_start < self.n_times:
             if win_stop > self.n_times:
@@ -471,8 +472,10 @@ class Detector(BaseEstimator):
 
             # compute the statistic based on 'method' on filtered signal
             # in this window
-            signal_win_stat[win_idx] = hfo_detect_func(
+            stat = hfo_detect_func(
                 sig[int(win_start):int(win_stop)], extra_params=extra_params)[0]
+            #print(f"Stat: {stat} \n with type: {type(stat)}")
+            signal_win_stat[win_idx] = stat
 
             if win_stop == self.n_times:
                 break

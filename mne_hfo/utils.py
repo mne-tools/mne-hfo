@@ -12,7 +12,6 @@ from scipy.signal import hilbert
 from joblib import Parallel, delayed, cpu_count
 
 from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
-from mne_hfo.posthoc import _check_detection_overlap
 
 
 def _check_df(df: pd.DataFrame, df_type: str,
@@ -264,7 +263,7 @@ def compute_hilbert(signal, extra_params):
     freq_cutoffs = extra_params["freq_cutoffs"]
     freq_span = extra_params["freq_span"]
     sfreq=extra_params["sfreq"]
-    if None in [freq_cutoffs, freq_span, sfreq]:
+    if any(elem is None for elem in [freq_cutoffs, freq_span, sfreq]):
         raise RuntimeError(f"extra_params must have values for 'freq_cutoffs',"
                            f"'freq_span', and 'sfreq'. You passed {extra_params}")
 
@@ -275,9 +274,9 @@ def compute_hilbert(signal, extra_params):
         h_freq = freq_cutoffs[ind+1]
 
         # Filter the data for this frequency band
-        signal =  mne.filter_data(signal, sfreq=sfreq,
+        signal =  mne.filter.filter_data(signal, sfreq=sfreq,
                                   l_freq=l_freq, h_freq=h_freq,
-                                  method='iir')
+                                  method='iir', verbose=False)
         # compute z-score of data
         signal = (signal - np.mean(signal)) / np.std(signal)
 
@@ -312,7 +311,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     zscore_threshold = threshold_dict["zscore"]
     gap_threshold = threshold_dict["gap"]
     cycles_threshold = threshold_dict["cycles"]
-    if None in [zscore_threshold, gap_threshold, cycles_threshold]:
+    if any(elem is None for elem in [zscore_threshold, gap_threshold, cycles_threshold]):
         raise RuntimeError(f"threshold_dict must have values for zscore,"
                            f" gap, and cycles. You passed {threshold_dict}")
     n_times = kwargs["n_times"]
@@ -321,7 +320,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     freq_cutoffs = kwargs["freq_cutoffs"]
     freq_span = kwargs["freq_span"]
     n_jobs = kwargs["n_jobs"]
-    if None in [n_times, sfreq, filter_band, freq_cutoffs, freq_span, n_jobs]:
+    if any(elem is None for elem in [n_times, sfreq, filter_band, freq_cutoffs, freq_span, n_jobs]):
         raise RuntimeError(f"kwargs must have values for n_times, sfreq,"
                            f" filter_band, freq_cutoffs, freq_span, n_jobs."
                            f" You passed {kwargs}")
@@ -391,7 +390,7 @@ def apply_std(metric, threshold_dict, kwargs):
     step_size = kwargs["step_size"]
     win_size = kwargs["win_size"]
     n_times = kwargs["n_times"]
-    if None in [step_size, win_size, n_times]:
+    if any(elem is None for elem in [step_size, win_size, n_times]):
         raise RuntimeError(f"kwargs must have step_size, win_size, "
                            f"and n_times. You passed {kwargs}")
 
@@ -466,6 +465,7 @@ def merge_contiguous_freq_bands(detections):
         List of the freq_band for each event
 
     """
+    from mne_hfo.posthoc import _check_detection_overlap
     outlines = []
     for detection in detections:
         band_idx = detection[0]

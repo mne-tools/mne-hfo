@@ -69,7 +69,7 @@ class HilbertDetector(Detector):  # noqa
                              f'one of {ACCEPTED_BAND_METHODS}')
 
         super(HilbertDetector, self).__init__(
-            threshold, win_size=None, overlap=None,
+            threshold, win_size=1, overlap=1,
             scoring_func=scoring_func, n_jobs=n_jobs, verbose=verbose)
 
         self.band_method = band_method
@@ -101,7 +101,7 @@ class HilbertDetector(Detector):  # noqa
         # Override the attribute set by fit so we ignore sliding windows
         self.n_windows = 1
         n_windows = self.n_windows
-        self.win_size = X.shape[0]
+        self.win_size = X.shape[1]
         hfo_event_arr = np.empty((self.n_chs, n_windows))
 
         # Determine the splits for freq bands
@@ -435,10 +435,11 @@ class RMSDetector(Detector):
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
-                hfo_threshold_arr[idx, :] =\
-                    self._apply_threshold(
+                arr = self._apply_threshold(
                         sig, threshold_method='std'
                     )
+                hfo_threshold_arr[idx, :]  = arr
+
         else:
             if self.n_jobs == -1:
                 n_jobs = cpu_count()

@@ -4,19 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
-scipy = "*"
-scikit-learn = "*"
-pandas = "*"
+numpy = ">=1.20"
+scipy = ">=1.6"
+scikit-learn = ">=0.24"
+pandas = ">=1.2"
 mne = ">=0.22"
-mne-bids = ">=0.6"
-matplotlib = "*"
+mne-bids = ">=0.7"
+matplotlib = ">=3.3"
 joblib = ">=1.0.0"
-tqdm = "*"
-pydocstyle = "*"
-ipykernel = "*"
+tqdm = ">=4.59"
 
 [dev-packages]
+openneuro-py = "*"
 ipykernel = "*"
 pytest = "*"
 pytest-sugar = "*"

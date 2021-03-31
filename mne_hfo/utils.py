@@ -259,6 +259,7 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         Hilbert transforms per freq band
 
     """
+    print(f"freq_span: {freq_span}")
     hfx_bands = []
     # Iterate over freq bands
     for ind in range(freq_span):
@@ -272,10 +273,25 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         # compute z-score of data
         signal = (signal - np.mean(signal)) / np.std(signal)
 
+        # Chunk the signal into 30 second windows and compute the Hilbert
+        # to save memory
+        hfx = np.empty(signal.shape)
+        n_times = len(hfx)
+        win_size = int(sfreq*30)
+        n_wins = int(np.ceil(n_times / win_size))
+        for win in range(n_wins):
+            start_samp = win*win_size
+            end_samp = (win+1)*win_size
+            if win == n_wins:
+                end_samp = n_times
+            #print(f"Looking at window: {start_samp}:{end_samp}")
+            sig = signal[start_samp:end_samp]
+            hfx[start_samp:end_samp] = np.abs(hilbert(sig))
+
         # return the absolute value of the Hilbert transform.
         # (i.e. the envelope)
-        hfx = np.abs(hilbert(signal))
         hfx_bands.append(hfx)
+        hfx = None;
     return hfx_bands
 
 

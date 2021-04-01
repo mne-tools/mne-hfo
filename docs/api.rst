@@ -82,7 +82,9 @@ Metrics
 
     compute_rms
     compute_line_length
-    threshold_std
+    compute_hilbert
+    apply_std
+    apply_hilbert
     threshold_tukey
 
 Simulation

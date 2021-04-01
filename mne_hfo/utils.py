@@ -306,7 +306,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     kwargs : dict
         Additional model parameters needed to apply hilbert threshold.
         Must have n_times, sfreq, filter_band, freq_cutoffs,
-         freq_span, and n_jobs.
+        freq_span, and n_jobs.
 
     Returns
     -------
@@ -378,10 +378,10 @@ def apply_std(metric, threshold_dict, kwargs):
         Values to apply the threshold to
     threshold_dict : dict
         Dictionary of threshold values. Should just have thresh,
-         which is the number of standard deviations to check against
+        which is the number of standard deviations to check against
     kwargs : dict
         Additional key-word args from the detector needed to
-         apply the threshold.
+        apply the threshold.
         Step_size, win_size, and n_times are required keys.
 
     Returns
@@ -390,7 +390,6 @@ def apply_std(metric, threshold_dict, kwargs):
         List of detected events that pass the threshold
 
     """
-    print(f"Metric: {metric}, shape: {metric.shape}")
     # determine threshold value
     threshold = threshold_dict["thresh"]
     if threshold is None:

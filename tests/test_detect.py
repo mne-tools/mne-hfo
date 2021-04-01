@@ -113,7 +113,8 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
     raw = RawArray(filt_data, info=info)
 
-    compute_instance = HilbertDetector(filter_band=[80, 250], n_jobs=1, threshold=3)
+    compute_instance = HilbertDetector(filter_band=[80, 250],
+                                       n_jobs=1, threshold=3)
     dets = benchmark(compute_instance.fit,
                      raw)
 

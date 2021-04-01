@@ -280,7 +280,7 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         n_wins = int(np.ceil(n_times / win_size))
         for win in range(n_wins):
             start_samp = win * win_size
-            end_samp = (win + 1)*win_size
+            end_samp = (win + 1) * win_size
             if win == n_wins:
                 end_samp = n_times
             sig = signal[start_samp:end_samp]

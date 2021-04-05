@@ -8,7 +8,7 @@ You are very welcome to participate in the development by reporting bugs,
 writing documentation, or contributing code.
 
 Development takes place on the collaborative platform GitHub at
-`github.com/adam2392/mne-hfo <https://github.com/mne-tools/mne-hfo>`_.
+`github.com/mne-tools/mne-hfo <https://github.com/mne-tools/mne-hfo>`_.
 
 .. image:: https://mne.tools/mne-bids/assets/GitHub.png
    :width: 400

@@ -89,10 +89,9 @@ jobs:
             git config --global user.email "circle@mne.com"
             git config --global user.name "Circle Ci"
 
-#      ask Larsoner
       - add_ssh_keys:
           fingerprints:
-            - "b6:2b:0a:07:20:23:bc:43:03:58:b1:33:e2:eb:a7:0e"
+            - "35:48:e2:58:4c:3f:44:b9:0e:64:40:60:06:d2:1f:bf"
 
       - run:
           # push built docs into the `dev` directory on the `gh-pages` branch

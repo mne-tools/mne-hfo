@@ -67,5 +67,4 @@ Indices and tables
    Install<install>
    Use<use>
    API<api>
-   CLI<generated/cli>
    Contribute<contribute>

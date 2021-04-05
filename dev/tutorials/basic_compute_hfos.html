@@ -1,18 +1,45 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tutorial on Computing HFOs (Part 1) &#8212; mne_hfo 0.2dev documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Tutorial on Computing HFOs (Part 1) &#8212; MNE-HFO 0.2dev documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1e043a052b0af929e4d8.js">
+
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -22,100 +49,112 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/scrollfix.js"></script>
 
-  </head><body>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="../index.html">
-          MNE-HFO</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.2dev</b></span>
-      </div>
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-                <li><a href="../whats_new.html">News</a></li>
-                <li><a href="../install.html">Install</a></li>
-                <li><a href="../tutorial.html">Tutorial</a></li>
-                <li><a href="../use.html">Use</a></li>
-                <li><a href="../api.html">API</a></li>
-                <li><a href="../contribute.html">Contribute!</a></li>
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="../index.html">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
-</ul>
-</ul>
+
+    
+    <a class="navbar-brand" href="../index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
 </li>
-              
-            
-            
-            
-            
-            
-              <li class="hidden-sm"></li>
-            
-          </ul>
 
-          
-<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
-  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
-    v0.2dev
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    <li><a href="https://mne-hfo.readthedocs.io/en/latest/index.html">Development</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/stable/index.html">Stable</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/v0.1/index.html">v0.1</a></li>
-  </ul>
-</div>
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/adam2392/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
 
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../whats_new.html">
+  News
+ </a>
+</li>
 
-            
-<form class="navbar-form navbar-right" action="../search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../install.html">
+  Install
+ </a>
+</li>
 
-        </div>
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2dev
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-bids" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
     </div>
-  </div>
+</div>
+    </nav>
+    
 
-<div class="container">
-  <div class="row">
-      <div class="col-md-3">
-        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">Tutorial on Computing HFOs (Part 1)</a></li>
 <li><a class="reference internal" href="#1-Simulated-Data">1 Simulated Data</a><ul>
 <li><a class="reference internal" href="#1.1-Simulate-the-HFO-data">1.1 Simulate the HFO data</a><ul>
@@ -136,10 +175,102 @@
 </li>
 </ul>
 
-        </div>
-      </div>
-    <div class="body col-md-9 content" role="main">
-      
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Tutorial on Computing HFOs (Part 1)
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#1-Simulated-Data">
+   1 Simulated Data
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#1.1-Simulate-the-HFO-data">
+     1.1 Simulate the HFO data
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.1.1-Create-and-plot-the-simulated-HFOs">
+       1.1.1 Create and plot the simulated HFOs
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.1.2-Add-other-“simulated”-EEG-data">
+       1.1.2 Add other “simulated” EEG data
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.1.3-Combine-the-simulated-data-with-sample-data">
+       1.1.3 Combine the simulated data with sample data
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#1.2-Detect-the-HFOs">
+     1.2 Detect the HFOs
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.2.1-Line-Length-Detector">
+       1.2.1 Line Length Detector
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.2.2-Check-Results">
+       1.2.2 Check Results
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.2.3-Repeat-for-RMS-Detector">
+       1.2.3 Repeat for RMS Detector
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.2.4-Repeat-for-the-fast-ripple-dataset">
+       1.2.4 Repeat for the fast ripple dataset
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#1.2.5-More-complex-Example">
+       1.2.5 More complex Example
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
   
 <style>
 /* CSS for nbsphinx extension */
@@ -388,7 +519,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Tutorial-on-Computing-HFOs-(Part-1)">
+<section id="Tutorial-on-Computing-HFOs-(Part-1)">
 <h1>Tutorial on Computing HFOs (Part 1)<a class="headerlink" href="#Tutorial-on-Computing-HFOs-(Part-1)" title="Permalink to this headline">¶</a></h1>
 <p>In this tutorial, we will walk through how to compute HFOs on simulated toy data</p>
 <p>We will demonstrate usage of the following detectors:</p>
@@ -421,13 +552,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="1-Simulated-Data">
+</section>
+<section id="1-Simulated-Data">
 <h1>1 Simulated Data<a class="headerlink" href="#1-Simulated-Data" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="1.1-Simulate-the-HFO-data">
+<section id="1.1-Simulate-the-HFO-data">
 <h2>1.1 Simulate the HFO data<a class="headerlink" href="#1.1-Simulate-the-HFO-data" title="Permalink to this headline">¶</a></h2>
 <p>We will first create a simulated version of an HFO, which we can run through the detection algorithms to show a simple use case. We will create two HFOs, one in the ripple frequency (80-250 Hz) and one in the fast ripple frequency (250-500 Hz). We will then plot the simulated data</p>
-<div class="section" id="1.1.1-Create-and-plot-the-simulated-HFOs">
+<section id="1.1.1-Create-and-plot-the-simulated-HFOs">
 <h3>1.1.1 Create and plot the simulated HFOs<a class="headerlink" href="#1.1.1-Create-and-plot-the-simulated-HFOs" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -481,8 +612,8 @@ Text(0.5, 1.0, &#39;Simulated Fast Ripple&#39;)
 <img alt="../_images/tutorials_basic_compute_hfos_6_2.png" src="../_images/tutorials_basic_compute_hfos_6_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="1.1.2-Add-other-“simulated”-EEG-data">
+</section>
+<section id="1.1.2-Add-other-“simulated”-EEG-data">
 <h3>1.1.2 Add other “simulated” EEG data<a class="headerlink" href="#1.1.2-Add-other-“simulated”-EEG-data" title="Permalink to this headline">¶</a></h3>
 <p>These detectors work by finding patterns that deviate from the normal, so we need some “normal” EEG attached to the simulated HFO signal for the detectors to work. We can do this by grabbing a small segment of real EEG data from mne’s samples.</p>
 <div class="nbinput nblast docutils container">
@@ -550,8 +681,8 @@ Text(0.5, 1.0, &#39;Raw Data Sample (Back)&#39;)
 <img alt="../_images/tutorials_basic_compute_hfos_9_2.png" src="../_images/tutorials_basic_compute_hfos_9_2.png" />
 </div>
 </div>
-</div>
-<div class="section" id="1.1.3-Combine-the-simulated-data-with-sample-data">
+</section>
+<section id="1.1.3-Combine-the-simulated-data-with-sample-data">
 <h3>1.1.3 Combine the simulated data with sample data<a class="headerlink" href="#1.1.3-Combine-the-simulated-data-with-sample-data" title="Permalink to this headline">¶</a></h3>
 <p>Append the data to the front and back of the simulated HFOs</p>
 <div class="nbinput nblast docutils container">
@@ -651,12 +782,12 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 </pre></div>
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="1.2-Detect-the-HFOs">
+</section>
+</section>
+<section id="1.2-Detect-the-HFOs">
 <h2>1.2 Detect the HFOs<a class="headerlink" href="#1.2-Detect-the-HFOs" title="Permalink to this headline">¶</a></h2>
 <p>We have two detectors that can detect the presense of an HFO, a LineLengthDetector and an RMSDetector. We will plug the simulated data into each detector to demonstrate the presence of HFOs.</p>
-<div class="section" id="1.2.1-Line-Length-Detector">
+<section id="1.2.1-Line-Length-Detector">
 <h3>1.2.1 Line Length Detector<a class="headerlink" href="#1.2.1-Line-Length-Detector" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -694,8 +825,8 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="1.2.2-Check-Results">
+</section>
+<section id="1.2.2-Check-Results">
 <h3>1.2.2 Check Results<a class="headerlink" href="#1.2.2-Check-Results" title="Permalink to this headline">¶</a></h3>
 <p>We should see a single HFO starting around 2 seconds and ending a small amount after</p>
 <div class="nbinput docutils container">
@@ -721,8 +852,8 @@ Text(0.5, 1.0, &#39;Simulated data with Fast Ripple&#39;)
 Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="1.2.3-Repeat-for-RMS-Detector">
+</section>
+<section id="1.2.3-Repeat-for-RMS-Detector">
 <h3>1.2.3 Repeat for RMS Detector<a class="headerlink" href="#1.2.3-Repeat-for-RMS-Detector" title="Permalink to this headline">¶</a></h3>
 <p>We should get almost the exact same result</p>
 <div class="nbinput nblast docutils container">
@@ -768,8 +899,8 @@ Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906
 Detected a ripple HFO starting at 2.0798668885191347s and ending at 2.4126455906821964s
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="1.2.4-Repeat-for-the-fast-ripple-dataset">
+</section>
+<section id="1.2.4-Repeat-for-the-fast-ripple-dataset">
 <h3>1.2.4 Repeat for the fast ripple dataset<a class="headerlink" href="#1.2.4-Repeat-for-the-fast-ripple-dataset" title="Permalink to this headline">¶</a></h3>
 <p>We should expect similar results</p>
 <div class="nbinput nblast docutils container">
@@ -829,8 +960,8 @@ Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.24625
 Detected a fast ripple HFO starting at 1.9550748752079867s and ending at 2.2462562396006653s using the RMS detector
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="1.2.5-More-complex-Example">
+</section>
+<section id="1.2.5-More-complex-Example">
 <h3>1.2.5 More complex Example<a class="headerlink" href="#1.2.5-More-complex-Example" title="Permalink to this headline">¶</a></h3>
 <p>Now let’s combine the two datasets to show how the detectors differentiate the ripple types.</p>
 <p>The detectors set to the ripple frequency band (80-250Hz) should only detect a single HFO (ripple) around the 2 second mark. The detectors set to the fast ripple frequency band (250-500Hz) should only detect a single HFO (fast ripple) around the 6 second mark (will vary based on the length of the ripple wave added).</p>
@@ -968,37 +1099,36 @@ Detected a fast ripple HFO starting at 6.364392678868552s and ending at 6.613976
 Detected a fast ripple HFO starting at 6.364392678868552s and ending at 6.613976705490849s using the RMS detector
 </pre></div></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
     </div>
-      
-  </div>
-</div>
 
-<footer class="footer">
+    
+  <script src="../_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-    </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-03-24.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>
 </footer>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-37225609-2');
-</script>
-
   </body>
 </html>

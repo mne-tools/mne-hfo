@@ -1,18 +1,45 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>01. Detect HFOs in Simulated Dataset &#8212; mne_hfo 0.2dev documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>01. Detect HFOs in Simulated Dataset &#8212; MNE-HFO 0.2dev documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1e043a052b0af929e4d8.js">
+
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
@@ -22,100 +49,114 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+    <link rel="next" title="02. Detect HFOs on BIDS Dataset" href="working_with_bids.html" />
+    <link rel="prev" title="Using MNE-HFO" href="../use.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/scrollfix.js"></script>
 
-  </head><body>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="../index.html">
-          MNE-HFO</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.2dev</b></span>
-      </div>
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-                <li><a href="../whats_new.html">News</a></li>
-                <li><a href="../install.html">Install</a></li>
-                <li><a href="../tutorial.html">Tutorial</a></li>
-                <li><a href="../use.html">Use</a></li>
-                <li><a href="../api.html">API</a></li>
-                <li><a href="../contribute.html">Contribute!</a></li>
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="../index.html">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
-</ul>
-</ul>
+
+    
+    <a class="navbar-brand" href="../index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
 </li>
-              
-            
-            
-            
-            
-            
-              <li class="hidden-sm"></li>
-            
-          </ul>
 
-          
-<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
-  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
-    v0.2dev
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    <li><a href="https://mne-hfo.readthedocs.io/en/latest/index.html">Development</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/stable/index.html">Stable</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/v0.1/index.html">v0.1</a></li>
-  </ul>
-</div>
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/adam2392/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
 
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../whats_new.html">
+  News
+ </a>
+</li>
 
-            
-<form class="navbar-form navbar-right" action="../search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../install.html">
+  Install
+ </a>
+</li>
 
-        </div>
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2dev
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-bids" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
     </div>
-  </div>
+</div>
+    </nav>
+    
 
-<div class="container">
-  <div class="row">
-      <div class="col-md-3">
-        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">01. Detect HFOs in Simulated Dataset</a><ul>
 <li><a class="reference internal" href="#simulate-the-data">Simulate the data</a></li>
 <li><a class="reference internal" href="#detect-hfos">Detect HFOs</a></li>
@@ -124,16 +165,57 @@
 </li>
 </ul>
 
-        </div>
-      </div>
-    <div class="body col-md-9 content" role="main">
-      
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#simulate-the-data">
+   Simulate the data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#detect-hfos">
+   Detect HFOs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#convert-hfo-events-to-annotations">
+   Convert HFO events to annotations
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
 <p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-detect-hfos-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="detect-hfos-in-simulated-dataset">
+<section class="sphx-glr-example-title" id="detect-hfos-in-simulated-dataset">
 <span id="sphx-glr-auto-examples-detect-hfos-py"></span><h1>01. Detect HFOs in Simulated Dataset<a class="headerlink" href="#detect-hfos-in-simulated-dataset" title="Permalink to this headline">¶</a></h1>
 <p>MNE-HFO currently depends on the data structures defined by <code class="docutils literal notranslate"><span class="pre">MNE-Python</span></code>.
 Namely the <a class="reference external" href="https://mne.tools/dev/generated/mne.io.Raw.html#mne.io.Raw" title="(in MNE v0.23.dev0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">mne.io.Raw</span></code></a> object.</p>
@@ -142,7 +224,7 @@ Specifically, we will follow these steps:</p>
 <ol class="arabic simple">
 <li><p>Create some simulated data and artificially simulate a few HFOs</p></li>
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1151.ga20c169f8a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1240.gce34c1cee7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk and read it in again.</p></li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Adam Li &lt;adam2392@gmail.com&gt;</span>
@@ -159,7 +241,7 @@ Specifically, we will follow these steps:</p>
 <span class="kn">from</span> <span class="nn">mne_hfo.simulate</span> <span class="kn">import</span> <a href="../generated/mne_hfo.simulate.simulate_hfo.html#mne_hfo.simulate.simulate_hfo" title="mne_hfo.simulate.simulate_hfo" class="sphx-glr-backref-module-mne_hfo-simulate sphx-glr-backref-type-py-function"><span class="n">simulate_hfo</span></a>
 </pre></div>
 </div>
-<div class="section" id="simulate-the-data">
+<section id="simulate-the-data">
 <h2>Simulate the data<a class="headerlink" href="#simulate-the-data" title="Permalink to this headline">¶</a></h2>
 <p>First, we need some data to work with. We will use a fake dataset that we
 simulate.</p>
@@ -217,8 +299,8 @@ Ready.
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;MNEBrowseFigure size 640x480 with 4 Axes&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="detect-hfos">
+</section>
+<section id="detect-hfos">
 <h2>Detect HFOs<a class="headerlink" href="#detect-hfos" title="Permalink to this headline">¶</a></h2>
 <p>All detectors inherit from the base class <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code>,
 which inherits from the <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.base.BaseEstimator.html#sklearn.base.BaseEstimator" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code></a> class.
@@ -243,7 +325,7 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:00&lt;?, ?it/s]
-100%|##########| 1/1 [00:00&lt;00:00, 92.00it/s]
+100%|##########| 1/1 [00:00&lt;00:00, 100.22it/s]
    onset  ...  trial_type
 0    1.0  ...      hfo_A1
 1    7.0  ...      hfo_A1
@@ -251,8 +333,8 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 [2 rows x 4 columns]
 </pre></div>
 </div>
-</div>
-<div class="section" id="convert-hfo-events-to-annotations">
+</section>
+<section id="convert-hfo-events-to-annotations">
 <h2>Convert HFO events to annotations<a class="headerlink" href="#convert-hfo-events-to-annotations" title="Permalink to this headline">¶</a></h2>
 <p>Detectors output HFO events detected as a DataFrame fashioned after the
 <code class="docutils literal notranslate"><span class="pre">*_events.tsv</span></code> files in BIDS-iEEG. Instead, HFO events are indeed
@@ -278,13 +360,13 @@ according to the BIDS-Derivatives specification.</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Beginning timestamp: 2021-03-24 15:03:00.558909+00:00
-Got end timestamp of: 2021-03-24 15:03:07.558909+00:00
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Beginning timestamp: 2021-04-05 21:17:14.848273+00:00
+Got end timestamp of: 2021-04-05 21:17:21.848273+00:00
 Found HFO rate per s for A1 as 0.2857142857142857
 defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;A1&#39;: 0.2857142857142857})
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.239 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.248 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-detect-hfos-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b0a7e07d3abf35bc8e62af473976ade1/detect_hfos.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">detect_hfos.py</span></code></a></p>
@@ -294,36 +376,37 @@ defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;A1&#39;: 0.2857142857142857})
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+    <a class='left-prev' id="prev-link" href="../use.html" title="previous page">Using MNE-HFO</a>
+    <a class='right-next' id="next-link" href="working_with_bids.html" title="next page">02. Detect HFOs on BIDS Dataset</a>
+
+              </div>
+              
+          </main>
+          
+
+      </div>
     </div>
-      
-  </div>
-</div>
 
-<footer class="footer">
+    
+  <script src="../_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-    </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-03-24.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>
 </footer>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-37225609-2');
-</script>
-
   </body>
 </html>

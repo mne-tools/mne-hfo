@@ -1,18 +1,45 @@
+
 <!DOCTYPE html>
 
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Overview of mne-hfo &#8212; mne_hfo 0.2dev documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>Overview of mne-hfo &#8212; MNE-HFO 0.2dev documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1e043a052b0af929e4d8.js">
+
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
@@ -22,100 +49,113 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-<meta charset='utf-8'>
-<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+    <link rel="next" title="What’s new?" href="whats_new.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/scrollfix.js"></script>
 
-  </head><body>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
 
-  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">
-          MNE-HFO</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.2dev</b></span>
-      </div>
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
-        <div class="collapse navbar-collapse nav-collapse">
-          <ul class="nav navbar-nav">
-            
-                <li><a href="whats_new.html">News</a></li>
-                <li><a href="install.html">Install</a></li>
-                <li><a href="tutorial.html">Tutorial</a></li>
-                <li><a href="use.html">Use</a></li>
-                <li><a href="api.html">API</a></li>
-                <li><a href="contribute.html">Contribute!</a></li>
-            
-            
-              <li class="dropdown globaltoc-container">
-  <a role="button"
-     id="dLabelGlobalToc"
-     data-toggle="dropdown"
-     data-target="#"
-     href="#">Site <b class="caret"></b></a>
-  <ul class="dropdown-menu globaltoc"
-      role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Useful Links</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
-</ul>
-</ul>
+
+    
+    <a class="navbar-brand" href="#">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
 </li>
-              
-            
-            
-            
-            
-            
-              <li class="hidden-sm"></li>
-            
-          </ul>
 
-          
-<div class="navbar-form navbar-right navbar-btn dropdown btn-group-sm" style="margin-left: 20px; margin-top: 5px; margin-bottom: 5px">
-  <button type="button" class="btn btn-primary navbar-btn dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
-    v0.2dev
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    <li><a href="https://mne-hfo.readthedocs.io/en/latest/index.html">Development</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/stable/index.html">Stable</a></li>
-    <li><a href="https://mne-hfo.readthedocs.io/en/v0.1/index.html">v0.1</a></li>
-  </ul>
-</div>
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/adam2392/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
 
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="whats_new.html">
+  News
+ </a>
+</li>
 
-            
-<form class="navbar-form navbar-right" action="search.html" method="get">
- <div class="form-group">
-  <input type="text" name="q" class="form-control" placeholder="Search" />
- </div>
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-          
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="install.html">
+  Install
+ </a>
+</li>
 
-        </div>
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2dev
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-bids" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
     </div>
-  </div>
+</div>
+    </nav>
+    
 
-<div class="container">
-  <div class="row">
-      <div class="col-md-3">
-        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
 <li><a class="reference internal" href="#">Overview of mne-hfo</a><ul>
 <li><a class="reference internal" href="#motivation">Motivation</a></li>
 <li><a class="reference internal" href="#python">Python</a></li>
@@ -126,14 +166,72 @@
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
-        </div>
-      </div>
-    <div class="body col-md-9 content" role="main">
-      
-  <div class="section" id="overview-of-mne-hfo">
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Overview of mne-hfo
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#motivation">
+     Motivation
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#python">
+     Python
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#free-software">
+     Free software
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#documentation">
+   Documentation
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#indices-and-tables">
+   Indices and tables
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="overview-of-mne-hfo">
 <span id="contents"></span><h1>Overview of <a class="reference external" href="https://readthedocs.org/projects/mne-hfo/">mne-hfo</a><a class="headerlink" href="#overview-of-mne-hfo" title="Permalink to this headline">¶</a></h1>
 <p>mne-hfo is a Python package for analysis of iEEG data for HFO events.</p>
-<div class="section" id="motivation">
+<section id="motivation">
 <h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
 <p>High-frequency oscillations are events that clinicians hypothesize to be related
 to the epileptogenic zone. They have also been observed in other physiological
@@ -145,8 +243,8 @@ utilities and algorithms for detecting HFOs that have been proposed in the liter
 In addition, we formulate the design of the package to be closely tied with <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>,
 <code class="docutils literal notranslate"><span class="pre">mne-python</span></code>, and the <code class="docutils literal notranslate"><span class="pre">BIDS</span></code> data specification. These design choices make the
 algorithms easy to tune, easy to use, and the results easy to share.</p>
-</div>
-<div class="section" id="python">
+</section>
+<section id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>Python is a powerful programming language that allows concise expressions of network
 algorithms.  Python has a vibrant and growing ecosystem of packages that
@@ -154,61 +252,62 @@ mne-hfo uses to provide more features such as numerical linear algebra and
 plotting.  In order to make the most out of mne-hfo you will want to know how
 to write basic programs in Python.  Among the many guides to Python, we
 recommend the <a class="reference external" href="https://docs.python.org/3/">Python documentation</a>.</p>
-</div>
-<div class="section" id="free-software">
+</section>
+<section id="free-software">
 <h2>Free software<a class="headerlink" href="#free-software" title="Permalink to this headline">¶</a></h2>
 <p>mne-hfo is free software; you can redistribute it and/or modify it under the
 terms of the <code class="docutils literal notranslate"><span class="pre">BSD</span></code> license.  We welcome contributions.
 Join us on <a class="reference external" href="https://github.com/adam2392/mne-hfo">GitHub</a>.</p>
-</div>
-</div>
-<div class="section" id="documentation">
+</section>
+</section>
+<section id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
 <p>mne-hfo is a HFO-detection package in python.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Useful Links</span></p>
+<p><span class="caption-text">Useful Links</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="http://www.github.com/adam2392/mne-hfo/">mne-hfo &#64; GitHub</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/mne-hfo/">mne-hfo &#64; PyPI</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/adam2392/mne-hfo/issues">Issue Tracker</a></li>
 </ul>
 </div>
-</div>
-<div class="section" id="indices-and-tables">
+</section>
+<section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+<div class="toctree-wrapper compound">
 </div>
+</section>
 
 
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+    <a class='right-next' id="next-link" href="whats_new.html" title="next page">What’s new?</a>
+
+              </div>
+              
+          </main>
+          
+
+      </div>
     </div>
-      
-  </div>
-</div>
 
-<footer class="footer">
+    
+  <script src="_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
   <div class="container">
-    <p class="pull-right">
-      <a href="#">Back to top</a>
-      
-    </p>
     <p>
-        &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-03-24.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>
 </footer>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-37225609-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-37225609-2');
-</script>
-
   </body>
 </html>

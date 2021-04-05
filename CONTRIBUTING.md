@@ -11,19 +11,24 @@ We heavily rely on ``mne``, so one can even peruse their [contributing guide](ht
 ## Basic Setup
 
 The basic setup for development will be: i) [Git](https://github.com/git-guides/install-git), which is 
-a command-line tool that enables version control, ii) Python virtual environment.
+a command-line tool that enables version control, and ii) a Python virtual environment.
 
 For a Python virtual environment, one can use [miniconda](https://docs.conda.io/en/latest/miniconda.html),
-or [pip](https://pip.pypa.io/en/stable/installing/).
+or [pip](https://pip.pypa.io/en/stable/installing/). We recommend ``miniconda`` for Mac/Windows users.
+
+Most of these tools will use the command line. For Windows 10 users, there exists a linux sub-system https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
 ### Forking Repository
 
-Once you have git installed, you should create a fork of the ``mne-hfo``
-repository.
+Once you have git installed, you should create a [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) of the ``mne-hfo``
+repository. This will setup a "copy" of the current state of the repository to allow you to 
+freely push somewhere. You are unable to directly push to the ``mne-tools/mne-hfo`` repository for 
+obvious security reasons.
 
 ### Clone Repository
 
-Next, you should clone your repository locally. Afterwards, you can see where git is 
+Next, you should clone your repository locally and add the upstream copy of ``mne-hfo`` to your 
+list of git "remotes". Afterwards, you can see where git is 
 pulling from by typing in ``git remote -v``. For example, my local copy will say:
 
     (base) adam2392@Adams-MacBook-Pro mne-hfo % git remote -v
@@ -34,7 +39,40 @@ Meaning that my remote version is called ``origin`` and the url that it is
 fetching and pushing to is `https://github.com/adam2392/mne-hfo.git`. Since you are 
 on a fork, you should also add the ``upstream`` version:
 
-    git remote add upstream https://github.com/adam2392/mne-hfo.git
+    # add upstream remote
+    git remote add upstream https://github.com/mne-tools/mne-hfo.git
+
+### Installation
+
+Now that you have your repository settings setup, you should install the development version 
+of ``mne-hfo``. You should first create a virtual environment for Python3.6+ say using conda:
+
+    # create a conda environment called "mne-hfo"
+    # optionally add the "python=3.8" flag to tell it which python version to use.
+    conda create -n mne-hfo
+
+    # activate the said virtual environment
+    conda activate mne-hhfo
+
+    # install libraries
+    pip install -r requirements.txt
+
+    # install development libraries
+    pip install -r test_requirements.txt
+
+Alternatively, one could use ``pipenv`` to install libraries. One should only use this method if 
+they're familiar with ``pip`` and ``pipenv``. First, cd to the root of the cloned repo:
+
+    cd <path_to_mne_hfo_dir>
+
+Then install packages using pipenv:
+
+    python3.8 -m venv .venv
+
+    pip install --upgrade pip pipenv
+
+    pipenv install --skip-lock
+    pipenv install --dev --skip-lock
 
 ## Running tests
 
@@ -42,46 +80,31 @@ on a fork, you should also add the ``upstream`` version:
 
 If you want to run the tests with a development version of MNE-Python, you can install it by running
 
-    $ pip install -U https://github.com/mne-tools/mne-python/archive/master.zip
-
-### Install development version of MNE-HFO
-
-First, you should [fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo) the `mne-hfo`
-repository. Then, clone the fork and install it in
-"editable" mode.
-
-    $ git clone https://github.com/<your-GitHub-username>/mne-hfo
-    $ pip install -e ./mne-hfo
-
-### Install Python packages required to run tests
-
-Install the following packages for testing purposes, plus all optonal MNE-HFO dependencies to ensure you will be able to
-run all tests.
-
-    $ pipenv install --dev
+    pip install -U https://github.com/mne-tools/mne-python/archive/master.zip
 
 ### Invoke pytest
 
 Now you can finally run the tests by running `pytest` in the
 `mne-hfo` directory.
-
-    $ cd mne-hfo
-    $ pytest
+    
+    # run pytests
+    cd mne-hfo
+    pytest ./tests
 
 ## Building the documentation
 
 The documentation can be built using sphinx. For that, please additionally install the following:
 
-    $ pip install matplotlib nilearn sphinx numpydoc sphinx-gallery sphinx_bootstrap_theme pillow
+    pip install matplotlib nilearn sphinx numpydoc sphinx-gallery sphinx_bootstrap_theme pillow
 
 To build the documentation locally, one can run:
 
-    $ cd doc/
-    $ make html
+    cd doc/
+    make html
 
 or
 
-    $ make html-noplot
+    make html-noplot
 
 if you don't want to run the examples to build the documentation. This will result in a faster build but produce no
 plots in the examples.

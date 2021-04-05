@@ -85,10 +85,11 @@ jobs:
       - run:
           name: Install and configure dependencies
           command: |
-            npm install -g --silent gh-pages@2.2
-            git config --global user.email "adam2392@gmail.com"
+            npm install --global gh-pages@3.0
+            git config --global user.email "circle@mne.com"
             git config --global user.name "Circle Ci"
 
+#      ask Larsoner
       - add_ssh_keys:
           fingerprints:
             - "b6:2b:0a:07:20:23:bc:43:03:58:b1:33:e2:eb:a7:0e"

@@ -78,7 +78,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'mne_hfo'
+project = u'MNE-HFO'
 td = date.today()
 copyright = u'2020-%s, MNE Developers. Last updated on %s' % (td.year,
                                                               td.isoformat())
@@ -104,9 +104,9 @@ exclude_patterns = ['auto_examples/index.rst', '_build', 'Thumbs.db',
 # see: https://sphinx-bootstrap-theme.readthedocs.io/en/latest/README.html
 # Clean up sidebar: Do not show "Source" link
 html_show_sourcelink = False
+html_copy_source = False
 
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = 'pydata_sphinx_theme'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -117,19 +117,33 @@ html_css_files = ['style.css']
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'navbar_title': 'MNE-HFO',
-    'bootswatch_theme': "flatly",
-    'navbar_sidebarrel': False,  # no "previous / next" navigation
-    'navbar_pagenav': False,  # no "Page" navigation in sidebar
-    'bootstrap_version': "3",
-    'navbar_links': [
-        ("News", "whats_new"),
-        ("Install", "install"),
-        ("Tutorial", "tutorial"),
-        ("Use", "use"),
-        ("API", "api"),
-        ("Contribute!", "contribute")
-    ]}
+    'icon_links': [
+        dict(name='GitHub',
+             url='https://github.com/mne-tools/mne-bids',
+             icon='fab fa-github-square'),
+    ],
+    # 'navbar_title': 'MNE-HFO',
+    # 'bootswatch_theme': "flatly",
+    # 'navbar_sidebarrel': False,  # no "previous / next" navigation
+    # 'navbar_pagenav': False,  # no "Page" navigation in sidebar
+    # 'bootstrap_version': "3",
+    # 'navbar_links': [
+    #     ("News", "whats_new"),
+    #     ("Install", "install"),
+    #     ("Tutorial", "tutorial"),
+    #     ("Use", "use"),
+    #     ("API", "api"),
+    #     ("Contribute!", "contribute")
+    # ]
+}
+
+html_context = {
+    'versions_dropdown': {
+        'dev': 'v0.2 (devel)',
+        'stable': 'v0.1 (stable)',
+        'v0.1': 'v0.1',
+    },
+}
 
 html_sidebars = {'**': ['localtoc.html']}
 

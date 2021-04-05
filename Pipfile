@@ -37,6 +37,7 @@ pipfile-requirements = "*"
 pandoc = "*"
 sphinx-autodoc-typehints = "*"
 typing-extensions = "*"
+pydata-sphinx-theme = "*"
 
 [requires]
 python_version = "3"

@@ -49,7 +49,6 @@ mne-hfo is a HFO-detection package in python.
    :maxdepth: 1
    :caption: Useful Links
 
-   mne-hfo @ GitHub <http://www.github.com/adam2392/mne-hfo/>
    mne-hfo @ PyPI <https://pypi.org/project/mne-hfo/>
    Issue Tracker <https://github.com/adam2392/mne-hfo/issues>
 
@@ -59,3 +58,13 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
+
+
+.. toctree::
+   :hidden:
+
+   News<whats_new>
+   Install<install>
+   Use<use>
+   API<api>
+   Contribute<contribute>

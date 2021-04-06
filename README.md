@@ -12,7 +12,7 @@ MNE-HFO
 =======
 
 MNE-HFO is a Python package that computes estimates of high-frequency oscillations in iEEG data stored in
-[BIDS](https://bids.neuroimaging.io/)-compatible datasets with the help of
+the [BIDS-compatible](https://bids.neuroimaging.io/) datasets with the help of
 [MNE-Python](https://mne.tools/stable/index.html).
 
 NOTE: This is currently in ALPHA stage, and we are looking for contributors. Please get in touch via Issues tab if you

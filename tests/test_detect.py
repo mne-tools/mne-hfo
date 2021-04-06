@@ -84,7 +84,7 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     raw = RawArray(filt_data, info=info)
 
     compute_instance = RMSDetector(sfreq=fs, win_size=window_size,
-                                   filter_band=None)
+                                   filter_band=None, n_jobs=1)
     dets = benchmark(compute_instance.fit,
                      raw)
 
@@ -98,27 +98,33 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
         assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
-@pytest.mark.skip(reason='need to implement...')
+@pytest.mark.skip(reason='Not as sensitive, need to investigate why')
 def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
+    """Test HilbertDetector with simulated HFO.
+
+    Assumes simulated data has already been "bandpass" filtered.
+    """
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
+    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
+    filt_data = filtfilt(b, a, data)[np.newaxis, :]
 
-    compute_instance = HilbertDetector(sfreq=fs)
-    compute_instance.params = {'fs': fs,
-                               'low_fc': 80,
-                               'high_fc': 600,
-                               'threshold': 7}
+    # create input data structure
+    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    raw = RawArray(filt_data, info=info)
+
+    compute_instance = HilbertDetector(filter_band=[80, 250],
+                                       n_jobs=1, threshold=3)
     dets = benchmark(compute_instance.fit,
-                     data)
-
-    compute_instance.fit(data)
+                     raw)
 
     expected_vals = [(5056, 5123),
                      (35028, 35063)]
+    print(dets.chs_hfos_list)
 
-    for exp_val, det in zip(expected_vals, dets):
-        assert det[0] == exp_val[0]
-        assert det[1] == exp_val[1]
+    for idx, (exp_val) in enumerate(expected_vals):
+        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
+        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
 @pytest.mark.skip(reason='need to implement...')

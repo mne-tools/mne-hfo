@@ -183,9 +183,14 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">op</span>
+<span class="kn">import</span> <span class="nn">mne</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">hilbert</span>
+
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 
 <span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">ANNOT_COLUMNS</span><span class="p">,</span> <span class="n">EVENT_COLUMNS</span>
 
@@ -260,7 +265,105 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">json_output</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="compute_rms"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms">[docs]</a><span class="k">def</span> <span class="nf">compute_rms</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_band_zscore_detect</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">,</span> <span class="n">n_times</span><span class="p">,</span>
+                        <span class="n">cycles_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span> <span class="n">zscore_threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find detections that meet the Hilbert envelope criteria.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal : np.ndarray</span>
+<span class="sd">        A single channel&#39;s Hilbert transform within a frequency band</span>
+<span class="sd">    sfreq : float</span>
+<span class="sd">        Sampling frequency of the data</span>
+<span class="sd">    band_idx :  int</span>
+<span class="sd">        The index of the frequency band</span>
+<span class="sd">    l_freq : float</span>
+<span class="sd">        The low frequency of the band</span>
+<span class="sd">    h_freq : float</span>
+<span class="sd">        The high frequency of the band</span>
+<span class="sd">    n_times : int</span>
+<span class="sd">        The number of timepoints used to calculate the signal</span>
+<span class="sd">    cycles_threshold : float</span>
+<span class="sd">        The number of cycles to be considered a valid envelope</span>
+<span class="sd">    gap_threshold : float</span>
+<span class="sd">        The number of cycles needed to be considered a gap</span>
+<span class="sd">    zscore_threshold : float</span>
+<span class="sd">        Value to threshold the signal on</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tdetects: List[Tuple[int, int, int, int]]</span>
+<span class="sd">        All HFO events that passed the bandpass, zscore. Each tuple contains:</span>
+<span class="sd">        [0] - The band index</span>
+<span class="sd">        [1] - The timepoint of the start of a detection</span>
+<span class="sd">        [2] - The timepoint of the end of the detection</span>
+<span class="sd">        [3] - Maximum value of the Hilbert envelope in this event window</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Detections where the envelope has a zscore greater than threshold</span>
+    <span class="n">tdetects</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Create boolean mask of signal greater than zscore_threshold</span>
+    <span class="n">thresh_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+    <span class="n">thresh_sig</span><span class="p">[</span><span class="n">signal</span> <span class="o">&gt;</span> <span class="n">zscore_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Find indices where threshold is met</span>
+    <span class="n">thresh_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">thresh_sig</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Calculate the required samples to be considered a valid gap</span>
+    <span class="n">gap_samp</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">gap_threshold</span> <span class="o">*</span> <span class="n">sfreq</span> <span class="o">/</span> <span class="n">l_freq</span><span class="p">)</span>
+
+    <span class="c1"># Iterate over valid indices (significant zscore timepoints)</span>
+    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Find the start of the envelope, which occurs when back to back</span>
+        <span class="c1"># time-points meet the threshold</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">start_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="c1"># Find where the envelope ends by iterating over indices</span>
+            <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Check if last index over threshold. If so,</span>
+                <span class="c1"># consider this index to be the end of the envelope</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">stop_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                        <span class="c1"># Check that envelope meets number of cycles criteria</span>
+                        <span class="n">dur</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop_idx</span> <span class="o">-</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">sfreq</span>
+                        <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
+                        <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycles_threshold</span><span class="p">:</span>
+                            <span class="c1"># Valid, so append to detections</span>
+                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
+                                             <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
+                                             <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">]])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If there is no gap between this and the next index,</span>
+                    <span class="c1"># it is still part of this envelope. Increment the</span>
+                    <span class="c1"># index.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="n">gap_samp</span><span class="p">:</span>
+                        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="c1"># If the next index has a gap, the current index is the</span>
+                    <span class="c1"># end of the envelope</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">stop_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                        <span class="c1"># Check that envelope meets number of cycles criteria</span>
+                        <span class="n">dur</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop_idx</span> <span class="o">-</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">sfreq</span>
+                        <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
+                        <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycles_threshold</span><span class="p">:</span>
+                            <span class="c1"># Valid, so append to detections</span>
+                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
+                                             <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
+                                             <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">]])</span>
+                        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tdetects</span>
+
+
+<div class="viewcode-block" id="compute_rms"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms">[docs]</a><span class="k">def</span> <span class="nf">compute_rms</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Root Mean Square (RMS) energy.</span>
 
@@ -319,7 +422,203 @@
     <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="o">-</span><span class="n">stop</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="threshold_std"><a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_std.html#mne_hfo.utils.threshold_std">[docs]</a><span class="k">def</span> <span class="nf">threshold_std</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_hilbert"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_hilbert.html#mne_hfo.utils.compute_hilbert">[docs]</a><span class="k">def</span> <span class="nf">compute_hilbert</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the Hilbert envelope for a single channel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    signal : np.array</span>
+<span class="sd">        EEG signal for a single channel</span>
+<span class="sd">    extra_params : dict</span>
+<span class="sd">        Must have values for &#39;freq_cutoffs&#39;, &#39;freq_span&#39;, and</span>
+<span class="sd">        &#39;sfreq&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hfx_bands: np.ndarray</span>
+<span class="sd">        Hilbert transforms per freq band</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hfx_bands</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Iterate over freq bands</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">):</span>
+        <span class="n">l_freq</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+        <span class="n">h_freq</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Filter the data for this frequency band</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="n">sfreq</span><span class="p">,</span>
+                                        <span class="n">l_freq</span><span class="o">=</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="o">=</span><span class="n">h_freq</span><span class="p">,</span>
+                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;iir&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># compute z-score of data</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+
+        <span class="c1"># Chunk the signal into 30 second windows and compute the Hilbert</span>
+        <span class="c1"># to save memory</span>
+        <span class="n">hfx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">n_times</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hfx</span><span class="p">)</span>
+        <span class="n">win_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sfreq</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="n">n_wins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_times</span> <span class="o">/</span> <span class="n">win_size</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">win</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_wins</span><span class="p">):</span>
+            <span class="n">start_samp</span> <span class="o">=</span> <span class="n">win</span> <span class="o">*</span> <span class="n">win_size</span>
+            <span class="n">end_samp</span> <span class="o">=</span> <span class="p">(</span><span class="n">win</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">win_size</span>
+            <span class="k">if</span> <span class="n">win</span> <span class="o">==</span> <span class="n">n_wins</span><span class="p">:</span>
+                <span class="n">end_samp</span> <span class="o">=</span> <span class="n">n_times</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">signal</span><span class="p">[</span><span class="n">start_samp</span><span class="p">:</span><span class="n">end_samp</span><span class="p">]</span>
+            <span class="n">hfx</span><span class="p">[</span><span class="n">start_samp</span><span class="p">:</span><span class="n">end_samp</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hilbert</span><span class="p">(</span><span class="n">sig</span><span class="p">))</span>
+
+        <span class="c1"># return the absolute value of the Hilbert transform.</span>
+        <span class="c1"># (i.e. the envelope)</span>
+        <span class="n">hfx_bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hfx</span><span class="p">)</span>
+        <span class="n">hfx</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">hfx_bands</span></div>
+
+
+<div class="viewcode-block" id="apply_hilbert"><a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_hilbert.html#mne_hfo.utils.apply_hilbert">[docs]</a><span class="k">def</span> <span class="nf">apply_hilbert</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Apply the Hilbert z-score thresholding scheme.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metric : np.ndarray</span>
+<span class="sd">        The values to apply the threshold rules to.</span>
+<span class="sd">    threshold_dict : dict</span>
+<span class="sd">        Dictionary of  threshold parameters to apply to metric.</span>
+<span class="sd">        Must have zscore, gap, and cycles keys</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Additional model parameters needed to apply hilbert threshold.</span>
+<span class="sd">        Must have n_times, sfreq, filter_band, freq_cutoffs,</span>
+<span class="sd">        freq_span, and n_jobs.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tdetects: List(tuples)</span>
+<span class="sd">        Detected hfo events with the structure [band_idx, start,</span>
+<span class="sd">        stop, max_amplitude, freq_band]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get threshold vals</span>
+    <span class="n">zscore_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;zscore&quot;</span><span class="p">]</span>
+    <span class="n">gap_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span>
+    <span class="n">cycles_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;cycles&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">zscore_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span>
+                                     <span class="n">cycles_threshold</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold_dict must have values for zscore,&quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot; gap, and cycles. You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">n_times</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_times&quot;</span><span class="p">]</span>
+    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;sfreq&quot;</span><span class="p">]</span>
+    <span class="n">filter_band</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;filter_band&quot;</span><span class="p">]</span>
+    <span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;freq_cutoffs&quot;</span><span class="p">]</span>
+    <span class="n">freq_span</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;freq_span&quot;</span><span class="p">]</span>
+    <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_jobs&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n_times</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">filter_band</span><span class="p">,</span>
+                                     <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kwargs must have values for n_times, sfreq,&quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot; filter_band, freq_cutoffs, freq_span, n_jobs.&quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">tdetects</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># If multiple jobs listed, call `_band_zscore_detect` in parallel</span>
+    <span class="c1"># across the multiple freq bands</span>
+    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">iter_mat</span> <span class="o">=</span> <span class="p">[(</span><span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span>
+                     <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                     <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                     <span class="n">n_times</span><span class="p">,</span>
+                     <span class="n">cycles_threshold</span><span class="p">,</span>
+                     <span class="n">gap_threshold</span><span class="p">,</span>
+                     <span class="n">zscore_threshold</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">)]</span>
+        <span class="n">tdetects</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_band_zscore_detect</span><span class="p">)(</span>
+                <span class="o">**</span><span class="n">iter_args</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">iter_args</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">iter_mat</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;HFO-first-phase&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Else, run `_band_zscore_detect` serially across the</span>
+        <span class="c1"># multiple freq bands</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;HFO-first-phase&quot;</span><span class="p">):</span>
+            <span class="c1"># Find bottom and top of the frequency band</span>
+            <span class="n">bot</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">top</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Make sure you only look at Hilbert envelope values</span>
+            <span class="c1"># for the specific freq band</span>
+            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_band_zscore_detect</span><span class="p">(</span><span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">bot</span><span class="p">,</span>
+                                                <span class="n">top</span><span class="p">,</span> <span class="n">n_times</span><span class="p">,</span> <span class="n">cycles_threshold</span><span class="p">,</span>
+                                                <span class="n">gap_threshold</span><span class="p">,</span>
+                                                <span class="n">zscore_threshold</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">tdetects</span></div>
+
+
+<div class="viewcode-block" id="apply_std"><a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_std.html#mne_hfo.utils.apply_std">[docs]</a><span class="k">def</span> <span class="nf">apply_std</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate and apply the threshold based on number of standard deviations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metric : np.ndarray</span>
+<span class="sd">        Values to apply the threshold to</span>
+<span class="sd">    threshold_dict : dict</span>
+<span class="sd">        Dictionary of threshold values. Should just have thresh,</span>
+<span class="sd">        which is the number of standard deviations to check against</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Additional key-word args from the detector needed to</span>
+<span class="sd">        apply the threshold.</span>
+<span class="sd">        Step_size, win_size, and n_times are required keys.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output: List(tuples)</span>
+<span class="sd">        List of detected events that pass the threshold</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># determine threshold value</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;thresh&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold_dict must have a value for &#39;thresh&#39;.&quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">det_th</span> <span class="o">=</span> <span class="n">_get_threshold_std</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+    <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+    <span class="n">step_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;step_size&quot;</span><span class="p">]</span>
+    <span class="n">win_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;win_size&quot;</span><span class="p">]</span>
+    <span class="n">n_times</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_times&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">step_size</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">n_times</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kwargs must have step_size, win_size, &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;and n_times. You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># store thresholded hfo events as a list</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Detect and now group events if they are within a</span>
+    <span class="c1"># step size of each other</span>
+    <span class="n">win_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span><span class="p">:</span>
+        <span class="c1"># log events if they pass our threshold criterion</span>
+        <span class="k">if</span> <span class="n">metric</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
+            <span class="n">event_start</span> <span class="o">=</span> <span class="n">win_idx</span> <span class="o">*</span> <span class="n">step_size</span>
+
+            <span class="c1"># group events together if they occur in</span>
+            <span class="c1"># contiguous windows</span>
+            <span class="c1"># TODO: We could factor this out into an independent step,</span>
+            <span class="c1">#  but that will just add comp time</span>
+            <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span> <span class="ow">and</span> \
+                    <span class="n">metric</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
+                <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">event_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">win_idx</span> <span class="o">*</span> <span class="n">step_size</span><span class="p">)</span> <span class="o">+</span> <span class="n">win_size</span>
+
+            <span class="k">if</span> <span class="n">event_stop</span> <span class="o">&gt;</span> <span class="n">n_times</span><span class="p">:</span>
+                <span class="n">event_stop</span> <span class="o">=</span> <span class="n">n_times</span>
+
+            <span class="c1"># TODO: Optional feature calculations</span>
+
+            <span class="c1"># Write into output</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">event_start</span><span class="p">,</span> <span class="n">event_stop</span><span class="p">))</span>
+            <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_threshold_std</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate threshold by Standard Deviations above the mean.</span>
 
@@ -327,8 +626,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    signal: numpy array</span>
 <span class="sd">        1D signal for threshold determination</span>
-<span class="sd">    threshold: float</span>
-<span class="sd">        Number of SD above the mean</span>
+<span class="sd">    threshold: int</span>
+<span class="sd">        Number of standard deviations to consider.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -337,7 +636,64 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ths_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ths_value</span></div>
+    <span class="k">return</span> <span class="n">ths_value</span>
+
+
+<span class="k">def</span> <span class="nf">merge_contiguous_freq_bands</span><span class="p">(</span><span class="n">detections</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge detected events in contiguous freq bands and time windows.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    detections : List(tuple)</span>
+<span class="sd">        List of detections, which have the form [band_idx, start,</span>
+<span class="sd">         stop, max_amplitude, freq_band]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hfo_events: List(tuple)</span>
+<span class="sd">        List of distinct hfo events, which have the form [start, stop]</span>
+<span class="sd">    max_hilbert: List(int)</span>
+<span class="sd">        List of max values in each event</span>
+<span class="sd">    freq_bands: List(tuple)</span>
+<span class="sd">        List of the freq_band for each event</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">mne_hfo.posthoc</span> <span class="kn">import</span> <span class="n">_check_detection_overlap</span>
+    <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">detection</span> <span class="ow">in</span> <span class="n">detections</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">band_idx</span> <span class="o">=</span> <span class="n">detection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># If first freq band, always unique so append</span>
+        <span class="k">if</span> <span class="n">band_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">detection</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">outline</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outlines</span><span class="p">):</span>
+                <span class="c1"># only try to merge contiguous freq bands</span>
+                <span class="k">if</span> <span class="n">outline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">band_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># Check if the events overlap in time</span>
+                    <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">([</span><span class="n">detection</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                                                <span class="p">[</span><span class="n">outline</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">outline</span><span class="p">[</span><span class="mi">2</span><span class="p">]]):</span>
+                        <span class="c1"># merge the overlapping events</span>
+                        <span class="n">outlines</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">_merge_outline</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">detection</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Events dont overlap so append it</span>
+                        <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">detection</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Events are contiguous so append it</span>
+                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">detection</span><span class="p">)</span>
+    <span class="c1"># extract start and stop times</span>
+    <span class="n">hfo_events</span> <span class="o">=</span> <span class="p">[[</span><span class="n">o</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">o</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outlines</span><span class="p">]</span>
+    <span class="n">max_hilbert</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outlines</span><span class="p">]</span>
+    <span class="n">freq_bands</span> <span class="o">=</span> <span class="p">[[</span><span class="n">o</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">o</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">outlines</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">hfo_events</span><span class="p">,</span> <span class="n">max_hilbert</span><span class="p">,</span> <span class="n">freq_bands</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_outline</span><span class="p">(</span><span class="n">outline</span><span class="p">,</span> <span class="n">detection</span><span class="p">):</span>
+    <span class="n">band_idx</span> <span class="o">=</span> <span class="n">detection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">max_frq</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">freq_band</span> <span class="o">=</span> <span class="p">[</span><span class="n">outline</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">max_frq</span><span class="p">,</span> <span class="n">freq_band</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="threshold_tukey"><a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey">[docs]</a><span class="k">def</span> <span class="nf">threshold_tukey</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
@@ -410,7 +766,7 @@
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

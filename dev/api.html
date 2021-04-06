@@ -332,8 +332,14 @@
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length" title="mne_hfo.utils.compute_line_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_line_length</span></code></a>(signal[, win_size])</p></td>
 <td><p>Calculate line length.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_std.html#mne_hfo.utils.threshold_std" title="mne_hfo.utils.threshold_std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_std</span></code></a>(signal, threshold)</p></td>
-<td><p>Calculate threshold by Standard Deviations above the mean.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.compute_hilbert.html#mne_hfo.utils.compute_hilbert" title="mne_hfo.utils.compute_hilbert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_hilbert</span></code></a>(signal, freq_cutoffs, …)</p></td>
+<td><p>Compute the Hilbert envelope for a single channel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.apply_std.html#mne_hfo.utils.apply_std" title="mne_hfo.utils.apply_std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_std</span></code></a>(metric, threshold_dict, kwargs)</p></td>
+<td><p>Calculate and apply the threshold based on number of standard deviations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/mne_hfo.utils.apply_hilbert.html#mne_hfo.utils.apply_hilbert" title="mne_hfo.utils.apply_hilbert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_hilbert</span></code></a>(metric, threshold_dict, kwargs)</p></td>
+<td><p>Apply the Hilbert z-score thresholding scheme.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey" title="mne_hfo.utils.threshold_tukey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold_tukey</span></code></a>(signal, threshold)</p></td>
 <td><p>Calculate threshold by Tukey method.</p></td>
@@ -402,7 +408,7 @@
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

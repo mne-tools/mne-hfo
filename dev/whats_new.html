@@ -277,7 +277,8 @@
 <li><p>Added notebook to demo use of detection algorithms by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
 <li><p>Vectorized detection overlap check to enhance scoring speed by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
 <li><p>Added notebook to demo use of GridSearchCV to optimize detector performance by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
-<li><p>Added module to compare detections and notebook to demo usage <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/22">#22</a>)</p></li>
+<li><p>Added module to compare detections and notebook to demo usage by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/22">#22</a>)</p></li>
+<li><p>Added initial implementation of HilbertDetector by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/23">#23</a>)</p></li>
 </ul>
 </section>
 <section id="api-changes">
@@ -285,6 +286,7 @@
 <ul class="simple">
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.events_to_annotations()</span></code></a> to go from <code class="docutils literal notranslate"><span class="pre">*events.tsv</span></code> to <code class="docutils literal notranslate"><span class="pre">*annotations.tsv</span></code> files, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
 <li><p>Added <a class="reference internal" href="generated/mne_hfo.sklearn.make_Xy_sklearn.html#mne_hfo.sklearn.make_Xy_sklearn" title="mne_hfo.sklearn.make_Xy_sklearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.sklearn.make_Xy_sklearn()</span></code></a> to format data into scikit-learn compatible data structures for the sake of running hyper-parameter searches with <code class="docutils literal notranslate"><span class="pre">SearchCV</span></code> functions, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+<li><p>Separated postprocessing step into two discrete steps _threshold_statistic and _post_process_ch_hfos by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/23">#23</a>)</p></li>
 </ul>
 </section>
 <section id="requirements">
@@ -329,7 +331,7 @@
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

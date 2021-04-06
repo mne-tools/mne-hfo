@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>mne_hfo.utils.threshold_std &#8212; MNE-HFO 0.2dev documentation</title>
+    <title>mne_hfo.utils.apply_std &#8212; MNE-HFO 0.2dev documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
@@ -49,8 +49,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="mne_hfo.utils.threshold_tukey" href="mne_hfo.utils.threshold_tukey.html" />
-    <link rel="prev" title="mne_hfo.utils.compute_line_length" href="mne_hfo.utils.compute_line_length.html" />
+    <link rel="next" title="mne_hfo.utils.apply_hilbert" href="mne_hfo.utils.apply_hilbert.html" />
+    <link rel="prev" title="mne_hfo.utils.compute_hilbert" href="mne_hfo.utils.compute_hilbert.html" />
     <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
     <script type="text/javascript" src="../_static/copybutton.js"></script>
     <script type="text/javascript" src="../_static/scrollfix.js"></script>
@@ -157,8 +157,8 @@
             <div class="col-12 col-md-3 bd-sidebar">
   <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">mne_hfo.utils.threshold_std</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-utils-threshold-std">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.threshold_std</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.utils.apply_std</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-utils-apply-std">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.apply_std</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -177,11 +177,11 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#examples-using-mne-hfo-utils-threshold-std">
+  <a class="reference internal nav-link" href="#examples-using-mne-hfo-utils-apply-std">
    Examples using
    <code class="docutils literal notranslate">
     <span class="pre">
-     mne_hfo.utils.threshold_std
+     mne_hfo.utils.apply_std
     </span>
    </code>
   </a>
@@ -203,34 +203,41 @@
               
               <div>
                 
-  <section id="mne-hfo-utils-threshold-std">
-<h1>mne_hfo.utils.threshold_std<a class="headerlink" href="#mne-hfo-utils-threshold-std" title="Permalink to this headline">¶</a></h1>
+  <section id="mne-hfo-utils-apply-std">
+<h1>mne_hfo.utils.apply_std<a class="headerlink" href="#mne-hfo-utils-apply-std" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.utils.threshold_std">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.utils.</span></code><code class="sig-name descname"><span class="pre">threshold_std</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/utils.html#threshold_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.utils.threshold_std" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate threshold by Standard Deviations above the mean.</p>
+<dt id="mne_hfo.utils.apply_std">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.utils.</span></code><code class="sig-name descname"><span class="pre">apply_std</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/utils.html#apply_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.utils.apply_std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate and apply the threshold based on number of standard deviations.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>signal: numpy array</strong></p>
+<dd class="field-odd"><p><strong>metric</strong> : np.ndarray</p>
 <blockquote>
-<div><p>1D signal for threshold determination</p>
+<div><p>Values to apply the threshold to</p>
 </div></blockquote>
-<p><strong>threshold: float</strong></p>
+<p><strong>threshold_dict</strong> : dict</p>
 <blockquote>
-<div><p>Number of SD above the mean</p>
+<div><p>Dictionary of threshold values. Should just have thresh,
+which is the number of standard deviations to check against</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Additional key-word args from the detector needed to
+apply the threshold.
+Step_size, win_size, and n_times are required keys.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>ths_value: float</p>
+<dd class="field-even"><p>output: List(tuples)</p>
 <blockquote>
-<div><p>Value of the threshold</p>
+<div><p>List of detected events that pass the threshold</p>
 </div></blockquote>
 </dd>
 </dl>
 </dd></dl>
 
-<section id="examples-using-mne-hfo-utils-threshold-std">
-<span id="sphx-glr-backreferences-mne-hfo-utils-threshold-std"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.threshold_std</span></code><a class="headerlink" href="#examples-using-mne-hfo-utils-threshold-std" title="Permalink to this headline">¶</a></h2>
+<section id="examples-using-mne-hfo-utils-apply-std">
+<span id="sphx-glr-backreferences-mne-hfo-utils-apply-std"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.apply_std</span></code><a class="headerlink" href="#examples-using-mne-hfo-utils-apply-std" title="Permalink to this headline">¶</a></h2>
 <div class="sphx-glr-clear"></div></section>
 </section>
 
@@ -240,8 +247,8 @@
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="mne_hfo.utils.compute_line_length.html" title="previous page">mne_hfo.utils.compute_line_length</a>
-    <a class='right-next' id="next-link" href="mne_hfo.utils.threshold_tukey.html" title="next page">mne_hfo.utils.threshold_tukey</a>
+    <a class='left-prev' id="prev-link" href="mne_hfo.utils.compute_hilbert.html" title="previous page">mne_hfo.utils.compute_hilbert</a>
+    <a class='right-next' id="next-link" href="mne_hfo.utils.apply_hilbert.html" title="next page">mne_hfo.utils.apply_hilbert</a>
 
               </div>
               
@@ -258,7 +265,7 @@
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

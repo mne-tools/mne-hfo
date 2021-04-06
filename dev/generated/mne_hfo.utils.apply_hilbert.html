@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>mne_hfo.simulate.simulate_hfo &#8212; MNE-HFO 0.2dev documentation</title>
+    <title>mne_hfo.utils.apply_hilbert &#8212; MNE-HFO 0.2dev documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
@@ -49,8 +49,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contributing to MNE-HFO" href="../contribute.html" />
-    <link rel="prev" title="mne_hfo.simulate.simulate_spike" href="mne_hfo.simulate.simulate_spike.html" />
+    <link rel="next" title="mne_hfo.utils.threshold_tukey" href="mne_hfo.utils.threshold_tukey.html" />
+    <link rel="prev" title="mne_hfo.utils.apply_std" href="mne_hfo.utils.apply_std.html" />
     <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
     <script type="text/javascript" src="../_static/copybutton.js"></script>
     <script type="text/javascript" src="../_static/scrollfix.js"></script>
@@ -157,8 +157,8 @@
             <div class="col-12 col-md-3 bd-sidebar">
   <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">mne_hfo.simulate.simulate_hfo</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-simulate-simulate-hfo">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_hfo</span></code></a></li>
+<li><a class="reference internal" href="#">mne_hfo.utils.apply_hilbert</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-utils-apply-hilbert">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.apply_hilbert</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -177,11 +177,11 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#examples-using-mne-hfo-simulate-simulate-hfo">
+  <a class="reference internal nav-link" href="#examples-using-mne-hfo-utils-apply-hilbert">
    Examples using
    <code class="docutils literal notranslate">
     <span class="pre">
-     mne_hfo.simulate.simulate_hfo
+     mne_hfo.utils.apply_hilbert
     </span>
    </code>
   </a>
@@ -203,50 +203,43 @@
               
               <div>
                 
-  <section id="mne-hfo-simulate-simulate-hfo">
-<h1>mne_hfo.simulate.simulate_hfo<a class="headerlink" href="#mne-hfo-simulate-simulate-hfo" title="Permalink to this headline">¶</a></h1>
+  <section id="mne-hfo-utils-apply-hilbert">
+<h1>mne_hfo.utils.apply_hilbert<a class="headerlink" href="#mne-hfo-utils-apply-hilbert" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="mne_hfo.simulate.simulate_hfo">
-<code class="sig-prename descclassname"><span class="pre">mne_hfo.simulate.</span></code><code class="sig-name descname"><span class="pre">simulate_hfo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numcycles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/simulate.html#simulate_hfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.simulate.simulate_hfo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a simulated HFO signal.</p>
+<dt id="mne_hfo.utils.apply_hilbert">
+<code class="sig-prename descclassname"><span class="pre">mne_hfo.utils.</span></code><code class="sig-name descname"><span class="pre">apply_hilbert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/utils.html#apply_hilbert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.utils.apply_hilbert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the Hilbert z-score thresholding scheme.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fs: float</strong></p>
+<dd class="field-odd"><p><strong>metric</strong> : np.ndarray</p>
 <blockquote>
-<div><p>Sampling rate of the signal (default=5000)</p>
+<div><p>The values to apply the threshold rules to.</p>
 </div></blockquote>
-<p><strong>freq: float</strong></p>
+<p><strong>threshold_dict</strong> : dict</p>
 <blockquote>
-<div><p>Frequency of the artificial HFO (default=None - random frequency
-between 80 nad 600 Hz)</p>
+<div><p>Dictionary of  threshold parameters to apply to metric.
+Must have zscore, gap, and cycles keys</p>
 </div></blockquote>
-<p><strong>numcycles: int</strong></p>
+<p><strong>kwargs</strong> : dict</p>
 <blockquote>
-<div><p>Number of HFO cycles (default=None - cycles between 9 - 15)</p>
+<div><p>Additional model parameters needed to apply hilbert threshold.
+Must have n_times, sfreq, filter_band, freq_cutoffs,
+freq_span, and n_jobs.</p>
 </div></blockquote>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>wave: numpy array</p>
+<dd class="field-even"><p>tdetects: List(tuples)</p>
 <blockquote>
-<div><p>1D numpy array with waveform</p>
-</div></blockquote>
-<p>time: numpy array</p>
-<blockquote>
-<div><p>1D numpy array with the time vector</p>
+<div><p>Detected hfo events with the structure [band_idx, start,
+stop, max_amplitude, freq_band]</p>
 </div></blockquote>
 </dd>
 </dl>
 </dd></dl>
 
-<section id="examples-using-mne-hfo-simulate-simulate-hfo">
-<span id="sphx-glr-backreferences-mne-hfo-simulate-simulate-hfo"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.simulate.simulate_hfo</span></code><a class="headerlink" href="#examples-using-mne-hfo-simulate-simulate-hfo" title="Permalink to this headline">¶</a></h2>
-<div class="sphx-glr-thumbcontainer" tooltip="MNE-HFO currently depends on the data structures defined by MNE-Python. Namely the :py:class:`m..."><figure class="align-default" id="id1">
-<img alt="01. Detect HFOs in Simulated Dataset" src="../_images/sphx_glr_detect_hfos_thumb.png" />
-<figcaption>
-<p><span class="caption-text"><a class="reference internal" href="../auto_examples/detect_hfos.html#sphx-glr-auto-examples-detect-hfos-py"><span class="std std-ref">01. Detect HFOs in Simulated Dataset</span></a></span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
-</div><div class="sphx-glr-clear"></div></section>
+<section id="examples-using-mne-hfo-utils-apply-hilbert">
+<span id="sphx-glr-backreferences-mne-hfo-utils-apply-hilbert"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.utils.apply_hilbert</span></code><a class="headerlink" href="#examples-using-mne-hfo-utils-apply-hilbert" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-clear"></div></section>
 </section>
 
 
@@ -255,8 +248,8 @@ between 80 nad 600 Hz)</p>
               
               <div class='prev-next-bottom'>
                 
-    <a class='left-prev' id="prev-link" href="mne_hfo.simulate.simulate_spike.html" title="previous page">mne_hfo.simulate.simulate_spike</a>
-    <a class='right-next' id="next-link" href="../contribute.html" title="next page">Contributing to MNE-HFO</a>
+    <a class='left-prev' id="prev-link" href="mne_hfo.utils.apply_std.html" title="previous page">mne_hfo.utils.apply_std</a>
+    <a class='right-next' id="next-link" href="mne_hfo.utils.threshold_tukey.html" title="next page">mne_hfo.utils.threshold_tukey</a>
 
               </div>
               

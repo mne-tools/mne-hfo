@@ -178,142 +178,15 @@
               <div>
                 
   <h1>Source code for mne_hfo.detect</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">mne</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span><span class="p">,</span> <span class="n">cpu_count</span>
-<span class="kn">from</span> <span class="nn">mne.utils</span> <span class="kn">import</span> <span class="n">warn</span>
-<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">hilbert</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">mne_hfo.base</span> <span class="kn">import</span> <span class="n">Detector</span>
 <span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">ACCEPTED_BAND_METHODS</span>
-<span class="kn">from</span> <span class="nn">mne_hfo.posthoc</span> <span class="kn">import</span> <span class="n">_check_detection_overlap</span>
-
-
-<span class="k">def</span> <span class="nf">_band_z_score_detect</span><span class="p">(</span><span class="n">x_cond</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">,</span>
-                         <span class="n">cycle_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iterate bandpass and z-score a channel&#39;s signal.</span>
-
-<span class="sd">    Creates a bandpass filter (order=3) between ``l_freq`` and ``h_freq``.</span>
-<span class="sd">    Then it z-scores the data</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x_cond :</span>
-<span class="sd">    sfreq :</span>
-<span class="sd">    band_idx :</span>
-<span class="sd">    l_freq :</span>
-<span class="sd">    h_freq :</span>
-<span class="sd">    cycle_threshold :</span>
-<span class="sd">    gap_threshold :</span>
-<span class="sd">    threshold :</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    tdetects : list of tuples</span>
-<span class="sd">        All HFO events that passed the bandpass, zscore. It will store</span>
-<span class="sd">        the band index (``band_idx``), timepoint of start, endpoint of start,</span>
-<span class="sd">        and the maximum value of the Hilbert envelope in this event window.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tdetects</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># create highpass and lowpass filters</span>
-    <span class="n">x_cond</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span>
-        <span class="n">x_cond</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="n">sfreq</span><span class="p">,</span>
-        <span class="n">l_freq</span><span class="o">=</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="o">=</span><span class="n">h_freq</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;iir&#39;</span><span class="p">)</span>
-    <span class="c1"># b, a = butter(N=3, Wn=l_freq / (sfreq / 2), btype=&#39;highpass&#39;)</span>
-    <span class="c1"># x_cond = filtfilt(b, a, x_cond)</span>
-    <span class="c1"># b, a = butter(N=3, Wn=h_freq / (sfreq / 2), btype=&#39;lowpass&#39;)</span>
-    <span class="c1"># x_cond = filtfilt(b, a, x_cond)</span>
-
-    <span class="c1"># Compute the z-scores</span>
-    <span class="n">x_cond</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_cond</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_cond</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x_cond</span><span class="p">)</span>
-
-    <span class="c1"># compute the absolute value of the Hilbert transform</span>
-    <span class="c1"># (i.e. the envelope)</span>
-    <span class="n">hfx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hilbert</span><span class="p">(</span><span class="n">x_cond</span><span class="p">))</span>
-
-    <span class="c1"># threshold the Hilbert envelope to create a</span>
-    <span class="c1"># thresholded mask</span>
-    <span class="n">thresh_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_cond</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
-    <span class="n">thresh_sig</span><span class="p">[</span><span class="n">hfx</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="c1"># Now get the lengths of each detected HFO</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="c1"># indices where the threshold was met</span>
-    <span class="n">thresh_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">thresh_sig</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">gap_samp</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">gap_threshold</span> <span class="o">*</span> <span class="n">sfreq</span> <span class="o">/</span> <span class="n">l_freq</span><span class="p">)</span>
-
-    <span class="c1"># loop through all significant zscore time points</span>
-    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">start_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Move to the end of the detection</span>
-                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">thresh_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">stop_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                        <span class="c1"># Check for number of cycles</span>
-                        <span class="n">dur</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop_idx</span> <span class="o">-</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">sfreq</span>
-                        <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
-                        <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycle_threshold</span><span class="p">:</span>
-                            <span class="c1"># Carry the amplitude and frequency info</span>
-                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
-                                             <span class="nb">max</span><span class="p">(</span><span class="n">hfx</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">])])</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># Check for gap</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">gap_samp</span><span class="p">:</span>
-                        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">stop_idx</span> <span class="o">=</span> <span class="n">thresh_idxs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                        <span class="c1"># Check for number of cycles</span>
-                        <span class="n">dur</span> <span class="o">=</span> <span class="p">(</span><span class="n">stop_idx</span> <span class="o">-</span> <span class="n">start_idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">sfreq</span>
-                        <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
-                        <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycle_threshold</span><span class="p">:</span>
-                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
-                                             <span class="nb">max</span><span class="p">(</span><span class="n">hfx</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">])])</span>
-                        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-                        <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">tdetects</span>
-
-
-<span class="k">def</span> <span class="nf">_run_detect_branch</span><span class="p">(</span><span class="n">detects</span><span class="p">,</span> <span class="n">det_idx</span><span class="p">,</span> <span class="n">HFO_outline</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Process detections from hilbert detector.</span>
-
-<span class="sd">    HFO_outline structure:</span>
-<span class="sd">    [0] - bands in which the detection happened</span>
-<span class="sd">    [1] - starts for each band</span>
-<span class="sd">    [2] - stop for each band</span>
-<span class="sd">    [3] -</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">HFO_outline</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="p">:]))</span>
-
-    <span class="c1"># Create a subset for next band</span>
-    <span class="n">next_band_idcs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">detects</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">((</span><span class="n">next_band_idcs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="c1"># No detects in band - finish the branch</span>
-        <span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Set the processed detect to zero</span>
-        <span class="k">return</span> <span class="n">HFO_outline</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Get overllaping detects</span>
-        <span class="k">for</span> <span class="n">next_det_idx</span> <span class="ow">in</span> <span class="n">next_band_idcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">([</span><span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span>
-                                                                      <span class="mi">2</span><span class="p">]],</span>
-                                        <span class="p">[</span><span class="n">detects</span><span class="p">[</span><span class="n">next_det_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                                         <span class="n">detects</span><span class="p">[</span><span class="n">next_det_idx</span><span class="p">,</span>
-                                                 <span class="mi">2</span><span class="p">]]):</span>
-                <span class="c1"># Go up the tree</span>
-                <span class="n">_run_detect_branch</span><span class="p">(</span><span class="n">detects</span><span class="p">,</span> <span class="n">next_det_idx</span><span class="p">,</span> <span class="n">HFO_outline</span><span class="p">)</span>
-
-        <span class="n">detects</span><span class="p">[</span><span class="n">det_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="n">HFO_outline</span>
 
 
 <span class="k">class</span> <span class="nc">HilbertDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>  <span class="c1"># noqa</span>
@@ -357,140 +230,122 @@
 <span class="sd">    Jun. 2014.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">l_freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">band_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>
-                 <span class="n">n_bands</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">cycle_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                 <span class="n">gap_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                 <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">scoring_func</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;f1&#39;</span><span class="p">,</span>
-                 <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">threshold</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                 <span class="n">filter_band</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+                 <span class="n">band_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+                 <span class="n">cycle_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">scoring_func</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;f1&#39;</span><span class="p">,</span>
+                 <span class="n">hfo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hfo&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">band_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ACCEPTED_BAND_METHODS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Band method </span><span class="si">{</span><span class="n">band_method</span><span class="si">}</span><span class="s1"> is not &#39;</span>
                              <span class="sa">f</span><span class="s1">&#39;an acceptable parameter. Please use &#39;</span>
                              <span class="sa">f</span><span class="s1">&#39;one of </span><span class="si">{</span><span class="n">ACCEPTED_BAND_METHODS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">HilbertDetector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">threshold</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">scoring_func</span><span class="o">=</span><span class="n">scoring_func</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreq</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span> <span class="o">=</span> <span class="n">l_freq</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span> <span class="o">=</span> <span class="n">h_freq</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">band_method</span> <span class="o">=</span> <span class="n">band_method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_bands</span> <span class="o">=</span> <span class="n">n_bands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="o">=</span> <span class="n">filter_band</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_name</span> <span class="o">=</span> <span class="n">hfo_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cycle_threshold</span> <span class="o">=</span> <span class="n">cycle_threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gap_threshold</span> <span class="o">=</span> <span class="n">gap_threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override ``Detector.fit`` function.&quot;&quot;&quot;</span>
-        <span class="n">n_chs</span><span class="p">,</span> <span class="n">n_times</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">l_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lower frequency band for HFO definition.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># store all hfo occurrences as an array of channels X windows</span>
-        <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">n_times</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">)</span> <span class="o">/</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_chs</span><span class="p">,</span> <span class="n">n_windows</span><span class="p">))</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">h_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Higher frequency band for HFO definition.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># store contiguous hfos as one occurrence, so we store</span>
-        <span class="c1"># them as a dictionary of lists</span>
-        <span class="n">chs_hfos</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_compute_hfo_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo_statistic`` function.&quot;&quot;&quot;</span>
+        <span class="c1"># Override the attribute set by fit so we actually slide on freq</span>
+        <span class="c1"># bands not time windows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_size</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># bandpass the signal using FIR filter</span>
-        <span class="c1"># X = mne.filter.filter_data(X, sfreq=self.sfreq,</span>
-        <span class="c1">#                            l_freq=self.l_freq,</span>
-        <span class="c1">#                            h_freq=self.h_freq, picks=picks,</span>
-        <span class="c1">#                            method=&#39;iir&#39;, verbose=self.verbose)</span>
-
-        <span class="c1"># Construct filter cut offs that are either logarithmically</span>
-        <span class="c1"># or linearly spaced</span>
+        <span class="c1"># Determine the splits for freq bands</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_method</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
-            <span class="n">low_fc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span><span class="p">)</span>
-            <span class="n">high_fc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">)</span>
+            <span class="n">low_fc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">high_fc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">high_fc</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_bands</span><span class="p">)</span>
-            <span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[(</span><span class="n">freq_cutoffs</span> <span class="o">&gt;</span> <span class="n">low_fc</span><span class="p">)</span> <span class="o">&amp;</span>
-                                        <span class="p">(</span><span class="n">freq_cutoffs</span> <span class="o">&lt;</span> <span class="n">high_fc</span><span class="p">)]</span>
-            <span class="n">freq_span</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq_cutoffs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[(</span><span class="n">freq_cutoffs</span> <span class="o">&gt;</span> <span class="n">low_fc</span><span class="p">)</span> <span class="o">&amp;</span>
+                                             <span class="p">(</span><span class="n">freq_cutoffs</span> <span class="o">&lt;</span> <span class="n">high_fc</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_span</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_cutoffs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_method</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
-            <span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span><span class="p">)</span>
-            <span class="n">freq_span</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_freq</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_freq</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_span</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
 
-        <span class="c1"># run detector on all channels</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">):</span>
-            <span class="n">sig</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">hfo_event_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_span</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_times</span><span class="p">))</span>
 
-            <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># call the detector per channel in series</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)):</span>
+                <span class="n">sig</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
 
-            <span class="c1"># run detection algorithm possibly in parallel on this channel</span>
-            <span class="n">tdetects_concat</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># for a single job, we don&#39;t need joblib</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
-                    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="kn">from</span> <span class="nn">sklearn.externals.joblib</span> <span class="kn">import</span> <span class="p">(</span>
-                                <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-                            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;joblib not installed. &#39;</span>
-                                 <span class="s1">&#39;Cannot run in parallel.&#39;</span><span class="p">)</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">1</span>
-
-                <span class="c1"># Run the filters in their threads and return the result</span>
-                <span class="n">iter_mat</span> <span class="o">=</span> <span class="p">[(</span><span class="n">sig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span>
-                             <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                             <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">cycle_threshold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gap_threshold</span><span class="p">,</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">)]</span>
-                <span class="n">tdetects_concat</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">)(</span>
-                    <span class="n">delayed</span><span class="p">(</span><span class="n">_band_z_score_detect</span><span class="p">)(</span>
-                        <span class="o">*</span><span class="n">iter_args</span>
-                    <span class="p">)</span>
-                    <span class="k">for</span> <span class="n">iter_args</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">iter_mat</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;HFO-first-phase&#39;</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_compute_frq_band_detection</span><span class="p">(</span>
+                        <span class="n">sig</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;hilbert&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># call the detector per channel in parallel based on n_jobs</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># OPTIMIZE - check if there is a better way to do this</span>
-                <span class="c1"># (S transform?+ spectra zeroing?)</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;HFO-first-phase&#39;</span><span class="p">):</span>
-                    <span class="n">bot</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                    <span class="n">top</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span>
 
-                    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">sig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfreq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">bot</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">cycle_threshold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gap_threshold</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+                <span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compute_sliding_window_detection</span><span class="p">)(</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;hilbert&#39;</span>
+                <span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+                <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-                    <span class="n">tdetects_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_band_z_score_detect</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">hfo_event_arr</span>
 
-            <span class="c1"># post process detected HFO events by detecting outline of events</span>
-            <span class="n">detects</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">det</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">tdetects_concat</span>
-                                <span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">band</span><span class="p">])</span>
-            <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">detects</span><span class="p">):</span>
-                <span class="k">while</span> <span class="nb">sum</span><span class="p">(</span><span class="n">detects</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-                    <span class="n">det_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">detects</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">HFO_outline</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">outlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_run_detect_branch</span><span class="p">(</span><span class="n">detects</span><span class="p">,</span>
-                                                                <span class="n">det_idx</span><span class="p">,</span>
-                                                                <span class="n">HFO_outline</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">_threshold_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._threshold_statistic`` function.&quot;&quot;&quot;</span>
+        <span class="n">hfo_threshold_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                     <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)):</span>
+                <span class="n">sig</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">hfo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold</span><span class="p">(</span>
+                    <span class="n">sig</span><span class="p">,</span> <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;hilbert&#39;</span>
+                <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">))</span>
+                <span class="n">hfo_threshold_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">hfo</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)(</span>
+                <span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold</span><span class="p">)(</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;hilbert&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
+                <span class="n">hfo_threshold_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">hfo_threshold_arr</span>
 
-            <span class="c1"># Get the detections</span>
-            <span class="k">for</span> <span class="n">outline</span> <span class="ow">in</span> <span class="n">outlines</span><span class="p">:</span>
-                <span class="n">start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outline</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
-                <span class="n">stop</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">outline</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
-                <span class="n">freq_min</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
-                <span class="n">freq_max</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])]</span>
-                <span class="n">frequency_at_max</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span>
-                    <span class="nb">int</span><span class="p">(</span><span class="n">outline</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outline</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]),</span> <span class="mi">0</span><span class="p">])]</span>
-                <span class="n">max_amplitude</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">outline</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">])</span>
-
-                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span>
-                               <span class="n">freq_min</span><span class="p">,</span> <span class="n">freq_max</span><span class="p">,</span> <span class="n">frequency_at_max</span><span class="p">,</span>
-                               <span class="n">max_amplitude</span><span class="p">))</span>
-            <span class="n">chs_hfos</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">hfo_event_arr_</span> <span class="o">=</span> <span class="n">hfo_event_arr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chs_hfos_</span> <span class="o">=</span> <span class="n">chs_hfos</span>
-        <span class="k">return</span> <span class="n">chs_hfos</span>
+    <span class="k">def</span> <span class="nf">_post_process_ch_hfos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detections</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._post_process_ch_hfos`` function.&quot;&quot;&quot;</span>
+        <span class="n">hfo_events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_contiguous_ch_detections</span><span class="p">(</span>
+            <span class="n">detections</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;freq-bands&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hfo_events</span>
 
 
 <div class="viewcode-block" id="LineLengthDetector"><a class="viewcode-back" href="../../generated/mne_hfo.LineLengthDetector.html#mne_hfo.LineLengthDetector">[docs]</a><span class="k">class</span> <span class="nc">LineLengthDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
@@ -575,8 +430,8 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo`` function.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_compute_hfo_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo_statistic`` function.&quot;&quot;&quot;</span>
         <span class="c1"># store all hfo occurrences as an array of channels X windows</span>
         <span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">,</span>
                                          <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
@@ -614,7 +469,23 @@
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
                 <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">hfo_event_arr</span></div>
+        <span class="k">return</span> <span class="n">hfo_event_arr</span>
+
+    <span class="k">def</span> <span class="nf">_threshold_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._threshold_statistic`` function.&quot;&quot;&quot;</span>
+        <span class="n">hfo_threshold_arr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)):</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold</span><span class="p">(</span>
+                <span class="n">sig</span><span class="p">,</span> <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
+            <span class="p">)</span>
+            <span class="n">hfo_threshold_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hfo_threshold_arr</span>
+
+    <span class="k">def</span> <span class="nf">_post_process_ch_hfos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detections</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._post_process_ch_hfos`` function.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_contiguous_ch_detections</span><span class="p">(</span>
+            <span class="n">detections</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;time-windows&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RMSDetector"><a class="viewcode-back" href="../../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector">[docs]</a><span class="k">class</span> <span class="nc">RMSDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
@@ -684,14 +555,8 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_band</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_compute_hfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo`` function.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        hfo_event_arr : np.ndarray (channels x windows)</span>
-<span class="sd">            The HFO metric value within each window per channel.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_compute_hfo_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._compute_hfo`` function.&quot;&quot;&quot;</span>
         <span class="c1"># store all hfo occurrences as an array of channels X windows</span>
         <span class="n">n_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_n_wins</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_size</span><span class="p">,</span>
                                          <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
@@ -727,7 +592,23 @@
             <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)):</span>
                 <span class="n">hfo_event_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">hfo_event_arr</span></div>
+        <span class="k">return</span> <span class="n">hfo_event_arr</span>
+
+    <span class="k">def</span> <span class="nf">_threshold_statistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._threshold_statistic`` function.&quot;&quot;&quot;</span>
+        <span class="n">hfo_threshold_arr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chs</span><span class="p">)):</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold</span><span class="p">(</span>
+                <span class="n">sig</span><span class="p">,</span> <span class="n">threshold_method</span><span class="o">=</span><span class="s1">&#39;std&#39;</span>
+            <span class="p">)</span>
+            <span class="n">hfo_threshold_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hfo_threshold_arr</span>
+
+    <span class="k">def</span> <span class="nf">_post_process_ch_hfos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detections</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override ``Detector._post_process_ch_hfos`` function.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_contiguous_ch_detections</span><span class="p">(</span>
+            <span class="n">detections</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;time-windows&quot;</span><span class="p">)</span></div>
 </pre></div>
 
               </div>
@@ -751,7 +632,7 @@
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

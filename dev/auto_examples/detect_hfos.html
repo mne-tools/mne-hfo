@@ -224,7 +224,7 @@ Specifically, we will follow these steps:</p>
 <ol class="arabic simple">
 <li><p>Create some simulated data and artificially simulate a few HFOs</p></li>
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1240.gce34c1cee7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1241.g6c15d95c2a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk and read it in again.</p></li>
 </ol>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Authors: Adam Li &lt;adam2392@gmail.com&gt;</span>
@@ -325,7 +325,10 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1 [00:00&lt;?, ?it/s]
-100%|##########| 1/1 [00:00&lt;00:00, 100.22it/s]
+100%|##########| 1/1 [00:00&lt;00:00, 86.73it/s]
+
+  0%|          | 0/1 [00:00&lt;?, ?it/s]
+100%|##########| 1/1 [00:00&lt;00:00, 2714.76it/s]
    onset  ...  trial_type
 0    1.0  ...      hfo_A1
 1    7.0  ...      hfo_A1
@@ -360,13 +363,13 @@ according to the BIDS-Derivatives specification.</p>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Beginning timestamp: 2021-04-05 21:17:14.848273+00:00
-Got end timestamp of: 2021-04-05 21:17:21.848273+00:00
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Beginning timestamp: 2021-04-06 16:13:10.383655+00:00
+Got end timestamp of: 2021-04-06 16:13:17.383655+00:00
 Found HFO rate per s for A1 as 0.2857142857142857
 defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;A1&#39;: 0.2857142857142857})
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.248 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.612 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-detect-hfos-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b0a7e07d3abf35bc8e62af473976ade1/detect_hfos.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">detect_hfos.py</span></code></a></p>
@@ -403,7 +406,7 @@ defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;A1&#39;: 0.2857142857142857})
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-05.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

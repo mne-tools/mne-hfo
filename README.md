@@ -1,8 +1,8 @@
-[![Codecov](https://codecov.io/gh/adam2392/mne-hfo/branch/master/graph/badge.svg)](https://codecov.io/gh/adam2392/mne-hfo)
-![.github/workflows/main.yml](https://github.com/adam2392/mne-hfo/workflows/.github/workflows/main.yml/badge.svg)
-[![CircleCI](https://circleci.com/gh/adam2392/mne-hfo.svg?style=svg)](https://circleci.com/gh/adam2392/mne-hfo)
+[![Codecov](https://codecov.io/gh/mne-tools/mne-hfo/branch/master/graph/badge.svg)](https://codecov.io/gh/adam2392/mne-hfo)
+![.github/workflows/main.yml](https://github.com/mne-tools/mne-hfo/workflows/.github/workflows/main.yml/badge.svg)
+[![CircleCI](https://circleci.com/gh/mne-tools/mne-hfo.svg?style=svg)](https://circleci.com/gh/mne-tools/mne-hfo)
 ![License](https://img.shields.io/pypi/l/mne-bids)
-[![Code Maintainability](https://api.codeclimate.com/v1/badges/3afe97439ec5133ce267/maintainability)](https://codeclimate.com/github/adam2392/mne-hfo/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fa5d3f4435c197409e56/maintainability)](https://codeclimate.com/github/mne-tools/mne-hfo/maintainability)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mne-hfo)
 [![Documentation Status](https://readthedocs.org/projects/mne-hfo/badge/?version=latest)](https://mne-hfo.readthedocs.io/en/latest/?badge=latest)
@@ -12,11 +12,8 @@ MNE-HFO
 =======
 
 MNE-HFO is a Python package that computes estimates of high-frequency oscillations in iEEG data stored in
-the [BIDS](https://bids.neuroimaging.io/)-compatible datasets with the help of
+[BIDS](https://bids.neuroimaging.io/)-compatible datasets with the help of
 [MNE-Python](https://mne.tools/stable/index.html).
-
-The initial code was adapted and taken from: https://gitlab.com/icrc-bme/epycom
-to turn into a sklearn-compatible API that works with ``mne-python``. Additional algorithms and functionality are added.
 
 NOTE: This is currently in ALPHA stage, and we are looking for contributors. Please get in touch via Issues tab if you
 would like to contribute.
@@ -41,8 +38,8 @@ robust, and facilitate data and code sharing with co-workers and collaborators.
 
 Installation
 ------------
-Installation is RECOMMENDED via a python virtual environment, using ``pipenv``. The package is hosted on ``pypi``, which
-can be installed via pip, or pipenv.
+Installation can be done via a python virtual environment, using ``pipenv``. The package is hosted on ``pypi``, which
+can be installed via pip, or pipenv. For additional installation instructions, see [CONTRIBUTING.md](https://github.com/mne-tools/mne-hfo/blob/master/CONTRIBUTING.md) document.
 
     pip install mne-hfo
 
@@ -58,8 +55,8 @@ Documentation and Usage
 
 The documentation can be found under the following links:
 
-- for the [stable release](https://mne-hfo.readthedocs.io/en/stable/index.html)
-- for the [latest (development) version](https://mne-hfo.readthedocs.io/en/latest/index.html)
+- for the [stable release](https://mne.tools/mne-hfo/)
+- for the [latest (development) version](https://mne.tools/mne-hfo/dev/index.html)
 
 Note: Functionality has been tested on MacOSX and Ubuntu.
 
@@ -162,6 +159,13 @@ For testing and demo purposes, we use the dataset in [1]. If you use the demo/te
 If you use ``mne-hfo`` itself in your research, please cite the paper (TBD).
 
     Adam Li. (2021, February 1). MNE-HFO: An open-source Python implementation of HFO detection algorithms (Version 0.0.1). Zenodo. http://doi.org/10.5281/zenodo.4485036
+
+History and state of development
+--------------------------------
+
+The initial code was adapted and taken from: https://gitlab.com/icrc-bme/epycom
+to turn into a sklearn-compatible API that works with ``mne-python``. Additional algorithms 
+and functionality were added.
 
 References
 ----------

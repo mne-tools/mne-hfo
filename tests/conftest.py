@@ -112,3 +112,29 @@ def create_testing_data():
         data += y
 
     return data
+
+
+@pytest.fixture(scope="module")
+def create_testing_zscore_data():
+    """Create testing data with certain points over a threshold."""
+    # Create 30 second window
+    fs = 2000
+    dur = 30
+    l_freq = 81
+    numcycles = dur * l_freq
+    N = int((fs * numcycles) / l_freq)
+    cycle_len = int(N / numcycles)
+    # Create z-score data with all values less than threshold of 3
+    z_base = 3 * np.random.rand(N, 1).flatten()
+    # Modify 5-cycles worth of values to be over threshold
+    # i.e. a valid HFO
+    valid_cycles = cycle_len * 5
+    hfo_start_ind = np.random.randint(20, N - valid_cycles)
+    hfo_end_ind = hfo_start_ind + valid_cycles
+    z_base[hfo_start_ind:hfo_end_ind] += 3
+    # Modify < 1 cycle worth of values to be over threshold
+    # i.e. not a valid HFO
+    non_hfo_start_ind = 10
+    non_hfo_end_ind = 20
+    z_base[non_hfo_start_ind:non_hfo_end_ind] += 3
+    return z_base, [hfo_start_ind, hfo_end_ind - 1]

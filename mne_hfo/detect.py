@@ -105,7 +105,7 @@ class HilbertDetector(Detector):  # noqa
             freq_cutoffs = np.logspace(0, np.log10(high_fc), self.n_bands)
             self.freq_cutoffs = freq_cutoffs[(freq_cutoffs > low_fc) &
                                              (freq_cutoffs < high_fc)]
-            self.freq_span = len(freq_cutoffs) - 1
+            self.freq_span = len(self.freq_cutoffs) - 1
         elif self.band_method == 'linear':
             self.freq_cutoffs = np.arange(self.filter_band[0],
                                           self.filter_band[1])

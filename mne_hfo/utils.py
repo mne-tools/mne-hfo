@@ -272,10 +272,24 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         # compute z-score of data
         signal = (signal - np.mean(signal)) / np.std(signal)
 
+        # Chunk the signal into 30 second windows and compute the Hilbert
+        # to save memory
+        hfx = np.empty(signal.shape)
+        n_times = len(hfx)
+        win_size = int(sfreq * 30)
+        n_wins = int(np.ceil(n_times / win_size))
+        for win in range(n_wins):
+            start_samp = win * win_size
+            end_samp = (win + 1) * win_size
+            if win == n_wins:
+                end_samp = n_times
+            sig = signal[start_samp:end_samp]
+            hfx[start_samp:end_samp] = np.abs(hilbert(sig))
+
         # return the absolute value of the Hilbert transform.
         # (i.e. the envelope)
-        hfx = np.abs(hilbert(signal))
         hfx_bands.append(hfx)
+        hfx = None
     return hfx_bands
 
 
@@ -292,7 +306,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     kwargs : dict
         Additional model parameters needed to apply hilbert threshold.
         Must have n_times, sfreq, filter_band, freq_cutoffs,
-         freq_span, and n_jobs.
+        freq_span, and n_jobs.
 
     Returns
     -------
@@ -364,10 +378,10 @@ def apply_std(metric, threshold_dict, kwargs):
         Values to apply the threshold to
     threshold_dict : dict
         Dictionary of threshold values. Should just have thresh,
-         which is the number of standard deviations to check against
+        which is the number of standard deviations to check against
     kwargs : dict
         Additional key-word args from the detector needed to
-         apply the threshold.
+        apply the threshold.
         Step_size, win_size, and n_times are required keys.
 
     Returns
@@ -376,7 +390,6 @@ def apply_std(metric, threshold_dict, kwargs):
         List of detected events that pass the threshold
 
     """
-    print(f"Metric: {metric}, shape: {metric.shape}")
     # determine threshold value
     threshold = threshold_dict["thresh"]
     if threshold is None:

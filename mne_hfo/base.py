@@ -102,7 +102,7 @@ class Detector(BaseEstimator):
                                   'needs to be implemented.')
 
     def _post_process_ch_hfos(self, hfo_event_array, idx):
-        """Post process one channel's HFO events.
+        """Post process one channel's HFO events generally after thresholding.
 
         Joins contiguously detected HFOs as one event.
 
@@ -417,7 +417,7 @@ class Detector(BaseEstimator):
         self.df_ = annot_df
 
     def _compute_sliding_window_detection(self, sig, method):
-        """Compute detections on an individual channel data.
+        """Compute detections on an individual channel data using a sliding window.
 
         If the method does not use sliding windows, make win_size
         equal to the length of the dataset.
@@ -425,9 +425,9 @@ class Detector(BaseEstimator):
         Parameters
         ----------
         sig: np.array
-            Data from a single channel
+            Data (1D array) from a single channel
         method: str
-            Method used to compute the detection
+            Method used to compute the detection. Can be one of ``'line_length', 'rms', 'hilbert'``.
 
         Returns
         -------
@@ -492,7 +492,7 @@ class Detector(BaseEstimator):
         detections : List(tuples)
             List of raw hfo detected events
         method : str
-            Method to use to merge the detections.
+            Method to use to merge the detections. Can be one of ``'time-windows', 'freq-bands'``.
 
         Returns
         -------

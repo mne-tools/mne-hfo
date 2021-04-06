@@ -125,7 +125,7 @@ def create_testing_zscore_data():
     N = int((fs * numcycles) / l_freq)
     cycle_len = int(N / numcycles)
     # Create z-score data with all values less than threshold of 3
-    z_base = 3*np.random.rand(N, 1).flatten()
+    z_base = 3 * np.random.rand(N, 1).flatten()
     # Modify 5-cycles worth of values to be over threshold
     # i.e. a valid HFO
     valid_cycles = cycle_len * 5
@@ -137,4 +137,4 @@ def create_testing_zscore_data():
     non_hfo_start_ind = 10
     non_hfo_end_ind = 20
     z_base[non_hfo_start_ind:non_hfo_end_ind] += 3
-    return z_base, [hfo_start_ind, hfo_end_ind-1]
+    return z_base, [hfo_start_ind, hfo_end_ind - 1]

@@ -84,6 +84,7 @@ pep:
 build-doc:
 	cd docs; make clean
 	cd docs; make html
+	cd docs; make view
 
 build-pipy:
 	python setup.py sdist bdist_wheel
@@ -92,5 +93,8 @@ test-pipy:
 	twine check dist/*
 	twine upload --repository testpypi dist/*
 
+# upload-pipy:
+#	# twine upload dist/*
+
 upload-pipy:
-	twine upload dist/*
+	python setup.py sdist bdist_egg register upload

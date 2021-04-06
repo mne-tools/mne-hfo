@@ -427,7 +427,8 @@ class Detector(BaseEstimator):
         sig: np.array
             Data (1D array) from a single channel
         method: str
-            Method used to compute the detection. Can be one of ``'line_length', 'rms', 'hilbert'``.
+            Method used to compute the detection. Can be one of
+            ``'line_length', 'rms', 'hilbert'``.
 
         Returns
         -------
@@ -492,7 +493,8 @@ class Detector(BaseEstimator):
         detections : List(tuples)
             List of raw hfo detected events
         method : str
-            Method to use to merge the detections. Can be one of ``'time-windows', 'freq-bands'``.
+            Method to use to merge the detections. Can be one of
+            ``'time-windows', 'freq-bands'``.
 
         Returns
         -------

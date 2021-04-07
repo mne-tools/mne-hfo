@@ -1,3 +1,5 @@
+from multiprocessing import cpu_count
+
 from typing import Union
 
 import mne
@@ -60,7 +62,7 @@ class Detector(BaseEstimator):
         self.verbose = verbose
         self.n_jobs = n_jobs
 
-    def _compute_hfo_statistic(self, X, picks):
+    def _compute_hfo_statistic(self, X):
         """Compute HFO statistic.
 
         Takes a sliding window approach and computes the existence
@@ -70,10 +72,8 @@ class Detector(BaseEstimator):
 
         Parameters
         ----------
-        X : np.ndarray
-            EEG data matrix (n_chs, n_times).
-        picks : np.ndarray | list | None
-            Corresponds to ``picks`` in mne-python.
+        X : np.array
+            EEG data array for single channel: N = n_times.
 
         Returns
         -------
@@ -325,22 +325,41 @@ class Detector(BaseEstimator):
                  f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
                  f'Please use with caution.')
 
-        # compute HFO related statistic for the detector
-        hfo_statistic_arr = self._compute_hfo_statistic(X)
+        chs_hfos = {}
+        if self.n_jobs == 1:
+            for idx in tqdm(range(self.n_chs)):
+                sig = X[idx, :]
+                ch_name = self.ch_names[idx]
+                chs_hfos[ch_name] = self._fit_channel(sig, idx)
+
+        else:
+            if self.n_jobs == -1:
+                n_jobs = cpu_count()
+            else:
+                n_jobs = self.n_jobs
+
+            # run joblib parallelization over channels
+            results = Parallel(n_jobs=n_jobs)(
+                delayed(self._fit_channel())(
+                    X[idx, :], idx
+                ) for idx in tqdm(range(self.n_chs))
+            )
+            for idx in range(len(results)):
+                chs_hfos[self.ch_names[idx]] = results[idx]
+
+        self.chs_hfos_ = chs_hfos
+        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
+        return self
+
+    def _fit_channel(self, sig, idx):
+        hfo_statistic_arr = self._compute_hfo_statistic(sig)
+        self.hfo_event_arr_[idx, :] = hfo_statistic_arr
 
         # apply the threshold(s) to the statistic to get detections
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)
 
-        # merge contiguous detections into discrete hfo events
-        # store hfo event endpoints per channel
-        chs_hfos = {ch_name: self._post_process_ch_hfos(
-            hfo_detection_arr[idx], idx
-        ) for idx, ch_name in enumerate(self.ch_names)}
-
-        self.chs_hfos_ = chs_hfos
-        self.hfo_event_arr_ = hfo_statistic_arr
-        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
-        return self
+        ch_hfo = self._post_process_ch_hfos(hfo_detection_arr)
+        return ch_hfo
 
     def _apply_threshold(self, metric, threshold_method):
         """Apply the threshold(s) to the calculated metric for a single channel.

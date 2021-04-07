@@ -5,6 +5,8 @@ from typing import Union
 import mne
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed, cpu_count
+from tqdm import tqdm
 from mne.utils import warn
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
@@ -326,6 +328,10 @@ class Detector(BaseEstimator):
                  f'Please use with caution.')
 
         chs_hfos = {}
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        self.hfo_event_arr_ = np.empty((self.n_chs, n_windows))
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
@@ -340,7 +346,7 @@ class Detector(BaseEstimator):
 
             # run joblib parallelization over channels
             results = Parallel(n_jobs=n_jobs)(
-                delayed(self._fit_channel())(
+                delayed(self._fit_channel)(
                     X[idx, :], idx
                 ) for idx in tqdm(range(self.n_chs))
             )
@@ -358,7 +364,7 @@ class Detector(BaseEstimator):
         # apply the threshold(s) to the statistic to get detections
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)
 
-        ch_hfo = self._post_process_ch_hfos(hfo_detection_arr)
+        ch_hfo = self._post_process_ch_hfos(hfo_detection_arr, idx)
         return ch_hfo
 
     def _apply_threshold(self, metric, threshold_method):

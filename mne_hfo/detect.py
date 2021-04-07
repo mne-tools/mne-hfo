@@ -2,8 +2,6 @@ from typing import Tuple, Union
 
 import mne
 import numpy as np
-from joblib import Parallel, delayed, cpu_count
-from tqdm import tqdm
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS

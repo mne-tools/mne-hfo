@@ -109,8 +109,6 @@ class HilbertDetector(Detector):  # noqa
                                           self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
 
-
-
         hfo_event_arr = self._compute_frq_band_detection(X, method='hilbert')
 
         return hfo_event_arr
@@ -212,10 +210,7 @@ class LineLengthDetector(Detector):
 
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
-        # store all hfo occurrences as an array of channels X windows
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
+        # store all hfo occurrences as an array of length windows
 
         # bandpass the signal using FIR filter
         if self.filter_band is not None:
@@ -227,14 +222,13 @@ class LineLengthDetector(Detector):
         hfo_event_arr = self._compute_sliding_window_detection(
             X, method='line_length')
 
-
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
         hfo_threshold_arr = self._apply_threshold(
-                X, threshold_method='std'
-            )
+            X, threshold_method='std'
+        )
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
@@ -312,10 +306,7 @@ class RMSDetector(Detector):
 
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo`` function."""
-        # store all hfo occurrences as an array of channels X windows
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
+        # store all hfo occurrences as an array of length windows
 
         if self.l_freq is not None or self.h_freq is not None:
             # bandpass the signal using FIR filter
@@ -332,8 +323,8 @@ class RMSDetector(Detector):
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
         hfo_threshold_arr = self._apply_threshold(
-                X, threshold_method='std'
-            )
+            X, threshold_method='std'
+        )
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):

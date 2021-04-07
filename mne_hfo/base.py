@@ -1,5 +1,3 @@
-from multiprocessing import cpu_count
-
 from typing import Union
 
 import mne
@@ -318,7 +316,6 @@ class Detector(BaseEstimator):
         -----
         All detectors use a sliding window to compute HFOs in windows.
         """
-        # TODO: Refactor parallelization over all steps per channel to improve memory efficiency
         X, y = self._check_input_raw(X, y)
 
         sfreq = self.sfreq

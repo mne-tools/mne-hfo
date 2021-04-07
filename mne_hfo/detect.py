@@ -103,9 +103,9 @@ class HilbertDetector(Detector):  # noqa
             self.freq_cutoffs = np.arange(self.filter_band[0],
                                           self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
-        n_windows = 1
+        n_windows = self.n_times
         n_bands = len(self.freq_cutoffs) - 1
-        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        hfo_event_arr = np.empty((self.n_chs, n_bands, n_windows))
         return hfo_event_arr
 
     def _compute_hfo_statistic(self, X):

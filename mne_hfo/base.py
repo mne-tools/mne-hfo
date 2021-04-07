@@ -325,10 +325,7 @@ class Detector(BaseEstimator):
                  f'Please use with caution.')
 
         chs_hfos = {}
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
-        self.hfo_event_arr_ = np.empty((self.n_chs, n_windows))
+        self.hfo_event_arr_ = self.create_empty_event_arr()
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
@@ -356,7 +353,7 @@ class Detector(BaseEstimator):
 
     def _fit_channel(self, sig, idx):
         hfo_statistic_arr = self._compute_hfo_statistic(sig)
-        self.hfo_event_arr_[idx, :] = hfo_statistic_arr
+        self.hfo_event_arr_[idx, :, :] = hfo_statistic_arr
 
         # apply the threshold(s) to the statistic to get detections
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)

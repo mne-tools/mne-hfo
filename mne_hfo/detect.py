@@ -88,6 +88,13 @@ class HilbertDetector(Detector):  # noqa
             return None
         return self.filter_band[1]
 
+    def create_empty_event_arr(self):
+        """Override ``Detector._create_empty_event_arr`` function."""
+        n_windows = 1
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        return hfo_event_arr
+
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
         # Override the attribute set by fit so we actually slide on freq
@@ -208,6 +215,16 @@ class LineLengthDetector(Detector):
             return None
         return self.filter_band[1]
 
+    def create_empty_event_arr(self):
+        """Override ``Detector._create_empty_event_arr`` function."""
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        self.freq_cutoffs = np.array([self.filter_band[0], self.filter_band[1]])
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        return hfo_event_arr
+
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
         # store all hfo occurrences as an array of length windows
@@ -221,6 +238,12 @@ class LineLengthDetector(Detector):
 
         hfo_event_arr = self._compute_sliding_window_detection(
             X, method='line_length')
+
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
+        n_bands = len(self.freq_cutoffs) - 1
+        shape = (n_windows, n_bands)
+        hfo_event_arr = np.array(hfo_event_arr).reshape(shape)
 
         return hfo_event_arr
 
@@ -304,6 +327,16 @@ class RMSDetector(Detector):
             return None
         return self.filter_band[1]
 
+    def create_empty_event_arr(self):
+        """Override ``Detector._create_empty_event_arr`` function."""
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        self.freq_cutoffs = np.array([self.filter_band[0], self.filter_band[1]])
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        return hfo_event_arr
+
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of length windows
@@ -317,6 +350,12 @@ class RMSDetector(Detector):
 
         hfo_event_arr = self._compute_sliding_window_detection(
             X, method='rms')
+
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
+        n_bands = len(self.freq_cutoffs) - 1
+        shape = (n_windows, n_bands)
+        hfo_event_arr = np.array(hfo_event_arr).reshape(shape)
 
         return hfo_event_arr
 

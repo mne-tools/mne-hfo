@@ -21,6 +21,7 @@ Detectors
 
     LineLengthDetector
     RMSDetector
+    HilbertDetector
 
 BIDS-IO functions
 -----------------

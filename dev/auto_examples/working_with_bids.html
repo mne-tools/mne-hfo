@@ -238,7 +238,7 @@ MNE-HFO to detect HFOs. Specifically, we will follow these steps:</p>
 from the Fedele dataset [1].</p>
 <ol class="arabic simple" start="2">
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1241.g6c15d95c2a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1247.g3b4b193d57)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk according to <a class="reference external" href="https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#">BEP-021</a> and read it in again.</p></li>
 </ol>
 <section id="references">
@@ -372,12 +372,11 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/50 [00:00&lt;?, ?it/s]
- 40%|####      | 20/50 [00:00&lt;00:00, 139.54it/s]
- 88%|########8 | 44/50 [00:00&lt;00:00, 161.53it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 179.48it/s]
+ 56%|#####6    | 28/50 [00:00&lt;00:00, 150.00it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 210.47it/s]
 
   0%|          | 0/50 [00:00&lt;?, ?it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 8565.05it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 8428.05it/s]
     onset  ...  trial_type
 0  4.6250  ...    hfo_IAR2
 1  1.1750  ...    hfo_IAR3
@@ -455,7 +454,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 [5 rows x 5 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  2.197 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.591 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-working-with-bids-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b91a5f552e41ab2cf6ac33f460a74b78/working_with_bids.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">working_with_bids.py</span></code></a></p>
@@ -492,7 +491,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
     <footer class="footer mt-5 mt-md-0">
   <div class="container">
     <p>
-          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-06.<br/>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-07.<br/>
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>

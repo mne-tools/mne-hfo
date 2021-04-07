@@ -90,18 +90,6 @@ class HilbertDetector(Detector):  # noqa
 
     def create_empty_event_arr(self):
         """Override ``Detector._create_empty_event_arr`` function."""
-        n_windows = 1
-        n_bands = len(self.freq_cutoffs) - 1
-        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
-        return hfo_event_arr
-
-    def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo_statistic`` function."""
-        # Override the attribute set by fit so we actually slide on freq
-        # bands not time windows
-        self.n_windows = self.n_bands
-        self.win_size = 1
-        self.n_times = len(X)
 
         # Determine the splits for freq bands
         if self.band_method == 'log':
@@ -115,6 +103,18 @@ class HilbertDetector(Detector):  # noqa
             self.freq_cutoffs = np.arange(self.filter_band[0],
                                           self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
+        n_windows = 1
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        return hfo_event_arr
+
+    def _compute_hfo_statistic(self, X):
+        """Override ``Detector._compute_hfo_statistic`` function."""
+        # Override the attribute set by fit so we actually slide on freq
+        # bands not time windows
+        self.n_windows = self.n_bands
+        self.win_size = 1
+        self.n_times = len(X)
 
         hfo_event_arr = self._compute_frq_band_detection(X, method='hilbert')
 

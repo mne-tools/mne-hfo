@@ -40,6 +40,7 @@ Enhancements
 - Added notebook to demo use of GridSearchCV to optimize detector performance by `Patrick Myers`_ (:gh:`15`)
 - Added module to compare detections and notebook to demo usage by `Patrick Myers`_ (:gh:`22`)
 - Added initial implementation of HilbertDetector by `Patrick Myers`_ (:gh:`23`)
+- Improve memory utilization by allowing parallelization of the entire workflow per channel by `Patrick Myers`_ (:gh:`38`)
 
 API changes
 ^^^^^^^^^^^

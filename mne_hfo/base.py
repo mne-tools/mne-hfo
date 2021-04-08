@@ -330,7 +330,9 @@ class Detector(BaseEstimator):
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
                 ch_name = self.ch_names[idx]
-                chs_hfos[ch_name] = self._fit_channel(sig, idx)
+                hfo, statistic = self._fit_channel(sig, idx)
+                chs_hfos[ch_name] = hfo
+                self.hfo_event_arr[idx, :, :] = statistic
 
         else:
             if self.n_jobs == -1:
@@ -339,13 +341,14 @@ class Detector(BaseEstimator):
                 n_jobs = self.n_jobs
 
             # run joblib parallelization over channels
-            results = Parallel(n_jobs=n_jobs)(
+            hfos, statistics = zip(*Parallel(n_jobs=n_jobs)(
                 delayed(self._fit_channel)(
                     X[idx, :], idx
                 ) for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                chs_hfos[self.ch_names[idx]] = results[idx]
+            ))
+            for idx in range(len(hfos)):
+                chs_hfos[self.ch_names[idx]] = hfos[idx]
+                self.hfo_event_arr[idx, :, :] = statistics[idx]
 
         self.chs_hfos_ = chs_hfos
         self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
@@ -353,7 +356,6 @@ class Detector(BaseEstimator):
 
     def _fit_channel(self, sig, idx):
         hfo_statistic_arr = self._compute_hfo_statistic(sig)
-        self.hfo_event_arr_[idx, :, :] = hfo_statistic_arr
 
         # apply the threshold(s) to the statistic to get detections
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)

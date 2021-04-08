@@ -336,36 +336,16 @@ def apply_hilbert(metric, threshold_dict, kwargs):
                            f" You passed {kwargs}")
 
     tdetects = []
-    # If multiple jobs listed, call `_band_zscore_detect` in parallel
-    # across the multiple freq bands
-    if n_jobs > 1 or n_jobs == -1:
-        iter_mat = [(metric[i], sfreq, i,
-                     freq_cutoffs[i],
-                     freq_cutoffs[i + 1],
-                     n_times,
-                     cycles_threshold,
-                     gap_threshold,
-                     zscore_threshold)
-                    for i in range(freq_span)]
-        tdetects = Parallel(n_jobs=n_jobs)(
-            delayed(_band_zscore_detect)(
-                **iter_args
-            )
-            for iter_args in tqdm(iter_mat, unit="HFO-first-phase")
-        )
-    else:
-        # Else, run `_band_zscore_detect` serially across the
-        # multiple freq bands
-        for i in tqdm(range(freq_span), unit="HFO-first-phase"):
-            # Find bottom and top of the frequency band
-            bot = freq_cutoffs[i]
-            top = freq_cutoffs[i + 1]
-            # Make sure you only look at Hilbert envelope values
-            # for the specific freq band
-            tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot,
-                                                top, n_times, cycles_threshold,
-                                                gap_threshold,
-                                                zscore_threshold))
+    for i in tqdm(range(freq_span), unit="HFO-first-phase"):
+        # Find bottom and top of the frequency band
+        bot = freq_cutoffs[i]
+        top = freq_cutoffs[i + 1]
+        # Make sure you only look at Hilbert envelope values
+        # for the specific freq band
+        tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot,
+                                            top, n_times, cycles_threshold,
+                                            gap_threshold,
+                                            zscore_threshold))
     return tdetects
 
 

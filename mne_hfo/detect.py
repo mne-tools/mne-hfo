@@ -90,7 +90,6 @@ class HilbertDetector(Detector):  # noqa
 
     def create_empty_event_arr(self):
         """Override ``Detector._create_empty_event_arr`` function."""
-
         # Determine the splits for freq bands
         if self.band_method == 'log':
             low_fc = float(self.filter_band[0])
@@ -220,7 +219,11 @@ class LineLengthDetector(Detector):
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
-        self.freq_cutoffs = np.array([self.filter_band[0], self.filter_band[1]])
+        if self.filter_band is not None:
+            self.freq_cutoffs = np.array([self.filter_band[0],
+                                          self.filter_band[1]])
+        else:
+            self.freq_cutoffs = np.array([30, 500])
         n_bands = len(self.freq_cutoffs) - 1
         hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
         return hfo_event_arr
@@ -240,7 +243,8 @@ class LineLengthDetector(Detector):
             X, method='line_length')
 
         # reshape array to be n_wins x n_bands (i.e. 1)
-        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size,
+                                         self.n_times)
         n_bands = len(self.freq_cutoffs) - 1
         shape = (n_windows, n_bands)
         hfo_event_arr = np.array(hfo_event_arr).reshape(shape)
@@ -332,7 +336,11 @@ class RMSDetector(Detector):
         n_windows = self._compute_n_wins(self.win_size,
                                          self.step_size,
                                          self.n_times)
-        self.freq_cutoffs = np.array([self.filter_band[0], self.filter_band[1]])
+        if self.filter_band is not None:
+            self.freq_cutoffs = np.array([self.filter_band[0],
+                                          self.filter_band[1]])
+        else:
+            self.freq_cutoffs = np.array([30, 500])
         n_bands = len(self.freq_cutoffs) - 1
         hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
         return hfo_event_arr
@@ -352,7 +360,8 @@ class RMSDetector(Detector):
             X, method='rms')
 
         # reshape array to be n_wins x n_bands (i.e. 1)
-        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size,
+                                         self.n_times)
         n_bands = len(self.freq_cutoffs) - 1
         shape = (n_windows, n_bands)
         hfo_event_arr = np.array(hfo_event_arr).reshape(shape)

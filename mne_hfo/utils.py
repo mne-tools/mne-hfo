@@ -10,8 +10,6 @@ import numpy as np
 import pandas as pd
 from scipy.signal import hilbert
 
-from joblib import Parallel, delayed
-
 from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
 
 

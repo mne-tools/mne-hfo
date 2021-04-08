@@ -361,7 +361,7 @@ class Detector(BaseEstimator):
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)
 
         ch_hfo = self._post_process_ch_hfos(hfo_detection_arr, idx)
-        return ch_hfo
+        return ch_hfo, hfo_statistic_arr
 
     def _apply_threshold(self, metric, threshold_method):
         """Apply the threshold(s) to the calculated metric for a single channel.

@@ -67,4 +67,5 @@ Indices and tables
    Install<install>
    Use<use>
    API<api>
+   Tutorial<tutorial>
    Contribute<contribute>

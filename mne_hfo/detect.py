@@ -2,8 +2,6 @@ from typing import Tuple, Union
 
 import mne
 import numpy as np
-from joblib import Parallel, delayed, cpu_count
-from tqdm import tqdm
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS
@@ -90,14 +88,11 @@ class HilbertDetector(Detector):  # noqa
             return None
         return self.filter_band[1]
 
-    def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo_statistic`` function."""
-        # Override the attribute set by fit so we actually slide on freq
-        # bands not time windows
-        self.n_windows = self.n_bands
-        self.win_size = 1
-        self.n_times = X.shape[1]
+    def _create_empty_event_arr(self):
+        """Override ``Detector._create_empty_event_arr`` function.
 
+        Also sets the frequency span of the Hilbert detector.
+        """
         # Determine the splits for freq bands
         if self.band_method == 'log':
             low_fc = float(self.filter_band[0])
@@ -110,55 +105,27 @@ class HilbertDetector(Detector):  # noqa
             self.freq_cutoffs = np.arange(self.filter_band[0],
                                           self.filter_band[1])
             self.freq_span = (self.filter_band[1] - self.filter_band[0]) - 1
+        n_windows = self.n_times
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_bands, n_windows))
+        return hfo_event_arr
 
-        hfo_event_arr = np.empty((self.n_chs, self.freq_span, self.n_times))
+    def _compute_hfo_statistic(self, X):
+        """Override ``Detector._compute_hfo_statistic`` function."""
+        # Override the attribute set by fit so we actually slide on freq
+        # bands not time windows
+        self.n_windows = self.n_bands
+        self.win_size = 1
+        self.n_times = len(X)
 
-        # call the detector per channel in series
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
-
-                hfo_event_arr[idx, :, :] = \
-                    self._compute_frq_band_detection(
-                        sig, method='hilbert')
-        else:  # call the detector per channel in parallel based on n_jobs
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._compute_sliding_window_detection)(
-                    X[idx, :], 'hilbert'
-                ) for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                hfo_event_arr[idx, :] = results[idx]
+        hfo_event_arr = self._compute_frq_band_detection(X, method='hilbert')
 
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = np.empty((X.shape[0], X.shape[1]),
-                                     dtype='object')
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
-                hfo = np.transpose(np.array(self._apply_threshold(
-                    sig, threshold_method='hilbert'
-                ), dtype='object'))
-                hfo_threshold_arr[idx, :] = hfo
-        else:
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._apply_threshold)(
-                    X[idx, :], 'hilbert') for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                hfo_threshold_arr[idx, :] = results[idx]
+        hfo_threshold_arr = np.transpose(np.array(self._apply_threshold(
+            X, threshold_method='hilbert'), dtype='object'))
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
@@ -252,11 +219,7 @@ class LineLengthDetector(Detector):
 
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo_statistic`` function."""
-        # store all hfo occurrences as an array of channels X windows
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
-        hfo_event_arr = np.empty((self.n_chs, n_windows))
+        # store all hfo occurrences as an array of length windows
 
         # bandpass the signal using FIR filter
         if self.filter_band is not None:
@@ -265,41 +228,23 @@ class LineLengthDetector(Detector):
                                        h_freq=self.h_freq,
                                        method='iir', verbose=self.verbose)
 
-        # run HFO detection on all the channels
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
+        hfo_event_arr = self._compute_sliding_window_detection(
+            X, method='line_length')
 
-                # compute sliding window RMS
-                hfo_event_arr[idx, :] = \
-                    self._compute_sliding_window_detection(
-                        sig, method='line_length')
-        else:
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-
-            # run joblib parallelization over channels
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._compute_sliding_window_detection)(
-                    X[idx, :], 'line_length'
-                ) for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                hfo_event_arr[idx, :] = results[idx]
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size,
+                                         self.n_times)
+        n_bands = len(self.freq_cutoffs) - 1
+        shape = (n_windows, n_bands)
+        hfo_event_arr = np.array(hfo_event_arr).reshape(shape)
 
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = []
-        for idx in tqdm(range(self.n_chs)):
-            sig = X[idx, :]
-            arr = self._apply_threshold(
-                sig, threshold_method='std'
-            )
-            hfo_threshold_arr.append(arr)
+        hfo_threshold_arr = self._apply_threshold(
+            X, threshold_method='std'
+        )
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):
@@ -377,11 +322,7 @@ class RMSDetector(Detector):
 
     def _compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo`` function."""
-        # store all hfo occurrences as an array of channels X windows
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
-        hfo_event_arr = np.empty((self.n_chs, n_windows))
+        # store all hfo occurrences as an array of length windows
 
         if self.l_freq is not None or self.h_freq is not None:
             # bandpass the signal using FIR filter
@@ -390,39 +331,23 @@ class RMSDetector(Detector):
                                        h_freq=self.h_freq,
                                        method='fir', verbose=self.verbose)
 
-        # run HFO detection on all the channels
-        if self.n_jobs == 1:
-            for idx in tqdm(range(self.n_chs)):
-                sig = X[idx, :]
+        hfo_event_arr = self._compute_sliding_window_detection(
+            X, method='rms')
 
-                # compute sliding window RMS
-                hfo_event_arr[idx, :] = \
-                    self._compute_sliding_window_detection(sig, method='rms')
-        else:
-            if self.n_jobs == -1:
-                n_jobs = cpu_count()
-            else:
-                n_jobs = self.n_jobs
-
-            results = Parallel(n_jobs=n_jobs)(
-                delayed(self._compute_sliding_window_detection)(
-                    X[idx, :], 'rms'
-                ) for idx in tqdm(range(self.n_chs))
-            )
-            for idx in range(len(results)):
-                hfo_event_arr[idx, :] = results[idx]
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size,
+                                         self.n_times)
+        n_bands = len(self.freq_cutoffs) - 1
+        shape = (n_windows, n_bands)
+        hfo_event_arr = np.array(hfo_event_arr).reshape(shape)
 
         return hfo_event_arr
 
     def _threshold_statistic(self, X):
         """Override ``Detector._threshold_statistic`` function."""
-        hfo_threshold_arr = []
-        for idx in tqdm(range(self.n_chs)):
-            sig = X[idx, :]
-            arr = self._apply_threshold(
-                sig, threshold_method='std'
-            )
-            hfo_threshold_arr.append(arr)
+        hfo_threshold_arr = self._apply_threshold(
+            X, threshold_method='std'
+        )
         return hfo_threshold_arr
 
     def _post_process_ch_hfos(self, detections, idx):

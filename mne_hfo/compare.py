@@ -65,7 +65,7 @@ def compare_detectors(clf_1, clf_2, method='cohen-kappa'):
         # and merge these results
         df1_matches = overlap_df[overlap_df['true_index'].isin(df1_indices)]
         df2_matches = overlap_df[overlap_df['pred_index'].isin(df2_indices)]
-        df_match_total = pd.concat([df1_matches, df2_matches]).\
+        df_match_total = pd.concat([df1_matches, df2_matches]). \
             drop_duplicates().reset_index(drop=True)
 
         # Get the detections as a list

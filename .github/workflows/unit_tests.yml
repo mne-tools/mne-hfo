@@ -142,8 +142,9 @@ jobs:
         run: |
           python -m pytest . --cov=mne_hfo --cov-report=xml --cov-config=setup.cfg --verbose --ignore mne-python
         shell: bash
-#      - name: Upload coverage stats to codecov
-#        if: "matrix.os == 'ubuntu-latest'"
-#        uses: codecov/codecov-action@v1
-#        with:
-#          file: ./coverage.xml
+
+      - name: Upload coverage stats to codecov
+        if: "matrix.os == 'ubuntu-latest'"
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml

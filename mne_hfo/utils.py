@@ -3,12 +3,12 @@
 import json
 import os
 from os import path as op
-import mne
-from tqdm import tqdm
 
+import mne
 import numpy as np
 import pandas as pd
 from scipy.signal import hilbert
+from tqdm import tqdm
 
 from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
 

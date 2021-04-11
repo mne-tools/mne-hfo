@@ -4,10 +4,10 @@ import mne
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed, cpu_count
-from tqdm import tqdm
 from mne.utils import warn
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
+from tqdm import tqdm
 
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ
 from mne_hfo.io import create_events_df, events_to_annotations
@@ -61,6 +61,30 @@ class Detector(BaseEstimator):
         self.scoring_func = scoring_func
         self.verbose = verbose
         self.n_jobs = n_jobs
+
+    def _create_empty_event_arr(self):
+        """Create an empty HFO event array.
+
+        Assumes there is only one set of frequency cutoffs (i.e. one
+        frequency band) right now.
+
+        Returns
+        -------
+        hfo_event_arr : np.ndarray (n_chs, n_windows, n_bands)
+            An array that consists of channels X windows X
+            frequency bands.
+        """
+        n_windows = self._compute_n_wins(self.win_size,
+                                         self.step_size,
+                                         self.n_times)
+        if self.filter_band is not None:
+            self.freq_cutoffs = np.array([self.filter_band[0],
+                                          self.filter_band[1]])
+        else:
+            self.freq_cutoffs = np.array([30, 500])
+        n_bands = len(self.freq_cutoffs) - 1
+        hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
+        return hfo_event_arr
 
     def _compute_hfo_statistic(self, X):
         """Compute HFO statistic.
@@ -325,7 +349,7 @@ class Detector(BaseEstimator):
                  f'Please use with caution.')
 
         chs_hfos = {}
-        self.hfo_event_arr_ = self.create_empty_event_arr()
+        self.hfo_event_arr_ = self._create_empty_event_arr()
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]

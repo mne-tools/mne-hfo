@@ -282,6 +282,12 @@ class RMSDetector(Detector):
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
 
+    Notes
+    ----------
+
+    TODO later
+
+    
     References
     ----------
     [1] R. J. Staba, C. L. Wilson, A. Bragin, I. Fried, and J. Engel,

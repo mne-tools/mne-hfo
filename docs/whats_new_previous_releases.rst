@@ -57,7 +57,7 @@ API changes
 Requirements
 ^^^^^^^^^^^^
 
-- Updated requirement version for ``mne`` to ``v0.23+``, by `Adam Li`_ (:gh:``)
+- Updated requirement version for ``mne`` to ``v0.23+``, by `Adam Li`_ (:gh:`44`)
 - Added ``tqdm``, ``joblib`` and ``pandas`` to requirements, by `Adam Li`_ (:gh:`7`)
 
 Bug fixes

@@ -50,7 +50,7 @@ mne-hfo is a HFO-detection package in python.
    :caption: Useful Links
 
    mne-hfo @ PyPI <https://pypi.org/project/mne-hfo/>
-   Issue Tracker <https://github.com/adam2392/mne-hfo/issues>
+   Issue Tracker <https://github.com/mne-tools/mne-hfo/issues>
 
 
 Indices and tables

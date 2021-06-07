@@ -119,7 +119,7 @@ html_css_files = ['style.css']
 html_theme_options = {
     'icon_links': [
         dict(name='GitHub',
-             url='https://github.com/mne-tools/mne-bids',
+             url='https://github.com/mne-tools/mne-hfo',
              icon='fab fa-github-square'),
     ],
     # 'navbar_title': 'MNE-HFO',

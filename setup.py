@@ -38,9 +38,9 @@ DISTNAME = 'mne-hfo'
 DESCRIPTION = descr
 MAINTAINER = 'Adam Li'
 MAINTAINER_EMAIL = 'adam2392@gmail.com'
-URL = 'https://adam2392/mne-hfo/'
+URL = 'https://mne.tools/mne-hfo/stable/index.html'
 LICENSE = 'BSD (3-clause)'
-DOWNLOAD_URL = 'https://github.com/adam2392/mne-hfo.git'
+DOWNLOAD_URL = 'https://github.com/mne-tools/mne-hfo.git'
 VERSION = version
 
 if __name__ == "__main__":
@@ -56,8 +56,8 @@ if __name__ == "__main__":
           long_description_content_type='text/markdown',
           python_requires='~=3.6',
           install_requires=[
-              'mne >=0.22',
-              'mne-bids >= 0.6',
+              'mne >=0.23',
+              'mne-bids >= 0.7',
               'numpy >=1.14',
               'scipy >=0.18.1',
               'scikit-learn >= 0.23',
@@ -89,7 +89,7 @@ if __name__ == "__main__":
           packages=find_packages(),
           project_urls={
               'Documentation': URL,
-              'Bug Reports': 'https://github.com/adam2392/mne-hfo/issues',
-              'Source': 'https://github.com/adam2392/mne-hfo',
+              'Bug Reports': 'https://github.com/mne-tools/mne-hfo/issues',
+              'Source': 'https://github.com/mne-tools/mne-hfo',
           },
           )

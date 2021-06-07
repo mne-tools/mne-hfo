@@ -21,7 +21,6 @@ clean-build:
 
 clean-ctags:
 	rm -f tags
-	rm junit-results.xml
 
 clean: clean-build clean-so clean-ctags
 

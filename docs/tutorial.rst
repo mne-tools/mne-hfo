@@ -12,7 +12,7 @@ This tutorial presents several HFO detectors: the Line Length detector, Root Mea
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 0
 
    tutorials/basic_compute_hfos
    tutorials/compute_hfos_on_fedele_dataset

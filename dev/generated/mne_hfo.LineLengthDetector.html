@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.LineLengthDetector &#8212; MNE-HFO 0.2dev documentation</title>
+    <title>mne_hfo.LineLengthDetector &#8212; MNE-HFO 0.2 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.ee6fb81b276d6fba8a971ad8e9b95dd9.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -28,8 +28,8 @@
         code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
     </style>
 
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.c86189f1ce1b71a67eb6.js">
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -93,7 +93,7 @@
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference external nav-link" href="https://github.com/adam2392/mne-hfo/issues">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
   Issue Tracker
  </a>
 </li>
@@ -145,7 +145,7 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/mne-tools/mne-bids" rel="noopener" target="_blank" title="GitHub">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github-square"></i></span>
             <label class="sr-only">GitHub</label>
           </a>
@@ -165,14 +165,6 @@
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
-  <h3><a href="../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">mne_hfo.LineLengthDetector</a><ul>
-<li><a class="reference internal" href="#examples-using-mne-hfo-linelengthdetector">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.LineLengthDetector</span></code></a></li>
-</ul>
-</li>
-</ul>
-
             </div>
             
           
@@ -183,24 +175,9 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
 
 <nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#examples-using-mne-hfo-linelengthdetector">
-   Examples using
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     mne_hfo.LineLengthDetector
-    </span>
-   </code>
-  </a>
- </li>
-</ul>
-
+    
 </nav>
               </div>
               
@@ -223,8 +200,8 @@
   <div class="section" id="mne-hfo-linelengthdetector">
 <h1>mne_hfo.LineLengthDetector<a class="headerlink" href="#mne-hfo-linelengthdetector" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="mne_hfo.LineLengthDetector">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">LineLengthDetector</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(30,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoring_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hfo_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hfo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mne_hfo.</span></span><span class="sig-name descname"><span class="pre">LineLengthDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(30,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoring_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hfo_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hfo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#LineLengthDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.LineLengthDetector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Line-length detection algorithm.</p>
 <p>Original paper defines HFOS as “(HFOs), which we collectively
 term as all activity &gt;40 Hz (including gamma, high-gamma,
@@ -348,21 +325,21 @@ Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</p>
 </tr>
 </tbody>
 </table>
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.chs_hfos_dict">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">chs_hfos_dict</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.chs_hfos_dict" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.chs_hfos_dict">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">chs_hfos_dict</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.chs_hfos_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dictionary of HFO start/end points.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.chs_hfos_list">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">chs_hfos_list</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.chs_hfos_list" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.chs_hfos_list">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">chs_hfos_list</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.chs_hfos_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return list of HFO start/end points for each channel.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.fit">
-<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the model according to the optionally given training data.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -390,8 +367,8 @@ are the number of channels.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.fit_predict">
-<code class="sig-name descname"><span class="pre">fit_predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit_predict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.fit_predict">
+<span class="sig-name descname"><span class="pre">fit_predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.fit_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform fit on X and returns labels for X.</p>
 <p>Returns -1 for outliers and 1 for inliers.</p>
 <dl class="field-list">
@@ -414,8 +391,8 @@ are the number of channels.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.get_params">
-<code class="sig-name descname"><span class="pre">get_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.get_params" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get parameters for this estimator.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -434,21 +411,21 @@ contained subobjects that are estimators.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.h_freq">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">h_freq</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.h_freq" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.h_freq">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">h_freq</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.h_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Higher frequency band for HFO definition.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.hfo_df">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_df</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_df" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.hfo_df">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">hfo_df</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return HFO detections as a dataframe.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.hfo_event_arr">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_event_arr</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_event_arr" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.hfo_event_arr">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">hfo_event_arr</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_event_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>HFO event array.</p>
 <dl class="field-list">
 <dt class="field-odd">Returns</dt>
@@ -461,21 +438,21 @@ value of <code class="docutils literal notranslate"><span class="pre">1</span></
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.hfo_event_df">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_event_df</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_event_df" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.hfo_event_df">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">hfo_event_df</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.hfo_event_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return HFO detections as an event.tsv DataFrame.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.l_freq">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">l_freq</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.l_freq" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.l_freq">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">l_freq</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.l_freq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lower frequency band for HFO definition.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.predict">
-<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.predict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scikit-learn override predict function.</p>
 <p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
 <dl class="field-list">
@@ -497,8 +474,8 @@ and offset of the HFO event.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.score">
-<code class="sig-name descname"><span class="pre">score</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.score" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.score">
+<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the score of the HFO prediction.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -523,8 +500,8 @@ and offset of the HFO event.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.set_params">
-<code class="sig-name descname"><span class="pre">set_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.set_params" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.LineLengthDetector.set_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the parameters of this estimator.</p>
 <p>The method works on simple estimators as well as on nested objects
 (such as <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>). The latter have
@@ -546,19 +523,16 @@ possible to update each component of a nested object.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="mne_hfo.LineLengthDetector.step_size">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">step_size</span></code><a class="headerlink" href="#mne_hfo.LineLengthDetector.step_size" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="mne_hfo.LineLengthDetector.step_size">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">step_size</span></span><a class="headerlink" href="#mne_hfo.LineLengthDetector.step_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Step size of each window.</p>
 <p>Window increment over the samples of signal.</p>
 </dd></dl>
 
 </dd></dl>
 
-<div class="section" id="examples-using-mne-hfo-linelengthdetector">
-<span id="sphx-glr-backreferences-mne-hfo-linelengthdetector"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.LineLengthDetector</span></code><a class="headerlink" href="#examples-using-mne-hfo-linelengthdetector" title="Permalink to this headline">¶</a></h2>
-<div class="sphx-glr-clear"></div></div>
-</div>
+<span class="target" id="sphx-glr-backreferences-mne-hfo-linelengthdetector"></span></div>
 
 
               </div>
@@ -576,22 +550,21 @@ possible to update each component of a nested object.</p>
 
       </div>
     </div>
-    
-  <script src="../_static/js/index.c86189f1ce1b71a67eb6.js"></script>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-
-    <footer class="footer mt-5 mt-md-0">
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-13.<br/>
+    &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
 </p>
     </div>
     

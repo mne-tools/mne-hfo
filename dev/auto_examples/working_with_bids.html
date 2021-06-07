@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>02. Detect HFOs on BIDS Dataset &#8212; MNE-HFO 0.2dev documentation</title>
+    <title>02. Detect HFOs on BIDS Dataset &#8212; MNE-HFO 0.2 documentation</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
-  <link href="../_static/css/index.ee6fb81b276d6fba8a971ad8e9b95dd9.css" rel="stylesheet" />
+  <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
 
     
   <link rel="stylesheet"
@@ -28,8 +28,8 @@
         code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
     </style>
 
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
     <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
     <link rel="stylesheet" type="text/css" href="../_static/style.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.c86189f1ce1b71a67eb6.js">
+  <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -93,7 +93,7 @@
 </li>
 
 <li class="toctree-l1 nav-item">
- <a class="reference external nav-link" href="https://github.com/adam2392/mne-hfo/issues">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
   Issue Tracker
  </a>
 </li>
@@ -145,7 +145,7 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/mne-tools/mne-bids" rel="noopener" target="_blank" title="GitHub">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
             <span><i class="fab fa-github-square"></i></span>
             <label class="sr-only">GitHub</label>
           </a>
@@ -255,7 +255,7 @@ MNE-HFO to detect HFOs. Specifically, we will follow these steps:</p>
 from the Fedele dataset [1].</p>
 <ol class="arabic simple" start="2">
 <li><p>Run a few <code class="docutils literal notranslate"><span class="pre">mne_hfo.base.Detector</span></code> instances to detect HFOs</p></li>
-<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1297.g7d4757b4de)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
+<li><p>Format the detected HFOs as a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.3.0.dev0+1832.gdae5c5972a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></p></li>
 <li><p>Write to disk according to <a class="reference external" href="https://docs.google.com/document/d/1PmcVs7vg7Th-cGC-UrX8rAhKUHIzOI-uIOh69_mvdlw/edit#">BEP-021</a> and read it in again.</p></li>
 </ol>
 <div class="section" id="references">
@@ -383,15 +383,15 @@ is accessible via the <code class="docutils literal notranslate"><span class="pr
 <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.fit" title="mne_hfo.RMSDetector.fit" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">fit</span></a><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
 
 <span class="c1"># get the HFO results as an events.tsv DataFrame</span>
-<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.hfo_event_df" title="mne_hfo.RMSDetector.hfo_event_df" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-method"><span class="n">detector</span><span class="o">.</span><span class="n">hfo_event_df</span></a>
+<a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">event_df</span></a> <span class="o">=</span> <a href="../generated/mne_hfo.RMSDetector.html#mne_hfo.RMSDetector.hfo_event_df" title="mne_hfo.RMSDetector.hfo_event_df" class="sphx-glr-backref-module-mne_hfo sphx-glr-backref-type-py-property"><span class="n">detector</span><span class="o">.</span><span class="n">hfo_event_df</span></a>
 <span class="nb">print</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method"><span class="n">event_df</span><span class="o">.</span><span class="n">head</span></a><span class="p">())</span>
 </pre></div>
 </div>
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/50 [00:00&lt;?, ?it/s]
- 40%|####      | 20/50 [00:00&lt;00:00, 189.69it/s]
- 88%|########8 | 44/50 [00:00&lt;00:00, 172.74it/s]
-100%|##########| 50/50 [00:00&lt;00:00, 198.48it/s]
+ 24%|##4       | 12/50 [00:00&lt;00:00, 118.31it/s]
+ 56%|#####6    | 28/50 [00:00&lt;00:00, 111.82it/s]
+100%|##########| 50/50 [00:00&lt;00:00, 147.63it/s]
     onset  ...  trial_type
 0  4.6250  ...    hfo_IAR2
 1  1.1750  ...    hfo_IAR3
@@ -419,7 +419,7 @@ according to the BIDS-Derivatives specification.</p>
                                      <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;.tsv&#39;</span><span class="p">,</span>
                                      <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">intended_for</span></a> <span class="o">=</span> <a href="https://mne.tools/dev/generated/mne.io.BaseRaw.html#mne.io.BaseRaw.filenames" title="mne.io.BaseRaw.filenames" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-method"><span class="n">raw</span><span class="o">.</span><span class="n">filenames</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">intended_for</span></a> <span class="o">=</span> <a href="https://mne.tools/dev/generated/mne.io.BaseRaw.html#mne.io.BaseRaw.filenames" title="mne.io.BaseRaw.filenames" class="sphx-glr-backref-module-mne-io sphx-glr-backref-type-py-property"><span class="n">raw</span><span class="o">.</span><span class="n">filenames</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">write_annotations</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="pandas.DataFrame" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">annot_df</span></a><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="n">annot_path</span><span class="p">,</span>
                   <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">intended_for</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">intended_for</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">root</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">root</span></a><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><a href="https://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.head.html#pandas.DataFrame.head" title="pandas.DataFrame.head" class="sphx-glr-backref-module-pandas sphx-glr-backref-type-py-method"><span class="n">annot_df</span><span class="o">.</span><span class="n">head</span></a><span class="p">())</span>
@@ -469,7 +469,7 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 [5 rows x 5 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.475 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.203 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-working-with-bids-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/b91a5f552e41ab2cf6ac33f460a74b78/working_with_bids.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">working_with_bids.py</span></code></a></p>
@@ -498,22 +498,21 @@ The search_str was &quot;../data/sub-01/**/sub-01_ses-interictalsleep*coordsyste
 
       </div>
     </div>
-    
-  <script src="../_static/js/index.c86189f1ce1b71a67eb6.js"></script>
+  
+  <script src="../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
 
-
-    <footer class="footer mt-5 mt-md-0">
+  <footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
       <p class="copyright">
-    &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-04-13.<br/>
+    &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
 </p>
     </div>
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
 </p>
     </div>
     

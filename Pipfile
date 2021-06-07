@@ -10,7 +10,7 @@ scikit-learn = ">=0.24"
 pandas = ">=1.2"
 mne = ">=0.23"
 mne-bids = ">=0.7"
-matplotlib = ">=3.3"
+matplotlib = ">=3.4"
 joblib = ">=1.0.0"
 tqdm = ">=4.59"
 

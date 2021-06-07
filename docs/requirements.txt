@@ -14,7 +14,7 @@ matplotlib==3.4.1
 mne==0.22.1
 mne-bids==0.7
 numpy==1.20.2
-pandas==1.2.3
+pandas>=1.2
 parso==0.8.2; python_version >= "3.6"
 pexpect==4.8.0; sys_platform != "win32"
 pickleshare==0.7.5

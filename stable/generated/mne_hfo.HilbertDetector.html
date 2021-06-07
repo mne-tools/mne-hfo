@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>mne_hfo.HilbertDetector &#8212; MNE-HFO 0.2 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet" />
+  <link href="../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.1e043a052b0af929e4d8.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mne_hfo.io.create_events_df" href="mne_hfo.io.create_events_df.html" />
+    <link rel="prev" title="mne_hfo.RMSDetector" href="mne_hfo.RMSDetector.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../_static/scrollfix.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+
+    
+    <a class="navbar-brand" href="../index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../whats_new.html">
+  News
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../install.html">
+  Install
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../tutorial.html">
+  Tutorial
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">mne_hfo.HilbertDetector</a><ul>
+<li><a class="reference internal" href="#examples-using-mne-hfo-hilbertdetector">Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.HilbertDetector</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples-using-mne-hfo-hilbertdetector">
+   Examples using
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     mne_hfo.HilbertDetector
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="mne-hfo-hilbertdetector">
+<h1>mne_hfo.HilbertDetector<a class="headerlink" href="#mne-hfo-hilbertdetector" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="mne_hfo.HilbertDetector">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">mne_hfo.</span></code><code class="sig-name descname"><span class="pre">HilbertDetector</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(30,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoring_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hfo_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hfo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mne_hfo/detect.html#HilbertDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mne_hfo.HilbertDetector" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D HFO hilbert detection used in Kucewicz et al. 2014.</p>
+<p>A multi-taper method with: 4 Hz bandwidth, 1 sec sliding window,
+stepsize 100 ms, for the 1-500 Hz range, no padding, 2 tapers.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sfreq: float</strong></p>
+<blockquote>
+<div><p>Sampling frequency of the signal</p>
+</div></blockquote>
+<p><strong>l_freq: float</strong></p>
+<blockquote>
+<div><p>Low cut-off frequency</p>
+</div></blockquote>
+<p><strong>h_freq: float</strong></p>
+<blockquote>
+<div><p>High cut-off frequency</p>
+</div></blockquote>
+<p><strong>threshold: float</strong></p>
+<blockquote>
+<div><p>Threshold for detection (default=3)</p>
+</div></blockquote>
+<p><strong>band_method: str</strong></p>
+<blockquote>
+<div><p>Spacing of hilbert frequency bands - options: ‘linear’ or ‘log’
+(default=’linear’). Linear provides better frequency resolution but
+is slower.</p>
+</div></blockquote>
+<p><strong>n_bands: int</strong></p>
+<blockquote>
+<div><p>Number of bands if band_spacing = log (default=300)</p>
+</div></blockquote>
+<p><strong>cycle_threshold: float</strong></p>
+<blockquote>
+<div><p>Minimum number of cycles to detect (default=1)</p>
+</div></blockquote>
+<p><strong>gap_threshold: float</strong></p>
+<blockquote>
+<div><p>Number of cycles for gaps (default=1)</p>
+</div></blockquote>
+<p><strong>n_jobs: int</strong></p>
+<blockquote>
+<div><p>Number of cores to use (default=1)</p>
+</div></blockquote>
+<p><strong>offset: int</strong></p>
+<blockquote>
+<div><p>Offset which is added to the final detection. This is used when the
+function is run in separate windows. Default = 0</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>[1] M. T. Kucewicz, J. Cimbalnik, J. Y. Matsumoto, B. H. Brinkmann,
+M. Bower, V. Vasoli, V. Sulc, F. Meyer, W. R. Marsh, S. M. Stead, and
+G. A. Worrell, “High frequency oscillations are associated with
+cognitive processing in human recognition memory.,” Brain, pp. 1–14,
+Jun. 2014.</p>
+<dl class="field-list">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#mne_hfo.HilbertDetector.chs_hfos_dict" title="mne_hfo.HilbertDetector.chs_hfos_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chs_hfos_dict</span></code></a></p>
+<blockquote>
+<div><p>Return dictionary of HFO start/end points.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.chs_hfos_list" title="mne_hfo.HilbertDetector.chs_hfos_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chs_hfos_list</span></code></a></p>
+<blockquote>
+<div><p>Return list of HFO start/end points for each channel.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.h_freq" title="mne_hfo.HilbertDetector.h_freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h_freq</span></code></a></p>
+<blockquote>
+<div><p>Higher frequency band for HFO definition.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.hfo_df" title="mne_hfo.HilbertDetector.hfo_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hfo_df</span></code></a></p>
+<blockquote>
+<div><p>Return HFO detections as a dataframe.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.hfo_event_arr" title="mne_hfo.HilbertDetector.hfo_event_arr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hfo_event_arr</span></code></a></p>
+<blockquote>
+<div><p>HFO event array.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.hfo_event_df" title="mne_hfo.HilbertDetector.hfo_event_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hfo_event_df</span></code></a></p>
+<blockquote>
+<div><p>Return HFO detections as an event.tsv DataFrame.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.l_freq" title="mne_hfo.HilbertDetector.l_freq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">l_freq</span></code></a></p>
+<blockquote>
+<div><p>Lower frequency band for HFO definition.</p>
+</div></blockquote>
+<p><a class="reference internal" href="#mne_hfo.HilbertDetector.step_size" title="mne_hfo.HilbertDetector.step_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_size</span></code></a></p>
+<blockquote>
+<div><p>Step size of each window.</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.fit" title="mne_hfo.HilbertDetector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fit the model according to the optionally given training data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.fit_predict" title="mne_hfo.HilbertDetector.fit_predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_predict</span></code></a>(X[, y])</p></td>
+<td><p>Perform fit on X and returns labels for X.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.get_params" title="mne_hfo.HilbertDetector.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.predict" title="mne_hfo.HilbertDetector.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X)</p></td>
+<td><p>Scikit-learn override predict function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.score" title="mne_hfo.HilbertDetector.score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">score</span></code></a>(X, y[, sample_weight])</p></td>
+<td><p>Return the score of the HFO prediction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mne_hfo.HilbertDetector.set_params" title="mne_hfo.HilbertDetector.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.chs_hfos_dict">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">chs_hfos_dict</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.chs_hfos_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dictionary of HFO start/end points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.chs_hfos_list">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">chs_hfos_list</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.chs_hfos_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of HFO start/end points for each channel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.fit">
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model according to the optionally given training data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : mne.io.Raw of shape (n_samples, n_features) | pd.DataFrame</p>
+<blockquote>
+<div><p>Training vector, where n_samples is the number of samples and
+n_features is the number of features. In MNE-HFO, n_features
+are the number of time points in the EEG data, and n_samples
+are the number of channels.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like of shape (n_samples, n_output)</p>
+<blockquote>
+<div><p>Target vector relative to X.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+<blockquote>
+<div><p>Fitted estimator.</p>
+</div></blockquote>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>All detectors use a sliding window to compute HFOs in windows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.fit_predict">
+<code class="sig-name descname"><span class="pre">fit_predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.fit_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform fit on X and returns labels for X.</p>
+<p>Returns -1 for outliers and 1 for inliers.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">{array-like, sparse matrix, dataframe} of shape             (n_samples, n_features)</span></dt><dd></dd>
+</dl>
+<p><strong>y</strong> : Ignored</p>
+<blockquote>
+<div><p>Not used, present for API consistency by convention.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> : ndarray of shape (n_samples,)</p>
+<blockquote>
+<div><p>1 for inliers, -1 for outliers.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.get_params">
+<code class="sig-name descname"><span class="pre">get_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>deep</strong> : bool, default=True</p>
+<blockquote>
+<div><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>params</strong> : dict</p>
+<blockquote>
+<div><p>Parameter names mapped to their values.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.h_freq">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">h_freq</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.h_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Higher frequency band for HFO definition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.hfo_df">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_df</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.hfo_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return HFO detections as a dataframe.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.hfo_event_arr">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_event_arr</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.hfo_event_arr" title="Permalink to this definition">¶</a></dt>
+<dd><p>HFO event array.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>hfo_event_arr</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Array that is (n_chs, n_samples), which has a
+value of <code class="docutils literal notranslate"><span class="pre">1</span></code> if</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.hfo_event_df">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hfo_event_df</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.hfo_event_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return HFO detections as an event.tsv DataFrame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.l_freq">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">l_freq</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.l_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lower frequency band for HFO definition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.predict">
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scikit-learn override predict function.</p>
+<p>Just directly computes HFOs using <code class="docutils literal notranslate"><span class="pre">fit</span></code> function.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : mne.io.Raw | pd.DataFrame</p>
+<blockquote>
+<div><p>Input data.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ypred</strong> : list[list[tuple]]</p>
+<blockquote>
+<div><p>List of HFO events per channel in order of <code class="docutils literal notranslate"><span class="pre">ch_names</span></code> of
+input data. HFO events are stored as list of tuples: onset
+and offset of the HFO event.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.score">
+<code class="sig-name descname"><span class="pre">score</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the score of the HFO prediction.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Channel data to detect HFOs on.</p>
+</div></blockquote>
+<p><strong>y</strong> : pd.DataFrame</p>
+<blockquote>
+<div><p>Event Dataframe of true labels</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>sample_weight :</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.set_params">
+<code class="sig-name descname"><span class="pre">set_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mne_hfo.HilbertDetector.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code></a>). The latter have
+parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
+possible to update each component of a nested object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**params</strong> : dict</p>
+<blockquote>
+<div><p>Estimator parameters.</p>
+</div></blockquote>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> : estimator instance</p>
+<blockquote>
+<div><p>Estimator instance.</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="mne_hfo.HilbertDetector.step_size">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">step_size</span></code><a class="headerlink" href="#mne_hfo.HilbertDetector.step_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step size of each window.</p>
+<p>Window increment over the samples of signal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="examples-using-mne-hfo-hilbertdetector">
+<span id="sphx-glr-backreferences-mne-hfo-hilbertdetector"></span><h2>Examples using <code class="docutils literal notranslate"><span class="pre">mne_hfo.HilbertDetector</span></code><a class="headerlink" href="#examples-using-mne-hfo-hilbertdetector" title="Permalink to this headline">¶</a></h2>
+<div class="sphx-glr-clear"></div></section>
+</section>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+    <a class='left-prev' id="prev-link" href="mne_hfo.RMSDetector.html" title="previous page">mne_hfo.RMSDetector</a>
+    <a class='right-next' id="next-link" href="mne_hfo.io.create_events_df.html" title="next page">mne_hfo.io.create_events_df</a>
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

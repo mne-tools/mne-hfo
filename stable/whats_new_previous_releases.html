@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>What was new in previous releases? &#8212; MNE-HFO 0.2 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1e043a052b0af929e4d8.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="_static/scrollfix.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+
+    
+    <a class="navbar-brand" href="index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="whats_new.html">
+  News
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="install.html">
+  Install
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="tutorial.html">
+  Tutorial
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">What was new in previous releases?</a><ul>
+<li><a class="reference internal" href="#version-0-2">Version 0.2</a><ul>
+<li><a class="reference internal" href="#notable-changes">Notable changes</a></li>
+<li><a class="reference internal" href="#authors">Authors</a></li>
+<li><a class="reference internal" href="#detailed-list-of-changes">Detailed list of changes</a><ul>
+<li><a class="reference internal" href="#enhancements">Enhancements</a></li>
+<li><a class="reference internal" href="#api-changes">API changes</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#bug-fixes">Bug fixes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#version-0-2">
+   Version 0.2
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#notable-changes">
+     Notable changes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#authors">
+     Authors
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#detailed-list-of-changes">
+     Detailed list of changes
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#enhancements">
+       Enhancements
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#api-changes">
+       API changes
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#requirements">
+       Requirements
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#bug-fixes">
+       Bug fixes
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="what-was-new-in-previous-releases">
+<span id="whats-new-in-previous-releases"></span><h1>What was new in previous releases?<a class="headerlink" href="#what-was-new-in-previous-releases" title="Permalink to this headline">¶</a></h1>
+<section id="version-0-2">
+<span id="changes-0-2"></span><h2>Version 0.2<a class="headerlink" href="#version-0-2" title="Permalink to this headline">¶</a></h2>
+<section id="notable-changes">
+<h3>Notable changes<a class="headerlink" href="#notable-changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Added the <code class="docutils literal notranslate"><span class="pre">HilbertDetector</span></code> and optimized its performance on long recordings</p></li>
+</ul>
+</section>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/adam2392">Adam Li</a></p></li>
+<li><p><a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a></p></li>
+</ul>
+</section>
+<section id="detailed-list-of-changes">
+<h3>Detailed list of changes<a class="headerlink" href="#detailed-list-of-changes" title="Permalink to this headline">¶</a></h3>
+<p>This release is the first one under the <code class="docutils literal notranslate"><span class="pre">mne.tools</span></code> umbrella. We introduced three core detectors that
+we found were used and cited in the literature: Line Length, RMS and Hilbert detectors. We have organized
+a roadmap for what future improvements would entail. In addition, we have added tutorials that are rendered
+as jupyter notebooks, which walk through usage of the package to: i) load data from BIDS, ii) run a detection and
+then iii) evaluate the efficacy using tools from <code class="docutils literal notranslate"><span class="pre">scikit-learn</span></code>.</p>
+<section id="enhancements">
+<h4>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates" title="mne_hfo.compute_chs_hfo_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.compute_chs_hfo_rates()</span></code></a> to compute HFO rates per unit of time for every channel, by <em class="xref py py-obj">Adam Li</em>) (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/13">#13</a>)</p></li>
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.io.create_events_df.html#mne_hfo.io.create_events_df" title="mne_hfo.io.create_events_df"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.create_events_df()</span></code></a> to generate a DataFrame of HFO events from <code class="docutils literal notranslate"><span class="pre">Raw</span></code> object, or dictionary of lists of HFO endpoints, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/7">#7</a>)</p></li>
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events" title="mne_hfo.find_coincident_events"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.find_coincident_events()</span></code></a> to compare two dicts that contain event information by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Added notebook to demo use of detection algorithms by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Vectorized detection overlap check to enhance scoring speed by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+<li><p>Added notebook to demo use of GridSearchCV to optimize detector performance by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+<li><p>Added module to compare detections and notebook to demo usage by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/22">#22</a>)</p></li>
+<li><p>Added initial implementation of HilbertDetector by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/23">#23</a>)</p></li>
+<li><p>Improve memory utilization by allowing parallelization of the entire workflow per channel by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/38">#38</a>)</p></li>
+</ul>
+</section>
+<section id="api-changes">
+<h4>API changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.io.events_to_annotations.html#mne_hfo.io.events_to_annotations" title="mne_hfo.io.events_to_annotations"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.io.events_to_annotations()</span></code></a> to go from <code class="docutils literal notranslate"><span class="pre">*events.tsv</span></code> to <code class="docutils literal notranslate"><span class="pre">*annotations.tsv</span></code> files, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/10">#10</a>)</p></li>
+<li><p>Added <a class="reference internal" href="generated/mne_hfo.sklearn.make_Xy_sklearn.html#mne_hfo.sklearn.make_Xy_sklearn" title="mne_hfo.sklearn.make_Xy_sklearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">mne_hfo.sklearn.make_Xy_sklearn()</span></code></a> to format data into scikit-learn compatible data structures for the sake of running hyper-parameter searches with <code class="docutils literal notranslate"><span class="pre">SearchCV</span></code> functions, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+<li><p>Separated postprocessing step into two discrete steps _threshold_statistic and _post_process_ch_hfos by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/23">#23</a>)</p></li>
+</ul>
+</section>
+<section id="requirements">
+<h4>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Updated requirement version for <code class="docutils literal notranslate"><span class="pre">mne</span></code> to <code class="docutils literal notranslate"><span class="pre">v0.23+</span></code>, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/44">#44</a>)</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">tqdm</span></code>, <code class="docutils literal notranslate"><span class="pre">joblib</span></code> and <code class="docutils literal notranslate"><span class="pre">pandas</span></code> to requirements, by <a class="reference external" href="https://github.com/adam2392">Adam Li</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/7">#7</a>)</p></li>
+</ul>
+</section>
+<section id="bug-fixes">
+<h4>Bug fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>Fixed channel name issue introduced by redundant type checks when using <em class="xref py py-obj">fit_and_predict</em> by <a class="reference external" href="https://github.com/pmyers16">Patrick Myers</a> (<a class="reference external" href="https://github.com/mne-tools/mne-bids/issues/15">#15</a>)</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

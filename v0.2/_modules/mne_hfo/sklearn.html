@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.sklearn &#8212; MNE-HFO 0.2 documentation</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1e043a052b0af929e4d8.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../../_static/scrollfix.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+
+    
+    <a class="navbar-brand" href="../../index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../whats_new.html">
+  News
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../install.html">
+  Install
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../tutorial.html">
+  Tutorial
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+
+<nav id="bd-toc-nav">
+    
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for mne_hfo.sklearn</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">_convert_y_sklearn_to_annot_df</span><span class="p">(</span><span class="n">ylist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert y sklearn list to Annotations DataFrame.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.io</span> <span class="kn">import</span> <span class="n">create_annotations_df</span>
+
+    <span class="c1"># store basic data points needed for annotations dataframe</span>
+    <span class="n">onset_sec</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">duration_sec</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ch_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sfreqs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># loop over all channel HFO results</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch_results</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ylist</span><span class="p">):</span>
+        <span class="c1"># sklearn is returning a single HFO with onset and duration of 0</span>
+        <span class="k">for</span> <span class="n">jdx</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ch_results</span><span class="p">):</span>
+            <span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">sfreq</span> <span class="o">=</span> <span class="n">res</span>
+
+            <span class="c1"># if onset/offset is None, then there is</span>
+            <span class="c1"># on HFO for this channel</span>
+            <span class="k">if</span> <span class="n">onset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">sfreq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> \
+                        <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sfreq</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))):</span>
+                    <span class="c1"># Sampling frequencies should always be integers</span>
+                    <span class="c1"># Solves issues with unique check due to float</span>
+                    <span class="c1"># division</span>
+                    <span class="n">sfreq</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sfreq</span><span class="p">))</span>
+                    <span class="n">sfreqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sfreq</span><span class="p">)</span>
+                    <span class="n">onset_sec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
+                    <span class="n">duration_sec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset</span> <span class="o">-</span> <span class="n">onset</span><span class="p">)</span>
+
+                    <span class="n">ch_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># If no hfos detected, return an empty annotation df</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sfreqs</span><span class="p">:</span>
+        <span class="n">empty_annotation_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;channels&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;sample&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">empty_annotation_df</span>
+    <span class="c1"># If hfos are detected, assert they all have the same frq</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sfreqs</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreqs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># create the output annotations dataframe</span>
+    <span class="n">annot_df</span> <span class="o">=</span> <span class="n">create_annotations_df</span><span class="p">(</span><span class="n">onset</span><span class="o">=</span><span class="n">onset_sec</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration_sec</span><span class="p">,</span>
+                                     <span class="n">ch_name</span><span class="o">=</span><span class="n">ch_names</span><span class="p">,</span> <span class="n">annotation_label</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">sfreq</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">annot_df</span>
+
+
+<div class="viewcode-block" id="make_Xy_sklearn"><a class="viewcode-back" href="../../generated/mne_hfo.sklearn.make_Xy_sklearn.html#mne_hfo.sklearn.make_Xy_sklearn">[docs]</a><span class="k">def</span> <span class="nf">make_Xy_sklearn</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make X/y for HFO detector compliant with scikit-learn.</span>
+
+<span class="sd">    To render a dataframe &quot;sklearn&quot; compatible, by</span>
+<span class="sd">    turning it into a list of list of tuples.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    raw : mne.io.Raw</span>
+<span class="sd">        The raw iEEG data.</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        The HFO labeled dataframe, in the form of ``*_annotations.tsv``.</span>
+<span class="sd">        Should be read in through ``read_annotations`` function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    raw_df : pd.DataFrame</span>
+<span class="sd">        The Raw dataframe generated from :meth:`mne.io.Raw.to_data_frame`.</span>
+<span class="sd">        It should be structured as channels X time.</span>
+<span class="sd">    ch_results : list[list[tuple]]</span>
+<span class="sd">        List of channel HFO events, ordered by the channel names from the</span>
+<span class="sd">        ``raw`` dataset. Each channel corresponds to a list of &quot;onset&quot;</span>
+<span class="sd">        and &quot;offset&quot; time points (in seconds) that an HFO was detected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw</span><span class="o">.</span><span class="n">to_data_frame</span>
+    <span class="n">ch_names</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">ch_names</span>
+
+    <span class="n">ch_results</span> <span class="o">=</span> <span class="n">_make_ydf_sklearn</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">)</span>
+
+    <span class="c1"># set arbitrary measurement date to allow time format as a datetime</span>
+    <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;meas_date&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">raw</span><span class="o">.</span><span class="n">set_meas_date</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">))</span>
+
+    <span class="c1"># keep as C x T</span>
+    <span class="n">raw_df</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">to_data_frame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                               <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">return</span> <span class="n">raw_df</span><span class="p">,</span> <span class="n">ch_results</span></div>
+
+
+<span class="k">def</span> <span class="nf">_make_ydf_sklearn</span><span class="p">(</span><span class="n">ydf</span><span class="p">,</span> <span class="n">ch_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert HFO annotations DataFrame into scikit-learn y input.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ydf : pd.Dataframe</span>
+<span class="sd">        Annotations DataFrame containing HFO events.</span>
+<span class="sd">    ch_names : list</span>
+<span class="sd">        A list of channel names in the raw data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ch_results : List of list[tuple]</span>
+<span class="sd">        Ordered dictionary of channel HFO events, ordered by the channel</span>
+<span class="sd">        names from the ``raw`` dataset. Each channel corresponds to a</span>
+<span class="sd">        list of &quot;onset&quot; and &quot;offset&quot; time points (in seconds) that an</span>
+<span class="sd">        HFO was detected. The channel is also appended to the third</span>
+<span class="sd">        element of each HFO event. For example::</span>
+
+<span class="sd">            # ch_results has length of ch_names</span>
+<span class="sd">            ch_results = [</span>
+<span class="sd">                [</span>
+<span class="sd">                    (0, 10, &#39;A1&#39;),</span>
+<span class="sd">                    (20, 30, &#39;A1&#39;),</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ],</span>
+<span class="sd">                [</span>
+<span class="sd">                    (None, None, &#39;A2&#39;),</span>
+<span class="sd">                ],</span>
+<span class="sd">                [</span>
+<span class="sd">                    (20, 30, &#39;A3&#39;),</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ],</span>
+<span class="sd">                ...</span>
+<span class="sd">            ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create channel results</span>
+    <span class="n">ch_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># make sure offset in column</span>
+    <span class="k">if</span> <span class="s1">&#39;offset&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ydf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">ydf</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ydf</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ydf</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+
+    <span class="n">ch_groups</span> <span class="o">=</span> <span class="n">ydf</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;channels&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ch_names</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ch_groups</span><span class="o">.</span><span class="n">groups</span><span class="p">]):</span>  <span class="c1"># type: ignore</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Channel </span><span class="si">{</span><span class="n">ch_groups</span><span class="o">.</span><span class="n">groups</span><span class="si">}</span><span class="s1"> contain &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;channels not in &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;actual data channel names: &#39;</span>
+                           <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ch_names</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># group by channels</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ch_names</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ch_groups</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ch_results</span><span class="o">.</span><span class="n">append</span><span class="p">([(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)])</span>
+            <span class="k">continue</span>
+        <span class="c1"># get channel name</span>
+        <span class="n">ch_df</span> <span class="o">=</span> <span class="n">ch_groups</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+
+        <span class="c1"># obtain list of HFO onset, offset for this channel</span>
+        <span class="n">ch_name_as_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span>
+        <span class="n">sfreqs</span> <span class="o">=</span> <span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span>
+        <span class="n">ch_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">],</span>
+                                   <span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">],</span>
+                                   <span class="n">ch_name_as_list</span><span class="p">,</span>
+                                   <span class="n">ch_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span>
+                                   <span class="n">sfreqs</span><span class="p">)))</span>
+
+    <span class="n">ch_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ch_results</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ch_results</span>
+
+
+<div class="viewcode-block" id="DisabledCV"><a class="viewcode-back" href="../../generated/mne_hfo.sklearn.DisabledCV.html#mne_hfo.sklearn.DisabledCV">[docs]</a><span class="k">class</span> <span class="nc">DisabledCV</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dummy CV class for SearchCV scikit-learn functions.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_splits</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="DisabledCV.split"><a class="viewcode-back" href="../../generated/mne_hfo.sklearn.DisabledCV.html#mne_hfo.sklearn.DisabledCV.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Disabled split.&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="DisabledCV.get_n_splits"><a class="viewcode-back" href="../../generated/mne_hfo.sklearn.DisabledCV.html#mne_hfo.sklearn.DisabledCV.get_n_splits">[docs]</a>    <span class="k">def</span> <span class="nf">get_n_splits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Disabled split.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_splits</span></div></div>
+</pre></div>
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

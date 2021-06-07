@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mne_hfo.posthoc &#8212; MNE-HFO 0.2 documentation</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.f6b7ca918bee2f46fd9abac01cfb07d5.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
+    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
+    <!-- ... and optionally preload the `woff2` for snappier page loads -->
+    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
+    <style>
+        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
+        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
+    </style>
+
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1e043a052b0af929e4d8.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
+    <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    <script type="text/javascript" src="../../_static/scrollfix.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+
+    
+    <a class="navbar-brand" href="../../index.html">
+      <p class="title">MNE-HFO</p>
+    </a>
+    
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
+  mne-hfo @ PyPI
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
+  Issue Tracker
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../whats_new.html">
+  News
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../install.html">
+  Install
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../use.html">
+  Use
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../api.html">
+  API
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../tutorial.html">
+  Tutorial
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../contribute.html">
+  Contribute
+ </a>
+</li>
+
+        
+      </ul>
+
+      <!-- begin version dropdown -->
+<ul class="navbar-nav">
+    <li class="mr-2 dropdown">
+        <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+            v0.2
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dLabelMore">
+            <li><a href="https://mne-tools.github.io/mne-hfo/dev/index.html">v0.2 (devel)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/stable/index.html">v0.1 (stable)</a></li>
+            <li><a href="https://mne-tools.github.io/mne-hfo/v0.1/index.html">v0.1</a></li>
+        </ul>
+    </li>
+</ul>
+<!-- end version dropdown --><ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+
+<nav id="bd-toc-nav">
+    
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for mne_hfo.posthoc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">TIME_SCALE_TO_SECS</span>
+<span class="kn">from</span> <span class="nn">mne_hfo.utils</span> <span class="kn">import</span> <span class="n">_check_df</span>
+
+
+<span class="k">def</span> <span class="nf">_to_freq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a groupby DataFrame to rate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : pd.Series</span>
+<span class="sd">        The series of the group to compute frequency of occurrence.</span>
+<span class="sd">    rate : str</span>
+<span class="sd">        One of ``s`` (second), ``m`` (minute), ``h`` (hour),</span>
+<span class="sd">        ``d`` (day) to compute rate of the dataframe.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rate : float</span>
+<span class="sd">        The rate of the events per unit of time, selected</span>
+<span class="sd">        by ``rate`` input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">f</span> <span class="o">/</span> <span class="n">TIME_SCALE_TO_SECS</span><span class="p">[</span><span class="n">rate</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="compute_chs_hfo_rates"><a class="viewcode-back" href="../../generated/mne_hfo.compute_chs_hfo_rates.html#mne_hfo.compute_chs_hfo_rates">[docs]</a><span class="k">def</span> <span class="nf">compute_chs_hfo_rates</span><span class="p">(</span><span class="n">annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                          <span class="n">rate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">ch_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">end_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute channel HFO rates from annotations DataFrame.</span>
+
+<span class="sd">    This function will assume that each row is another</span>
+<span class="sd">    HFO event. If you want to pre-process the HFOs that</span>
+<span class="sd">    in some way overlap, do so beforehand.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    annot_df : pandas.core.DataFrame</span>
+<span class="sd">        The DataFrame corresponding to the ``annotations.tsv`` file.</span>
+<span class="sd">    rate : str</span>
+<span class="sd">        The frequency at which to compute the HFO rate.</span>
+<span class="sd">        One of ``s`` (second), ``m`` (minute), ``h`` (hour),</span>
+<span class="sd">        ``d`` (day) to compute rate of the dataframe.</span>
+<span class="sd">    ch_names : list of str | None</span>
+<span class="sd">        A list of channel names to constrain the rate computation to.</span>
+<span class="sd">        Default = None will compute rate for all channels present in the</span>
+<span class="sd">        ``annot_df``.</span>
+<span class="sd">    end_sec : float | None</span>
+<span class="sd">        The end time (in seconds) of the dataset that HFOs were computed on.</span>
+<span class="sd">        If None (default), then will take the last detected HFO as the end</span>
+<span class="sd">        time point.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Verbosity.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ch_hfo_rates : dict</span>
+<span class="sd">        The HFO rates per channel with any HFOs.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] https://stackoverflow.com/questions/66143839/computing-rate-of-occurrences-per-unit-of-time-in-a-pandas-dataframe  # noqa</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    mne_hfo.io.read_annotations : Reading in annotations.tsv file as DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">annot_df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">annot_df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
+
+    <span class="c1"># store channel rates over sliding window</span>
+    <span class="n">ch_hfo_rates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="c1"># start timestamp with current time</span>
+    <span class="n">ref_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">onset_tdelta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_timestamp</span> <span class="o">+</span> <span class="n">onset_tdelta</span>
+
+    <span class="c1"># get the end point in seconds</span>
+    <span class="k">if</span> <span class="n">end_sec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">end_timestamp</span> <span class="o">=</span> <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end_timestamp</span> <span class="o">=</span> <span class="n">ref_timestamp</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">end_sec</span><span class="p">)</span>
+
+    <span class="c1"># get end time in seconds</span>
+    <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="p">(</span><span class="n">end_timestamp</span> <span class="o">-</span> <span class="n">ref_timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Beginning timestamp: </span><span class="si">{</span><span class="n">ref_timestamp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Got end timestamp of: </span><span class="si">{</span><span class="n">end_timestamp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># set timestamp as the datetime index to allow resampling</span>
+    <span class="n">annot_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># get all unique channels</span>
+    <span class="k">if</span> <span class="n">ch_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ch_names</span> <span class="o">=</span> <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># search for channel names not inside pandas dataframe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">name</span> <span class="ow">in</span> <span class="n">annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not all channels are inside the &#39;</span>
+                             <span class="s1">&#39;annotation DataFrame.&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">annot_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;channels&#39;</span><span class="p">]):</span>
+        <span class="c1"># get channel name</span>
+        <span class="n">ch_name</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">ch_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># resample datetime indices over a certain frequency</span>
+        <span class="c1"># so we can now count the number of HFO occurrences in a</span>
+        <span class="c1"># set time frame</span>
+        <span class="c1"># dt_idx = pd.date_range(ref_timestamp, end_timestamp, freq=rate)</span>
+        <span class="c1"># group = group.reindex(dt_idx, fill_value=np.nan)</span>
+
+        <span class="c1"># see Reference [1] where we compute rate of occurrence</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">end_time</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">_to_freq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found HFO rate per </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">ch_name</span><span class="si">}</span><span class="s1"> as </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># now compute the rate in this group</span>
+        <span class="n">ch_hfo_rates</span><span class="p">[</span><span class="n">ch_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="c1"># if not over_time:</span>
+        <span class="c1"># ch_hfo_rates[ch_name] = ch_hfo_rates[ch_name].count()</span>
+
+    <span class="k">return</span> <span class="n">ch_hfo_rates</span></div>
+
+
+<span class="k">def</span> <span class="nf">_join_times</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Join together start and end times sorted in order.</span>
+
+<span class="sd">    Creates a second column ``what`` that marks +1/-1 for start/end times</span>
+<span class="sd">    to keep track of how many intervals are overlapping. Then a ``newwin``</span>
+<span class="sd">    column is added to identify the beginning of a new non-overlapping time interval</span>
+<span class="sd">    and a ``group`` column is added to mark the rows that belong to the same</span>
+<span class="sd">    overlapping time interval.</span>
+
+<span class="sd">    This ``group`` column is added to the original dataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : pd.DataFrame</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] https://stackoverflow.com/questions/57804145/combining-rows-with-overlapping-time-periods-in-a-pandas-dataframe  # noqa</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">startdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>  <span class="c1"># type: ignore</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+        <span class="s1">&#39;what&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>  <span class="c1"># type: ignore</span>
+    <span class="n">enddf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>  <span class="c1"># type: ignore</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;end_timestamp&#39;</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+        <span class="s1">&#39;what&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># create merged dataframe of start and end times that are</span>
+    <span class="c1"># sorted by timestamp</span>
+    <span class="n">mergdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">startdf</span><span class="p">,</span> <span class="n">enddf</span><span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+
+    <span class="c1"># get a running cumulative sum</span>
+    <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;running&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># assign groups to overlapping intervals</span>
+    <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;newwin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;running&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;newwin&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># add the group assignments to the original dataframe</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mergdf</span><span class="p">[</span><span class="s1">&#39;what&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># now group all overlapping intervals in the original dataframe</span>
+    <span class="c1"># agg_func_dict = {col: lambda x: set(x) for col in df.columns}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">:</span> <span class="s1">&#39;first&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;end_timestamp&#39;</span><span class="p">:</span> <span class="s1">&#39;last&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;unique&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;ref_timestamp&#39;</span><span class="p">:</span> <span class="s1">&#39;first&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<div class="viewcode-block" id="merge_overlapping_events"><a class="viewcode-back" href="../../generated/mne_hfo.merge_overlapping_events.html#mne_hfo.merge_overlapping_events">[docs]</a><span class="k">def</span> <span class="nf">merge_overlapping_events</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge overlapping events detected.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        Events dataframe generated from HFO events detected.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    merged_df : pd.DataFrame</span>
+<span class="sd">        New events dataframe with merged HFOs depending on</span>
+<span class="sd">        overlap criterion.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    mne_hfo.io.create_events_df : Create events DataFrame from HFO detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">orig_cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+
+    <span class="c1"># check dataframe</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
+
+    <span class="c1"># compute sfreq</span>
+    <span class="n">sfreq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span>
+
+    <span class="c1"># start/end timestamp with current time for every row</span>
+    <span class="n">ref_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">onset_tdelta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_timestamp</span> <span class="o">+</span> <span class="n">onset_tdelta</span>
+
+    <span class="n">duration_secs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;end_timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">duration_secs</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ref_timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_timestamp</span>
+
+    <span class="c1"># first group by channels</span>
+    <span class="c1"># now join rows that are overlapping</span>
+    <span class="n">merged_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;channels&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="n">_join_times</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># get the old columns back and drop the intermediate computation columns</span>
+    <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;end_timestamp&#39;</span><span class="p">]</span> <span class="o">-</span>
+                             <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+    <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">]</span> <span class="o">-</span>
+                          <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;ref_timestamp&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+    <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">sfreq</span>
+    <span class="n">merged_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;start_timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;end_timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;ref_timestamp&#39;</span><span class="p">],</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">merged_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="n">orig_cols</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">merged_df</span></div>
+
+
+<div class="viewcode-block" id="find_coincident_events"><a class="viewcode-back" href="../../generated/mne_hfo.find_coincident_events.html#mne_hfo.find_coincident_events">[docs]</a><span class="k">def</span> <span class="nf">find_coincident_events</span><span class="p">(</span><span class="n">hfo_dict1</span><span class="p">,</span> <span class="n">hfo_dict2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a dictionary of hfo events that overlap between two sets.</span>
+
+<span class="sd">    Note: Both input dictionaries should come from the same original</span>
+<span class="sd">    dataset and therefore contain the same keys.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hfo_dict1 : dict</span>
+<span class="sd">        keys are channel names and values are list of tuples of start</span>
+<span class="sd">        and end times.</span>
+<span class="sd">    hfo_dict2 : dict</span>
+<span class="sd">        keys are channel names and values are list of tuples of start</span>
+<span class="sd">        and end times.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coincident_hfo_dict : dict</span>
+<span class="sd">        Subset of hfo_dict1 containing just the entries that overlap</span>
+<span class="sd">        with hfo_dict2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">hfo_dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hfo_dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The two dictionaries must have the same keys.&quot;</span><span class="p">)</span>
+    <span class="n">coincident_hfo_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ch_name</span><span class="p">,</span> <span class="n">hfo_list1</span> <span class="ow">in</span> <span class="n">hfo_dict1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">hfo_list2</span> <span class="o">=</span> <span class="n">hfo_dict2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ch_name</span><span class="p">)</span>
+        <span class="n">coincident_hfo_list</span> <span class="o">=</span> <span class="n">_find_overlapping_events</span><span class="p">(</span><span class="n">hfo_list1</span><span class="p">,</span> <span class="n">hfo_list2</span><span class="p">)</span>
+        <span class="n">coincident_hfo_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">ch_name</span><span class="p">:</span> <span class="n">coincident_hfo_list</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">coincident_hfo_dict</span></div>
+
+
+<span class="k">def</span> <span class="nf">_check_detection_overlap</span><span class="p">(</span><span class="n">y_true</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">y_predict</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate if two detections overlap.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y_true: list</span>
+<span class="sd">        Gold standard detection [start,stop]</span>
+<span class="sd">    y_predict: list</span>
+<span class="sd">        Detector detection [start,stop]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    overlap: bool</span>
+<span class="sd">        Whether two events overlap.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">overlap</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># dd stop in gs + (dd inside gs)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># dd start in gs + (dd inside gs)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># gs inside dd</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y_predict</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">overlap</span>
+
+
+<span class="k">def</span> <span class="nf">_find_overlapping_events</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get subset of list1 that overlaps with list2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list1 : list</span>
+<span class="sd">        list of tuples (start_time, end_time)</span>
+<span class="sd">    list2 : list</span>
+<span class="sd">        list of tuples (start_time, end_time)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    overlapping_events : list</span>
+<span class="sd">        list of tuples (start_time, end_time) that overlap between</span>
+<span class="sd">        list1 and list2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sort events by start times to speed up calculation</span>
+    <span class="n">list1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">list2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">list2</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">overlapping_events</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">event_time1</span> <span class="ow">in</span> <span class="n">list1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">event_time2</span> <span class="ow">in</span> <span class="n">list2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_time2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">event_time1</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">(</span><span class="n">event_time1</span><span class="p">,</span> <span class="n">event_time2</span><span class="p">):</span>
+                <span class="n">overlapping_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event_time1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">overlapping_events</span>
+
+
+<div class="viewcode-block" id="match_detected_annotations"><a class="viewcode-back" href="../../generated/mne_hfo.match_detected_annotations.html#mne_hfo.match_detected_annotations">[docs]</a><span class="k">def</span> <span class="nf">match_detected_annotations</span><span class="p">(</span>
+        <span class="n">ytrue_annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">ch_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;match-true&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given two annotations.tsv DataFrames, match HFO detection overlaps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ytrue_annot_df : pd.DataFrame</span>
+<span class="sd">        The reference annotations DataFrame containing the HFO events that are</span>
+<span class="sd">        considered &quot;ground-truth&quot; in this comparison.</span>
+<span class="sd">    ypred_annot_df : pd.DataFrame</span>
+<span class="sd">        The estimated annotations DataFrame containing the HFO events that</span>
+<span class="sd">        are estimated using a ``Detector``.</span>
+<span class="sd">    ch_names : list | str | None</span>
+<span class="sd">        Which channels to match. If None (default), then will match all</span>
+<span class="sd">        available channels in both dataframes. If str, then must be a single</span>
+<span class="sd">        channel name available in the ``ytrue_annot_df``. If list of</span>
+<span class="sd">        strings, then must be a list of channel names available in the</span>
+<span class="sd">        ``ytrue_annot_df``.</span>
+<span class="sd">    label : str | None</span>
+<span class="sd">        The HFO label to use. If None (default) will consider all rows in</span>
+<span class="sd">        both input DataFrames as an HFO event. If a string, then it must</span>
+<span class="sd">        match to an element of ``label`` column in the dataframes.</span>
+<span class="sd">    sec_margin : float</span>
+<span class="sd">        Number of seconds to consider a valid checking window.</span>
+<span class="sd">        Default = 1.</span>
+<span class="sd">    method : str</span>
+<span class="sd">        Type of strategy for matching HFO events. Must be one of</span>
+<span class="sd">        ``match-true``, ``match-pred``, or ``match-total``.</span>
+<span class="sd">        If &quot;match-true&quot;, will return a dataframe of all true indices</span>
+<span class="sd">        and matching predicted indices if they exist. If &quot;match-pred&quot;,</span>
+<span class="sd">        will return a dataframe of all predicted indices and matching</span>
+<span class="sd">        true indices if they exist. If &quot;match-total&quot;, will return the</span>
+<span class="sd">        concatenation of the two. See Notes for more information.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matched_df : pd.DataFrame</span>
+<span class="sd">        A DataFrame with the columns ``pred_index`` and ``true_index``,</span>
+<span class="sd">        which corresponds to indices,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check adherence of the annotations dataframe structure</span>
+    <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
+    <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">_check_df</span><span class="p">(</span><span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">df_type</span><span class="o">=</span><span class="s1">&#39;annotations&#39;</span><span class="p">)</span>
+
+    <span class="c1"># select only certain labels</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="ow">or</span> \
+                <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Label </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> is not inside the input &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;DataFrames.&#39;</span><span class="p">)</span>
+
+        <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+        <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+
+    <span class="c1"># select only certain channels</span>
+    <span class="k">if</span> <span class="n">ch_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ch_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">ch_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">ch_names</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Channels </span><span class="si">{</span><span class="n">ch_names</span><span class="si">}</span><span class="s1"> are not all inside &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;ground-truth HFO DataFrame.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">ch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">ch_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Channels </span><span class="si">{</span><span class="n">ch_names</span><span class="si">}</span><span class="s1"> are not all inside &#39;</span>
+                             <span class="sa">f</span><span class="s1">&#39;predicted HFO DataFrame.&#39;</span><span class="p">)</span>
+
+        <span class="n">ytrue_annot_df</span> <span class="o">=</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">ch_names</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">ypred_annot_df</span> <span class="o">=</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">ch_names</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># if prediction yields no events and method is match-pred,</span>
+    <span class="c1"># return empty structured dataframe</span>
+    <span class="k">if</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;match-pred&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+    <span class="c1"># else if prediction yields no events, return structured dataframe</span>
+    <span class="c1"># containing just true indices</span>
+    <span class="k">elif</span> <span class="n">ypred_annot_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ytrue_annot_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">match_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">match_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span>
+                       <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">match_df</span>
+
+    <span class="c1"># make sure columns match what is needed</span>
+    <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ytrue_annot_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+    <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">ypred_annot_df</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-true&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-pred&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;pred_index&#39;</span><span class="p">,</span> <span class="s1">&#39;true_index&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;match-total&quot;</span><span class="p">:</span>
+        <span class="n">true_match</span> <span class="o">=</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;true_index&#39;</span><span class="p">,</span> <span class="s1">&#39;pred_index&#39;</span><span class="p">))</span>
+        <span class="n">pred_match</span> <span class="o">=</span> <span class="n">_match_detections_overlap</span><span class="p">(</span>
+            <span class="n">ypred_annot_df</span><span class="p">,</span> <span class="n">ytrue_annot_df</span><span class="p">,</span> <span class="n">sec_margin</span><span class="p">,</span>
+            <span class="p">(</span><span class="s1">&#39;pred_index&#39;</span><span class="p">,</span> <span class="s1">&#39;true_index&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">true_match</span><span class="p">,</span> <span class="n">pred_match</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span> \
+            <span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method must be one of match-true,&quot;</span>
+                                  <span class="s2">&quot; match-pred, or match-total&quot;</span><span class="p">)</span></div>
+        <span class="c1"># Iterate over true labels (gold standard)</span>
+
+
+<span class="k">def</span> <span class="nf">_match_detections_overlap</span><span class="p">(</span><span class="n">gs_df</span><span class="p">,</span> <span class="n">check_df</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the overlapping detections in the two passed dataframes.</span>
+
+<span class="sd">    gs_df and check_df need to be the same type (i.e. both annotation</span>
+<span class="sd">    dataframes or event dataframes). If they are annotation dataframes,</span>
+<span class="sd">    margin should be in seconds, and if they are event dataframes,</span>
+<span class="sd">    margin should be in samples.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gs_df : pd.DataFrame</span>
+<span class="sd">        The reference DataFrame containing the HFO events that are</span>
+<span class="sd">        considered &quot;ground-truth&quot; in this comparison.</span>
+<span class="sd">    check_df : pd.DataFrame</span>
+<span class="sd">        The estimated DataFrame containing the HFO events that</span>
+<span class="sd">        are estimated using a ``Detector``.</span>
+<span class="sd">    margin : int</span>
+<span class="sd">        Margin to check. Should be in the same unit as the data</span>
+<span class="sd">        in the desired columns</span>
+<span class="sd">    cols : list[str]</span>
+<span class="sd">        Name of the columns corresponding to gs indices and check indices</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    match_df: pd.DataFrame</span>
+<span class="sd">        A DataFrame with the columns from cols input,</span>
+<span class="sd">        which corresponds to indices</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">col</span> <span class="ow">in</span> <span class="n">gs_df</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">]]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Gold standard reference Annotations &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;DataFrame must have both &quot;onset&quot; and &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;&quot;offset&quot; columns (in seconds). It &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;has columns: </span><span class="si">{</span><span class="n">gs_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">col</span> <span class="ow">in</span> <span class="n">check_df</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">]]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimated Annotations &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;DataFrame must have both &quot;onset&quot; and &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;&quot;offset&quot; columns (in seconds).It &#39;</span>
+                         <span class="sa">f</span><span class="s1">&#39;has columns: </span><span class="si">{</span><span class="n">check_df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># List of tuples to populate the output DataFrame</span>
+    <span class="n">match_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Convert the DataFrames that are expensive to manipulate into a list</span>
+    <span class="c1"># of tuples (index, onset, offset, ch_name)</span>
+    <span class="c1"># Pandas does not care about column order, but since we are changing</span>
+    <span class="c1"># the DataFrames to numpy, we need to track the column order</span>
+    <span class="n">gs_cols</span> <span class="o">=</span> <span class="n">gs_df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">check_cols</span> <span class="o">=</span> <span class="n">check_df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">gs_keep_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;onset&quot;</span><span class="p">),</span>
+                    <span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">),</span>
+                    <span class="n">gs_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">))</span>
+    <span class="n">check_keep_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;onset&quot;</span><span class="p">),</span>
+                       <span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;offset&quot;</span><span class="p">),</span>
+                       <span class="n">check_cols</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">))</span>
+    <span class="n">gs_numpy</span> <span class="o">=</span> <span class="n">gs_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:,</span> <span class="n">gs_keep_inds</span><span class="p">]</span>
+    <span class="n">gs_numpy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">]</span> <span class="k">for</span>
+                <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">)</span>
+                <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gs_numpy</span><span class="p">)]</span>
+    <span class="n">check_numpy</span> <span class="o">=</span> <span class="n">check_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:,</span> <span class="n">check_keep_inds</span><span class="p">]</span>
+    <span class="n">check_numpy</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">]</span> <span class="k">for</span>
+                   <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">onset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">ch_name</span><span class="p">)</span>
+                   <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">check_numpy</span><span class="p">)]</span>
+
+    <span class="c1"># TODO: If there is a way to subset by channel, we can speed</span>
+    <span class="c1">#  up the loop</span>
+
+    <span class="c1"># Now we can iterate</span>
+    <span class="k">for</span> <span class="n">gs_hfo</span> <span class="ow">in</span> <span class="n">gs_numpy</span><span class="p">:</span>
+        <span class="n">gs_ind</span><span class="p">,</span> <span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">,</span> <span class="n">gs_ch_name</span> <span class="o">=</span> <span class="n">gs_hfo</span>
+        <span class="n">check_window</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_onset</span> <span class="o">-</span> <span class="n">margin</span><span class="p">,</span> <span class="n">gs_onset</span> <span class="o">+</span> <span class="n">margin</span><span class="p">)</span>
+        <span class="c1"># Subset to the same channel and has onset within the expected window</span>
+        <span class="n">check_numpy_channel</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">check_numpy</span>
+                               <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="n">gs_ch_name</span> <span class="ow">and</span>
+                                   <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">check_window</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>
+                                    <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">check_window</span><span class="p">[</span><span class="mi">1</span><span class="p">]))]</span>
+        <span class="c1"># check if nothing meets this criteria</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_numpy_channel</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="n">potential_matches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># else, see if there is overlap</span>
+        <span class="k">for</span> <span class="n">check_hfo</span> <span class="ow">in</span> <span class="n">check_numpy_channel</span><span class="p">:</span>
+            <span class="n">check_ind</span><span class="p">,</span> <span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">,</span> <span class="n">check_ch_name</span> <span class="o">=</span> <span class="n">check_hfo</span>
+            <span class="n">gs_win</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">)</span>
+            <span class="n">check_win</span> <span class="o">=</span> <span class="p">(</span><span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">(</span><span class="n">gs_win</span><span class="p">,</span> <span class="n">check_win</span><span class="p">):</span>
+                <span class="n">potential_matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">check_hfo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">potential_matches</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">potential_matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gs_ind</span><span class="p">,</span> <span class="n">potential_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># more than one match, find closest</span>
+            <span class="n">match_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_find_best_overlap</span><span class="p">(</span><span class="n">gs_hfo</span><span class="p">,</span> <span class="n">potential_matches</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">match_indices</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">match_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">match_indices</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">match_df</span>
+
+
+<span class="k">def</span> <span class="nf">_find_best_overlap</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span> <span class="n">check_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find best overlap from an ideal (gs) and a possible list.&quot;&quot;&quot;</span>
+    <span class="n">gs_ind</span><span class="p">,</span> <span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">gs</span>
+    <span class="n">gs_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">gs_onset</span><span class="p">,</span> <span class="n">gs_offset</span><span class="p">])</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">best_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_ind</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">check_hfo</span> <span class="ow">in</span> <span class="n">check_list</span><span class="p">:</span>
+        <span class="n">check_ind</span><span class="p">,</span> <span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">check_hfo</span>
+        <span class="n">check_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">check_onset</span><span class="p">,</span> <span class="n">check_offset</span><span class="p">])</span>
+        <span class="c1"># Using distance of the points as the metric</span>
+        <span class="n">new_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gs_point</span> <span class="o">-</span> <span class="n">check_point</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_dist</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">new_dist</span>
+            <span class="n">best_inds</span> <span class="o">=</span> <span class="p">(</span><span class="n">gs_ind</span><span class="p">,</span> <span class="n">check_ind</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">best_inds</span>
+</pre></div>
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.1e043a052b0af929e4d8.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-07.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

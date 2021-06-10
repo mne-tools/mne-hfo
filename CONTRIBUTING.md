@@ -52,7 +52,7 @@ of ``mne-hfo``. You should first create a virtual environment for Python3.6+ say
     conda create -n mne-hfo
 
     # activate the said virtual environment
-    conda activate mne-hhfo
+    conda activate mne-hfo
 
     # install libraries
     pip install -r requirements.txt

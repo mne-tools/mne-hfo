@@ -128,7 +128,7 @@ class HilbertDetector(Detector):  # noqa
             X, threshold_method='hilbert'), dtype='object'))
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         hfo_events = self._merge_contiguous_ch_detections(
             detections, method="freq-bands")
@@ -247,7 +247,7 @@ class LineLengthDetector(Detector):
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")
@@ -350,7 +350,7 @@ class RMSDetector(Detector):
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")

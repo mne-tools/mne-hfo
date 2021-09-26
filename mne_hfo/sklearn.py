@@ -153,7 +153,7 @@ def _make_ydf_sklearn(ydf, ch_names):
 
         # obtain list of HFO onset, offset for this channel
         ch_name_as_list = [ch] * len(ch_df['onset'])
-        sfreqs = ch_df['sample'].divide(ch_df['onset'])
+        sfreqs = ch_df['sfreq']
         ch_results.append(list(zip(ch_df['onset'],
                                    ch_df['offset'],
                                    ch_name_as_list,

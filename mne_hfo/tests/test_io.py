@@ -4,10 +4,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from mne.utils import _TempDir
-from mne_bids import BIDSPath, read_raw_bids
+from mne_bids import BIDSPath
 
-from mne_hfo import (create_annotations_df, create_events_df,
-                     read_annotations, events_to_annotations,
+from mne_hfo import (create_annotations_df, read_annotations,
                      write_annotations)
 
 data_path = Path('data')
@@ -21,22 +20,6 @@ bids_path = BIDSPath(subject=subject, session=session,
                      root=data_path)
 events_path = bids_path.copy().update(
     suffix='events', extension='.tsv')
-
-
-def test_events_to_annotations():
-    """Test converting events to annotations DataFrame."""
-    # test conversion from events dataframe to annotations dataframe
-    events_df = pd.read_csv(events_path, delimiter='\t', index_col=None)
-    annot_df = events_to_annotations(events_df)
-
-    expected_cols = ['onset', 'duration', 'label', 'channels']
-    assert all([col in annot_df.columns for col in expected_cols])
-
-    # check errors when input event dataframe is missing a column
-    with pytest.raises(RuntimeError, match='Passed in events '
-                                           'dataframe is missing'):
-        events_df.drop('onset', axis=1, inplace=True)
-        events_to_annotations(events_df)
 
 
 @pytest.mark.usefixtures('test_bids_root')
@@ -75,22 +58,6 @@ def test_io_annot_df(test_bids_root):
                       root=test_bids_root)
     with pytest.raises(RuntimeError, match='No raw dataset found'):
         read_annotations(fname=out_fname)
-
-
-def test_create_events_df():
-    # read in test raw file
-    raw = read_raw_bids(bids_path)
-    sfreq = raw.info['sfreq']
-
-    # create fake HFO event endpoints detected
-    input_dict = {
-        'A1': [[1500, 2000], ],
-        'A2': [[3000, 5000], ],
-    }
-    events_df = create_events_df(input_dict, sfreq, event_name='hfo')
-    assert len(events_df['trial_type'].unique()) == 2
-    exp_series = pd.Series([0.25, 1.0], name='duration')
-    pd.testing.assert_series_equal(events_df['duration'], exp_series)
 
 
 def test_create_annot_df():

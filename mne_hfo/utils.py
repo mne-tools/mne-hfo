@@ -10,7 +10,7 @@ import pandas as pd
 from scipy.signal import hilbert
 from tqdm import tqdm
 
-from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
+from mne_hfo.config import ANNOT_COLUMNS
 
 
 def _check_df(df: pd.DataFrame, df_type: str,
@@ -21,11 +21,6 @@ def _check_df(df: pd.DataFrame, df_type: str,
                 for col in ANNOT_COLUMNS + ['sample']]):
             raise RuntimeError(f'Annotations dataframe columns must contain '
                                f'{ANNOT_COLUMNS + ["sample"]}.')
-    elif df_type == 'events':
-        if any([col not in df.columns
-                for col in EVENT_COLUMNS + ['sample']]):
-            raise RuntimeError(f'Events dataframe columns must contain '
-                               f'{EVENT_COLUMNS}.')
 
     # Only want to do this check if there are multiple rows. Handles edge case
     # of 1 HFO starting at 0. TODO: handle this more elegantly

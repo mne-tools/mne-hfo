@@ -9,8 +9,10 @@ from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 from tqdm import tqdm
 
+from mne import Annotations
+
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ
-from mne_hfo.io import create_events_df, events_to_annotations
+from mne_hfo.io import create_annotations_df
 from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
 from mne_hfo.sklearn import _make_ydf_sklearn
@@ -125,7 +127,7 @@ class Detector(BaseEstimator):
         raise NotImplementedError('Private function that computes the HFOs '
                                   'needs to be implemented.')
 
-    def _post_process_ch_hfos(self, hfo_event_array, idx):
+    def _post_process_ch_hfos(self, hfo_event_array):
         """Post process one channel's HFO events generally after thresholding.
 
         Joins contiguously detected HFOs as one event.
@@ -133,9 +135,8 @@ class Detector(BaseEstimator):
         Parameters
         ----------
         hfo_event_array : np.ndarray
-            List of HFO metric values (e.g. Line Length, or RMS) over windows.
-        idx : int
-            Index of the channel being analyzed
+            List of HFO metric values (e.g. Line Length, or RMS) over windows
+            for a specific channel.
 
         Returns
         -------
@@ -149,66 +150,6 @@ class Detector(BaseEstimator):
     def _compute_n_wins(self, win_size, step_size, n_times):
         n_windows = int(np.ceil((n_times - win_size) / step_size)) + 1
         return n_windows
-
-    def fit_predict(self, X, y=None):
-        """Perform fit on X and returns labels for X.
-
-        Returns -1 for outliers and 1 for inliers.
-
-        Parameters
-        ----------
-        X : {array-like, sparse matrix, dataframe} of shape \
-            (n_samples, n_features)
-
-        y : Ignored
-            Not used, present for API consistency by convention.
-
-        Returns
-        -------
-        y : ndarray of shape (n_samples,)
-            1 for inliers, -1 for outliers.
-        """
-        # override for transductive outlier detectors like LocalOulierFactor
-        return self.fit(X).predict(X)
-
-    def score(self, X, y, sample_weight=None):
-        """
-        Return the score of the HFO prediction.
-
-        Parameters
-        ----------
-        X : np.ndarray
-            Channel data to detect HFOs on.
-        y : pd.DataFrame
-            Event Dataframe of true labels
-        sample_weight :
-
-        Returns
-        -------
-        float
-
-        """
-        # y_true should be an annotations DataFrame actually
-        # fit and predict
-        y_pred = self.fit_predict(X, y)
-
-        # match predictions with reference dataframe
-        # call `match_detections`. This should
-        # return y_true, y_pred, which are just lists of 0s and 1s
-        # representing overlap detection or not
-
-        # compute score
-        if self.scoring_func == "accuracy":
-            score = accuracy(y, y_pred)
-        elif self.scoring_func == "fnr":
-            score = false_negative_rate(y, y_pred)
-        elif self.scoring_func == "tpr":
-            score = true_positive_rate(y, y_pred)
-        elif self.scoring_func == "precision":
-            score = precision(y, y_pred)
-        elif self.scoring_func == "fdr":
-            score = false_discovery_rate(y, y_pred)
-        return score
 
     def _check_input_raw(self, X, y):
         if isinstance(X, mne.io.BaseRaw):
@@ -276,6 +217,78 @@ class Detector(BaseEstimator):
 
         return X, y
 
+    def fit_predict(self, X, y=None):
+        """Perform fit on X and returns labels for X.
+
+        Returns -1 for outliers and 1 for inliers.
+
+        Parameters
+        ----------
+        X : {array-like, sparse matrix, dataframe} of shape \
+            (n_samples, n_features)
+
+        y : Ignored
+            Not used, present for API consistency by convention.
+
+        Returns
+        -------
+        y : ndarray of shape (n_samples,)
+            1 for inliers, -1 for outliers.
+        """
+        # override for transductive outlier detectors like LocalOulierFactor
+        return self.fit(X).predict(X)
+
+    def score(self, X, y, sample_weight=None):
+        """
+        Return the score of the HFO prediction.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Channel data to detect HFOs on.
+        y : pd.DataFrame
+            Event Dataframe of true labels
+        sample_weight :
+
+        Returns
+        -------
+        float
+
+        """
+        # y_true should be an annotations DataFrame actually
+        # fit and predict
+        y_pred = self.fit_predict(X, y)
+
+        # match predictions with reference dataframe
+        # call `match_detections`. This should
+        # return y_true, y_pred, which are just lists of 0s and 1s
+        # representing overlap detection or not
+
+        # compute score
+        if self.scoring_func == "accuracy":
+            score = accuracy(y, y_pred)
+        elif self.scoring_func == "fnr":
+            score = false_negative_rate(y, y_pred)
+        elif self.scoring_func == "tpr":
+            score = true_positive_rate(y, y_pred)
+        elif self.scoring_func == "precision":
+            score = precision(y, y_pred)
+        elif self.scoring_func == "fdr":
+            score = false_discovery_rate(y, y_pred)
+        return score
+
+    @property
+    def hfo_annotations(self):
+        """HFO Annotations.
+
+        Returns
+        -------
+        hfo_annotations : instance of Annotations
+            `mne.Annotations` object with ``onset``, ``duration``
+            and specified ``ch_name`` for each HFO event detected.
+        """
+        return self.hfo_annotations_
+
     @property
     def hfo_event_arr(self):
         """HFO event array.
@@ -284,29 +297,9 @@ class Detector(BaseEstimator):
         -------
         hfo_event_arr : np.ndarray
             Array that is (n_chs, n_samples), which has a
-            value of ``1`` if
+            value of ``1`` if there is an HFO in that sample.
         """
         return self.hfo_event_arr_
-
-    @property
-    def chs_hfos_dict(self):
-        """Return dictionary of HFO start/end points."""
-        return self.chs_hfos_
-
-    @property
-    def chs_hfos_list(self):
-        """Return list of HFO start/end points for each channel."""
-        return [vals for vals in self.chs_hfos_dict.values()]
-
-    @property
-    def hfo_df(self):
-        """Return HFO detections as a dataframe."""
-        return self.df_
-
-    @property
-    def hfo_event_df(self):
-        """Return HFO detections as an event.tsv DataFrame."""
-        return self.event_df_
 
     @property
     def step_size(self):
@@ -316,6 +309,41 @@ class Detector(BaseEstimator):
         """
         # Calculate window values for easier operation
         return int(np.ceil(self.win_size * self.overlap))
+
+    def to_data_frame(self, format=None):
+        """Export HFO annotations in tabular structure as a pandas DataFrame.
+
+        Parameters
+        ----------
+        format : str | None
+            If None (default), will return a `mne.Annotations` object as a
+            DataFrame. If 'bids', then will return a DataFrame formatted
+            with columns names as an 'annotations.tsv' derivatve file.
+
+        Returns
+        -------
+        result : pandas.DataFrame
+            Returns a pandas DataFrame with onset, duration, and description
+            columns. A column named ch_names is added if any annotations are
+            channel-specific.
+        """
+        if format is None:
+            return self.hfo_annotations.to_data_frame()
+        elif format == 'bids':
+            # format as an annots.tsv DataFrame
+            annots = self.hfo_annotations
+            onset = annots.onset
+            duration = annots.duration
+            label = annots.description
+
+            # each annotation only has one channel associated with it
+            ch_names = [ch[0] for ch in annots.ch_names]
+
+            # create an annotations.tsv dataframe
+            df = create_annotations_df(
+                onset, duration, ch_names,
+                annotation_label=label, sfreq=self.sfreq)
+            return df
 
     def fit(self, X, y=None):
         """Fit the model according to the optionally given training data.
@@ -348,14 +376,22 @@ class Detector(BaseEstimator):
                  f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
                  f'Please use with caution.')
 
-        chs_hfos = {}
+        # store HFO events as list of mne.annotations
+        hfo_description = 'hfo'
+        hfo_annotations = []
+
         self.hfo_event_arr_ = self._create_empty_event_arr()
         if self.n_jobs == 1:
             for idx in tqdm(range(self.n_chs)):
                 sig = X[idx, :]
                 ch_name = self.ch_names[idx]
-                hfo, statistic = self._fit_channel(sig, idx)
-                chs_hfos[ch_name] = hfo
+
+                # compute HFOs for this channel
+                ch_hfo_events, statistic = self._fit_channel(
+                    sig, sfreq, ch_name, hfo_description=hfo_description)
+
+                # create list of annotations
+                hfo_annotations.append(ch_hfo_events)
                 self.hfo_event_arr[idx, :, :] = statistic
 
         else:
@@ -365,27 +401,52 @@ class Detector(BaseEstimator):
                 n_jobs = self.n_jobs
 
             # run joblib parallelization over channels
-            hfos, statistics = zip(*Parallel(n_jobs=n_jobs)(
+            ch_hfos, statistics = zip(*Parallel(n_jobs=n_jobs)(
                 delayed(self._fit_channel)(
-                    X[idx, :], idx
+                    X[idx, :], sfreq, self.ch_names[idx], hfo_description
                 ) for idx in tqdm(range(self.n_chs))
             ))
-            for idx in range(len(hfos)):
-                chs_hfos[self.ch_names[idx]] = hfos[idx]
+            for idx in range(len(ch_hfos)):
+                # chs_hfos[self.ch_names[idx]] = ch_hfos[idx]
+                hfo_annotations.append(ch_hfos[idx])
                 self.hfo_event_arr[idx, :, :] = statistics[idx]
 
-        self.chs_hfos_ = chs_hfos
-        self._create_annotation_df(self.chs_hfos_dict, self.hfo_name)
+        # merge HFO annotation list into one Annotations data structure
+        all_hfo_annots = hfo_annotations[0]
+        for idx in range(1, len(hfo_annotations)):
+            all_hfo_annots += hfo_annotations[idx]
+
+        # assign annotations object
+        self.hfo_annotations_ = all_hfo_annots
+        self.chs_hfos_ = all_hfo_annots
         return self
 
-    def _fit_channel(self, sig, idx):
+    def _fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
+        """Compute a list of HFO events for channel."""
+        # compute the metric over the signal used to compute the HFO
+        # e.g. RMS, or Line Length over time
         hfo_statistic_arr = self._compute_hfo_statistic(sig)
 
         # apply the threshold(s) to the statistic to get detections
+        # of start and stop samples
         hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)
 
-        ch_hfo = self._post_process_ch_hfos(hfo_detection_arr, idx)
-        return ch_hfo, hfo_statistic_arr
+        # (optionally) post process HFOs
+        ch_hfo_list = self._post_process_ch_hfos(hfo_detection_arr)
+
+        # extract onset, and durations of each HFO detected to form Annotations
+        onset, duration = [], []
+        for (start_sample, stop_sample) in ch_hfo_list:
+            onset.append(start_sample / sfreq)
+            duration.append((stop_sample - start_sample) / sfreq)
+
+        # create Annotations object
+        description = [hfo_description] * len(onset)
+        ch_names = [[ch_name] for _ in range(len(onset))]
+        ch_hfo_events = Annotations(onset=onset, duration=duration,
+                                    description=description,
+                                    ch_names=ch_names)
+        return ch_hfo_events, hfo_statistic_arr
 
     def _apply_threshold(self, metric, threshold_method):
         """Apply the threshold(s) to the calculated metric for a single channel.
@@ -450,17 +511,10 @@ class Detector(BaseEstimator):
             and offset of the HFO event.
         """
         check_is_fitted(self)
-        # X, y = self._check_input_raw(X, None)
         self.fit(X, None)
-        ypred = _make_ydf_sklearn(self.hfo_df, ch_names=self.ch_names)
+        ypred = _make_ydf_sklearn(
+            self.to_data_frame(format='bids'), ch_names=self.ch_names)
         return ypred
-
-    def _create_annotation_df(self, chs_hfos_list, hfo_name):
-        event_df = create_events_df(chs_hfos_list, sfreq=self.sfreq,
-                                    event_name=hfo_name)
-        self.event_df_ = event_df
-        annot_df = events_to_annotations(event_df)
-        self.df_ = annot_df
 
     def _compute_sliding_window_detection(self, sig, method):
         """Compute detections on an individual channel data using a sliding window.

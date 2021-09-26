@@ -26,6 +26,8 @@ def test_sklearn_compat(estimator, check):
         # 'check_methods_sample_order_invariance',
         # negative window dimension not allowed
         # 'check_methods_subset_invariance',
+        'check_estimators_dtype',
+        'check_dtype_object',
     ]:
         pytest.skip()
 
@@ -41,6 +43,10 @@ def test_sklearn_compat(estimator, check):
 
 
 def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
+    """Test line length detector.
+
+    Tests regression against original epycom implementation.
+    """
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
     b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
@@ -52,20 +58,23 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
     raw = RawArray(filt_data, info=info)
 
     compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size,
-                                          filter_band=None)
+                                          filter_band=None, n_jobs=1)
     dets = benchmark(compute_instance.fit,
                      raw)
 
     compute_instance.fit(raw)
 
-    # copied from epycom
+    # copied from epycom onset and offset sample of two HFO events
     expected_vals = [(5040, 5198),
                      (34992, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
-        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
-        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
+        onset = dets.hfo_annotations.onset[idx]
+        assert onset * raw.info['sfreq'] == exp_val[0]
+
+        duration = dets.hfo_annotations.duration[idx]
+        assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
 
 
 def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
@@ -94,8 +103,11 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
-        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
-        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
+        onset = dets.hfo_annotations.onset[idx]
+        assert onset * raw.info['sfreq'] == exp_val[0]
+
+        duration = dets.hfo_annotations.duration[idx]
+        assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
 
 
 @pytest.mark.skip(reason='Not as sensitive, need to investigate why')
@@ -120,7 +132,6 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
 
     expected_vals = [(5056, 5123),
                      (35028, 35063)]
-    print(dets.chs_hfos_list)
 
     for idx, (exp_val) in enumerate(expected_vals):
         assert dets.chs_hfos_list[0][idx][0] == exp_val[0]

@@ -31,8 +31,7 @@ import numpy as np
 from mne import create_info
 from mne.io import RawArray
 
-from mne_hfo import (RMSDetector, compute_chs_hfo_rates,
-                     events_to_annotations)
+from mne_hfo import (RMSDetector, compute_chs_hfo_rates)
 from mne_hfo.simulate import simulate_hfo
 
 ###############################################################################

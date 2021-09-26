@@ -38,7 +38,7 @@ from pathlib import Path
 
 from mne_bids import BIDSPath, read_raw_bids, make_report, print_dir_tree
 
-from mne_hfo import (RMSDetector, events_to_annotations, write_annotations,
+from mne_hfo import (RMSDetector, write_annotations,
                      read_annotations)
 
 ###############################################################################

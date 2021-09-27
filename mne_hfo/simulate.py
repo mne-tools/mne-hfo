@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 
 # ----- Noise types -----
-def simulate_pink_noise(N):
+def simulate_pink_noise(N, random_state=None):
     """
     Create a pink noise (1/f) with N points.
 
@@ -16,18 +16,26 @@ def simulate_pink_noise(N):
     ----------
     N: int
         Number of samples to be returned
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
     pink_noise_array: numpy array
         1D array of pink noise
     """
+    rng = np.random.RandomState(random_state)
+
     M = N
     # ensure that the N is even
     if N % 2:
         N += 1
 
-    x = np.random.randn(N)  # generate a white noise
+    x = rng.randn(N)  # generate a white noise
     X = np.fft.fft(x)  # FFT
 
     # prepare a vector for 1/f multiplication
@@ -54,7 +62,7 @@ def simulate_pink_noise(N):
     return y
 
 
-def simulate_brown_noise(N):
+def simulate_brown_noise(N, random_state=None):
     """
     Create a brown noise (1/f²) with N points.
 
@@ -62,18 +70,26 @@ def simulate_brown_noise(N):
     ----------
     N: int
         Number of samples to be returned
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
     brown_noise_array: numpy array
         1D array of brown noise
     """
+    rng = np.random.RandomState(random_state)
+
     M = N
     # ensure that the N is even
     if N % 2:
         N += 1
 
-    x = np.random.randn(N)  # generate a white noise
+    x = rng.randn(N)  # generate a white noise
 
     X = np.fft.fft(x)  # FFT
 
@@ -100,7 +116,7 @@ def simulate_brown_noise(N):
 
 
 # ----- Artifacts -----
-def simulate_delta(fs=5000, decay_dur=None):
+def simulate_delta(fs=5000, decay_dur=None, random_state=None):
     """
     Delta function with exponential decay.
 
@@ -110,14 +126,22 @@ def simulate_delta(fs=5000, decay_dur=None):
         Sampling frequency of the signal (default=5000)
     decay_dur: float
         Decay duration before returning to 0 in seconds
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
     delta: numpy array
         1D numpy array with delta function
     """
+    rng = np.random.RandomState(random_state)
+
     if decay_dur is None:
-        decay_dur = np.random.random()
+        decay_dur = rng.random()
 
     decay_N = int(fs * decay_dur)
     return_value = 0.001  # This is the value where decay finishes
@@ -130,7 +154,8 @@ def simulate_delta(fs=5000, decay_dur=None):
     return delta
 
 
-def simulate_line_noise(fs=5000, freq=50, numcycles=None):
+def simulate_line_noise(fs=5000, freq=50, numcycles=None,
+                        random_state=None):
     """
     Line noise artifact.
 
@@ -142,14 +167,22 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None):
         Line noise frequency (default=50)
     ncycles: float
         Number of cycles to create
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
     line_noise: numpy array
         1D numpy array with line noise
     """
+    rng = np.random.RandomState(random_state)
+
     if numcycles is None:
-        numcycles = np.random.randint(3, 50)
+        numcycles = rng.randint(3, 50)
 
     dur_samps = int((numcycles / freq) * fs)
     x = np.arange(dur_samps)
@@ -158,7 +191,7 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None):
     return y
 
 
-def simulate_artifact_spike(fs=5000, dur=None):
+def simulate_artifact_spike(fs=5000, dur=None, random_state=None):
     """
     Artifact like spike (sharp, not gaussian).
 
@@ -168,14 +201,22 @@ def simulate_artifact_spike(fs=5000, dur=None):
         Sampling frequency of the signal (default=5000)
     dur: float
         Duration of the event in seconds
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
     artifact_spike: numpy array
         1D numpy array with artifact spike
     """
+    rng = np.random.RandomState(random_state)
+
     if dur is None:
-        dur = round(np.random.random() / 10, 3)
+        dur = round(rng.random() / 10, 3)
 
     N = int(fs * dur)
     if not N % 2:  # Check if the number is odd - we want to have proper spike
@@ -217,7 +258,7 @@ def _wavelet(numcycles, f, fs):
     return wave, time
 
 
-def simulate_hfo(fs=5000, freq=None, numcycles=None):
+def simulate_hfo(fs=5000, freq=None, numcycles=None, random_state=None):
     """
     Create a simulated HFO signal.
 
@@ -230,6 +271,12 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None):
         between 80 nad 600 Hz)
     numcycles: int
         Number of HFO cycles (default=None - cycles between 9 - 15)
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
@@ -238,16 +285,18 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None):
     time: numpy array
         1D numpy array with the time vector
     """
+    rng = np.random.RandomState(random_state)
+
     if numcycles is None:
-        numcycles = np.random.randint(9, 15)
+        numcycles = rng.randint(9, 15)
     if freq is None:
-        freq = np.random.randint(80, 600)
+        freq = rng.randint(80, 600)
     wave, time = _wavelet(numcycles, freq, fs)
     return np.real(wave), time
 
 
 # ----- Spike -----
-def simulate_spike(fs=5000, dur=None):
+def simulate_spike(fs=5000, dur=None, random_state=None):
     """
     Create a simple gaussian spike.
 
@@ -263,6 +312,8 @@ def simulate_spike(fs=5000, dur=None):
     spike numpy array
         1D numpy array with a sipke
     """
+    rng = np.random.RandomState(random_state)
+
     if dur is None:
         dur = round(np.random.random() * 0.5, 2)
 

@@ -37,7 +37,6 @@ jobs:
           name: Run unit and integration tests
           command: |
             pipenv run make pep
-            pipenv run pytest --cov=mne_hfo ./tests/ --cov-report=xml --cov-config=setup.cfg --verbose
 
       - run:
           name: Build the documentation

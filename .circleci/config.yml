@@ -71,7 +71,7 @@ jobs:
       - run:
           name: Run style check
           command: |
-            make pep
+            sudo make pep
 
       - run:
           name: Build the documentation

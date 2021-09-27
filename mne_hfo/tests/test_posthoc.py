@@ -207,7 +207,6 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     # print(pd.concat([pd.DataFrame(gs.cv_results_["params"]),
     #                 pd.DataFrame(gs.cv_results_["mean_test_score"],
     #                              columns=["Accuracy"])],axis=1))
-
     # uncomment this to see that gridsearch results
     # raise Exception('check out the print statements')
 

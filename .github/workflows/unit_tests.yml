@@ -115,6 +115,7 @@ jobs:
         run: |
           pip install --upgrade --upgrade-strategy eager -r requirements.txt
           pip install --upgrade --upgrade-strategy eager -r requirements_testing.txt
+          pip install --upgrade --progress-bar off https://github.com/mne-tools/mne-python/zipball/main
 
       - name: Display versions and environment information
         run: |

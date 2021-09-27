@@ -202,6 +202,7 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
+
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)
     # print(pd.concat([pd.DataFrame(gs.cv_results_["params"]),

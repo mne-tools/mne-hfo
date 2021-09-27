@@ -48,7 +48,8 @@ def _convert_y_sklearn_to_annot_df(ylist):
 
     # create the output annotations dataframe
     annot_df = create_annotations_df(onset=onset_sec, duration=duration_sec,
-                                     ch_name=ch_names, annotation_label=labels)
+                                     ch_name=ch_names, sfreq=sfreq,
+                                     annotation_label=labels)
     annot_df['sample'] = annot_df['onset'].multiply(sfreq)
     return annot_df
 

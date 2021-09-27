@@ -79,7 +79,7 @@ def create_annotations_df(onset: List[float], duration: List[float],
     if not isinstance(sfreq, list):
         sfreq = [sfreq] * len(onset)
 
-    sample = np.multiply(onset, sfreq)
+    sample = np.multiply(onset, sfreq).astype(int)
 
     # set annotation labels
     if annotation_label is None:
@@ -102,7 +102,8 @@ def create_annotations_df(onset: List[float], duration: List[float],
     annot_df = pd.DataFrame(data=np.column_stack([onset, duration, label,
                                                   channels, sample, sfreq]),
                             index=None,
-                            columns=ANNOT_COLUMNS + ['sample', 'sfreq'])
+                            columns=ANNOT_COLUMNS + ['sfreq'])
+    print(annot_df.head())
     annot_df = annot_df.astype({
         'onset': 'float64',
         'duration': 'float64',

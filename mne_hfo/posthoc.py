@@ -214,8 +214,8 @@ def merge_overlapping_events(df: pd.DataFrame):
     # check dataframe
     df = _check_df(df, df_type='annotations')
 
-    # compute sfreq
-    sfreq = np.unique(df['sample'] / df['onset'])
+    # compute sfreq. XXX: assumes only 1 sampling rate
+    sfreq = np.unique(df['sfreq'])[0]
 
     # start/end timestamp with current time for every row
     ref_timestamp = datetime.now(tz=timezone.utc)
@@ -238,6 +238,11 @@ def merge_overlapping_events(df: pd.DataFrame):
     merged_df['onset'] = (merged_df['start_timestamp'] -
                           merged_df['ref_timestamp']).dt.total_seconds()
     merged_df['sample'] = merged_df['onset'] * sfreq
+
+    # XXX: need to enable different sfreqs maybe
+    print(sfreq)
+    print(merged_df)
+    merged_df['sfreq'] = sfreq
     merged_df.drop(['start_timestamp', 'end_timestamp', 'ref_timestamp'],
                    axis=1, inplace=True)
     merged_df = merged_df[orig_cols]

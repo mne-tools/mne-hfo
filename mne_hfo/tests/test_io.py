@@ -25,12 +25,13 @@ events_path = bids_path.copy().update(
 @pytest.mark.usefixtures('test_bids_root')
 def test_io_annot_df(test_bids_root):
     # create dummy annotations
+    sfreq = 150
     onset = [1.5, 2.0, 3]
     duration = [0.0, 0, 1.5]
     ch_name = ['A1', 'A2', 'A3']
     annotation_label = ['ripple', 'frandr', 'fast-ripple']
     annot_df = create_annotations_df(onset, duration, ch_name,
-                                     annotation_label)
+                                     sfreq, annotation_label)
 
     annot_path = bids_path.copy().update(root=None,
                                          suffix='annotations', check=False)
@@ -61,19 +62,20 @@ def test_io_annot_df(test_bids_root):
 
 
 def test_create_annot_df():
+    sfreq = 150
     onset = [1.5, 2.0, 3]
     duration = [0.0, 0, 1.5]
     ch_name = ['A1', 'A2', 'A3']
     annotation_label = ['ripple', 'frandr', 'fast-ripple']
 
     # without using annotation label, everything is labeled HFO
-    annot_df = create_annotations_df(onset, duration, ch_name)
+    annot_df = create_annotations_df(onset, duration, ch_name, sfreq)
     assert len(annot_df['label'].unique()) == 1
     assert annot_df['label'][0] == 'HFO'
 
     # using annotation label, everything is labeled
     annot_df = create_annotations_df(onset, duration, ch_name,
-                                     annotation_label)
+                                     sfreq, annotation_label)
     assert len(annot_df['label'].unique()) == 3
     assert annot_df['label'][0] == 'ripple'
 
@@ -82,13 +84,13 @@ def test_create_annot_df():
                                          '"duration", need to be the same.'):
         _onset = onset + [2]
         create_annotations_df(_onset, duration, ch_name,
-                              annotation_label)
+                              sfreq, annotation_label)
     with pytest.raises(ValueError, match='Length of "annotation_label" need '
                                          'to be the same as other arguments'):
         create_annotations_df(onset, duration, ch_name,
-                              annotation_label[0])
+                              sfreq, annotation_label[0])
 
     # check typing mismatch, should be caught by pandas
     onset[0] = 'blah'
     with pytest.raises(ValueError, match='could not convert string to float:'):
-        create_annotations_df(onset, duration, ch_name)
+        create_annotations_df(onset, duration, ch_name, sfreq)

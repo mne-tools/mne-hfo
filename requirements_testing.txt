@@ -5,9 +5,6 @@ pytest-sugar
 pytest-cov 
 flake8 
 numpydoc 
-sphinx-gallery 
-sphinx-bootstrap-theme 
-sphinx 
 pydocstyle 
 codespell 
 check-manifest 
@@ -17,6 +14,8 @@ nbsphinx
 sphinx-copybutton 
 pipfile-requirements 
 pandoc 
+sphinx-gallery 
+sphinx 
 sphinx-autodoc-typehints 
 typing-extensions
 pydata-sphinx-theme

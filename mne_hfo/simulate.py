@@ -312,7 +312,7 @@ def simulate_spike(fs=5000, dur=None, random_state=None):
     spike numpy array
         1D numpy array with a sipke
     """
-    rng = np.random.RandomState(random_state)
+    np.random.RandomState(random_state)
 
     if dur is None:
         dur = round(np.random.random() * 0.5, 2)

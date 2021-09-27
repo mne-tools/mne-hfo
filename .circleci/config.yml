@@ -69,9 +69,9 @@ jobs:
               python -c "import mne; level = mne.get_config('MNE_LOGGING_LEVEL'); assert level.lower() == 'info', repr(level)"
 
       - run:
-          name: Run unit and integration tests
+          name: Run style check
           command: |
-            pipenv run make pep
+            make pep
 
       - run:
           name: Build the documentation

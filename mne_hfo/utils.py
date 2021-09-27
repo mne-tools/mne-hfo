@@ -189,7 +189,7 @@ def compute_rms(signal, win_size=6):
 
     Returns
     -------
-    rms: numpy array
+    rms: np.ndarray
         Root mean square transformed signal
     """
     aux = np.power(signal, 2)
@@ -240,7 +240,7 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
 
     Parameters
     ----------
-    signal : np.array
+    signal : np.ndarray
         EEG signal for a single channel
     extra_params : dict
         Must have values for 'freq_cutoffs', 'freq_span', and
@@ -303,7 +303,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
 
     Returns
     -------
-    tdetects: List(tuples)
+    tdetects: List of Tuple
         Detected hfo events with the structure [band_idx, start,
         stop, max_amplitude, freq_band]
 

@@ -15,14 +15,11 @@ class HilbertDetector(Detector):  # noqa
 
     Parameters
     ----------
-    sfreq: float
-        Sampling frequency of the signal
-    l_freq: float
-        Low cut-off frequency
-    h_freq: float
-        High cut-off frequency
     threshold: float
         Threshold for detection (default=3)
+    filter_band : tuple(float, float)
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1. The default is ``(30, 100)``.
     band_method: str
         Spacing of hilbert frequency bands - options: 'linear' or 'log'
         (default='linear'). Linear provides better frequency resolution but
@@ -38,6 +35,14 @@ class HilbertDetector(Detector):  # noqa
     offset: int
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    hfo_name: str
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     References
     ----------
@@ -155,21 +160,27 @@ class LineLengthDetector(Detector):
 
     Parameters
     ----------
-    filter_band : tuple(float, float) | None
-        Low cut-off frequency at index 0 and high cut-off frequency
-        at index 1.
     threshold: float
-        Number of standard deviations to use as a threshold
+        Number of standard deviations to use as a threshold.
     win_size: int
-        Sliding window size in samples
+        Sliding window size in samples.
     overlap: float
-        Fraction of the window overlap (0 to 1)
-    offset: int
-        Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
+        Fraction of the window overlap (0 to 1).
+    sfreq : int | None
+        The sampling rate of the data.
+    filter_band : tuple(float, float)
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1. The default is ``(30, 100)``.
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    n_jobs : int
+        The number of jobs for joblib parallelization.
     hfo_name: str
         What to name the events detected (i.e. fast ripple if freq_band is
         (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     Notes
     -----
@@ -268,21 +279,27 @@ class RMSDetector(Detector):
 
     Parameters
     ----------
-    filter_band : tuple(float, float) | None
-        Low cut-off frequency at index 0 and high cut-off frequency
-        at index 1.
     threshold: float
         Number of standard deviations to use as a threshold.
-        Default = 3.
     win_size: int
-        Sliding window size in samples. Default = 100. The
-        original paper uses a window size equivalent to 3 ms.
+        Sliding window size in samples.
     overlap: float
-        Fraction of the window overlap (0 to 1). Default = 0.25.
-        The original paper uses an overlap of 0.
-    offset: int
-        Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
+        Fraction of the window overlap (0 to 1).
+    sfreq : int | None
+        The sampling rate of the data.
+    filter_band : tuple(float, float)
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1. The default is ``(100, 500)``.
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    n_jobs : int
+        The number of jobs for joblib parallelization.
+    hfo_name: str
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     References
     ----------

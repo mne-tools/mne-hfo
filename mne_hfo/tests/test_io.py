@@ -89,8 +89,3 @@ def test_create_annot_df():
                                          'to be the same as other arguments'):
         create_annotations_df(onset, duration, ch_name,
                               sfreq, annotation_label[0])
-
-    # check typing mismatch, should be caught by pandas
-    onset[0] = 'blah'
-    with pytest.raises(ValueError, match='could not convert string to float:'):
-        create_annotations_df(onset, duration, ch_name, sfreq)

@@ -41,7 +41,8 @@ jobs:
       - run:
           name: Setup Python environment
           command: |
-            python -m pip install --upgrade --progress-bar off --only-binary matplotlib -r requirements_testing.txt
+            python -m pip install --upgrade --progress-bar off --only-binary matplotlib 
+            python -m pip install --upgrade --progress-bar off -r requirements_testing.txt
             python -m pip install --upgrade --progress-bar off -r requirements.txt
             python -m pip install --upgrade --progress-bar off https://github.com/mne-tools/mne-python/zipball/main
             python -m pip install --progress-bar off https://github.com/sphinx-gallery/sphinx-gallery/zipball/master
@@ -67,11 +68,6 @@ jobs:
               LIBGL_DEBUG=verbose python -c "import matplotlib.pyplot as plt; plt.figure()"
               python -c "import mne; mne.set_config('MNE_LOGGING_LEVEL', 'info')"
               python -c "import mne; level = mne.get_config('MNE_LOGGING_LEVEL'); assert level.lower() == 'info', repr(level)"
-
-      - run:
-          name: Run style check
-          command: |
-            sudo make pep
 
       - run:
           name: Build the documentation

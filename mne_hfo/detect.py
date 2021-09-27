@@ -138,10 +138,12 @@ class HilbertDetector(Detector):  # noqa
 class LineLengthDetector(Detector):
     """Line-length detection algorithm.
 
-    Original paper defines HFOS as "(HFOs), which we collectively
-    term as all activity >40 Hz (including gamma, high-gamma,
-    ripple, and fast ripple oscillations), may have a
-    fundamental role in the generation and spread of focal seizures"
+    Original paper defines HFOS as:
+    
+    "(HFOs), which we collectively term as all activity >40 Hz
+    (including gamma, high-gamma, ripple, and fast ripple oscillations),
+    may have a fundamental role in the generation and spread of focal
+    seizures."
 
     In the paper, data were sampled at 200 Hz and bandpass-filtered (0.1 – 100
     Hz) during acquisition. Data were further digitally bandpass-filtered

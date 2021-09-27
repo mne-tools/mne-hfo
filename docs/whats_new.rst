@@ -22,6 +22,7 @@ Notable changes
 
 Authors
 ~~~~~~~
+- `Adam Li`_
 
 Detailed list of changes
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,17 +30,17 @@ Detailed list of changes
 Enhancements
 ^^^^^^^^^^^^
 
-- xxx
+- All detectors now use ``mne.Annotations`` under the hood to create dataframe ``sfreq``, by `Adam Li`_ (:gh:`49`)
 
 API changes
 ^^^^^^^^^^^
 
-- xxx
+- :func:`mne_hfo.create_annotations_df` now requires the sampling rate to be passed into the argument ``sfreq``, by `Adam Li`_ (:gh:`49`)
+- All functions used for creating events and handling ``events.tsv`` like dataframes were removed, by `Adam Li`_ (:gh:`49`)
 
 Requirements
 ^^^^^^^^^^^^
-
-- xxx
+- Now requires ``mne`` v0.23.4+ `Adam Li`_ (:gh:`49`)
 
 Bug fixes
 ^^^^^^^^^

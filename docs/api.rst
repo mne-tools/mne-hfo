@@ -37,9 +37,7 @@ BIDS-IO functions
 .. autosummary::
    :toctree: generated/
 
-    create_events_df
     create_annotations_df
-    events_to_annotations
     read_annotations
     write_annotations
 

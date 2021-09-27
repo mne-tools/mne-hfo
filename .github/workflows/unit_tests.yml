@@ -113,20 +113,8 @@ jobs:
 
       - name: Install Python dependencies using pipenv
         run: |
-          python -m pip install --upgrade pip wheel pipenv
-          python -m pip install pipfile-requirements
-
-      - id: cache-pipenv
-        uses: actions/cache@v1
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-
-      - name: Install dependencies
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        run: |
-          pip install -r requirements.txt
-          pip install -r test_requirements.txt
+          pip install --upgrade --upgrade-strategy eager -r requirements.txt
+          pip install --upgrade --upgrade-strategy eager -r requirements_testing.txt
 
       - name: Display versions and environment information
         run: |
@@ -134,10 +122,14 @@ jobs:
           date
           python --version
           which python
-          python -c "import mne; mne.sys_info()"
 
       - name: Install MNE-HFO
         run: pip install --no-deps .
+
+      - shell: bash -el {0}
+        run: mne sys_info
+        name: 'Show infos'
+
       - name: Run pytest
         run: |
           python -m pytest . --cov=mne_hfo --cov-report=xml --cov-config=setup.cfg --verbose --ignore mne-python

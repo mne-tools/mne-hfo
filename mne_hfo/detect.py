@@ -15,30 +15,30 @@ class HilbertDetector(Detector):  # noqa
 
     Parameters
     ----------
-    threshold: float
-        Threshold for detection (default=3)
+    threshold : float
+        Threshold for detection (default=3).
     filter_band : tuple(float, float)
         Low cut-off frequency at index 0 and high cut-off frequency
         at index 1. The default is ``(30, 100)``.
-    band_method: str
+    band_method : str
         Spacing of hilbert frequency bands - options: 'linear' or 'log'
         (default='linear'). Linear provides better frequency resolution but
         is slower.
-    n_bands: int
-        Number of bands if band_spacing = log (default=300)
-    cycle_threshold: float
-        Minimum number of cycles to detect (default=1)
-    gap_threshold: float
-        Number of cycles for gaps (default=1)
-    n_jobs: int
-        Number of cores to use (default=1)
-    offset: int
+    n_bands : int
+        Number of bands if band_spacing = log (default=300).
+    cycle_threshold : float
+        Minimum number of cycles to detect (default=1).
+    gap_threshold : float
+        Number of cycles for gaps (default=1).
+    n_jobs : int
+        Number of cores to use (default=1).
+    offset : int
         Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
+        function is run in separate windows. Default = 0.
     scoring_func : str
         The scoring function to apply when trying to match HFOs with
         a different dataset, such as manual annotations.
-    hfo_name: str
+    hfo_name : str
         What to name the events detected (i.e. fast ripple if freq_band is
         (250, 500)).
     verbose : bool
@@ -160,11 +160,11 @@ class LineLengthDetector(Detector):
 
     Parameters
     ----------
-    threshold: float
+    threshold : float
         Number of standard deviations to use as a threshold.
-    win_size: int
+    win_size : int
         Sliding window size in samples.
-    overlap: float
+    overlap : float
         Fraction of the window overlap (0 to 1).
     sfreq : int | None
         The sampling rate of the data.
@@ -176,7 +176,7 @@ class LineLengthDetector(Detector):
         a different dataset, such as manual annotations.
     n_jobs : int
         The number of jobs for joblib parallelization.
-    hfo_name: str
+    hfo_name : str
         What to name the events detected (i.e. fast ripple if freq_band is
         (250, 500)).
     verbose : bool
@@ -279,11 +279,11 @@ class RMSDetector(Detector):
 
     Parameters
     ----------
-    threshold: float
+    threshold : float
         Number of standard deviations to use as a threshold.
-    win_size: int
+    win_size : int
         Sliding window size in samples.
-    overlap: float
+    overlap : float
         Fraction of the window overlap (0 to 1).
     sfreq : int | None
         The sampling rate of the data.
@@ -295,7 +295,7 @@ class RMSDetector(Detector):
         a different dataset, such as manual annotations.
     n_jobs : int
         The number of jobs for joblib parallelization.
-    hfo_name: str
+    hfo_name : str
         What to name the events detected (i.e. fast ripple if freq_band is
         (250, 500)).
     verbose : bool

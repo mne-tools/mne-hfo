@@ -42,7 +42,7 @@ def create_annotations_df(onset: List[float], duration: List[float],
     duration : list of float
         Duration in seconds.
     ch_name : list of str
-        The name of the event to add to the "trial_type" column
+        The name of the event to add to the "trial_type" column.
     sfreq : list of float | float
         The sample rate for each channel.
     annotation_label : list of str | None
@@ -188,7 +188,7 @@ def read_annotations(fname: Union[str, Path], root: Path = None) \
 
 def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
                       intended_for: str, root: Path,
-                      description: str = None) -> None:
+                      description: str = None):
     """Write annotations dataframe to disc.
 
     Parameters

@@ -3,7 +3,6 @@ import os
 import sys
 from datetime import date
 
-import sphinx_bootstrap_theme
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
 
@@ -22,21 +21,7 @@ sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
-
-error_ignores = {
-    # These we do not live by:
-    'GL01',  # Docstring should start in the line immediately after the quotes
-    'EX01', 'EX02',  # examples failed (we test them separately)
-    'ES01',  # no extended summary
-    'SA01',  # no see also
-    'YD01',  # no yields section
-    'SA04',  # no description in See Also
-    'PR04',  # Parameter "shape (n_channels" has no type
-    'RT02',  # The first line of the Returns section should contain only the type, unless multiple values are being returned  # noqa
-    # XXX should also verify that | is used rather than , to separate params
-    # XXX should maybe also restore the parameter-desc-length < 800 char check
-}
+needs_sphinx = '4.0'
 
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -53,7 +38,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx_gallery.gen_gallery',
     'numpydoc',
-    # 'nbsphinx',  # to render jupyter notebooks
+    'nbsphinx',  # to render jupyter notebooks
     'sphinx_copybutton',
     # 'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
     'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
@@ -76,6 +61,20 @@ nbsphinx_execute = 'never'
 nbsphinx_allow_errors = True
 
 # -- numpydoc
+error_ignores = {
+    # These we do not live by:
+    'GL01',  # Docstring should start in the line immediately after the quotes
+    'EX01', 'EX02',  # examples failed (we test them separately)
+    'ES01',  # no extended summary
+    'SA01',  # no see also
+    'YD01',  # no yields section
+    'SA04',  # no description in See Also
+    'PR04',  # Parameter "shape (n_channels" has no type
+    'RT02',  # The first line of the Returns section should contain only the type, unless multiple values are being returned  # noqa
+    # XXX should also verify that | is used rather than , to separate params
+    # XXX should maybe also restore the parameter-desc-length < 800 char check
+}
+
 # Below is needed to prevent errors
 numpydoc_class_members_toctree = False
 numpydoc_attributes_as_param_list = True
@@ -91,6 +90,9 @@ numpydoc_xref_ignore = {
     'n_node_names', 'n_tapers', 'n_signals', 'n_step', 'n_freqs',
     'epochs', 'freqs', 'times', 'arrays', 'lists', 'func', 'n_nodes',
     'n_estimated_nodes', 'n_samples', 'n_channels', 'Renderer',
+    'estimator', 'n_features', 'dataframe' ,'sparse', 'matrix',
+    'n_output', 'Annotations', 'DataFrame', 'Detector', 'BIDSPath',
+    'pd.DataFrame', 'List', 'Tuple'
 }
 numpydoc_xref_aliases = {
     # Python
@@ -130,7 +132,7 @@ numpydoc_validation_exclude = {  # set of regex
     r'plot_circle'
 }
 
-default_role = 'autolink'  # XXX silently allows bad syntax, someone should fix
+default_role = 'py:obj'  # XXX silently allows bad syntax, someone should fix
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -186,19 +188,10 @@ html_theme_options = {
              url='https://github.com/mne-tools/mne-hfo',
              icon='fab fa-github-square'),
     ],
-    # 'navbar_title': 'MNE-HFO',
-    # 'bootswatch_theme': "flatly",
-    # 'navbar_sidebarrel': False,  # no "previous / next" navigation
-    # 'navbar_pagenav': False,  # no "Page" navigation in sidebar
-    # 'bootstrap_version': "3",
-    # 'navbar_links': [
-    #     ("News", "whats_new"),
-    #     ("Install", "install"),
-    #     ("Tutorial", "tutorial"),
-    #     ("Use", "use"),
-    #     ("API", "api"),
-    #     ("Contribute!", "contribute")
-    # ]
+    'use_edit_page_button': False,
+    'navigation_with_keys': False,
+    'show_toc_level': 1,
+    'navbar_end': ['version-switcher', 'navbar-icon-links'],
 }
 
 html_context = {
@@ -261,9 +254,13 @@ sphinx_gallery_conf = {
     # }
 }
 
+# sphinxcontrib-bibtex
+bibtex_bibfiles = ['./references.bib']
+bibtex_style = 'unsrt'
+bibtex_footbibliography_header = ''
+
 # Enable nitpicky mode - which ensures that all references in the docs
 # resolve.
 
 nitpicky = True
-nitpick_ignore = [('py:class:', 'type'),
-                  ('py:class', 'pandas.core.frame.DataFrame')]
+nitpick_ignore = []

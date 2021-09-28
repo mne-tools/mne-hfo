@@ -43,7 +43,7 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
 
     Parameters
     ----------
-    annot_df : pandas.core.DataFrame
+    annot_df : pd.DataFrame
         The DataFrame corresponding to the ``annotations.tsv`` file.
     rate : str
         The frequency at which to compute the HFO rate.
@@ -65,13 +65,13 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
     ch_hfo_rates : dict
         The HFO rates per channel with any HFOs.
 
-    References
-    ----------
-    .. [1] https://stackoverflow.com/questions/66143839/computing-rate-of-occurrences-per-unit-of-time-in-a-pandas-dataframe  # noqa
-
     See Also
     --------
     mne_hfo.io.read_annotations : Reading in annotations.tsv file as DataFrame.
+
+    References
+    ----------
+    .. [1] https://stackoverflow.com/questions/66143839/computing-rate-of-occurrences-per-unit-of-time-in-a-pandas-dataframe  # noqa
     """
     annot_df = _check_df(annot_df, df_type='annotations')
 
@@ -207,7 +207,8 @@ def merge_overlapping_events(df: pd.DataFrame):
 
     See Also
     --------
-    mne_hfo.io.create_events_df : Create events DataFrame from HFO detections.
+    mne_hfo.io.create_annotations_df : Create annots DataFrame from HFO
+        detections.
     """
     orig_cols = df.columns
 
@@ -260,10 +261,10 @@ def find_coincident_events(hfo_dict1, hfo_dict2):
     Parameters
     ----------
     hfo_dict1 : dict
-        keys are channel names and values are list of tuples of start
+        Keys are channel names and values are list of tuples of start
         and end times.
     hfo_dict2 : dict
-        keys are channel names and values are list of tuples of start
+        Keys are channel names and values are list of tuples of start
         and end times.
 
     Returns
@@ -383,7 +384,7 @@ def match_detected_annotations(
     -------
     matched_df : pd.DataFrame
         A DataFrame with the columns ``pred_index`` and ``true_index``,
-        which corresponds to indices,
+        which corresponds to indices.
     """
     # check adherence of the annotations dataframe structure
     ytrue_annot_df = _check_df(ytrue_annot_df, df_type='annotations')

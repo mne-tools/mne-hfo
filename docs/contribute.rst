@@ -42,7 +42,7 @@ The basic hyperparameters of any Detector are:
     - window size: The size of the windows in terms of samples
     - overlap: The amount of overlap between consecutive windows
 
-One must also implement their own `_compute_hfo` function, which returns an HFO event array, consisting
+One must also implement their own ``_compute_hfo`` function, which returns an HFO event array, consisting
 of an array of ``(n_chs, n_windows)`` that is a binary existence of HFO detected or not. It is within
 this function that all HFO detection algorithm should be implemented.
 

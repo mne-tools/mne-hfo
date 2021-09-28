@@ -36,7 +36,7 @@ then iii) evaluate the efficacy using tools from ``scikit-learn``.
 Enhancements
 ^^^^^^^^^^^^
 
-- Added :func:`mne_hfo.compute_chs_hfo_rates` to compute HFO rates per unit of time for every channel, by `Adam Li`) (:gh:`13`)
+- Added :func:`mne_hfo.compute_chs_hfo_rates` to compute HFO rates per unit of time for every channel, by `Adam Li`_ (:gh:`13`)
 - Added ``mne_hfo.io.create_events_df`` to generate a DataFrame of HFO events from ``Raw`` object, or dictionary of lists of HFO endpoints, by `Adam Li`_ (:gh:`7`)
 - Added :func:`mne_hfo.find_coincident_events` to compare two dicts that contain event information by `Patrick Myers`_ (:gh:`10`)
 - Added notebook to demo use of detection algorithms by `Patrick Myers`_ (:gh:`10`)
@@ -63,6 +63,6 @@ Requirements
 Bug fixes
 ^^^^^^^^^
 
-- Fixed channel name issue introduced by redundant type checks when using `fit_and_predict` by `Patrick Myers`_ (:gh:`15`)
+- Fixed channel name issue introduced by redundant type checks when using ``fit_and_predict`` by `Patrick Myers`_ (:gh:`15`)
 
 .. include:: authors.rst

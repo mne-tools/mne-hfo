@@ -2,6 +2,7 @@
 
 __version__ = '0.3dev'
 
+from mne_hfo.base import Detector
 from mne_hfo.detect import RMSDetector, LineLengthDetector, HilbertDetector
 from mne_hfo.hodetect import MorphologyDetector, CSDetector
 from mne_hfo.io import (read_annotations, create_annotations_df,

@@ -226,8 +226,8 @@ class Detector(BaseEstimator):
         ----------
         X : {array-like, sparse matrix, dataframe} of shape \
             (n_samples, n_features)
-
-        y : Ignored
+            The input data.
+        y : np.ndarray
             Not used, present for API consistency by convention.
 
         Returns
@@ -246,14 +246,15 @@ class Detector(BaseEstimator):
         ----------
         X : np.ndarray
             Channel data to detect HFOs on.
-        y : pd.DataFrame
-            Event Dataframe of true labels
-        sample_weight :
+        y : DataFrame
+            Event Dataframe of true labels.
+        sample_weight : np.ndarray
+            Not used.
 
         Returns
         -------
-        float
-
+        score : float
+            The score relative to true annotations we want.
         """
         # y_true should be an annotations DataFrame actually
         # fit and predict
@@ -352,16 +353,16 @@ class Detector(BaseEstimator):
         ----------
         X : mne.io.Raw of shape (n_samples, n_features) | pd.DataFrame
             Training vector, where n_samples is the number of samples and
-            n_features is the number of features. In MNE-HFO, n_features
-            are the number of time points in the EEG data, and n_samples
-            are the number of channels.
+            ``n_features`` is the number of features. In MNE-HFO,
+            ``n_features`` are the number of time points in the EEG data,
+            and n_samples are the number of channels.
 
         y : array-like of shape (n_samples, n_output)
             Target vector relative to X.
 
         Returns
         -------
-        self
+        self : Detector
             Fitted estimator.
 
         Notes

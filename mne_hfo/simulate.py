@@ -14,8 +14,8 @@ def simulate_pink_noise(N, random_state=None):
 
     Parameters
     ----------
-    N: int
-        Number of samples to be returned
+    N : int
+        Number of samples to be returned.
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -25,8 +25,8 @@ def simulate_pink_noise(N, random_state=None):
 
     Returns
     -------
-    pink_noise_array: numpy array
-        1D array of pink noise
+    pink_noise_array : numpy array
+        1D array of pink noise.
     """
     rng = np.random.RandomState(random_state)
 
@@ -68,8 +68,8 @@ def simulate_brown_noise(N, random_state=None):
 
     Parameters
     ----------
-    N: int
-        Number of samples to be returned
+    N : int
+        Number of samples to be returned.
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -79,8 +79,8 @@ def simulate_brown_noise(N, random_state=None):
 
     Returns
     -------
-    brown_noise_array: numpy array
-        1D array of brown noise
+    brown_noise_array : numpy array
+        1D array of brown noise.
     """
     rng = np.random.RandomState(random_state)
 
@@ -122,10 +122,10 @@ def simulate_delta(fs=5000, decay_dur=None, random_state=None):
 
     Parameters
     ----------
-    fs: int
-        Sampling frequency of the signal (default=5000)
-    decay_dur: float
-        Decay duration before returning to 0 in seconds
+    fs : int
+        Sampling frequency of the signal (default=5000).
+    decay_dur : float
+        Decay duration before returning to 0 in seconds.
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -135,8 +135,8 @@ def simulate_delta(fs=5000, decay_dur=None, random_state=None):
 
     Returns
     -------
-    delta: numpy array
-        1D numpy array with delta function
+    delta : numpy array
+        1D numpy array with delta function.
     """
     rng = np.random.RandomState(random_state)
 
@@ -161,12 +161,12 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None,
 
     Parameters
     ----------
-    fs: int
-        Sampling frequency of the signal (default=5000)
-    freq: float
-        Line noise frequency (default=50)
-    ncycles: float
-        Number of cycles to create
+    fs : int
+        Sampling frequency of the signal (default=5000).
+    freq : float
+        Line noise frequency (default=50).
+    numcycles : float
+        Number of cycles to create.
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -176,8 +176,8 @@ def simulate_line_noise(fs=5000, freq=50, numcycles=None,
 
     Returns
     -------
-    line_noise: numpy array
-        1D numpy array with line noise
+    line_noise : numpy array
+        1D numpy array with line noise.
     """
     rng = np.random.RandomState(random_state)
 
@@ -197,10 +197,10 @@ def simulate_artifact_spike(fs=5000, dur=None, random_state=None):
 
     Parameters
     ----------
-    fs: int
-        Sampling frequency of the signal (default=5000)
-    dur: float
-        Duration of the event in seconds
+    fs : int
+        Sampling frequency of the signal (default=5000).
+    dur : float
+        Duration of the event in seconds.
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -210,8 +210,8 @@ def simulate_artifact_spike(fs=5000, dur=None, random_state=None):
 
     Returns
     -------
-    artifact_spike: numpy array
-        1D numpy array with artifact spike
+    artifact_spike : numpy array
+        1D numpy array with artifact spike.
     """
     rng = np.random.RandomState(random_state)
 
@@ -235,19 +235,19 @@ def _wavelet(numcycles, f, fs):
 
     Parameters
     ----------
-    numcycles: int
-        Number of cycles (gaussian window)
-    f: float
-        Central frequency
-    fs: float
-        Signal sampling rate (default=5000)
+    numcycles : int
+        Number of cycles (gaussian window).
+    f : float
+        Central frequency.
+    fs : float
+        Signal sampling rate (default=5000).
 
     Returns
     -------
-    wave: numpy array
-        1D numpy array with waveform
-    time: numpy array
-        1D numpy array with the time vector
+    wave : numpy array
+        1D numpy array with waveform.
+    time : numpy array
+        1D numpy array with the time vector.
     """
     N = int((fs * numcycles) / f)
     time = np.linspace((-numcycles / 2) / float(f),
@@ -264,13 +264,13 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None, random_state=None):
 
     Parameters
     ----------
-    fs: float
-        Sampling rate of the signal (default=5000)
-    freq: float
+    fs : float
+        Sampling rate of the signal (default=5000).
+    freq : float
         Frequency of the artificial HFO (default=None - random frequency
-        between 80 nad 600 Hz)
-    numcycles: int
-        Number of HFO cycles (default=None - cycles between 9 - 15)
+        between 80 nad 600 Hz).
+    numcycles : int
+        Number of HFO cycles (default=None - cycles between 9 - 15).
     random_state : None | int | instance of ~numpy.random.RandomState
         If ``random_state`` is an :class:`int`, it will be used as a seed for
         :class:`~numpy.random.RandomState`. If ``None``, the seed will be
@@ -280,10 +280,10 @@ def simulate_hfo(fs=5000, freq=None, numcycles=None, random_state=None):
 
     Returns
     -------
-    wave: numpy array
-        1D numpy array with waveform
-    time: numpy array
-        1D numpy array with the time vector
+    wave : numpy array
+        1D numpy array with waveform.
+    time : numpy array
+        1D numpy array with the time vector.
     """
     rng = np.random.RandomState(random_state)
 
@@ -302,15 +302,21 @@ def simulate_spike(fs=5000, dur=None, random_state=None):
 
     Parameters
     ----------
-    fs: float
-        Sampling rate (default=5000)
-    dur: float
-        Spike duration in seconds
+    fs : float
+        Sampling rate (default=5000).
+    dur : float
+        Spike duration in seconds.
+    random_state : None | int | instance of ~numpy.random.RandomState
+        If ``random_state`` is an :class:`int`, it will be used as a seed for
+        :class:`~numpy.random.RandomState`. If ``None``, the seed will be
+        obtained from the operating system (see
+        :class:`~numpy.random.RandomState` for details). Default is
+        ``None``.
 
     Returns
     -------
-    spike numpy array
-        1D numpy array with a sipke
+    spike : np.ndarray
+        1D numpy array with a spike.
     """
     np.random.RandomState(random_state)
 

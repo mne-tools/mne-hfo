@@ -165,16 +165,41 @@ def _make_ydf_sklearn(ydf, ch_names):
     return ch_results
 
 
-class DisabledCV:
+class DisabledCV:  # noqa
     """Dummy CV class for SearchCV scikit-learn functions."""
 
     def __init__(self):
         self.n_splits = 1
 
     def split(self, X, y, groups=None):
-        """Disabled split."""
+        """Disabled split.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Not used.
+        y : np.ndarray
+            Not used.
+        groups : np.ndarray, optional
+            Not used.
+        """
         yield (np.arange(len(X)), np.arange(len(y)))
 
     def get_n_splits(self, X, y, groups=None):
-        """Disabled split."""
+        """Disabled split.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Not used.
+        y : np.ndarray
+            Not used.
+        groups : np.ndarray, optional
+            Not used.
+
+        Returns
+        -------
+        n_splits : int
+            The number of splits.
+        """
         return self.n_splits

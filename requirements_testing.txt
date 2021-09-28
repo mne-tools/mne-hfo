@@ -11,6 +11,8 @@ check-manifest
 pytest-benchmark 
 mypy 
 nbsphinx 
+ipykernel>=5.1.0
+ipython>=7.4.0
 sphinx-copybutton 
 pipfile-requirements 
 pandoc 

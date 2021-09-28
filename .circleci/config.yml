@@ -8,6 +8,60 @@ jobs:
     environment:
       CODECOV_TOKEN: "895aebcc-753e-49f2-b964-b70d38d471c4"
     steps:
+      - checkout
+
+      # make sure pandoc is on the system
+      - run: sudo apt update && sudo apt install -y pandoc
+
+      # restore cache from last build. Unless __init__.py has changed since then
+      - restore_cache:
+          keys:
+            - data-cache-0-{{ checksum "./mne_hfo/__init__.py" }}
+
+      # Also restore pip cache to speed up installations
+      - restore_cache: # ensure this step occurs *before* installing dependencies
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+            - pip-packages-v1-{{ .Branch }}-
+            - pip-packages-v1-
+
+      - run:
+          name: Setup Python environment via Pipenv
+          command: |
+            sudo pip install --upgrade pip
+            sudo pip install pipenv
+            pipenv install --skip-lock --dev
+
+      - run:
+          name: Run style check
+          command: |
+            pipenv run make pep
+
+      - run:
+          name: Build the documentation
+          command: |
+            pipenv run make build-doc
+
+      - persist_to_workspace:
+          root: docs/_build
+          paths: html
+
+      - store_artifacts:
+          path: docs/_build/html/
+          destination: dev
+
+      - save_cache:
+          key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "~/.local/share/virtualenvs/venv"
+
+  docs-build-test:
+    docker:
+      - image: circleci/python:3.8.1-buster
+    environment:
+      CODECOV_TOKEN: "895aebcc-753e-49f2-b964-b70d38d471c4"
+    steps:
       - restore_cache:
             keys:
               - source-cache-hfo

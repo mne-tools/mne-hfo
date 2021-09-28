@@ -2,6 +2,7 @@
 import os
 import sys
 from datetime import date
+import warnings
 
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
@@ -38,7 +39,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx_gallery.gen_gallery',
     'numpydoc',
-    # 'nbsphinx',  # to render jupyter notebooks
+    'nbsphinx',  # to render jupyter notebooks
     'sphinx_copybutton',
     # 'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
     'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
@@ -218,6 +219,7 @@ intersphinx_mapping = {
 }
 intersphinx_timeout = 5
 
+
 # Resolve binder filepath_prefix. From the docs:
 # "A prefix to append to the filepath in the Binder links. You should use this
 # if you will store your built documentation in a sub-folder of a repository,
@@ -229,16 +231,43 @@ if 'dev' in version:
 else:
     filepath_prefix = 'v{}'.format(version)
 
+
+# Resolve binder filepath_prefix. From the docs:
+# "A prefix to append to the filepath in the Binder links. You should use this
+# if you will store your built documentation in a sub-folder of a repository,
+# instead of in the root."
+# we will store dev docs in a `dev` subdirectory and all other docs in a
+# directory "v" + version_str. E.g., "v0.3"
+if 'dev' in version:
+    filepath_prefix = 'dev'
+else:
+    filepath_prefix = 'v{}'.format(version)
+
+os.environ['_MNE_BUILDING_DOC'] = 'true'
+scrapers = ('matplotlib',)
+try:
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        import pyvista
+    pyvista.OFF_SCREEN = False
+except Exception:
+    pass
+else:
+    scrapers += ('pyvista',)
+
 sphinx_gallery_conf = {
     'doc_module': 'mne_hfo',
     'reference_url': {
         'mne_hfo': None,
     },
     'backreferences_dir': 'generated',
-    'examples_dirs': '../examples',
+    'examples_dirs': ['../examples'],
     'within_subsection_order': ExampleTitleSortKey,
-    'gallery_dirs': 'auto_examples',
+    'gallery_dirs': ['auto_examples'],
     'filename_pattern': '^((?!sgskip).)*$',
+    'matplotlib_animations': True,
+    'compress_images': ('images', 'thumbnails'),
+    'image_scrapers': scrapers,
     # 'binder': {
     #     # Required keys
     #     'org': 'mne-tools',

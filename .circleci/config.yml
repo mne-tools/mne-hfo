@@ -32,6 +32,7 @@ jobs:
             sudo pip install --upgrade pip
             sudo pip install pipenv
             pipenv install --skip-lock --dev
+            pipenv install --upgrade --progress-bar off https://github.com/mne-tools/mne-python/zipball/main
 
       - run:
           name: Run style check

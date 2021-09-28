@@ -1,5 +1,4 @@
 openneuro-py 
-ipykernel 
 pytest 
 pytest-sugar 
 pytest-cov 

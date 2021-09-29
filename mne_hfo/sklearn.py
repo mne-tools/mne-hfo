@@ -48,7 +48,8 @@ def _convert_y_sklearn_to_annot_df(ylist):
 
     # create the output annotations dataframe
     annot_df = create_annotations_df(onset=onset_sec, duration=duration_sec,
-                                     ch_name=ch_names, annotation_label=labels)
+                                     ch_name=ch_names, sfreq=sfreq,
+                                     annotation_label=labels)
     annot_df['sample'] = annot_df['onset'].multiply(sfreq)
     return annot_df
 
@@ -153,7 +154,7 @@ def _make_ydf_sklearn(ydf, ch_names):
 
         # obtain list of HFO onset, offset for this channel
         ch_name_as_list = [ch] * len(ch_df['onset'])
-        sfreqs = ch_df['sample'].divide(ch_df['onset'])
+        sfreqs = ch_df['sfreq']
         ch_results.append(list(zip(ch_df['onset'],
                                    ch_df['offset'],
                                    ch_name_as_list,
@@ -164,16 +165,41 @@ def _make_ydf_sklearn(ydf, ch_names):
     return ch_results
 
 
-class DisabledCV:
+class DisabledCV:  # noqa
     """Dummy CV class for SearchCV scikit-learn functions."""
 
     def __init__(self):
         self.n_splits = 1
 
     def split(self, X, y, groups=None):
-        """Disabled split."""
+        """Disabled split.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Not used.
+        y : np.ndarray
+            Not used.
+        groups : np.ndarray, optional
+            Not used.
+        """
         yield (np.arange(len(X)), np.arange(len(y)))
 
     def get_n_splits(self, X, y, groups=None):
-        """Disabled split."""
+        """Disabled split.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            Not used.
+        y : np.ndarray
+            Not used.
+        groups : np.ndarray, optional
+            Not used.
+
+        Returns
+        -------
+        n_splits : int
+            The number of splits.
+        """
         return self.n_splits

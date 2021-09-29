@@ -56,7 +56,7 @@ def create_testing_eeg_data():
     """Create testing data with HFO and a spike."""
     freqs = [2.5, 6.0, 10.0, 16.0, 32.5, 67.5, 165.0,
              250.0, 425.0, 500.0, 800.0, 1500.0]
-
+    random_state = 0
     fs = 5000
     n = fs * 10
     data = np.zeros(n)
@@ -73,21 +73,24 @@ def create_testing_eeg_data():
     fs = 5000
     freq = 250
     numcycles = 9
-    sim = simulate_hfo(fs, freq, numcycles)[0]
+    sim = simulate_hfo(fs, freq, numcycles,
+                       random_state=random_state)[0]
     ev_start = 5000
     data[ev_start: ev_start + len(sim)] += sim * 10
     hfo_samps.append((ev_start, ev_start + len(sim)))
 
     fs = 5000
     dur = 0.1
-    sim = simulate_spike(fs, dur)
+    sim = simulate_spike(fs, dur,
+                         random_state=random_state)
     ev_start = 4 * 5000
     data[ev_start: ev_start + len(sim)] += sim * 30
 
     fs = 5000
     freq = 500
     numcycles = 9
-    sim = simulate_hfo(fs, freq, numcycles)[0]
+    sim = simulate_hfo(fs, freq, numcycles,
+                       random_state=random_state)[0]
     ev_start = 7 * 5000
     data[ev_start: ev_start + len(sim)] += sim * 10
     hfo_samps.append((ev_start, ev_start + len(sim)))

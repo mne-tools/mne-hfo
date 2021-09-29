@@ -10,7 +10,7 @@ import pandas as pd
 from scipy.signal import hilbert
 from tqdm import tqdm
 
-from mne_hfo.config import ANNOT_COLUMNS, EVENT_COLUMNS
+from mne_hfo.config import ANNOT_COLUMNS
 
 
 def _check_df(df: pd.DataFrame, df_type: str,
@@ -21,11 +21,6 @@ def _check_df(df: pd.DataFrame, df_type: str,
                 for col in ANNOT_COLUMNS + ['sample']]):
             raise RuntimeError(f'Annotations dataframe columns must contain '
                                f'{ANNOT_COLUMNS + ["sample"]}.')
-    elif df_type == 'events':
-        if any([col not in df.columns
-                for col in EVENT_COLUMNS + ['sample']]):
-            raise RuntimeError(f'Events dataframe columns must contain '
-                               f'{EVENT_COLUMNS}.')
 
     # Only want to do this check if there are multiple rows. Handles edge case
     # of 1 HFO starting at 0. TODO: handle this more elegantly
@@ -111,7 +106,7 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
 
     Returns
     -------
-    tdetects: List[Tuple[int, int, int, int]]
+    tdetects : List[Tuple[int, int, int, int]]
         All HFO events that passed the bandpass, zscore. Each tuple contains:
         [0] - The band index
         [1] - The timepoint of the start of a detection
@@ -187,15 +182,15 @@ def compute_rms(signal, win_size=6):
 
     Parameters
     ----------
-    signal: numpy array
-        1D signal to be transformed
-    win_size: int
-        Number of the points of the window (default=6)
+    signal : numpy array
+        1D signal to be transformed.
+    win_size : int
+        Number of the points of the window (default=6).
 
     Returns
     -------
-    rms: numpy array
-        Root mean square transformed signal
+    rms: np.ndarray
+        Root mean square transformed signal.
     """
     aux = np.power(signal, 2)
     window = np.ones(win_size) / float(win_size)
@@ -207,15 +202,15 @@ def compute_line_length(signal, win_size=6):
 
     Parameters
     ----------
-    signal: numpy array
-        1D signal to be transformed
-    win_size: int
-        Number of the points of the window (default=6)
+    signal : numpy array
+        1D signal to be transformed.
+    win_size : int
+        Number of the points of the window (default=6).
 
     Returns
     -------
     line_length: numpy array
-        Line length transformed signal
+        Line length transformed signal.
 
     Notes
     -----
@@ -245,17 +240,19 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
 
     Parameters
     ----------
-    signal : np.array
-        EEG signal for a single channel
-    extra_params : dict
-        Must have values for 'freq_cutoffs', 'freq_span', and
-        'sfreq'
+    signal : np.ndarray
+        EEG signal for a single channel.
+    freq_cutoffs : tuple
+        The lower and higher frequency cutoff.
+    freq_span : tuple
+        The span of how many frequencies there are.
+    sfreq : float
+        The sampling rate.
 
     Returns
     -------
-    hfx_bands: np.ndarray
-        Hilbert transforms per freq band
-
+    hfx_bands : np.ndarray
+        Hilbert transforms per freq band.
     """
     hfx_bands = []
     # Iterate over freq bands
@@ -300,7 +297,7 @@ def apply_hilbert(metric, threshold_dict, kwargs):
         The values to apply the threshold rules to.
     threshold_dict : dict
         Dictionary of  threshold parameters to apply to metric.
-        Must have zscore, gap, and cycles keys
+        Must have zscore, gap, and cycles keys.
     kwargs : dict
         Additional model parameters needed to apply hilbert threshold.
         Must have n_times, sfreq, filter_band, freq_cutoffs,
@@ -308,10 +305,9 @@ def apply_hilbert(metric, threshold_dict, kwargs):
 
     Returns
     -------
-    tdetects: List(tuples)
+    tdetects : List of Tuple
         Detected hfo events with the structure [band_idx, start,
-        stop, max_amplitude, freq_band]
-
+        stop, max_amplitude, freq_band].
     """
     # get threshold vals
     zscore_threshold = threshold_dict["zscore"]
@@ -353,10 +349,10 @@ def apply_std(metric, threshold_dict, kwargs):
     Parameters
     ----------
     metric : np.ndarray
-        Values to apply the threshold to
+        Values to apply the threshold to.
     threshold_dict : dict
         Dictionary of threshold values. Should just have thresh,
-        which is the number of standard deviations to check against
+        which is the number of standard deviations to check against.
     kwargs : dict
         Additional key-word args from the detector needed to
         apply the threshold.
@@ -364,9 +360,8 @@ def apply_std(metric, threshold_dict, kwargs):
 
     Returns
     -------
-    output: List(tuples)
-        List of detected events that pass the threshold
-
+    output: List of tuple
+        List of detected events that pass the threshold.
     """
     # determine threshold value
     threshold = threshold_dict["thresh"]
@@ -500,15 +495,15 @@ def threshold_tukey(signal, threshold):
 
     Parameters
     ----------
-    signal: numpy array
-        1D signal for threshold determination
-    threshold: float
-        Number of interquartile interval above the 75th percentile
+    signal : numpy array
+        1D signal for threshold determination.
+    threshold : float
+        Number of interquartile interval above the 75th percentile.
 
     Returns
     -------
-    ths_value: float
-        Value of the threshold
+    ths_value : float
+        Value of the threshold.
 
     References
     ----------

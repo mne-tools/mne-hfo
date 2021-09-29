@@ -31,8 +31,7 @@ import numpy as np
 from mne import create_info
 from mne.io import RawArray
 
-from mne_hfo import (RMSDetector, compute_chs_hfo_rates,
-                     events_to_annotations)
+from mne_hfo import (RMSDetector, compute_chs_hfo_rates)
 from mne_hfo.simulate import simulate_hfo
 
 ###############################################################################
@@ -94,7 +93,7 @@ raw.plot()
 # To run any estimator, one instantiates it along with the hyper-parameters,
 # and then calls the ``fit`` function. Afterwards, detected HFOs are available
 # in the various data structures. The recommended usage is the DataFrame, which
-# is accessible via the ``mne_hfo.base.Detector.hfo_df`` property.
+# is accessible via the ``mne_hfo.base.Detector.to_data_frame`` property.
 
 kwargs = {
     'threshold': 3,  # threshold for "significance"
@@ -106,9 +105,12 @@ detector = RMSDetector(**kwargs)
 # run detector
 detector.fit(X=raw)
 
-# get the event dataframe
-event_df = detector.hfo_event_df
-print(event_df.head())
+# show all the HFO annotations
+print(detector.hfo_annotations)
+
+# get the dataframe of the Annotations
+df = detector.to_data_frame()
+print(df.head())
 
 ###############################################################################
 # Convert HFO events to annotations
@@ -119,8 +121,8 @@ print(event_df.head())
 # The correct way to store them is in terms of an ``*_annotations.tsv``,
 # according to the BIDS-Derivatives specification.
 
-# convert event df -> annotation df
-annot_df = events_to_annotations(event_df)
+# convert to annotation df
+annot_df = detector.to_data_frame(format='bids')
 print(annot_df.head())
 
 ###############################################################################

@@ -6,14 +6,14 @@
 API Documentation
 =================
 
-Detectors
----------
 :py:mod:`mne_hfo`:
 
 .. automodule:: mne_hfo
    :no-members:
    :no-inherited-members:
 
+Detectors
+---------
 .. currentmodule:: mne_hfo
 
 .. autosummary::
@@ -26,20 +26,12 @@ Detectors
 BIDS-IO functions
 -----------------
 
-:py:mod:`mne_hfo.io`:
-
-.. automodule:: mne_hfo.io
-   :no-members:
-   :no-inherited-members:
-
 .. currentmodule:: mne_hfo.io
 
 .. autosummary::
    :toctree: generated/
 
-    create_events_df
     create_annotations_df
-    events_to_annotations
     read_annotations
     write_annotations
 
@@ -70,12 +62,6 @@ Help transform data to be scikit-learn compatible (for SearchCV)
 Metrics
 -------
 
-:py:mod:`mne_hfo.utils`:
-
-.. automodule:: mne_hfo.utils
-   :no-members:
-   :no-inherited-members:
-
 .. currentmodule:: mne_hfo.utils
 
 .. autosummary::
@@ -90,12 +76,6 @@ Metrics
 
 Simulation
 ----------
-
-:py:mod:`mne_hfo.simulate`:
-
-.. automodule:: mne_hfo.simulate
-   :no-members:
-   :no-inherited-members:
 
 .. currentmodule:: mne_hfo.simulate
 

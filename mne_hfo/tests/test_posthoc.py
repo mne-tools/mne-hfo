@@ -49,7 +49,7 @@ def test_match_hfo_annotations():
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy predicted HFO annotations
@@ -59,7 +59,7 @@ def test_match_hfo_annotations():
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     # We first want to see what true labels are correctly predicted
@@ -119,7 +119,7 @@ def test_match_detections_empty():
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy reference annotations
@@ -129,7 +129,7 @@ def test_match_detections_empty():
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     expected_dict_true = {
@@ -197,17 +197,17 @@ def test_hyperparameter_search_cv(scorer, create_testing_eeg_data):
     raw = mne.io.RawArray(data_2d, info=info)
 
     # create the annotations dataframe
-    annot_df = create_annotations_df(onset, duration, ch_names)
+    annot_df = create_annotations_df(onset, duration, ch_names, sfreq)
     annot_df['sample'] = annot_df['onset'] * sfreq
 
     # make sklearn compatible
     raw_df, y = make_Xy_sklearn(raw, annot_df)
+
     # run Gridsearch
     gs.fit(raw_df, y, groups=None)
     # print(pd.concat([pd.DataFrame(gs.cv_results_["params"]),
     #                 pd.DataFrame(gs.cv_results_["mean_test_score"],
     #                              columns=["Accuracy"])],axis=1))
-
     # uncomment this to see that gridsearch results
     # raise Exception('check out the print statements')
 
@@ -219,7 +219,7 @@ def test_merge_overlapping_hfos():
     sfreq = 1000
 
     # create the annotations dataframe
-    annot_df = create_annotations_df(onset, duration, ch_name)
+    annot_df = create_annotations_df(onset, duration, ch_name, sfreq)
     annot_df['sample'] = annot_df['onset'] * sfreq
 
     # first, test that no merging occurs when it shouldn't
@@ -234,14 +234,14 @@ def test_merge_overlapping_hfos():
     ch_name = ['A1', 'A1', 'A1']
 
     # create the annotations dataframe
-    annot_df = create_annotations_df(onset, duration, ch_name)
+    annot_df = create_annotations_df(onset, duration, ch_name, sfreq)
     annot_df['sample'] = annot_df['onset'] * sfreq
 
     # nexxt, test that merging occurs when all three events overlap
     # merge overlapping HFOs should result in the exact same
     # annotations dataframe
     new_annot_df = merge_overlapping_events(annot_df)
-    assert new_annot_df.shape == (1, 5)
+    assert new_annot_df.shape == (1, annot_df.shape[1])
     assert new_annot_df['onset'].values == [1.5]
     assert new_annot_df['duration'].values == [0.55]
     assert new_annot_df['channels'].values == ['A1']
@@ -260,15 +260,7 @@ def test_metrics_df(end_sec, rate):
     ch_name = ['A1', 'A2', 'A3', 'A1']
     sfreq = 1000
 
-    annot_df = create_annotations_df(onset, duration, ch_name)
-
-    # error will occur without the sample column
-    with pytest.raises(RuntimeError, match='Annotations dataframe '
-                                           'columns must contain'):
-        compute_chs_hfo_rates(annot_df=annot_df, rate=rate)
-
-    # now add sample column
-    annot_df['sample'] = annot_df['onset'] * sfreq
+    annot_df = create_annotations_df(onset, duration, ch_name, sfreq=sfreq)
     chs_hfo_rates = compute_chs_hfo_rates(annot_df=annot_df,
                                           rate=rate,
                                           end_sec=end_sec)

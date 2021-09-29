@@ -15,7 +15,7 @@ def test_match_detection_scoring_df():
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy predicted HFO annotations
@@ -25,7 +25,7 @@ def test_match_detection_scoring_df():
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     # In the above example, we have 3 true positives, 1 false negative,
@@ -59,7 +59,7 @@ def test_match_detection_scoring_sklearn():
     ch_name = ['A1'] * len(onset1)
     annotation_label = ['hfo'] * len(onset1)
     annot_df1 = create_annotations_df(onset1, duration1, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df1['sample'] = annot_df1['onset'] * sfreq
 
     # create dummy predicted HFO annotations
@@ -69,7 +69,7 @@ def test_match_detection_scoring_sklearn():
     ch_name = ['A1'] * len(onset2)
     annotation_label = ['hfo'] * len(onset2)
     annot_df2 = create_annotations_df(onset2, duration2, ch_name,
-                                      annotation_label)
+                                      sfreq, annotation_label)
     annot_df2['sample'] = annot_df2['onset'] * sfreq
 
     # Now convert the annotation dataframes to "sklearn format" of a list

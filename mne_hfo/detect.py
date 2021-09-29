@@ -15,29 +15,34 @@ class HilbertDetector(Detector):  # noqa
 
     Parameters
     ----------
-    sfreq: float
-        Sampling frequency of the signal
-    l_freq: float
-        Low cut-off frequency
-    h_freq: float
-        High cut-off frequency
-    threshold: float
-        Threshold for detection (default=3)
-    band_method: str
+    threshold : float
+        Threshold for detection (default=3).
+    filter_band : tuple(float, float)
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1. The default is ``(30, 100)``.
+    band_method : str
         Spacing of hilbert frequency bands - options: 'linear' or 'log'
         (default='linear'). Linear provides better frequency resolution but
         is slower.
-    n_bands: int
-        Number of bands if band_spacing = log (default=300)
-    cycle_threshold: float
-        Minimum number of cycles to detect (default=1)
-    gap_threshold: float
-        Number of cycles for gaps (default=1)
-    n_jobs: int
-        Number of cores to use (default=1)
-    offset: int
+    n_bands : int
+        Number of bands if band_spacing = log (default=300).
+    cycle_threshold : float
+        Minimum number of cycles to detect (default=1).
+    gap_threshold : float
+        Number of cycles for gaps (default=1).
+    n_jobs : int
+        Number of cores to use (default=1).
+    offset : int
         Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
+        function is run in separate windows. Default = 0.
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    hfo_name : str
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     References
     ----------
@@ -128,7 +133,7 @@ class HilbertDetector(Detector):  # noqa
             X, threshold_method='hilbert'), dtype='object'))
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         hfo_events = self._merge_contiguous_ch_detections(
             detections, method="freq-bands")
@@ -138,10 +143,12 @@ class HilbertDetector(Detector):  # noqa
 class LineLengthDetector(Detector):
     """Line-length detection algorithm.
 
-    Original paper defines HFOS as "(HFOs), which we collectively
-    term as all activity >40 Hz (including gamma, high-gamma,
-    ripple, and fast ripple oscillations), may have a
-    fundamental role in the generation and spread of focal seizures"
+    Original paper defines HFOS as:
+
+    "(HFOs), which we collectively term as all activity >40 Hz
+    (including gamma, high-gamma, ripple, and fast ripple oscillations),
+    may have a fundamental role in the generation and spread of focal
+    seizures."
 
     In the paper, data were sampled at 200 Hz and bandpass-filtered (0.1 – 100
     Hz) during acquisition. Data were further digitally bandpass-filtered
@@ -153,21 +160,27 @@ class LineLengthDetector(Detector):
 
     Parameters
     ----------
-    filter_band : tuple(float, float) | None
+    threshold : float
+        Number of standard deviations to use as a threshold.
+    win_size : int
+        Sliding window size in samples.
+    overlap : float
+        Fraction of the window overlap (0 to 1).
+    sfreq : int | None
+        The sampling rate of the data.
+    filter_band : tuple(float, float)
         Low cut-off frequency at index 0 and high cut-off frequency
-        at index 1.
-    threshold: float
-        Number of standard deviations to use as a threshold
-    win_size: int
-        Sliding window size in samples
-    overlap: float
-        Fraction of the window overlap (0 to 1)
-    offset: int
-        Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
-    hfo_name: str
+        at index 1. The default is ``(30, 100)``.
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    n_jobs : int
+        The number of jobs for joblib parallelization.
+    hfo_name : str
         What to name the events detected (i.e. fast ripple if freq_band is
         (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     Notes
     -----
@@ -247,7 +260,7 @@ class LineLengthDetector(Detector):
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")
@@ -266,21 +279,27 @@ class RMSDetector(Detector):
 
     Parameters
     ----------
-    filter_band : tuple(float, float) | None
-        Low cut-off frequency at index 0 and high cut-off frequency
-        at index 1.
-    threshold: float
+    threshold : float
         Number of standard deviations to use as a threshold.
-        Default = 3.
-    win_size: int
-        Sliding window size in samples. Default = 100. The
-        original paper uses a window size equivalent to 3 ms.
-    overlap: float
-        Fraction of the window overlap (0 to 1). Default = 0.25.
-        The original paper uses an overlap of 0.
-    offset: int
-        Offset which is added to the final detection. This is used when the
-        function is run in separate windows. Default = 0
+    win_size : int
+        Sliding window size in samples.
+    overlap : float
+        Fraction of the window overlap (0 to 1).
+    sfreq : int | None
+        The sampling rate of the data.
+    filter_band : tuple(float, float)
+        Low cut-off frequency at index 0 and high cut-off frequency
+        at index 1. The default is ``(100, 500)``.
+    scoring_func : str
+        The scoring function to apply when trying to match HFOs with
+        a different dataset, such as manual annotations.
+    n_jobs : int
+        The number of jobs for joblib parallelization.
+    hfo_name : str
+        What to name the events detected (i.e. fast ripple if freq_band is
+        (250, 500)).
+    verbose : bool
+        Verbosity of the detector.
 
     References
     ----------
@@ -350,7 +369,7 @@ class RMSDetector(Detector):
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections, idx):
+    def _post_process_ch_hfos(self, detections):
         """Override ``Detector._post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")

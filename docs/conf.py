@@ -2,8 +2,8 @@
 import os
 import sys
 from datetime import date
+import warnings
 
-import sphinx_bootstrap_theme
 import sphinx_gallery  # noqa: F401
 from sphinx_gallery.sorting import ExampleTitleSortKey
 
@@ -22,7 +22,8 @@ sys.path.append(os.path.abspath(os.path.join(curdir, 'sphinxext')))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+needs_sphinx = '4.0'
+
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -57,16 +58,82 @@ autodoc_default_options = {'inherited-members': None}
 autodoc_typehints = 'signature'
 
 # prevent jupyter notebooks from being run even if empty cell
-# nbsphinx_execute = 'never'
+nbsphinx_execute = 'never'
 nbsphinx_allow_errors = True
 
 # -- numpydoc
+error_ignores = {
+    # These we do not live by:
+    'GL01',  # Docstring should start in the line immediately after the quotes
+    'EX01', 'EX02',  # examples failed (we test them separately)
+    'ES01',  # no extended summary
+    'SA01',  # no see also
+    'YD01',  # no yields section
+    'SA04',  # no description in See Also
+    'PR04',  # Parameter "shape (n_channels" has no type
+    'RT02',  # The first line of the Returns section should contain only the type, unless multiple values are being returned  # noqa
+    # XXX should also verify that | is used rather than , to separate params
+    # XXX should maybe also restore the parameter-desc-length < 800 char check
+}
+
 # Below is needed to prevent errors
 numpydoc_class_members_toctree = False
 numpydoc_attributes_as_param_list = True
 numpydoc_use_blockquotes = True
+numpydoc_xref_param_type = True
+numpydoc_xref_ignore = {
+    # words
+    'instance', 'instances', 'of', 'default', 'shape', 'or',
+    'with', 'length', 'pair', 'matplotlib', 'optional', 'kwargs', 'in',
+    'dtype', 'object', 'self.verbose',
+    # shapes
+    'n_times', 'obj', 'n_chan', 'n_epochs', 'n_picks', 'n_ch_groups',
+    'n_node_names', 'n_tapers', 'n_signals', 'n_step', 'n_freqs',
+    'epochs', 'freqs', 'times', 'arrays', 'lists', 'func', 'n_nodes',
+    'n_estimated_nodes', 'n_samples', 'n_channels', 'Renderer',
+    'estimator', 'n_features', 'dataframe' ,'sparse', 'matrix',
+    'n_output', 'Annotations', 'DataFrame', 'Detector', 'BIDSPath',
+    'pd.DataFrame', 'List', 'Tuple'
+}
+numpydoc_xref_aliases = {
+    # Python
+    'file-like': ':term:`file-like <python:file object>`',
+    # Matplotlib
+    'colormap': ':doc:`colormap <matplotlib:tutorials/colors/colormaps>`',
+    'color': ':doc:`color <matplotlib:api/colors_api>`',
+    'collection': ':doc:`collections <matplotlib:api/collections_api>`',
+    'Axes': 'matplotlib.axes.Axes',
+    'Figure': 'matplotlib.figure.Figure',
+    'Axes3D': 'mpl_toolkits.mplot3d.axes3d.Axes3D',
+    'ColorbarBase': 'matplotlib.colorbar.ColorbarBase',
+    # joblib
+    'joblib.Parallel': 'joblib.Parallel',
+    # MNE
+    'Label': 'mne.Label', 'Forward': 'mne.Forward', 'Evoked': 'mne.Evoked',
+    'Info': 'mne.Info', 'SourceSpaces': 'mne.SourceSpaces',
+    'SourceMorph': 'mne.SourceMorph',
+    'Epochs': 'mne.Epochs', 'Layout': 'mne.channels.Layout',
+    'EvokedArray': 'mne.EvokedArray', 'BiHemiLabel': 'mne.BiHemiLabel',
+    'AverageTFR': 'mne.time_frequency.AverageTFR',
+    'EpochsTFR': 'mne.time_frequency.EpochsTFR',
+    'Raw': 'mne.io.Raw', 'ICA': 'mne.preprocessing.ICA',
+}
+numpydoc_validate = True
+numpydoc_validation_checks = {'all'} | set(error_ignores)
+numpydoc_validation_exclude = {  # set of regex
+    # dict subclasses
+    r'\.clear', r'\.get$', r'\.copy$', r'\.fromkeys', r'\.items', r'\.keys',
+    r'\.pop', r'\.popitem', r'\.setdefault', r'\.update', r'\.values',
+    # list subclasses
+    r'\.append', r'\.count', r'\.extend', r'\.index', r'\.insert', r'\.remove',
+    r'\.sort',
+    # we currently don't document these properly (probably okay)
+    r'\.__getitem__', r'\.__contains__', r'\.__hash__', r'\.__mul__',
+    r'\.__sub__', r'\.__add__', r'\.__iter__', r'\.__div__', r'\.__neg__',
+    r'plot_circle'
+}
 
-default_role = 'autolink'  # XXX silently allows bad syntax, someone should fix
+default_role = 'py:obj'  # XXX silently allows bad syntax, someone should fix
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -122,19 +189,10 @@ html_theme_options = {
              url='https://github.com/mne-tools/mne-hfo',
              icon='fab fa-github-square'),
     ],
-    # 'navbar_title': 'MNE-HFO',
-    # 'bootswatch_theme': "flatly",
-    # 'navbar_sidebarrel': False,  # no "previous / next" navigation
-    # 'navbar_pagenav': False,  # no "Page" navigation in sidebar
-    # 'bootstrap_version': "3",
-    # 'navbar_links': [
-    #     ("News", "whats_new"),
-    #     ("Install", "install"),
-    #     ("Tutorial", "tutorial"),
-    #     ("Use", "use"),
-    #     ("API", "api"),
-    #     ("Contribute!", "contribute")
-    # ]
+    'use_edit_page_button': False,
+    'navigation_with_keys': False,
+    'show_toc_level': 1,
+    'navbar_end': ['version-switcher', 'navbar-icon-links'],
 }
 
 html_context = {
@@ -161,6 +219,7 @@ intersphinx_mapping = {
 }
 intersphinx_timeout = 5
 
+
 # Resolve binder filepath_prefix. From the docs:
 # "A prefix to append to the filepath in the Binder links. You should use this
 # if you will store your built documentation in a sub-folder of a repository,
@@ -172,16 +231,43 @@ if 'dev' in version:
 else:
     filepath_prefix = 'v{}'.format(version)
 
+
+# Resolve binder filepath_prefix. From the docs:
+# "A prefix to append to the filepath in the Binder links. You should use this
+# if you will store your built documentation in a sub-folder of a repository,
+# instead of in the root."
+# we will store dev docs in a `dev` subdirectory and all other docs in a
+# directory "v" + version_str. E.g., "v0.3"
+if 'dev' in version:
+    filepath_prefix = 'dev'
+else:
+    filepath_prefix = 'v{}'.format(version)
+
+os.environ['_MNE_BUILDING_DOC'] = 'true'
+scrapers = ('matplotlib',)
+try:
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        import pyvista
+    pyvista.OFF_SCREEN = False
+except Exception:
+    pass
+else:
+    scrapers += ('pyvista',)
+
 sphinx_gallery_conf = {
     'doc_module': 'mne_hfo',
     'reference_url': {
         'mne_hfo': None,
     },
     'backreferences_dir': 'generated',
-    'examples_dirs': '../examples',
+    'examples_dirs': ['../examples'],
     'within_subsection_order': ExampleTitleSortKey,
-    'gallery_dirs': 'auto_examples',
+    'gallery_dirs': ['auto_examples'],
     'filename_pattern': '^((?!sgskip).)*$',
+    'matplotlib_animations': True,
+    'compress_images': ('images', 'thumbnails'),
+    'image_scrapers': scrapers,
     # 'binder': {
     #     # Required keys
     #     'org': 'mne-tools',
@@ -197,9 +283,13 @@ sphinx_gallery_conf = {
     # }
 }
 
+# sphinxcontrib-bibtex
+bibtex_bibfiles = ['./references.bib']
+bibtex_style = 'unsrt'
+bibtex_footbibliography_header = ''
+
 # Enable nitpicky mode - which ensures that all references in the docs
 # resolve.
 
 nitpicky = True
-nitpick_ignore = [('py:class:', 'type'),
-                  ('py:class', 'pandas.core.frame.DataFrame')]
+nitpick_ignore = []

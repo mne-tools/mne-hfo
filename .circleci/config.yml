@@ -4,14 +4,14 @@ version: 2.1
 jobs:
   docs-build:
     docker:
-      - image: circleci/python:3.8.1-buster
+      - image: circleci/python:3.8.5-buster
     environment:
       CODECOV_TOKEN: "895aebcc-753e-49f2-b964-b70d38d471c4"
     steps:
       - checkout
 
       # make sure pandoc is on the system
-      - run: sudo apt update && sudo apt install -y pandoc
+      - run: sudo apt update && sudo apt install -y pandoc optipng
 
       # restore cache from last build. Unless __init__.py has changed since then
       - restore_cache:
@@ -32,12 +32,12 @@ jobs:
             sudo pip install --upgrade pip
             sudo pip install pipenv
             pipenv install --skip-lock --dev
+            pipenv run pip install --upgrade --progress-bar off https://github.com/mne-tools/mne-python/zipball/main
 
       - run:
-          name: Run unit and integration tests
+          name: Run style check
           command: |
             pipenv run make pep
-            pipenv run pytest --cov=mne_hfo ./tests/ --cov-report=xml --cov-config=setup.cfg --verbose
 
       - run:
           name: Build the documentation
@@ -52,13 +52,89 @@ jobs:
           path: docs/_build/html/
           destination: dev
 
-      - store_artifacts:
-          path: ./coverage.xml
+      - save_cache:
+          key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "~/.local/share/virtualenvs/venv"
+
+  docs-build-test:
+    docker:
+      - image: circleci/python:3.8.1-buster
+    environment:
+      CODECOV_TOKEN: "895aebcc-753e-49f2-b964-b70d38d471c4"
+    steps:
+      - restore_cache:
+            keys:
+              - source-cache-hfo
+
+      - checkout
 
       - run:
-          name: Upload codecov report
+          name: Complete checkout
           command: |
-            bash <(curl -s https://codecov.io/bash)
+            if ! git remote -v | grep upstream; then
+              git remote add upstream git://github.com/mne-tools/mne-hfo.git
+            fi
+            git fetch upstream
+
+      - save_cache:
+          key: source-cache-hfo
+          paths:
+            - ".git"
+
+      # make sure pandoc is on the system
+      - run: sudo apt update && sudo apt install -y pandoc
+
+      # Load pip cache
+      - restore_cache:
+          keys:
+            - pip-cache
+      - restore_cache:
+          keys:
+            - user-install-bin-cache
+              
+      - run:
+          name: Setup Python environment
+          command: |
+            python -m pip install --upgrade --progress-bar off --only-binary matplotlib -r requirements.txt
+            python -m pip install --upgrade --progress-bar off -r requirements_testing.txt
+            python -m pip install --upgrade --progress-bar off https://github.com/mne-tools/mne-python/zipball/main
+            python -m pip install --progress-bar off https://github.com/sphinx-gallery/sphinx-gallery/zipball/master
+            sudo python -m pip install -e .
+
+      - save_cache:
+          key: pip-cache
+          paths:
+            - ~/.cache/pip
+
+      - save_cache:
+          key: user-install-bin-cache
+          paths:
+            - ~/.local/lib/python3.8/site-packages
+            - ~/.local/bin
+
+      # Look at what we have and fail early if there is some library conflict
+      - run:
+          name: Check installation
+          command: |
+              which python
+              python -c "import mne; mne.sys_info()"
+              LIBGL_DEBUG=verbose python -c "import matplotlib.pyplot as plt; plt.figure()"
+              python -c "import mne; mne.set_config('MNE_LOGGING_LEVEL', 'info')"
+              python -c "import mne; level = mne.get_config('MNE_LOGGING_LEVEL'); assert level.lower() == 'info', repr(level)"
+
+      - run:
+          name: Build the documentation
+          command: |
+            make build-doc
+
+      - persist_to_workspace:
+          root: docs/_build
+          paths: html
+
+      - store_artifacts:
+          path: docs/_build/html/
+          destination: dev
 
 #      - run:
 #          name: Check links
@@ -66,11 +142,6 @@ jobs:
 #            pipenv run make -C doc clean
 #            pipenv run make -C docs linkcheck
 #            pipenv run make -C doc linkcheck-grep
-
-      - save_cache:
-          key: pip-packages-v1-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-          paths:
-            - "~/.local/share/virtualenvs/venv"
 
   docs-deploy:
     # will only be run on master branch

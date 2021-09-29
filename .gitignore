@@ -6,6 +6,9 @@ build
 coverage
 *.xml
 .venv
+.mypy_cache
+.benchmarks
+.pytest_cache
 
 # Sphinx documentation
 docs/_build/

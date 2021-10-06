@@ -2,9 +2,13 @@ from typing import Tuple, Union
 
 import mne
 import numpy as np
+from scipy import stats
+from mne.time_frequency import tfr_array_morlet
+
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS
+from mne_hfo.utils import autocorr
 
 
 class HilbertDetector(Detector):  # noqa
@@ -60,7 +64,7 @@ class HilbertDetector(Detector):  # noqa
                  cycle_threshold: float = 1, gap_threshold: float = 1,
                  n_jobs: int = -1, offset: int = 0,
                  scoring_func: str = 'f1',
-                 hfo_name: str = "hfo", verbose: bool = False):
+                 hfo_name: str = "hilberthfo", verbose: bool = False):
         if band_method not in ACCEPTED_BAND_METHODS:
             raise ValueError(f'Band method {band_method} is not '
                              f'an acceptable parameter. Please use '
@@ -68,12 +72,12 @@ class HilbertDetector(Detector):  # noqa
 
         super(HilbertDetector, self).__init__(
             threshold, win_size=1, overlap=1,
-            scoring_func=scoring_func, n_jobs=n_jobs, verbose=verbose)
+            scoring_func=scoring_func, name=hfo_name,
+            n_jobs=n_jobs, verbose=verbose)
 
         self.band_method = band_method
         self.n_bands = n_bands
         self.filter_band = filter_band
-        self.hfo_name = hfo_name
         self.cycle_threshold = cycle_threshold
         self.gap_threshold = gap_threshold
         self.n_jobs = n_jobs
@@ -115,26 +119,26 @@ class HilbertDetector(Detector):  # noqa
         hfo_event_arr = np.empty((self.n_chs, n_bands, n_windows))
         return hfo_event_arr
 
-    def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo_statistic`` function."""
+    def compute_hfo_statistic(self, X):
+        """Override ``Detector.compute_hfo_statistic`` function."""
         # Override the attribute set by fit so we actually slide on freq
         # bands not time windows
         self.n_windows = self.n_bands
         self.win_size = 1
         self.n_times = len(X)
 
-        hfo_event_arr = self._compute_frq_band_detection(X, method='hilbert')
+        hfo_event_arr = self._compute_freq_band_detection(X, method='hilbert')
 
         return hfo_event_arr
 
-    def _threshold_statistic(self, X):
-        """Override ``Detector._threshold_statistic`` function."""
+    def threshold_hfo_statistic(self, X):
+        """Override ``Detector.threshold_hfo_statistic`` function."""
         hfo_threshold_arr = np.transpose(np.array(self._apply_threshold(
             X, threshold_method='hilbert'), dtype='object'))
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections):
-        """Override ``Detector._post_process_ch_hfos`` function."""
+    def post_process_ch_hfos(self, detections):
+        """Override ``Detector.post_process_ch_hfos`` function."""
         hfo_events = self._merge_contiguous_ch_detections(
             detections, method="freq-bands")
         return hfo_events
@@ -205,16 +209,15 @@ class LineLengthDetector(Detector):
                  overlap: float = 0.25, sfreq: int = None,
                  filter_band: Tuple[int, int] = (30, 100),
                  scoring_func: str = 'f1', n_jobs: int = -1,
-                 hfo_name: str = "hfo",
+                 hfo_name: str = "llhfo",
                  verbose: bool = False):
         super(LineLengthDetector, self).__init__(
             threshold, win_size=win_size, overlap=overlap,
-            scoring_func=scoring_func, n_jobs=n_jobs,
+            scoring_func=scoring_func, name=hfo_name, n_jobs=n_jobs,
             verbose=verbose)
 
         self.filter_band = filter_band
         self.sfreq = sfreq
-        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -230,8 +233,8 @@ class LineLengthDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo_statistic(self, X):
-        """Override ``Detector._compute_hfo_statistic`` function."""
+    def compute_hfo_statistic(self, X):
+        """Override ``Detector.compute_hfo_statistic`` function."""
         # store all hfo occurrences as an array of length windows
 
         # bandpass the signal using FIR filter
@@ -253,15 +256,15 @@ class LineLengthDetector(Detector):
 
         return hfo_event_arr
 
-    def _threshold_statistic(self, X):
-        """Override ``Detector._threshold_statistic`` function."""
+    def threshold_hfo_statistic(self, X):
+        """Override ``Detector.threshold_hfo_statistic`` function."""
         hfo_threshold_arr = self._apply_threshold(
             X, threshold_method='std'
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections):
-        """Override ``Detector._post_process_ch_hfos`` function."""
+    def post_process_ch_hfos(self, detections):
+        """Override ``Detector.post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")
 
@@ -313,17 +316,16 @@ class RMSDetector(Detector):
                  overlap: float = 0.25, sfreq=None,
                  filter_band: Tuple[int, int] = (100, 500),
                  scoring_func='f1', n_jobs: int = -1,
-                 hfo_name: str = "hfo",
+                 hfo_name: str = "rmshfo",
                  verbose: bool = False):
         super(RMSDetector, self).__init__(
             threshold, win_size, overlap,
-            scoring_func,
+            scoring_func, name=hfo_name,
             n_jobs=n_jobs, verbose=verbose)
 
         # hyperparameters
         self.filter_band = filter_band
         self.sfreq = sfreq
-        self.hfo_name = hfo_name
 
     @property
     def l_freq(self):
@@ -339,7 +341,7 @@ class RMSDetector(Detector):
             return None
         return self.filter_band[1]
 
-    def _compute_hfo_statistic(self, X):
+    def compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo`` function."""
         # store all hfo occurrences as an array of length windows
 
@@ -362,14 +364,243 @@ class RMSDetector(Detector):
 
         return hfo_event_arr
 
-    def _threshold_statistic(self, X):
-        """Override ``Detector._threshold_statistic`` function."""
+    def threshold_hfo_statistic(self, X):
+        """Override ``Detector.threshold_hfo_statistic`` function."""
         hfo_threshold_arr = self._apply_threshold(
             X, threshold_method='std'
         )
         return hfo_threshold_arr
 
-    def _post_process_ch_hfos(self, detections):
-        """Override ``Detector._post_process_ch_hfos`` function."""
+    def post_process_ch_hfos(self, detections):
+        """Override ``Detector.post_process_ch_hfos`` function."""
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")
+
+
+class MNIDetector(Detector):
+    def __init__(self, threshold: Union[int, float],
+                 win_size: Union[int, None],
+                 overlap: Union[float, None],
+                 min_window_size: int = 10e-3,
+                 min_gap_size: int = 10e-3,
+                 baseline_threshold: float = 0.67,
+                 baseline_seg_size: float = 0.125,
+                 baseline_step_size: float = 0.5,
+                 baseline_min_time: float = 5,
+                 baseline_n_bootstrap: int = 100,
+                 filter_band: Tuple[int, int] = (80, 450),
+                 scoring_func: str = 'f1', sfreq=None,
+                 hfo_name: str = 'mnihfo',
+                 n_jobs: int = -1, verbose: bool = True):
+        super().__init__(threshold, win_size, overlap, scoring_func,
+                         hfo_name, n_jobs, verbose)
+        # hyperparameters
+        self.filter_band = filter_band
+        self.sfreq = sfreq
+
+        self.min_window_size = min_window_size
+        self.min_gap_size = min_gap_size
+        self.baseline_threshold = baseline_threshold
+        self.baseline_seg_size = baseline_seg_size
+        self.baseline_step_size = baseline_step_size
+        self.baseline_min_time = baseline_min_time
+        self.baseline_n_bootstrap = baseline_n_bootstrap
+
+    @property
+    def l_freq(self):
+        """Lower frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[0]
+
+    @property
+    def h_freq(self):
+        """Higher frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[1]
+
+    def compute_hfo_statistic(self, X):
+        """Override ``Detector._compute_hfo`` function."""
+        # first, bandpass the signal using FIR filter
+        X = mne.filter.filter_data(X, sfreq=self.sfreq,
+                                   l_freq=self.l_freq,
+                                   h_freq=self.h_freq,
+                                   method='fir', verbose=self.verbose)
+
+        # first compute the baseline
+        baseline_windows = self.compute_baseline(X)
+
+        # convert the necessary baseline needed into samples
+        window_samples = self.baseline_min_time / 60 * self.n_times
+
+        # compute the threshold used, depending on if baseline was detected
+        if np.sum(baseline_windows) >= window_samples:
+            # baseline was found, so this is the 99.9999 percentil
+            # value of a gamma distribution modeled for the empirical
+            # CDF of each 10second baseline segment
+            energy_threshold = 'posbaseline'
+        else:
+            energy_threshold = 'negbaseline'
+
+        # second, compute the RMS over a sliding window
+        rms_event_arr = self._compute_sliding_window_detection(
+            X, method='rms')
+
+        # if the baseline was met
+        window_min_secs = window_min_secs * sfreq
+
+        # DO REST
+
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size,
+                                         self.n_times)
+        n_bands = len(self.freq_cutoffs) - 1
+        shape = (n_windows, n_bands)
+        rms_event_arr = np.array(rms_event_arr).reshape(shape)
+
+        # compute the parts of signal with high RMS
+        threshold = None
+        high_rms_energy = rms_event_arr >= threshold
+
+        # get the window threshold
+        window_threshold = np.concatenate((0, high_rms_energy, 0))
+        window_jumps = np.diff(window_threshold)
+
+        # find when the windows jump up, or down
+        window_jump_up = np.argwhere(window_jumps == 1)
+        window_jump_down = np.argwhere(window_jumps == -1)
+        window_dist = window_jump_down - window_jump_up
+
+        # window distance selection where RMS energy is exceeded
+        # for more then a certain length of time
+        window_dist_select = window_dist > window_min_secs
+
+        # find windows that were selected
+        window_select = np.nonzero(window_dist_select)
+
+        # get the endpoints of each window
+        start_windows = window_jump_up[window_select]
+        end_windows = window_jump_down[window_select]
+
+        # loop until no more HFOs
+
+    def compute_baseline(self, X):
+        base_threshold = self.baseline_threshold
+
+        # compute parameters in terms of samples
+        baseline_step_size = self.baseline_step_size * self.sfreq
+
+        # known as s_EpochSamples
+        base_seg_sample = self.baseline_seg_size * self.sfreq
+        num_epoch_samples = np.round(base_seg_sample * self.sfreq)
+
+        n_repeats = self.baseline_n_bootstrap
+
+        # compute estimate of baseline using bootstrap of 100 times
+        baseline_we_max = np.zeros((n_repeats,))
+        for idx in range(n_repeats):
+            # create a white-noise segment
+            white_noise_seg = np.random.rand(num_epoch_samples, 1)
+
+            # compute auto-correlation of the signal
+            ac_x = autocorr(white_noise_seg)
+
+            # compute the wavelet entropy of the auto-correlation
+            wavelet_ac_x = tfr_array_morlet(ac_x[np.newaxis, ...]).squeeze()
+
+            # compute the mean normalized energy
+            mean_energy = np.mean(np.power(wavelet_ac_x, 2), axis=1)
+            mean_energy = mean_energy / np.sum(mean_energy)
+
+            # compute the max theoretical wavelet entropy
+            we_max = -np.sum(np.multiply(mean_energy, np.log(mean_energy)))
+            baseline_we_max[idx] = we_max
+
+        # get the median as our baseline max Wavelet Entropy
+        baseline_we_max = np.median(baseline_we_max)
+
+        # now compute portions of the dataset that are considered baseline
+        # reshape array to be n_wins x n_bands (i.e. 1)
+        n_windows = self._compute_n_wins(self.win_size, baseline_step_size,
+                                         self.n_times)
+        baseline_wins = np.zeros(X.shape)
+
+        start_index = np.linspace(0, self.n_times, self.win_size)
+        end_index = start_index + base_seg_sample
+
+        for idx in range(n_windows):
+            # compute auto-correlation of the signal
+            ac_x = np.apply_along_axis(autocorr, axis=1, arr=X)
+            ac_x = ac_x / np.sum(np.power(X, 2), axis=1)
+
+            # compute the wavelet entropy of the auto-correlation
+            wavelet_ac_x = tfr_array_morlet(ac_x[np.newaxis, ...]).squeeze()
+
+            # compute the mean normalized energy
+            mean_energy = np.mean(np.power(wavelet_ac_x, 2), axis=1)
+            mean_energy = mean_energy / np.sum(mean_energy)
+
+            # compute the maximum wavelet entropy in this section
+            we_max = -np.sum(np.multiply(mean_energy, np.log(mean_energy)))
+            if we_max < baseline_we_max * base_threshold:
+                baseline_wins[start_index[idx]:end_index[idx]] = 1
+
+        return baseline_wins
+
+    def compute_threshold(self, baseline_wins, X, sfreq):
+
+        return threshold
+
+    def threshold_hfo_statistic(self, X):
+        """Override ``Detector.threshold_hfo_statistic`` function."""
+        hfo_threshold_arr = self._apply_threshold(
+            X, threshold_method='std'
+        )
+        return hfo_threshold_arr
+
+    def post_process_ch_hfos(self, detections):
+        """Override ``Detector.post_process_ch_hfos`` function."""
+        return self._merge_contiguous_ch_detections(
+            detections, method="time-windows")
+
+    def _compute_energy_threshold(self, X, baseline, baseline_windows):
+        if baseline:
+            # cycle time
+            window_threshold = cycle_time * self.sfreq
+
+            # find how many discrete windows there are
+            baseline_jump = np.diff(np.concatenate((0, baseline_windows, 0)))
+            baseline_jump_up = np.argwhere(baseline_jump == 1)
+            n_windows = len(baseline_jump_up)
+
+            # get a list of all the baseline windows
+            for idx in range(n_windows):
+                pass
+
+            for idx in range(n_windows):
+                # fit gamma function to the window
+                fit_alpha, fit_loc, fit_beta = stats.gamma.fit(data)
+
+                # now generate the empirical CDF of the baseline data
+                gamma_perc = stats.gamma.cdf(
+                    data, fit_alpha, loc=fit_loc, scale=fit_beta)
+
+                # find the index where gamma less then the threshold percentile
+                index = np.arghwere(
+                    gamma_perc <= energy_threshold_percentile)[::-1][0]
+
+                # now apply threshold for each data point
+        else:
+            # continuous hfo
+            while 1:
+                # fit gamma function to the window
+                fit_alpha, fit_loc, fit_beta = stats.gamma.fit(data)
+
+                # now generate the empirical CDF of the baseline data
+                gamma_perc = stats.gamma.cdf(
+                    data, fit_alpha, loc=fit_loc, scale=fit_beta)
+
+                # find the index where gamma less then the threshold percentile
+                index = np.arghwere(
+                    gamma_perc <= energy_threshold_percentile)[::-1][0]

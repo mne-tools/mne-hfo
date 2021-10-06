@@ -25,6 +25,12 @@ ACCEPTED_MERGE_METHODS = ['time-windows', 'freq-bands']
 ACCEPTED_HFO_METHODS = ['line_length', 'rms', 'hilbert']
 
 
+class BaselineMethod:
+    def compute_baseline(self):
+        raise NotImplementedError(
+            'All methods that compute a baseline should have this method implemented.')
+
+
 class Detector(BaseEstimator):
     """Any sliding-window based HFO detector.
 
@@ -33,12 +39,12 @@ class Detector(BaseEstimator):
 
     Detectors fit follow the following general flow by implementing
     private functions:
-        1. Compute a statistic on the raw data in _compute_hfo_statistic.
+        1. Compute a statistic on the raw data in ``compute_hfo_statistic``.
             i.e. the LineLength of a time-window
         2. Apply a threshold to the statistic computed in (1) in
-            _threshold_statistic. i.e. std of LineLength
+            ``threshold_hfo_statistic``. i.e. std of LineLength
         3. Merge contiguous/overlapping events into unique detections
-            in _post_process_chs_hfo. i.e. contiguous time windows
+            in ``post_process_chs_hfo``. i.e. contiguous time windows
 
     Parameters
     ----------
@@ -50,17 +56,22 @@ class Detector(BaseEstimator):
         Fraction of the window overlap (0 to 1).
     scoring_func : str
         Either ``'f1'``, or ``'r2'``.
+    name : str
+        The name of the HFO detector.
+    n_jobs : int
+        The number of jobs used in `joblib` parallelization.
     verbose: bool
     """
 
     def __init__(self, threshold: Union[int, float],
                  win_size: Union[int, None], overlap: Union[float, None],
-                 scoring_func: str, n_jobs: int,
+                 scoring_func: str, name: str, n_jobs: int,
                  verbose: bool):
         self.win_size = win_size
         self.threshold = threshold
         self.overlap = overlap
         self.scoring_func = scoring_func
+        self.name = name
         self.verbose = verbose
         self.n_jobs = n_jobs
 
@@ -88,7 +99,7 @@ class Detector(BaseEstimator):
         hfo_event_arr = np.empty((self.n_chs, n_windows, n_bands))
         return hfo_event_arr
 
-    def _compute_hfo_statistic(self, X):
+    def compute_hfo_statistic(self, X):
         """Compute HFO statistic.
 
         Takes a sliding window approach and computes the existence
@@ -110,13 +121,13 @@ class Detector(BaseEstimator):
         raise NotImplementedError('Private function that computes the HFOs '
                                   'needs to be implemented.')
 
-    def _threshold_statistic(self, hfo_statistic_arr):
+    def threshold_hfo_statistic(self, hfo_statistic_arr):
         """Apply threshold(s) to the calculated statistic to generate hfo events.
 
         Parameters
         ----------
         hfo_statistic_arr: np.ndarray
-            The output of _compute_hfo_statistic
+            The output of compute_hfo_statistic
 
         Returns
         -------
@@ -127,7 +138,7 @@ class Detector(BaseEstimator):
         raise NotImplementedError('Private function that computes the HFOs '
                                   'needs to be implemented.')
 
-    def _post_process_ch_hfos(self, hfo_event_array):
+    def post_process_ch_hfos(self, hfo_event_array):
         """Post process one channel's HFO events generally after thresholding.
 
         Joins contiguously detected HFOs as one event.
@@ -422,18 +433,18 @@ class Detector(BaseEstimator):
         self.chs_hfos_ = all_hfo_annots
         return self
 
-    def _fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
+    def fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
         """Compute a list of HFO events for channel."""
         # compute the metric over the signal used to compute the HFO
         # e.g. RMS, or Line Length over time
-        hfo_statistic_arr = self._compute_hfo_statistic(sig)
+        hfo_statistic_arr = self.compute_hfo_statistic(sig)
 
         # apply the threshold(s) to the statistic to get detections
         # of start and stop samples
-        hfo_detection_arr = self._threshold_statistic(hfo_statistic_arr)
+        hfo_detection_arr = self.threshold_hfo_statistic(hfo_statistic_arr)
 
         # (optionally) post process HFOs
-        ch_hfo_list = self._post_process_ch_hfos(hfo_detection_arr)
+        ch_hfo_list = self.post_process_ch_hfos(hfo_detection_arr)
 
         # extract onset, and durations of each HFO detected to form Annotations
         onset, duration = [], []
@@ -575,7 +586,7 @@ class Detector(BaseEstimator):
             win_idx += 1
         return signal_win_stat
 
-    def _compute_frq_band_detection(self, sig, method):
+    def _compute_freq_band_detection(self, sig, method):
         if method not in ACCEPTED_HFO_METHODS:
             raise ValueError(f'Sliding window HFO detection method '
                              f'{method} is not implemented. Please '

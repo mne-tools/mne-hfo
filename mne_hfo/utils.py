@@ -13,6 +13,11 @@ from tqdm import tqdm
 from mne_hfo.config import ANNOT_COLUMNS
 
 
+def autocorr(x, t=1):
+    """Autocorrelation function of a vector."""
+    return np.corrcoef(np.array([x[:-t], x[t:]]))
+
+
 def _check_df(df: pd.DataFrame, df_type: str,
               copy: bool = True) -> pd.DataFrame:
     """Check dataframe for correctness."""

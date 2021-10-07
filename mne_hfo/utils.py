@@ -202,6 +202,13 @@ def compute_rms(signal, win_size=6):
     return np.sqrt(np.convolve(aux, window, 'same'))
 
 
+def rolling_rms(x, N):
+    """Compute rolling average RMS."""
+    x = np.concatenate((np.zeros((N,)), x))
+    xc = np.cumsum(abs(x)**2)
+    return np.sqrt((xc[N:] - xc[:-N]) / N)
+
+
 def compute_line_length(signal, win_size=6):
     """Calculate line length.
 

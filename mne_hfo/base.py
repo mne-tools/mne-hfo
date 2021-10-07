@@ -399,7 +399,7 @@ class Detector(BaseEstimator):
                 ch_name = self.ch_names[idx]
 
                 # compute HFOs for this channel
-                ch_hfo_events, statistic = self._fit_channel(
+                ch_hfo_events, statistic = self.fit_channel(
                     sig, sfreq, ch_name, hfo_description=hfo_description)
 
                 # create list of annotations
@@ -414,7 +414,7 @@ class Detector(BaseEstimator):
 
             # run joblib parallelization over channels
             ch_hfos, statistics = zip(*Parallel(n_jobs=n_jobs)(
-                delayed(self._fit_channel)(
+                delayed(self.fit_channel)(
                     X[idx, :], sfreq, self.ch_names[idx], hfo_description
                 ) for idx in tqdm(range(self.n_chs))
             ))
@@ -536,7 +536,7 @@ class Detector(BaseEstimator):
 
         Parameters
         ----------
-        sig: np.array
+        sig: np.ndarray
             Data (1D array) from a single channel
         method: str
             Method used to compute the detection. Can be one of
@@ -544,9 +544,9 @@ class Detector(BaseEstimator):
 
         Returns
         -------
-        signal_win_stat: np.ndarray
-            Statistic calculated per window
-
+        signal_win_stat: np.ndarray, shape (n_chs, n_windows)
+            Statistic calculated per window, where the number of
+            windows is equal to ``(n_samples - win_size) / step_size``.
         """
         if method not in ACCEPTED_HFO_METHODS:
             raise ValueError(f'Sliding window HFO detection method '

@@ -22,7 +22,10 @@ def _map_soz_chs_to_bids():
     root = Path('/Users/adam2392/OneDrive - Johns Hopkins/ds003498')
 
     # get all subjects
-    ignore_subjects = ['01', '02', '03', '04', '05', '06']
+    ignore_subjects = ['01',
+    #  '02', 
+    # '03', '04', '05', '06'
+    ]
     subjects = get_entity_vals(
         root, 'subject', ignore_subjects=ignore_subjects)
 
@@ -66,16 +69,17 @@ def _map_soz_chs_to_bids():
             # add a new column
             ch_names = rz_chs_dict[subject]
             mark_channels(ch_names, descriptions=['resected'] * len(ch_names),
-                              bids_path=channel_fpath, status='good', verbose=False)
+                          bids_path=channel_fpath, status='good', verbose=False)
 
 
 def analyze_zurich():
     root = Path('/Users/adam2392/OneDrive - Johns Hopkins/ds003498')
 
     # get all subjects
-    ignore_subjects = ['01', '02', 
-        '03']
-    subjects = get_entity_vals(root, 'subject', ignore_subjects=ignore_subjects)
+    ignore_subjects = ['01', '02',
+                       '03']
+    subjects = get_entity_vals(
+        root, 'subject', ignore_subjects=ignore_subjects)
     datatype = 'ieeg'
     overwrite = False
 
@@ -94,19 +98,23 @@ def analyze_zurich():
         # loop through each file path and compute HFOs
         for bids_fpath in fpaths:
             bids_path = BIDSPath(root=root, datatype=datatype,
-                **get_entities_from_fname(bids_fpath))
+                                 **get_entities_from_fname(bids_fpath))
             raw = read_raw_bids(bids_path)
 
             # filter line noise
             raw.load_data()
             line_freq = raw.info['line_freq']
             sfreq = raw.info['sfreq']
-            freqs = np.arange(line_freq, sfreq//2, line_freq)
+            freqs = np.arange(line_freq, sfreq // 2, line_freq)
             raw = raw.notch_filter(freqs=freqs)
 
             # run filtering
-            for name, detect_func in zip(['rms', 'linelength', 'hilbert'],
-                                         [RMSDetector, LineLengthDetector, HilbertDetector]):
+            for name, detect_func in zip(['rms', 'linelength',
+                                        #   'hilbert'
+                                          ],
+                                         [RMSDetector, LineLengthDetector, 
+                                        #  HilbertDetector
+                                         ]):
                 fname = bids_path.copy().update(
                     suffix=f'desc-{name}_ieeg', extension='.tsv', check=False)
                 if fname.fpath.exists() and not overwrite:

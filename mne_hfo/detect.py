@@ -8,9 +8,11 @@ from mne.time_frequency import tfr_array_morlet
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS
-from mne_hfo.utils import autocorr
+from mne_hfo.utils import autocorr, rolling_rms
+from .docs import fill_doc
 
 
+@fill_doc
 class HilbertDetector(Detector):  # noqa
     """2D HFO hilbert detection used in Kucewicz et al. 2014.
 
@@ -21,6 +23,7 @@ class HilbertDetector(Detector):  # noqa
     ----------
     threshold : float
         Threshold for detection (default=3).
+    %(sfreq)s
     filter_band : tuple(float, float)
         Low cut-off frequency at index 0 and high cut-off frequency
         at index 1. The default is ``(30, 100)``.
@@ -39,14 +42,10 @@ class HilbertDetector(Detector):  # noqa
     offset : int
         Offset which is added to the final detection. This is used when the
         function is run in separate windows. Default = 0.
-    scoring_func : str
-        The scoring function to apply when trying to match HFOs with
-        a different dataset, such as manual annotations.
-    hfo_name : str
-        What to name the events detected (i.e. fast ripple if freq_band is
-        (250, 500)).
-    verbose : bool
-        Verbosity of the detector.
+    %(scoring_func)s
+    %(n_jobs)s
+    %(hfo_name)s
+    %(verbose)s
 
     References
     ----------
@@ -58,13 +57,13 @@ class HilbertDetector(Detector):  # noqa
     """
 
     def __init__(self,
-                 threshold: Union[int, float] = 3,
+                 threshold: Union[int, float] = 3, sfreq=None,
                  filter_band: Tuple[int, int] = (30, 100),
                  band_method: str = 'linear', n_bands: int = 300,
                  cycle_threshold: float = 1, gap_threshold: float = 1,
-                 n_jobs: int = -1, offset: int = 0,
-                 scoring_func: str = 'f1',
-                 hfo_name: str = "hilberthfo", verbose: bool = False):
+                 offset: int = 0, scoring_func: str = 'f1',
+                 n_jobs: int = -1, hfo_name: str = "hilberthfo",
+                 verbose: bool = False):
         if band_method not in ACCEPTED_BAND_METHODS:
             raise ValueError(f'Band method {band_method} is not '
                              f'an acceptable parameter. Please use '
@@ -144,6 +143,7 @@ class HilbertDetector(Detector):  # noqa
         return hfo_events
 
 
+@fill_doc
 class LineLengthDetector(Detector):
     """Line-length detection algorithm.
 
@@ -170,21 +170,14 @@ class LineLengthDetector(Detector):
         Sliding window size in samples.
     overlap : float
         Fraction of the window overlap (0 to 1).
-    sfreq : int | None
-        The sampling rate of the data.
+    %(sfreq)s
     filter_band : tuple(float, float)
         Low cut-off frequency at index 0 and high cut-off frequency
         at index 1. The default is ``(30, 100)``.
-    scoring_func : str
-        The scoring function to apply when trying to match HFOs with
-        a different dataset, such as manual annotations.
-    n_jobs : int
-        The number of jobs for joblib parallelization.
-    hfo_name : str
-        What to name the events detected (i.e. fast ripple if freq_band is
-        (250, 500)).
-    verbose : bool
-        Verbosity of the detector.
+    %(scoring_func)s
+    %(n_jobs)s
+    %(hfo_name)s
+    %(verbose)s
 
     Notes
     -----
@@ -269,6 +262,7 @@ class LineLengthDetector(Detector):
             detections, method="time-windows")
 
 
+@fill_doc
 class RMSDetector(Detector):
     """Root mean square (RMS) detection algorithm (Staba Detector).
 
@@ -288,21 +282,14 @@ class RMSDetector(Detector):
         Sliding window size in samples.
     overlap : float
         Fraction of the window overlap (0 to 1).
-    sfreq : int | None
-        The sampling rate of the data.
+    %(sfreq)s
     filter_band : tuple(float, float)
         Low cut-off frequency at index 0 and high cut-off frequency
         at index 1. The default is ``(100, 500)``.
-    scoring_func : str
-        The scoring function to apply when trying to match HFOs with
-        a different dataset, such as manual annotations.
-    n_jobs : int
-        The number of jobs for joblib parallelization.
-    hfo_name : str
-        What to name the events detected (i.e. fast ripple if freq_band is
-        (250, 500)).
-    verbose : bool
-        Verbosity of the detector.
+    %(scoring_func)s
+    %(n_jobs)s
+    %(hfo_name)s
+    %(verbose)s
 
     References
     ----------
@@ -377,10 +364,12 @@ class RMSDetector(Detector):
             detections, method="time-windows")
 
 
+@fill_doc
 class MNIDetector(Detector):
     def __init__(self, threshold: Union[int, float],
-                 win_size: Union[int, None],
-                 overlap: Union[float, None],
+                 win_size: Union[int, None] = 0.002,
+                 overlap: Union[float, None] = 0.99,
+                 filter_band: Tuple[int, int] = (80, 450),
                  min_window_size: int = 10e-3,
                  min_gap_size: int = 10e-3,
                  baseline_threshold: float = 0.67,
@@ -388,18 +377,73 @@ class MNIDetector(Detector):
                  baseline_step_size: float = 0.5,
                  baseline_min_time: float = 5,
                  baseline_n_bootstrap: int = 100,
-                 filter_band: Tuple[int, int] = (80, 450),
-                 scoring_func: str = 'f1', sfreq=None,
-                 hfo_name: str = 'mnihfo',
-                 n_jobs: int = -1, verbose: bool = True):
+                 cycle_time: float = 10,
+                 energy_baseline_thresh: float = 0.9999,
+                 energy_chfo_thresh: float = 0.95,
+                 sfreq=None,
+                 scoring_func: str = 'f1',
+                 n_jobs: int = -1, hfo_name: str = 'mnihfo',
+                 verbose: bool = True):
+        """[summary]
+
+        Parameters
+        ----------
+        threshold : Union[int, float]
+            [description]
+        win_size : Union[int, None]
+            [description]
+        overlap : Union[float, None]
+            [description]
+        filter_band : Tuple[int, int], optional
+            [description], by default (80, 450)
+        min_window_size : int, optional
+            [description], by default 10e-3
+        min_gap_size : int, optional
+            [description], by default 10e-3
+        baseline_threshold : float, optional
+            [description], by default 0.67
+        baseline_seg_size : float, optional
+            [description], by default 0.125
+        baseline_step_size : float, optional
+            [description], by default 0.5
+        baseline_min_time : float, optional
+            [description], by default 5
+        baseline_n_bootstrap : int, optional
+            [description], by default 100
+        cycle_time : float
+            The amount of time in each segment cycle in seconds. By default 10.
+            This is the window of data to consider when looking for HFOs.
+        energy_baseline_thresh : float
+            The energy percentile threshold for EEG channels with a baseline
+            segment. By default 0.9999.
+        energy_chfo_thresh : float
+            The energy percentile threshold for EEG channels without a baseline
+            segment, where HFOs are looked for iteratively. By default 0.95.
+        %(sfreq)s
+        %(scoring_func)s
+        %(n_jobs)s
+        %(hfo_name)s
+        %(verbose)s
+        """
         super().__init__(threshold, win_size, overlap, scoring_func,
                          hfo_name, n_jobs, verbose)
         # hyperparameters
         self.filter_band = filter_band
         self.sfreq = sfreq
 
+        # minimum HFO time
         self.min_window_size = min_window_size
+
+        # minimum gap between HFOs
         self.min_gap_size = min_gap_size
+
+        # cycle time for each segment
+        self.cycle_time = cycle_time
+
+        self.energy_baseline_thresh = energy_baseline_thresh
+        self.energy_chfo_thres = energy_chfo_thresh
+
+        # baseline threshold, window size, step size, and time
         self.baseline_threshold = baseline_threshold
         self.baseline_seg_size = baseline_seg_size
         self.baseline_step_size = baseline_step_size
@@ -425,43 +469,35 @@ class MNIDetector(Detector):
         # first, bandpass the signal using FIR filter
         X = mne.filter.filter_data(X, sfreq=self.sfreq,
                                    l_freq=self.l_freq,
-                                   h_freq=self.h_freq,
+                                   h_freq=self.h_freq, n_jobs=self.n_jobs,
                                    method='fir', verbose=self.verbose)
 
+        # compute the max wavelet entropy of white noise
+        baseline_we_max = self._compute_white_noise_wemax()
+
         # first compute the baseline
-        baseline_windows = self.compute_baseline(X)
+        baseline_windows = self.compute_baseline(X, baseline_we_max)
 
         # convert the necessary baseline needed into samples
-        window_samples = self.baseline_min_time / 60 * self.n_times
+        # minimum size of the baseline
+        min_baseline_size = self.baseline_min_time / 60 * self.n_times
 
-        # compute the threshold used, depending on if baseline was detected
-        if np.sum(baseline_windows) >= window_samples:
-            # baseline was found, so this is the 99.9999 percentil
-            # value of a gamma distribution modeled for the empirical
-            # CDF of each 10second baseline segment
-            energy_threshold = 'posbaseline'
-        else:
-            energy_threshold = 'negbaseline'
+        # minimum size of each HFO event
+        min_window_size = self.min_window_size * self.sfreq
 
         # second, compute the RMS over a sliding window
-        rms_event_arr = self._compute_sliding_window_detection(
-            X, method='rms')
+        rms_event_arr = rolling_rms(X, 5)
 
-        # if the baseline was met
-        window_min_secs = window_min_secs * sfreq
+        # compute the threshold used, depending on if baseline was detected
+        baseline_condition = np.sum(baseline_windows) >= min_baseline_size
 
-        # DO REST
+        # compute the necessary energy threshold
+        energy_threshold = self._compute_energy_threshold(
+            X, baseline_condition, baseline_windows)
 
-        # reshape array to be n_wins x n_bands (i.e. 1)
-        n_windows = self._compute_n_wins(self.win_size, self.step_size,
-                                         self.n_times)
-        n_bands = len(self.freq_cutoffs) - 1
-        shape = (n_windows, n_bands)
-        rms_event_arr = np.array(rms_event_arr).reshape(shape)
-
+        # energy threshold met by RMS values
         # compute the parts of signal with high RMS
-        threshold = None
-        high_rms_energy = rms_event_arr >= threshold
+        high_rms_energy = rms_event_arr >= energy_threshold
 
         # get the window threshold
         window_threshold = np.concatenate((0, high_rms_energy, 0))
@@ -474,7 +510,7 @@ class MNIDetector(Detector):
 
         # window distance selection where RMS energy is exceeded
         # for more then a certain length of time
-        window_dist_select = window_dist > window_min_secs
+        window_dist_select = window_dist > min_window_size
 
         # find windows that were selected
         window_select = np.nonzero(window_dist_select)
@@ -484,16 +520,17 @@ class MNIDetector(Detector):
         end_windows = window_jump_down[window_select]
 
         # loop until no more HFOs
+        hfo_event_arr = np.zeros(rms_event_arr.shape)
+        for idx in range(len(start_windows)):
+            hfo_event_arr[start_windows[idx]: end_windows[idx]] = 1
+        return hfo_event_arr
 
-    def compute_baseline(self, X):
-        base_threshold = self.baseline_threshold
-
+    def _compute_white_noise_wemax(self):
         # compute parameters in terms of samples
-        baseline_step_size = self.baseline_step_size * self.sfreq
+        baseline_win_size = self.baseline_seg_size * self.sfreq
 
         # known as s_EpochSamples
-        base_seg_sample = self.baseline_seg_size * self.sfreq
-        num_epoch_samples = np.round(base_seg_sample * self.sfreq)
+        num_epoch_samples = np.round(baseline_win_size * self.sfreq)
 
         n_repeats = self.baseline_n_bootstrap
 
@@ -517,28 +554,67 @@ class MNIDetector(Detector):
             we_max = -np.sum(np.multiply(mean_energy, np.log(mean_energy)))
             baseline_we_max[idx] = we_max
 
-        # get the median as our baseline max Wavelet Entropy
-        baseline_we_max = np.median(baseline_we_max)
+        return np.median(baseline_we_max)
+
+    def compute_baseline(self, X, baseline_we_max):
+        """Compute the baseline for an EEG channel.
+
+        Computes the baseline of an EEG channel by looking
+        for segments without oscillatory activity of any kind.
+        This function first computes the maximum wavelet entropy
+        for the autocorrelation of white noise (i.e. WEmax). Then,
+        it computes the wavelet entropy of the autocorrelation of
+        the filtered EEG signal. Then taking a sliding window,
+        segments are considered baseline if the minimum wavelet
+        entropy is larger then the threshold (e.g. 0.67 * WEmax).
+
+        Consecutive or overlapping segments are joined.
+
+        Parameters
+        ----------
+        X : np.ndarray, shape (n_times,)
+            A 1-D vector of an EEG electrode activity over time.
+
+        Returns
+        -------
+        baseline_windows : np.ndarray, shape (n_times, )
+            A 1-D vector of 1's and 0's representing an array mask
+            where the baseline was detected.
+
+        Notes
+        -----
+        This function assumes that the input EEG data is already
+        bandpass filtered.
+        """
+        assert X.ndim == 1
+        base_threshold = self.baseline_threshold
+
+        # compute parameters in terms of samples
+        baseline_win_size = self.baseline_seg_size * self.sfreq
+        baseline_step_size = self.baseline_step_size * self.sfreq
 
         # now compute portions of the dataset that are considered baseline
         # reshape array to be n_wins x n_bands (i.e. 1)
-        n_windows = self._compute_n_wins(self.win_size, baseline_step_size,
-                                         self.n_times)
+        n_windows = self._compute_n_wins(
+            baseline_win_size, baseline_step_size, self.n_times)
         baseline_wins = np.zeros(X.shape)
 
+        # create array of the start and end indices for the sliding window
         start_index = np.linspace(0, self.n_times, self.win_size)
-        end_index = start_index + base_seg_sample
+        end_index = start_index + baseline_win_size
 
         for idx in range(n_windows):
             # compute auto-correlation of the signal
-            ac_x = np.apply_along_axis(autocorr, axis=1, arr=X)
-            ac_x = ac_x / np.sum(np.power(X, 2), axis=1)
+            windowed_X = X[start_index[idx]:end_index[idx]]
+            ac_x = autocorr(windowed_X)
+            ac_x = ac_x / np.sum(np.power(windowed_X, 2))
 
-            # compute the wavelet entropy of the auto-correlation
-            wavelet_ac_x = tfr_array_morlet(ac_x[np.newaxis, ...]).squeeze()
+            # compute the wavelet of the auto-correlation
+            wavelet_ac_x = tfr_array_morlet(
+                ac_x[np.newaxis, np.newaxis, ...]).squeeze()
 
             # compute the mean normalized energy
-            mean_energy = np.mean(np.power(wavelet_ac_x, 2), axis=1)
+            mean_energy = np.mean(np.power(wavelet_ac_x, 2))
             mean_energy = mean_energy / np.sum(mean_energy)
 
             # compute the maximum wavelet entropy in this section
@@ -547,10 +623,6 @@ class MNIDetector(Detector):
                 baseline_wins[start_index[idx]:end_index[idx]] = 1
 
         return baseline_wins
-
-    def compute_threshold(self, baseline_wins, X, sfreq):
-
-        return threshold
 
     def threshold_hfo_statistic(self, X):
         """Override ``Detector.threshold_hfo_statistic`` function."""
@@ -564,21 +636,41 @@ class MNIDetector(Detector):
         return self._merge_contiguous_ch_detections(
             detections, method="time-windows")
 
-    def _compute_energy_threshold(self, X, baseline, baseline_windows):
+    def _compute_energy_threshold(self, X: np.ndarray, baseline: bool,
+                                  baseline_windows: np.ndarray):
+        assert X.ndim == 1
+
+        energy_threshold = np.zeros(X.shape)
+
+        minimum_window_size = self.min_window_size * self.sfreq
+
         if baseline:
-            # cycle time
-            window_threshold = cycle_time * self.sfreq
+            # cycle time - s_WindowThreshold
+            window_cycle = np.round(self.cycle_time * self.sfreq)
 
             # find how many discrete windows there are
             baseline_jump = np.diff(np.concatenate((0, baseline_windows, 0)))
             baseline_jump_up = np.argwhere(baseline_jump == 1)
-            n_windows = len(baseline_jump_up)
+            baseline_jump_down = np.argwhere(baseline_jump == -1) - 1
 
-            # get a list of all the baseline windows
-            for idx in range(n_windows):
-                pass
+            # get starting indices of all the windows
+            window_start = []
+            for idx in range(len(baseline_jump_up)):
+                index = np.arange(
+                    baseline_jump_up[idx],
+                    baseline_jump_down[idx],
+                    window_cycle).tolist()
+                window_start.extend(index)
 
+            # get ending indices of all the windows
+            window_end = np.array(window_start) + window_cycle
+            n_windows = len(window_start)
+
+            # loop through each baseline window of at least "window_cycle" long
             for idx in range(n_windows):
+                # get the baseline window data
+                data = X[window_start[idx]:window_end[idx]]
+
                 # fit gamma function to the window
                 fit_alpha, fit_loc, fit_beta = stats.gamma.fit(data)
 
@@ -588,19 +680,71 @@ class MNIDetector(Detector):
 
                 # find the index where gamma less then the threshold percentile
                 index = np.arghwere(
-                    gamma_perc <= energy_threshold_percentile)[::-1][0]
+                    gamma_perc <= self.energy_baseline_thresh)[::-1][0]
 
                 # now apply threshold for each data point
+                energy_threshold[window_start[idx]:window_end[idx]] = data[index]
         else:
-            # continuous hfo
-            while 1:
-                # fit gamma function to the window
-                fit_alpha, fit_loc, fit_beta = stats.gamma.fit(data)
+            # number of seconds to consider for every continuous HFO
+            cont_hfo_epoch = 60
+            window_chfo = np.round(cont_hfo_epoch * self.sfreq)
 
-                # now generate the empirical CDF of the baseline data
-                gamma_perc = stats.gamma.cdf(
-                    data, fit_alpha, loc=fit_loc, scale=fit_beta)
+            window_start = np.arange(0, len(X), window_chfo)
+            window_end = window_start + window_chfo
 
-                # find the index where gamma less then the threshold percentile
-                index = np.arghwere(
-                    gamma_perc <= energy_threshold_percentile)[::-1][0]
+            for idx in range(len(window_start)):
+                data = np.sort(X[window_start[idx]:window_end[idx]])
+
+                curr_energy_threshold = np.max(data)
+
+                # continuous hfo
+                while 1:
+                    if np.sum(np.abs(data)) == 0:
+                        break
+
+                    # fit gamma function to the window
+                    fit_alpha, fit_loc, fit_beta = stats.gamma.fit(data)
+
+                    # now generate the empirical CDF of the baseline data
+                    gamma_perc = stats.gamma.cdf(
+                        data, fit_alpha, loc=fit_loc, scale=fit_beta)
+
+                    # find the index where gamma less then the threshold percentile
+                    index = np.arghwere(
+                        gamma_perc <= self.energy_chfo_thres)[::-1][0]
+
+                    # new energy threshold
+                    this_energy_threshold = data[index]
+
+                    # find portions of the data segment that are over this energy threshold
+                    over_energy_X = data >= this_energy_threshold
+
+                    # find jumps
+                    baseline_jump = np.diff(np.concatenate((0, over_energy_X)))
+                    baseline_jump_up = np.argwhere(baseline_jump == 1)
+                    baseline_jump_down = np.argwhere(baseline_jump == -1) - 1
+
+                    # find distance of the jump
+                    jump_dist = baseline_jump_down - baseline_jump_up
+
+                    # select windows where there are events meeting the minimum
+                    # size (in time) criterion for an HFO event
+                    hfo_events_index = np.argwhere(
+                        jump_dist > minimum_window_size)
+
+                    if hfo_events_index.size == 0:
+                        break
+
+                    # assign new window start and window ends
+                    window_start = baseline_jump_up[hfo_events_index]
+                    window_end = baseline_jump_down[hfo_events_index]
+
+                    # remove these windows from the next iteration
+                    for idx in range(len(window_start)):
+                        data[window_start[idx]:window_end[idx]] = 0
+
+                    # assign new energy threshold
+                    curr_energy_threshold = this_energy_threshold
+
+                energy_threshold[window_start[idx]:window_end[idx]] = curr_energy_threshold
+        return energy_threshold

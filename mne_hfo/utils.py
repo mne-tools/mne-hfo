@@ -1,16 +1,15 @@
 """Utility and helper functions for MNE-HFO."""
 # License: BSD (3-clause)
-import json
-import os
-from os import path as op
-
-import mne
 import numpy as np
 import pandas as pd
-from scipy.signal import hilbert
 from tqdm import tqdm
 
 from mne_hfo.config import ANNOT_COLUMNS
+
+
+def autocorr(x, t=1):
+    """Autocorrelation function of a vector."""
+    return np.corrcoef(np.array([x[:-t], x[t:]]))
 
 
 def _check_df(df: pd.DataFrame, df_type: str,
@@ -43,42 +42,7 @@ def _check_df(df: pd.DataFrame, df_type: str,
     return df
 
 
-def _ensure_tuple(x):
-    """Return a tuple."""
-    if x is None:
-        return tuple()
-    elif isinstance(x, str):
-        return (x,)
-    else:
-        return tuple(x)
-
-
-def _check_types(variables):
-    """Make sure all vars are str or None."""
-    for var in variables:
-        if not isinstance(var, (str, type(None))):
-            raise ValueError(f"You supplied a value ({var}) of type "
-                             f"{type(var)}, where a string or None was "
-                             f"expected.")
-
-
-def _write_json(fname, dictionary, overwrite=False, verbose=False):
-    """Write JSON to a file."""
-    if op.exists(fname) and not overwrite:
-        raise FileExistsError(f'"{fname}" already exists. '
-                              'Please set overwrite to True.')
-
-    json_output = json.dumps(dictionary, indent=4)
-    with open(fname, 'w', encoding='utf-8') as fid:
-        fid.write(json_output)
-        fid.write('\n')
-
-    if verbose is True:
-        print(os.linesep + f"Writing '{fname}'..." + os.linesep)
-        print(json_output)
-
-
-def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
+def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq,
                         cycles_threshold, gap_threshold, zscore_threshold):
     """
     Find detections that meet the Hilbert envelope criteria.
@@ -95,8 +59,6 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
         The low frequency of the band
     h_freq : float
         The high frequency of the band
-    n_times : int
-        The number of timepoints used to calculate the signal
     cycles_threshold : float
         The number of cycles to be considered a valid envelope
     gap_threshold : float
@@ -114,10 +76,13 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
         [3] - Maximum value of the Hilbert envelope in this event window
 
     """
+    assert np.ndim(np.array(signal).squeeze()) == 1
+
     # Detections where the envelope has a zscore greater than threshold
     tdetects = []
 
     # Create boolean mask of signal greater than zscore_threshold
+    n_times = len(signal)
     thresh_sig = np.zeros(n_times, dtype='bool')
     thresh_sig[signal > zscore_threshold] = 1
 
@@ -197,6 +162,13 @@ def compute_rms(signal, win_size=6):
     return np.sqrt(np.convolve(aux, window, 'same'))
 
 
+def rolling_rms(x, N):
+    """Compute rolling average RMS."""
+    x = np.concatenate((np.zeros((N,)), x))
+    xc = np.cumsum(abs(x)**2)
+    return np.sqrt((xc[N:] - xc[:-N]) / N)
+
+
 def compute_line_length(signal, win_size=6):
     """Calculate line length.
 
@@ -233,59 +205,6 @@ def compute_line_length(signal, win_size=6):
     start = int(np.floor(win_size / 2))
     stop = int(np.ceil(win_size / 2))
     return data[start:-stop]
-
-
-def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
-    """Compute the Hilbert envelope for a single channel.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        EEG signal for a single channel.
-    freq_cutoffs : tuple
-        The lower and higher frequency cutoff.
-    freq_span : tuple
-        The span of how many frequencies there are.
-    sfreq : float
-        The sampling rate.
-
-    Returns
-    -------
-    hfx_bands : np.ndarray
-        Hilbert transforms per freq band.
-    """
-    hfx_bands = []
-    # Iterate over freq bands
-    for ind in range(freq_span):
-        l_freq = freq_cutoffs[ind]
-        h_freq = freq_cutoffs[ind + 1]
-
-        # Filter the data for this frequency band
-        signal = mne.filter.filter_data(signal, sfreq=sfreq,
-                                        l_freq=l_freq, h_freq=h_freq,
-                                        method='iir', verbose=False)
-        # compute z-score of data
-        signal = (signal - np.mean(signal)) / np.std(signal)
-
-        # Chunk the signal into 30 second windows and compute the Hilbert
-        # to save memory
-        hfx = np.empty(signal.shape)
-        n_times = len(hfx)
-        win_size = int(sfreq * 30)
-        n_wins = int(np.ceil(n_times / win_size))
-        for win in range(n_wins):
-            start_samp = win * win_size
-            end_samp = (win + 1) * win_size
-            if win == n_wins:
-                end_samp = n_times
-            sig = signal[start_samp:end_samp]
-            hfx[start_samp:end_samp] = np.abs(hilbert(sig))
-
-        # return the absolute value of the Hilbert transform.
-        # (i.e. the envelope)
-        hfx_bands.append(hfx)
-        hfx = None
-    return hfx_bands
 
 
 def apply_hilbert(metric, threshold_dict, kwargs):
@@ -453,7 +372,7 @@ def merge_contiguous_freq_bands(detections):
     """
     from mne_hfo.posthoc import _check_detection_overlap
     outlines = []
-    for detection in detections[0]:
+    for detection in detections:
         band_idx = detection[0]
         # If first freq band, always unique so append
         if band_idx == 0:

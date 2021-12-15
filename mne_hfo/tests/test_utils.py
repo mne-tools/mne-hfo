@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 
 from mne_hfo.utils import (compute_rms, compute_line_length,
@@ -31,18 +32,17 @@ def test_threshold_quian(create_testing_data):
             round(6.777704219110832, 5))
 
 
+@pytest.mark.ignore('')
 def test_band_z_score_detect(create_testing_zscore_data):
     X, hfo_outline = create_testing_zscore_data
     fs = 2000
     band_idx = 0
     l_freq = 81
     h_freq = 82
-    dur = 30
-    n_times = fs * dur
     cycles_thresh = 1
     gap_thresh = 1
     zscore_thresh = 3
-    hfo_detect = _band_zscore_detect(X, fs, band_idx, l_freq, h_freq, n_times,
+    hfo_detect = _band_zscore_detect(X, fs, band_idx, l_freq, h_freq,
                                      cycles_thresh, gap_thresh, zscore_thresh)
     assert hfo_detect[0][1] == hfo_outline[0]
     assert hfo_detect[0][2] == hfo_outline[1]

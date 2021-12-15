@@ -2,13 +2,13 @@ from pathlib import Path
 import json
 import numpy as np
 import pandas as pd
-from mne_hfo.detect import HilbertDetector, LineLengthDetector
 from natsort import natsorted
 
 from mne_bids.path import BIDSPath, get_entities_from_fname
 from mne_bids import read_raw_bids, get_entity_vals, mark_channels, update_sidecar_json
 
-from mne_hfo import (RMSDetector, compute_chs_hfo_rates)
+from mne_hfo import (RMSDetector, HilbertDetector,
+                     LineLengthDetector, compute_chs_hfo_rates)
 from mne_hfo.simulate import simulate_hfo
 
 
@@ -23,9 +23,9 @@ def _map_soz_chs_to_bids():
 
     # get all subjects
     ignore_subjects = ['01',
-    #  '02', 
-    # '03', '04', '05', '06'
-    ]
+                       #  '02',
+                       # '03', '04', '05', '06'
+                       ]
     subjects = get_entity_vals(
         root, 'subject', ignore_subjects=ignore_subjects)
 
@@ -73,6 +73,7 @@ def _map_soz_chs_to_bids():
 
 
 def analyze_zurich():
+    """Use for analyzing Zurich dataset."""
     root = Path('/Users/adam2392/OneDrive - Johns Hopkins/ds003498')
 
     # get all subjects
@@ -110,11 +111,11 @@ def analyze_zurich():
 
             # run filtering
             for name, detect_func in zip(['rms', 'linelength',
-                                        #   'hilbert'
+                                          #   'hilbert'
                                           ],
-                                         [RMSDetector, LineLengthDetector, 
-                                        #  HilbertDetector
-                                         ]):
+                                         [RMSDetector, LineLengthDetector,
+                                          #  HilbertDetector
+                                          ]):
                 fname = bids_path.copy().update(
                     suffix=f'desc-{name}_ieeg', extension='.tsv', check=False)
                 if fname.fpath.exists() and not overwrite:

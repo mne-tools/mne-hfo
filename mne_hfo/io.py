@@ -3,6 +3,7 @@ import os
 import platform
 from pathlib import Path
 from typing import List, Union, Optional
+from mne_bids.path import get_bids_path_from_fname
 
 import numpy as np
 import pandas
@@ -215,13 +216,8 @@ def write_annotations(annot_df: pd.DataFrame, fname: Union[str, Path],
         description = 'HFO annotated events detected using ' \
                       'mne-hfo algorithms.'
 
-    # error check that intendeFor exists
-    entities = get_entities_from_fname(intended_for)
-    _, ext = os.path.splitext(intended_for)
-    # write the correct extension for BrainVision
-    if ext == '.eeg':
-        ext = '.vhdr'
-    intended_for_path = BIDSPath(**entities, extension=ext, root=root)
+    # error check that intendedFor exists
+    intended_for_path = get_bids_path_from_fname(intended_for)
     if not intended_for_path.fpath.exists():
         raise RuntimeError(f'The intended for raw dataset '
                            f'does not exist at {intended_for_path}. '

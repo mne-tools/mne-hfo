@@ -34,7 +34,9 @@ def test_io_annot_df(test_bids_root):
                                      sfreq, annotation_label)
 
     annot_path = bids_path.copy().update(root=None,
-                                         suffix='annotations', check=False)
+                                         suffix='annotations',
+                                         extension='.tsv',
+                                         check=False)
     out_fname = Path(test_bids_root) / 'derivatives' / 'sub-01' / annot_path.basename  # noqa
 
     # save to temporary directory

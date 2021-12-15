@@ -17,18 +17,12 @@ from mne_hfo.score import accuracy, false_negative_rate, \
     true_positive_rate, precision, false_discovery_rate
 from mne_hfo.sklearn import _make_ydf_sklearn
 from mne_hfo.utils import (apply_std, compute_rms,
-                           compute_line_length, compute_hilbert, apply_hilbert,
+                           compute_line_length, apply_hilbert,
                            merge_contiguous_freq_bands)
 
 ACCEPTED_THRESHOLD_METHODS = ['std', 'hilbert']
 ACCEPTED_MERGE_METHODS = ['time-windows', 'freq-bands']
 ACCEPTED_HFO_METHODS = ['line_length', 'rms', 'hilbert']
-
-
-class BaselineMethod:
-    def compute_baseline(self):
-        raise NotImplementedError(
-            'All methods that compute a baseline should have this method implemented.')
 
 
 class Detector(BaseEstimator):
@@ -65,15 +59,48 @@ class Detector(BaseEstimator):
 
     def __init__(self, threshold: Union[int, float],
                  win_size: Union[int, None], overlap: Union[float, None],
-                 scoring_func: str, name: str, n_jobs: int,
+                 scoring_func: str, hfo_name: str, n_jobs: int,
                  verbose: bool):
         self.win_size = win_size
         self.threshold = threshold
         self.overlap = overlap
         self.scoring_func = scoring_func
-        self.name = name
+        self.hfo_name = hfo_name
         self.verbose = verbose
         self.n_jobs = n_jobs
+
+    @property
+    def hfo_annotations(self):
+        """HFO Annotations.
+
+        Returns
+        -------
+        hfo_annotations : instance of Annotations
+            `mne.Annotations` object with ``onset``, ``duration``
+            and specified ``ch_name`` for each HFO event detected.
+        """
+        return self.hfo_annotations_
+
+    @property
+    def hfo_event_arr(self):
+        """HFO event array.
+
+        Returns
+        -------
+        hfo_event_arr : np.ndarray
+            Array that is (n_chs, n_samples), which has a
+            value of ``1`` if there is an HFO in that sample.
+        """
+        return self.hfo_event_arr_
+
+    @property
+    def step_size(self):
+        """Step size of each window.
+
+        Window increment over the samples of signal.
+        """
+        # Calculate window values for easier operation
+        return int(np.ceil(self.win_size * self.overlap))
 
     def _create_empty_event_arr(self):
         """Create an empty HFO event array.
@@ -109,7 +136,7 @@ class Detector(BaseEstimator):
 
         Parameters
         ----------
-        X : np.array
+        X : np.array shape of (n_times,)
             EEG data array for single channel: N = n_times.
 
         Returns
@@ -289,39 +316,6 @@ class Detector(BaseEstimator):
             score = false_discovery_rate(y, y_pred)
         return score
 
-    @property
-    def hfo_annotations(self):
-        """HFO Annotations.
-
-        Returns
-        -------
-        hfo_annotations : instance of Annotations
-            `mne.Annotations` object with ``onset``, ``duration``
-            and specified ``ch_name`` for each HFO event detected.
-        """
-        return self.hfo_annotations_
-
-    @property
-    def hfo_event_arr(self):
-        """HFO event array.
-
-        Returns
-        -------
-        hfo_event_arr : np.ndarray
-            Array that is (n_chs, n_samples), which has a
-            value of ``1`` if there is an HFO in that sample.
-        """
-        return self.hfo_event_arr_
-
-    @property
-    def step_size(self):
-        """Step size of each window.
-
-        Window increment over the samples of signal.
-        """
-        # Calculate window values for easier operation
-        return int(np.ceil(self.win_size * self.overlap))
-
     def to_data_frame(self, format=None):
         """Export HFO annotations in tabular structure as a pandas DataFrame.
 
@@ -430,7 +424,6 @@ class Detector(BaseEstimator):
 
         # assign annotations object
         self.hfo_annotations_ = all_hfo_annots
-        self.chs_hfos_ = all_hfo_annots
         return self
 
     def fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
@@ -585,17 +578,6 @@ class Detector(BaseEstimator):
             win_stop += self.step_size
             win_idx += 1
         return signal_win_stat
-
-    def _compute_freq_band_detection(self, sig, method):
-        if method not in ACCEPTED_HFO_METHODS:
-            raise ValueError(f'Sliding window HFO detection method '
-                             f'{method} is not implemented. Please '
-                             f'use one of {ACCEPTED_HFO_METHODS}.')
-        if method == 'hilbert':
-            hfo_detect_func = compute_hilbert
-        signal_stat = hfo_detect_func(sig, self.freq_cutoffs,
-                                      self.freq_span, self.sfreq)
-        return signal_stat
 
     def _merge_contiguous_ch_detections(self, detections, method):
         """Merge contiguous hfo detections into distinct events.

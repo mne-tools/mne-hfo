@@ -1,6 +1,7 @@
 """Testing HFO detection algorithms."""
 
 import numpy as np
+from numpy.testing import assert_almost_equal
 import pytest
 from scipy.signal import butter, filtfilt
 from sklearn.utils.estimator_checks import parametrize_with_checks
@@ -9,12 +10,13 @@ from mne import create_info
 
 from mne_hfo import LineLengthDetector, RMSDetector, \
     HilbertDetector, CSDetector
+from mne_hfo.detect import MNIDetector
 
 
 @parametrize_with_checks([
     RMSDetector(sfreq=2000, win_size=5),
     LineLengthDetector(sfreq=2000, win_size=5),
-    # HilbertDetector(sfreq=2000),
+    HilbertDetector(sfreq=2000),
 ])
 def test_sklearn_compat(estimator, check):
     """Tests sklearn API compatibility."""
@@ -110,7 +112,6 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
         assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
 
 
-@pytest.mark.skip(reason='Not as sensitive, need to investigate why')
 def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     """Test HilbertDetector with simulated HFO.
 
@@ -125,17 +126,60 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
     raw = RawArray(filt_data, info=info)
 
-    compute_instance = HilbertDetector(filter_band=[80, 250],
-                                       n_jobs=1, threshold=3)
+    compute_instance = HilbertDetector(filter_band=[80, 600],
+                                       n_jobs=1, threshold=7)
     dets = benchmark(compute_instance.fit,
                      raw)
 
-    expected_vals = [(5056, 5123),
-                     (35028, 35063)]
+    expected_vals = [(5056, 5093),
+                     (35029, 35049)]
 
     for idx, (exp_val) in enumerate(expected_vals):
-        assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
-        assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
+        onset = dets.hfo_annotations.onset[idx]
+        hfo_onset_samp = onset * raw.info['sfreq']
+        assert_almost_equal(hfo_onset_samp, exp_val[0])
+
+        duration = dets.hfo_annotations.duration[idx]
+        hfo_onset_samp = (onset + duration) * raw.info['sfreq']
+        assert_almost_equal(hfo_onset_samp, exp_val[1])
+
+
+@pytest.mark.ignore()
+def test_detect_hfo_mni(create_testing_eeg_data):
+    """Test MNIDetector with simulated HFO.
+
+    Assumes simulated data has already been "bandpass" filtered.
+    """
+    data, hfo_samps = create_testing_eeg_data
+    fs = 5000
+    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
+    filt_data = filtfilt(b, a, data)[np.newaxis, :]
+
+    # create input data structure
+    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    raw = RawArray(filt_data, info=info)
+
+    detector = MNIDetector(threshold=3, filter_band=[80, 600], n_jobs=1)
+    detector.fit(raw)
+
+    print(detector.hfo_annotations.to_data_frame())
+
+    # dets = benchmark(detector.fit,
+    #                  raw)
+
+    # expected_vals = [(5056, 5123),
+    #                  (35028, 35063)]
+
+    # for idx, (exp_val) in enumerate(expected_vals):
+    #     onset = dets.hfo_annotations.onset[idx]
+    #     hfo_onset_samp = onset * raw.info['sfreq']
+    #     assert hfo_onset_samp == exp_val[0]
+
+    #     duration = dets.hfo_annotations.duration[idx]
+    #     assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
+
+    # assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
+    # assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
 @pytest.mark.skip(reason='need to implement...')

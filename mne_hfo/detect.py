@@ -4,16 +4,149 @@ import mne
 import numpy as np
 from scipy import stats
 from mne.time_frequency import tfr_array_morlet
-
+from mne import Annotations
 
 from mne_hfo.base import Detector
 from mne_hfo.config import ACCEPTED_BAND_METHODS
 from mne_hfo.utils import autocorr, rolling_rms
+from mne_hfo.posthoc import _check_detection_overlap
 from .docs import fill_doc
+
+from scipy.signal import butter, hilbert, filtfilt
+
+
+def _band_z_score_detect(args):
+    """Find detections that meet the Hilbert envelope criteria.
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        A single channel's Hilbert transform within a frequency band
+    sfreq : float
+        Sampling frequency of the data
+    band_idx :  int
+        The index of the frequency band
+    l_freq : float
+        The low frequency of the band
+    h_freq : float
+        The high frequency of the band
+    cycles_threshold : float
+        The number of cycles to be considered a valid envelope
+    gap_threshold : float
+        The number of cycles needed to be considered a gap
+    zscore_threshold : float
+        Value to threshold the signal on
+
+    Returns
+    -------
+    tdetects : List[List[int, int, int, int]]
+        All HFO events that passed the bandpass, zscore. Each inner list
+        contains:
+        [0] - The band index
+        [1] - The timepoint of the start of a detection
+        [2] - The timepoint of the end of the detection
+        [3] - Maximum value of the Hilbert envelope in this event window
+        If there are no HFO events detected, then the inner list is empty.
+    """
+    hfx = args[0]
+    fs = args[1]
+    band_i = args[2]
+    bot = args[3]
+    # top = args[4]
+    cyc_th = args[5]
+    gap_th = args[6]
+    threshold = args[7]
+
+    tdetects = []
+    thresh_sig = np.zeros(len(hfx), dtype='bool')
+
+    # Create dot product and threshold the signal
+    thresh_sig[:] = 0
+    thresh_sig[hfx > threshold] = 1
+
+    # Now get the lengths
+    idx = 0
+    th_idcs = np.where(thresh_sig == 1)[0]
+    gap_samp = round(gap_th * fs / bot)
+    while idx < len(th_idcs) - 1:
+        if (th_idcs[idx + 1] - th_idcs[idx]) == 1:
+            start_idx = th_idcs[idx]
+            while idx < len(th_idcs) - 1:
+                if (th_idcs[idx + 1] - th_idcs[idx]) == 1:
+                    idx += 1  # Move to the end of the detection
+                    if idx == len(th_idcs) - 1:
+                        stop_idx = th_idcs[idx]
+                        # Check for number of cycles
+                        dur = (stop_idx - start_idx) / fs
+                        cycs = bot * dur
+                        if cycs > cyc_th:
+                            # Carry the amplitude and frequency info
+                            tdetects.append([band_i, start_idx, stop_idx,
+                                             max(hfx[start_idx:stop_idx])])
+                else:  # Check for gap
+                    if (th_idcs[idx + 1] - th_idcs[idx]) < gap_samp:
+                        idx += 1
+                    else:
+                        stop_idx = th_idcs[idx]
+                        # Check for number of cycles
+                        dur = (stop_idx - start_idx) / fs
+                        cycs = bot * dur
+                        if cycs > cyc_th:
+                            tdetects.append([band_i, start_idx, stop_idx,
+                                             max(hfx[start_idx:stop_idx])])
+                        idx += 1
+                        break
+        else:
+            idx += 1
+
+    return tdetects
+
+
+def _run_detect_branch(detects, det_idx, HFO_outline):
+    """Process detections from hilbert detector."""
+    HFO_outline.append(np.copy(detects[det_idx, :]))
+
+    # Create a subset for next band
+    next_band_idcs = np.where(detects[:, 0] == detects[det_idx, 0] + 1)
+    if not len(next_band_idcs[0]):
+        # No detects in band - finish the branch
+        detects[det_idx, 0] = 0  # Set the processed detect to zero
+        return HFO_outline
+    else:
+        # Get overllaping detects
+        for next_det_idx in next_band_idcs[0]:
+            if _check_detection_overlap([detects[det_idx, 1], detects[det_idx,
+                                                                      2]],
+                                        [detects[next_det_idx, 1],
+                                        detects[next_det_idx,
+                                                2]]):
+                # Go up the tree
+                _run_detect_branch(detects, next_det_idx, HFO_outline)
+
+        detects[det_idx, 0] = 0
+        return HFO_outline
+
+
+class FilterBandMixin:
+    """Mixin for filter band based detector properties."""
+
+    @property
+    def l_freq(self):
+        """Lower frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[0]
+
+    @property
+    def h_freq(self):
+        """Higher frequency band for HFO definition."""
+        if self.filter_band is None:
+            return None
+        return self.filter_band[1]
 
 
 @fill_doc
-class HilbertDetector(Detector):  # noqa
+class HilbertDetector(Detector, FilterBandMixin):  # noqa
     """2D HFO hilbert detection used in Kucewicz et al. 2014.
 
     A multi-taper method with: 4 Hz bandwidth, 1 sec sliding window,
@@ -32,7 +165,8 @@ class HilbertDetector(Detector):  # noqa
         (default='linear'). Linear provides better frequency resolution but
         is slower.
     n_bands : int
-        Number of bands if band_spacing = log (default=300).
+        Number of bands if band_spacing = log (default=300). Not used if
+        band_spacing is linear.
     cycle_threshold : float
         Minimum number of cycles to detect (default=1).
     gap_threshold : float
@@ -71,9 +205,10 @@ class HilbertDetector(Detector):  # noqa
 
         super(HilbertDetector, self).__init__(
             threshold, win_size=1, overlap=1,
-            scoring_func=scoring_func, name=hfo_name,
+            scoring_func=scoring_func, hfo_name=hfo_name,
             n_jobs=n_jobs, verbose=verbose)
 
+        self.sfreq = sfreq
         self.band_method = band_method
         self.n_bands = n_bands
         self.filter_band = filter_band
@@ -81,20 +216,6 @@ class HilbertDetector(Detector):  # noqa
         self.gap_threshold = gap_threshold
         self.n_jobs = n_jobs
         self.offset = offset
-
-    @property
-    def l_freq(self):
-        """Lower frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[0]
-
-    @property
-    def h_freq(self):
-        """Higher frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[1]
 
     def _create_empty_event_arr(self):
         """Override ``Detector._create_empty_event_arr`` function.
@@ -118,17 +239,23 @@ class HilbertDetector(Detector):  # noqa
         hfo_event_arr = np.empty((self.n_chs, n_bands, n_windows))
         return hfo_event_arr
 
-    def compute_hfo_statistic(self, X):
+    def compute_hfo_statistic(self, X, l_freq, h_freq):
         """Override ``Detector.compute_hfo_statistic`` function."""
         # Override the attribute set by fit so we actually slide on freq
-        # bands not time windows
-        self.n_windows = self.n_bands
-        self.win_size = 1
-        self.n_times = len(X)
+        # # bands not time windows
+        # self.n_windows = self.n_bands
+        # self.win_size = 1
+        [b, a] = butter(3, l_freq / (self.sfreq / 2), 'highpass')
+        fX = filtfilt(b, a, X)
 
-        hfo_event_arr = self._compute_freq_band_detection(X, method='hilbert')
+        [b, a] = butter(3, h_freq / (self.sfreq / 2), 'lowpass')
+        filtered_signal = filtfilt(b, a, fX)
 
-        return hfo_event_arr
+        # Compute the z-scores
+        zscore_signal = (filtered_signal -
+                         np.mean(filtered_signal)) / np.std(filtered_signal)
+        hilbert_signal = np.abs(hilbert(zscore_signal))
+        return hilbert_signal
 
     def threshold_hfo_statistic(self, X):
         """Override ``Detector.threshold_hfo_statistic`` function."""
@@ -142,9 +269,87 @@ class HilbertDetector(Detector):  # noqa
             detections, method="freq-bands")
         return hfo_events
 
+    def fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
+        """Override ``Detector.fit_channel`` function."""
+        n_bands = len(self.freq_cutoffs) - 1
+
+        # keep track of hilbert statistic
+        hilbert_statistic_bands = np.empty((n_bands, self.n_times))
+
+        # make sure signal is 1D numpy array
+        sig = np.array(sig).squeeze()
+
+        # keep track of detections
+        hfo_detections = []
+
+        # first loop through all frequency bands and find Epochs that
+        # meet the criterion for detector
+        for freq_idx in range(self.freq_span):
+            l_freq = self.freq_cutoffs[freq_idx]
+            h_freq = self.freq_cutoffs[freq_idx + 1]
+            hilbert_stat = self.compute_hfo_statistic(sig, l_freq, h_freq)
+
+            # store the Hilber statistic
+            hilbert_statistic_bands[freq_idx, :] = hilbert_stat
+
+            # Find detections that meet the Hilbert envelope criteria based
+            # on our different threshold criterion
+            args = [hilbert_stat, sfreq, freq_idx, l_freq, h_freq,
+                    self.cycle_threshold, self.gap_threshold, self.threshold]
+            this_band_detections = _band_z_score_detect(args)
+            hfo_detections.append(this_band_detections)
+
+        # Trim list of frequency bands that did not contain any events at all
+        detects = np.array([band for det_band in hfo_detections
+                            for band in det_band]).squeeze()
+
+        # get the explicit outline of each HFO event in (frequency band,
+        # onset sample, offset sample and amplitude)
+        outlines = []
+        if len(detects):
+            while sum(detects[:, 0] != 0):
+                det_idx = np.where(detects[:, 0] != 0)[0][0]
+                HFO_outline = []
+                outlines.append(np.array(_run_detect_branch(detects,
+                                                            det_idx,
+                                                            HFO_outline)))
+
+        # extract the frequency band, onset, offset and amplitude of
+        # each HFO event
+        freq_onset, freq_offset, onset, duration = [], [], [], []
+        max_amplitude = []
+        freq_at_max_amp = []
+        for hfo_outline in outlines:
+            start_sample = np.min(hfo_outline[:, 1])
+            stop_sample = np.min(hfo_outline[:, 2])
+
+            freq_min = self.freq_cutoffs[np.min(hfo_outline[:, 0]).astype(int)]
+            freq_max = self.freq_cutoffs[np.max(hfo_outline[:, 0]).astype(int)]
+
+            max_amp = np.max(hfo_outline[:, 3])
+            max_amp_index = np.argwhere(hfo_outline[:, 3] == max_amp)
+            freq_idx_at_max = hfo_outline[max_amp_index, 0].astype(int)
+            freq_at_max = self.freq_cutoffs[freq_idx_at_max]
+
+            # keep track of each event now
+            freq_onset.append(freq_min)
+            freq_offset.append(freq_max)
+            max_amplitude.append(max_amp)
+            freq_at_max_amp.append(freq_at_max)
+            onset.append(start_sample / sfreq)
+            duration.append((stop_sample - start_sample) / sfreq)
+
+        # create Annotations object
+        description = [hfo_description] * len(onset)
+        ch_names = [[ch_name] for _ in range(len(onset))]
+        ch_hfo_events = Annotations(onset=onset, duration=duration,
+                                    description=description,
+                                    ch_names=ch_names)
+        return ch_hfo_events, hilbert_statistic_bands
+
 
 @fill_doc
-class LineLengthDetector(Detector):
+class LineLengthDetector(Detector, FilterBandMixin):
     """Line-length detection algorithm.
 
     Original paper defines HFOS as:
@@ -206,30 +411,15 @@ class LineLengthDetector(Detector):
                  verbose: bool = False):
         super(LineLengthDetector, self).__init__(
             threshold, win_size=win_size, overlap=overlap,
-            scoring_func=scoring_func, name=hfo_name, n_jobs=n_jobs,
+            scoring_func=scoring_func, hfo_name=hfo_name, n_jobs=n_jobs,
             verbose=verbose)
 
         self.filter_band = filter_band
         self.sfreq = sfreq
 
-    @property
-    def l_freq(self):
-        """Lower frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[0]
-
-    @property
-    def h_freq(self):
-        """Higher frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[1]
-
     def compute_hfo_statistic(self, X):
         """Override ``Detector.compute_hfo_statistic`` function."""
         # store all hfo occurrences as an array of length windows
-
         # bandpass the signal using FIR filter
         if self.filter_band is not None:
             X = mne.filter.filter_data(X, sfreq=self.sfreq,
@@ -263,7 +453,7 @@ class LineLengthDetector(Detector):
 
 
 @fill_doc
-class RMSDetector(Detector):
+class RMSDetector(Detector, FilterBandMixin):
     """Root mean square (RMS) detection algorithm (Staba Detector).
 
     The original algorithm described in the reference, takes a sliding
@@ -307,26 +497,12 @@ class RMSDetector(Detector):
                  verbose: bool = False):
         super(RMSDetector, self).__init__(
             threshold, win_size, overlap,
-            scoring_func, name=hfo_name,
+            scoring_func, hfo_name=hfo_name,
             n_jobs=n_jobs, verbose=verbose)
 
         # hyperparameters
         self.filter_band = filter_band
         self.sfreq = sfreq
-
-    @property
-    def l_freq(self):
-        """Lower frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[0]
-
-    @property
-    def h_freq(self):
-        """Higher frequency band for HFO definition."""
-        if self.filter_band is None:
-            return None
-        return self.filter_band[1]
 
     def compute_hfo_statistic(self, X):
         """Override ``Detector._compute_hfo`` function."""
@@ -365,13 +541,59 @@ class RMSDetector(Detector):
 
 
 @fill_doc
-class MNIDetector(Detector):
+class MNIDetector(Detector):  # noqa
+    """MNI Detector.
+
+    Parameters
+    ----------
+    threshold : Union[int, float]
+        [description]
+    win_size : Union[int, None]
+        The window size in terms of seconds.
+    overlap : Union[float, None]
+        The overlap of windows in terms of percentage.
+    filter_band : Tuple[int, int], optional
+        The frequency band in which the HFO is assumed, by
+        default (80, 450).
+    min_window_size : int, optional
+        The minimum window of an HFO in time in terms of
+        seconds , by default 10e-3.
+    min_gap_size : int, optional
+        The minimum gap time between HFOs in terms of
+        seconds, by default 10e-3.
+    baseline_threshold : float, optional
+        The threshold to identify a baseline period, by default 0.67.
+    baseline_seg_size : float, optional
+        Baseline window size, by default 0.125.
+    baseline_step_size : float, optional
+        Baseline step size, by default 0.5
+    baseline_min_time : float, optional
+        The minimum time required for a baseline segment in seconds,
+        by default 5.
+    baseline_n_bootstrap : int, optional
+        [description], by default 100
+    cycle_time : float
+        The amount of time in each segment cycle in seconds. By default 10.
+        This is the window of data to consider when looking for HFOs.
+    energy_baseline_thresh : float
+        The energy percentile threshold for EEG channels with a baseline
+        segment. By default 0.9999.
+    energy_chfo_thresh : float
+        The energy percentile threshold for EEG channels without a baseline
+        segment, where HFOs are looked for iteratively. By default 0.95.
+    %(sfreq)s
+    %(scoring_func)s
+    %(n_jobs)s
+    %(hfo_name)s
+    %(verbose)s
+    """
+
     def __init__(self, threshold: Union[int, float],
-                 win_size: Union[int, None] = 0.002,
+                 win_size: Union[float, None] = 0.002,
                  overlap: Union[float, None] = 0.99,
                  filter_band: Tuple[int, int] = (80, 450),
-                 min_window_size: int = 10e-3,
-                 min_gap_size: int = 10e-3,
+                 min_window_size: float = 10e-3,
+                 min_gap_size: float = 10e-3,
                  baseline_threshold: float = 0.67,
                  baseline_seg_size: float = 0.125,
                  baseline_step_size: float = 0.5,
@@ -384,47 +606,6 @@ class MNIDetector(Detector):
                  scoring_func: str = 'f1',
                  n_jobs: int = -1, hfo_name: str = 'mnihfo',
                  verbose: bool = True):
-        """[summary]
-
-        Parameters
-        ----------
-        threshold : Union[int, float]
-            [description]
-        win_size : Union[int, None]
-            [description]
-        overlap : Union[float, None]
-            [description]
-        filter_band : Tuple[int, int], optional
-            [description], by default (80, 450)
-        min_window_size : int, optional
-            [description], by default 10e-3
-        min_gap_size : int, optional
-            [description], by default 10e-3
-        baseline_threshold : float, optional
-            [description], by default 0.67
-        baseline_seg_size : float, optional
-            [description], by default 0.125
-        baseline_step_size : float, optional
-            [description], by default 0.5
-        baseline_min_time : float, optional
-            [description], by default 5
-        baseline_n_bootstrap : int, optional
-            [description], by default 100
-        cycle_time : float
-            The amount of time in each segment cycle in seconds. By default 10.
-            This is the window of data to consider when looking for HFOs.
-        energy_baseline_thresh : float
-            The energy percentile threshold for EEG channels with a baseline
-            segment. By default 0.9999.
-        energy_chfo_thresh : float
-            The energy percentile threshold for EEG channels without a baseline
-            segment, where HFOs are looked for iteratively. By default 0.95.
-        %(sfreq)s
-        %(scoring_func)s
-        %(n_jobs)s
-        %(hfo_name)s
-        %(verbose)s
-        """
         super().__init__(threshold, win_size, overlap, scoring_func,
                          hfo_name, n_jobs, verbose)
         # hyperparameters
@@ -530,7 +711,10 @@ class MNIDetector(Detector):
         baseline_win_size = self.baseline_seg_size * self.sfreq
 
         # known as s_EpochSamples
-        num_epoch_samples = np.round(baseline_win_size * self.sfreq)
+        num_epoch_samples = np.round(
+            baseline_win_size * self.sfreq).astype(int)
+        sfreq = self.sfreq
+        freqs = np.linspace(1, sfreq // 2, 10)
 
         n_repeats = self.baseline_n_bootstrap
 
@@ -538,13 +722,14 @@ class MNIDetector(Detector):
         baseline_we_max = np.zeros((n_repeats,))
         for idx in range(n_repeats):
             # create a white-noise segment
-            white_noise_seg = np.random.rand(num_epoch_samples, 1)
+            white_noise_seg = np.random.rand(num_epoch_samples, 1).squeeze()
 
             # compute auto-correlation of the signal
             ac_x = autocorr(white_noise_seg)
 
             # compute the wavelet entropy of the auto-correlation
-            wavelet_ac_x = tfr_array_morlet(ac_x[np.newaxis, ...]).squeeze()
+            wavelet_ac_x = tfr_array_morlet(ac_x[np.newaxis, ...],
+                                            sfreq=sfreq, freqs=freqs).squeeze()
 
             # compute the mean normalized energy
             mean_energy = np.mean(np.power(wavelet_ac_x, 2), axis=1)
@@ -679,11 +864,12 @@ class MNIDetector(Detector):
                     data, fit_alpha, loc=fit_loc, scale=fit_beta)
 
                 # find the index where gamma less then the threshold percentile
-                index = np.arghwere(
+                index = np.argwhere(
                     gamma_perc <= self.energy_baseline_thresh)[::-1][0]
 
                 # now apply threshold for each data point
-                energy_threshold[window_start[idx]:window_end[idx]] = data[index]
+                energy_threshold[window_start[idx]:window_end[idx]] = \
+                    data[index]
         else:
             # number of seconds to consider for every continuous HFO
             cont_hfo_epoch = 60
@@ -709,14 +895,16 @@ class MNIDetector(Detector):
                     gamma_perc = stats.gamma.cdf(
                         data, fit_alpha, loc=fit_loc, scale=fit_beta)
 
-                    # find the index where gamma less then the threshold percentile
-                    index = np.arghwere(
+                    # find the index where gamma less then the threshold
+                    # percentile
+                    index = np.argwhere(
                         gamma_perc <= self.energy_chfo_thres)[::-1][0]
 
                     # new energy threshold
                     this_energy_threshold = data[index]
 
-                    # find portions of the data segment that are over this energy threshold
+                    # find portions of the data segment that are over this
+                    # energy threshold
                     over_energy_X = data >= this_energy_threshold
 
                     # find jumps
@@ -746,5 +934,6 @@ class MNIDetector(Detector):
                     # assign new energy threshold
                     curr_energy_threshold = this_energy_threshold
 
-                energy_threshold[window_start[idx]:window_end[idx]] = curr_energy_threshold
+                energy_threshold[window_start[idx]:window_end[idx]] = \
+                    curr_energy_threshold
         return energy_threshold

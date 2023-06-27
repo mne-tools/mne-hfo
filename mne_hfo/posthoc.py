@@ -109,7 +109,7 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
             raise ValueError('Not all channels are inside the '
                              'annotation DataFrame.')
 
-    for idx, group in annot_df.groupby(['channels']):
+    for idx, group in annot_df.groupby(annot_df['channels']):
         # get channel name
         ch_name = group['channels'].values[0]
 

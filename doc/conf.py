@@ -39,11 +39,12 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx_gallery.gen_gallery',
     "sphinxcontrib.bibtex",
+    "sphinx_issues",
     'numpydoc',
     'nbsphinx',  # to render jupyter notebooks
     'sphinx_copybutton',
     # 'gen_cli',  # custom extension, see ./sphinxext/gen_cli.py
-    'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
+    # 'gh_substitutions',  # custom extension, see ./sphinxext/gh_substitutions.py
     # 'm2r',
 ]
 
@@ -214,7 +215,6 @@ intersphinx_mapping = {
     'numpy': ('https://numpy.org/devdocs', None),
     'scipy': ('https://scipy.github.io/devdocs', None),
     'matplotlib': ('https://matplotlib.org', None),
-    'nilearn': ('https://nilearn.github.io', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
     'sklearn': ('http://scikit-learn.org/stable', None)
 }

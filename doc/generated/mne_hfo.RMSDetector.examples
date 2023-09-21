@@ -1,0 +1,60 @@
+
+
+Examples using ``mne_hfo.RMSDetector``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. start-sphx-glr-thumbnails
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="MNE-HFO currently depends on the data structures defined by MNE-Python. Namely the :py:class:`m...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_detect_hfos_thumb.png
+    :alt: 01. Detect HFOs in Simulated Dataset
+
+  :ref:`sphx_glr_auto_examples_detect_hfos.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">01. Detect HFOs in Simulated Dataset</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_detect_hfos.py`
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="MNE-HFO requires strict adherence to the BIDS specification for EEG/iEEG data. It currently dep...">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_working_with_bids_thumb.png
+    :alt: 02. Detect HFOs on BIDS Dataset
+
+  :ref:`sphx_glr_auto_examples_working_with_bids.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">02. Detect HFOs on BIDS Dataset</div>
+    </div>
+
+
+.. only:: not html
+
+ * :ref:`sphx_glr_auto_examples_working_with_bids.py`
+
+.. raw:: html
+
+    </div>
+

@@ -69,6 +69,7 @@ doc = [
     'pandoc',
     'sphinx-autodoc-typehints',
     'typing-extensions',
+    'ipython',
 ]
 style = [
     'bibclean',

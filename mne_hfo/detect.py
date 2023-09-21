@@ -12,6 +12,7 @@ class HilbertDetector(Detector):  # noqa
 
     A multi-taper method with: 4 Hz bandwidth, 1 sec sliding window,
     stepsize 100 ms, for the 1-500 Hz range, no padding, 2 tapers.
+    For full details, see :footcite:`kucewicz2014high`.
 
     Parameters
     ----------
@@ -46,11 +47,7 @@ class HilbertDetector(Detector):  # noqa
 
     References
     ----------
-    [1] M. T. Kucewicz, J. Cimbalnik, J. Y. Matsumoto, B. H. Brinkmann,
-    M. Bower, V. Vasoli, V. Sulc, F. Meyer, W. R. Marsh, S. M. Stead, and
-    G. A. Worrell, “High frequency oscillations are associated with
-    cognitive processing in human recognition memory.,” Brain, pp. 1–14,
-    Jun. 2014.
+    .. footbibliography::
     """
 
     def __init__(
@@ -165,7 +162,7 @@ class LineLengthDetector(Detector):
     "(HFOs), which we collectively term as all activity >40 Hz
     (including gamma, high-gamma, ripple, and fast ripple oscillations),
     may have a fundamental role in the generation and spread of focal
-    seizures."
+    seizures." See :footcite:`gardner2007human`.
 
     In the paper, data were sampled at 200 Hz and bandpass-filtered (0.1 – 100
     Hz) during acquisition. Data were further digitally bandpass-filtered
@@ -173,7 +170,8 @@ class LineLengthDetector(Detector):
     to minimize potential artifacts due to aliasing. (IIR for forward-backward
     pass).
 
-    Compared to RMS detector, they utilize line-length metric.
+    Compared to RMS detector, they utilize line-length metric
+    :footcite:`esteller2001line`.
 
     Parameters
     ----------
@@ -207,14 +205,7 @@ class LineLengthDetector(Detector):
 
     References
     ----------
-    .. [1] A. B. Gardner, G. A. Worrell, E. Marsh, D. Dlugos, and B. Litt,
-           “Human and automated detection of high-frequency oscillations in
-           clinical intracranial EEG recordings,” Clin. Neurophysiol.,
-           vol. 118, no. 5, pp. 1134–1143, May 2007.
-    .. [2] Esteller, R. et al. (2001). Line length: an efficient feature for
-           seizure onset detection. In Engineering in Medicine and Biology
-           Society, 2001. Proceedings of the 23rd Annual International
-           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
+    .. footbibliography::
     """
 
     def __init__(
@@ -300,7 +291,7 @@ class RMSDetector(Detector):
     Then events not having a minimum of 6 peaks (i.e. band-pass signal
     rectified above 0 V) with greater then 3 std above mean baseline
     were removed. A finite impulse response (FIR) filter with a
-    Hamming window was used.
+    Hamming window was used. See :footcite:`staba2002quantitative`.
 
     Parameters
     ----------
@@ -328,10 +319,7 @@ class RMSDetector(Detector):
 
     References
     ----------
-    [1] R. J. Staba, C. L. Wilson, A. Bragin, I. Fried, and J. Engel,
-    “Quantitative Analysis of High-Frequency Oscillations (80 − 500 Hz)
-    Recorded in Human Epileptic Hippocampus and Entorhinal Cortex,”
-    J. Neurophysiol., vol. 88, pp. 1743–1752, 2002.
+    .. footbibliography::
     """
 
     def __init__(

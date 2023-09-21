@@ -226,6 +226,8 @@ def compute_rms(signal, win_size=6):
 def compute_line_length(signal, win_size=6):
     """Calculate line length.
 
+    See :footcite:`esteller2001line` and :footcite:`dumpelmann2012automatic`.
+
     Parameters
     ----------
     signal : numpy array
@@ -246,12 +248,7 @@ def compute_line_length(signal, win_size=6):
 
     References
     ----------
-    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for
-           seizure onset detection. In Engineering in Medicine and Biology
-           Society, 2001. Proceedings of the 23rd Annual International
-           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
-
-    .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.
+    .. footbibliography::
     """
     aux = np.abs(np.subtract(signal[1:], signal[:-1]))
     window = np.ones(win_size) / float(win_size)

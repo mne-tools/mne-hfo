@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx_gallery.gen_gallery',
+    "sphinxcontrib.bibtex",
     'numpydoc',
     'nbsphinx',  # to render jupyter notebooks
     'sphinx_copybutton',

@@ -60,8 +60,6 @@ jobs:
           path: "./mne_hfo"
           mypy_flags: "--config-file pyproject.toml"
       - name: Run bibclean
-        with:
-          path: "./"
         run: bibclean-check ./doc/references.bib
 
   build:

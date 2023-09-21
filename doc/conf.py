@@ -95,7 +95,8 @@ numpydoc_xref_ignore = {
     'n_estimated_nodes', 'n_samples', 'n_channels', 'Renderer',
     'estimator', 'n_features', 'dataframe' ,'sparse', 'matrix',
     'n_output', 'Annotations', 'DataFrame', 'Detector', 'BIDSPath',
-    'pd.DataFrame', 'List', 'Tuple'
+    'pd.DataFrame', 'List', 'Tuple',
+    "MetadataRequest",
 }
 numpydoc_xref_aliases = {
     # Python

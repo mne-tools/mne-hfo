@@ -1,5 +1,8 @@
 """Testing reading, creating and writing of files."""
-from importlib.resources import path
+try:
+    from importlib.resources import files  # type: ignore
+except ImportError:
+    from importlib_resources import files
 from pathlib import Path
 
 import pandas as pd
@@ -9,20 +12,22 @@ from mne_bids import BIDSPath
 
 from mne_hfo import create_annotations_df, read_annotations, write_annotations
 
-data_path = path("mne_hfo", Path("data"))
+data_path = files("mne_hfo")
 subject = "01"
-session = "interictalsleep"
+task = "interictalsleep"
 run = "01"
 datatype = "ieeg"
-bids_path = BIDSPath(
-    subject=subject,
-    session=session,
-    run=run,
-    datatype=datatype,
-    suffix="ieeg",
-    extension=".vhdr",
-    root=data_path,
-)
+with data_path as data_dir:
+    print(data_dir)
+    bids_path = BIDSPath(
+        subject=subject,
+        task=task,
+        run=run,
+        datatype=datatype,
+        suffix="ieeg",
+        extension=".vhdr",
+        root=Path(data_dir) / "tests" / "data",
+    )
 events_path = bids_path.copy().update(suffix="events", extension=".tsv")
 
 

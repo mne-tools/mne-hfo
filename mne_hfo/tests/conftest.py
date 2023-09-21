@@ -3,6 +3,11 @@ import platform
 import shutil as sh
 from pathlib import Path
 
+try:
+    from importlib.resources import files  # type: ignore
+except ImportError:
+    from importlib_resources import files  # type: ignore
+
 import numpy as np
 import pytest
 from mne.utils import run_subprocess
@@ -45,7 +50,8 @@ def test_bids_root(tmpdir):
 
     Copies over dataset in ``data/`` to temporary directory.
     """
-    data_path = Path("data")
+    data_path = files("mne_hfo")
+    data_path = Path(data_path) / "tests" / "data"
     sh.copytree(data_path, tmpdir, dirs_exist_ok=True)
     return tmpdir
 

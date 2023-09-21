@@ -177,9 +177,11 @@ def read_annotations(
     # extract the sample freq
     raw_rel_fpath = annot_json["IntendedFor"]
     entities = get_entities_from_fname(raw_rel_fpath)
+    print(raw_rel_fpath)
     raw_fpath = BIDSPath(
         **entities, datatype="ieeg", extension=Path(raw_rel_fpath).suffix, root=root
     )
+    print("raw fpath: ", raw_fpath)
     if not raw_fpath.fpath.exists():
         raise RuntimeError(
             f"No raw dataset found for {fpath}. " f'Please set "root" kwarg.'
@@ -247,9 +249,10 @@ def write_annotations(
     annot_df.to_csv(tsv_fname, sep="\t", index=False)
 
     # create annotations json
+    print("\n\ninside write...", intended_for_path.fpath.name)
     annot_json = {
         "Description": description,
-        "IntendedFor": intended_for_path.basename,
+        "IntendedFor": intended_for_path.fpath.name,
         "Author": "mne-hfo",
         "LabelDescription": {
             "hfo_<ch_name>": "Generic HFO detected at channel name.",

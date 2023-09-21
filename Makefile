@@ -91,6 +91,7 @@ run-checks:
 	mypy ./mne_hfo
 	@$(MAKE) pydocstyle
 	@$(MAKE) codespell-error
+	bibclean-check ./doc/references.bib
 
 build-doc:
 	cd doc; make clean

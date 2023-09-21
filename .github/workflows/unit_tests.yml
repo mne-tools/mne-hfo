@@ -59,11 +59,11 @@ jobs:
         with:
           path: "./mne_hfo"
           mypy_flags: "--config-file pyproject.toml"
-      - name: Run bibclean
-        run: |
-          pwd
-          ls
-          bibclean-check ./doc/references.bib
+      # - name: Run bibclean
+      #   run: |
+      #     pwd
+      #     ls
+      #     bibclean-check ./doc/references.bib
 
   build:
     timeout-minutes: 10

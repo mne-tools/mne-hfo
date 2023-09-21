@@ -2,7 +2,7 @@
 try:
     from importlib.resources import files  # type: ignore
 except ImportError:
-    from importlib_resources import files
+    from importlib_resources import files  # type: ignore
 from pathlib import Path
 
 import pandas as pd
@@ -17,8 +17,7 @@ subject = "01"
 task = "interictalsleep"
 run = "01"
 datatype = "ieeg"
-with data_path as data_dir:
-    print(data_dir)
+with data_path as data_dir:  # type: ignore
     bids_path = BIDSPath(
         subject=subject,
         task=task,

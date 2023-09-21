@@ -50,7 +50,7 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: "./.git,./build,./.mypy_cache,./.pytest_cache,./doc/tutorials/*"
+          skip: "./.git,./build,./.mypy_cache,./.pytest_cache,./.codespellignore,./doc/tutorials/*"
           ignore_words_file: ./.codespellignore
       - name: Run pydocstyle
         run: pydocstyle .
@@ -163,7 +163,6 @@ jobs:
       - name: Download MNE/MNE-HFO testing dataset
         run: |
           python -c "import mne; mne.datasets.testing.data_path()"
-          python -c "import mne_hfo; mne_hfo.datasets.icalabel.data_path()"
       - name: Run pytest
         run: pytest main/mne_hfo --cov=main/mne_hfo --cov-report=xml --cov-config=main/pyproject.toml
       - name: Upload coverage stats to codecov

@@ -7,12 +7,12 @@
 import numpy as np
 
 from mne_hfo.simulate import (
-    simulate_pink_noise,
+    simulate_artifact_spike,
     simulate_brown_noise,
     simulate_delta,
-    simulate_line_noise,
-    simulate_artifact_spike,
     simulate_hfo,
+    simulate_line_noise,
+    simulate_pink_noise,
     simulate_spike,
 )
 

@@ -1,12 +1,12 @@
 import numpy as np
 
 from mne_hfo.utils import (
-    compute_rms,
-    compute_line_length,
-    threshold_tukey,
-    threshold_quian,
-    _get_threshold_std,
     _band_zscore_detect,
+    _get_threshold_std,
+    compute_line_length,
+    compute_rms,
+    threshold_quian,
+    threshold_tukey,
 )
 
 

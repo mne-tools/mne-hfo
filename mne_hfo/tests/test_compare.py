@@ -1,9 +1,9 @@
 import pytest
+from numpy.testing import assert_almost_equal
 
 from mne_hfo import create_annotations_df
 from mne_hfo.compare import compare_detectors
 from mne_hfo.detect import RMSDetector
-from numpy.testing import assert_almost_equal
 
 
 def test_compare_detectors():

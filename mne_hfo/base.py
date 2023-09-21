@@ -3,30 +3,29 @@ from typing import Union
 import mne
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed, cpu_count
+from joblib import Parallel, cpu_count, delayed
+from mne import Annotations
 from mne.utils import warn
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 from tqdm import tqdm
 
-from mne import Annotations
-
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ
 from mne_hfo.io import create_annotations_df
 from mne_hfo.score import (
     accuracy,
-    false_negative_rate,
-    true_positive_rate,
-    precision,
     false_discovery_rate,
+    false_negative_rate,
+    precision,
+    true_positive_rate,
 )
 from mne_hfo.sklearn import _make_ydf_sklearn
 from mne_hfo.utils import (
-    apply_std,
-    compute_rms,
-    compute_line_length,
-    compute_hilbert,
     apply_hilbert,
+    apply_std,
+    compute_hilbert,
+    compute_line_length,
+    compute_rms,
     merge_contiguous_freq_bands,
 )
 

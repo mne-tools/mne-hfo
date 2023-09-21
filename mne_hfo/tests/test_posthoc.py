@@ -8,22 +8,22 @@ from sklearn.metrics import make_scorer
 from sklearn.model_selection import GridSearchCV
 
 from mne_hfo import (
+    LineLengthDetector,
+    compute_chs_hfo_rates,
     create_annotations_df,
     find_coincident_events,
-    compute_chs_hfo_rates,
     merge_overlapping_events,
-    LineLengthDetector,
 )
 from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.posthoc import match_detected_annotations
 from mne_hfo.score import (
     accuracy,
-    false_negative_rate,
     false_discovery_rate,
-    true_positive_rate,
+    false_negative_rate,
     precision,
+    true_positive_rate,
 )
-from mne_hfo.sklearn import make_Xy_sklearn, DisabledCV
+from mne_hfo.sklearn import DisabledCV, make_Xy_sklearn
 
 
 def test_find_coincident_events():

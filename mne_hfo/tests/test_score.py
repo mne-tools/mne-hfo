@@ -1,10 +1,10 @@
 from mne_hfo import create_annotations_df
 from mne_hfo.score import (
     accuracy,
-    true_positive_rate,
-    false_negative_rate,
     false_discovery_rate,
+    false_negative_rate,
     precision,
+    true_positive_rate,
 )
 from mne_hfo.sklearn import _make_ydf_sklearn
 

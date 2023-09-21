@@ -2,13 +2,13 @@ import json
 import os
 import platform
 from pathlib import Path
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas
 import pandas as pd
 from mne.utils import run_subprocess
-from mne_bids import read_raw_bids, get_entities_from_fname, BIDSPath
+from mne_bids import BIDSPath, get_entities_from_fname, read_raw_bids
 
 from mne_hfo.config import ANNOT_COLUMNS
 

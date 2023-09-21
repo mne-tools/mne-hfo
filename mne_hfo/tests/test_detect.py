@@ -2,12 +2,12 @@
 
 import numpy as np
 import pytest
+from mne import create_info
+from mne.io import RawArray
 from scipy.signal import butter, filtfilt
 from sklearn.utils.estimator_checks import parametrize_with_checks
-from mne.io import RawArray
-from mne import create_info
 
-from mne_hfo import LineLengthDetector, RMSDetector, HilbertDetector, CSDetector
+from mne_hfo import CSDetector, HilbertDetector, LineLengthDetector, RMSDetector
 
 
 @parametrize_with_checks(

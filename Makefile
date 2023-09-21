@@ -71,11 +71,27 @@ codespell-error:  # running on travis
 	@echo "Running code-spell check"
 	@codespell -i 0 -q 7 -S $(CODESPELL_SKIPS) --ignore-words=ignore_words.txt $(CODESPELL_DIRS)
 
+
+isort:
+	@if command -v isort > /dev/null; then \
+		echo "Running isort"; \
+		isort mne_hfo examples doc; \
+	else \
+		echo "isort not found, please install it!"; \
+		exit 1; \
+	fi;
+	@echo "isort passed"
+
 type-check:
 	mypy ./mne_hfo
 
-pep:
-	@$(MAKE) -k flake pydocstyle codespell-error type-check
+run-checks:
+	isort --check .
+	black --check mne_hfo examples
+	flake8 .
+	mypy ./mne_hfo
+	@$(MAKE) pydocstyle
+	@$(MAKE) codespell-error
 
 build-doc:
 	cd doc; make clean

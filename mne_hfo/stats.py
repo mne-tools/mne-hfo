@@ -6,6 +6,7 @@
 
 
 from mne_bids import BIDSPath, get_datatypes
+
 from mne_hfo.config import EPHY_ALLOWED_DATATYPES
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mutual_info_score, cohen_kappa_score
+from sklearn.metrics import cohen_kappa_score, mutual_info_score
 
 from mne_hfo import match_detected_annotations
 

@@ -29,6 +29,8 @@ class MorphologyDetector(Detector):  # noqa
 
     The next step detects HFOs.
 
+    Note: Note implemented yet. TODO
+
     """
 
     def __init__(
@@ -71,7 +73,7 @@ class MorphologyDetector(Detector):  # noqa
 
         # apply threshold and baseline
         freq_ent_thresh = freq_entropy > entropy_freq_threshold
-
+        print(freq_ent_thresh)
         # determine length of each epoch that passes the threshold
 
     def fit(self, X, y=None):
@@ -87,17 +89,17 @@ class MorphologyDetector(Detector):  # noqa
         )
 
         # create a copy of the fast ripple data
-        fr_data = mne.filter.filter_data(
-            X,
-            sfreq=self.sfreq,
-            l_freq=self.fr_l_freq,
-            h_freq=self.fr_h_freq,
-            method="fir",
-            copy=True,
-        )
+        # fr_data = mne.filter.filter_data(
+        #     X,
+        #     sfreq=self.sfreq,
+        #     l_freq=self.fr_l_freq,
+        #     h_freq=self.fr_h_freq,
+        #     method="fir",
+        #     copy=True,
+        # )
 
         # compute the Hilbert transform envelope
         # (i.e. the envelope)
         hfx = np.abs(hilbert(ripple_data))
-
+        print(hfx)
         pass

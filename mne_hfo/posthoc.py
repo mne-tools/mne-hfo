@@ -1,5 +1,5 @@
 import collections
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Union
 
 import numpy as np

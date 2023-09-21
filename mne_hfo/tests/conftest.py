@@ -1,14 +1,13 @@
 import os
 import platform
+import shutil as sh
+from pathlib import Path
 
 import numpy as np
 import pytest
-import shutil as sh
-from pathlib import Path
 from mne.utils import run_subprocess
 
 from mne_hfo.simulate import simulate_hfo, simulate_spike
-
 
 # WINDOWS issues:
 # the bids-validator development version does not work properly on Windows as

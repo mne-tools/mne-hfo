@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import mne
 import numpy as np
@@ -222,7 +222,7 @@ class LineLengthDetector(Detector):
         threshold: Union[int, float] = 3,
         win_size: int = 100,
         overlap: float = 0.25,
-        sfreq: int = None,
+        sfreq: Optional[int] = None,
         filter_band: Tuple[int, int] = (30, 100),
         scoring_func: str = "f1",
         n_jobs: int = -1,

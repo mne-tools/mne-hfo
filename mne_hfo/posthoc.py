@@ -34,7 +34,7 @@ def compute_chs_hfo_rates(
     annot_df: pd.DataFrame,
     rate: str,
     ch_names: Optional[List[str]] = None,
-    end_sec: float = None,
+    end_sec: Optional[float] = None,
     verbose: bool = True,
 ):
     """Compute channel HFO rates from annotations DataFrame.
@@ -366,8 +366,8 @@ def _find_overlapping_events(list1, list2):
 def match_detected_annotations(
     ytrue_annot_df: pd.DataFrame,
     ypred_annot_df: pd.DataFrame,
-    ch_names: Union[List[str], str] = None,
-    label: str = None,
+    ch_names: Optional[Union[List[str], str]] = None,
+    label: Optional[str] = None,
     sec_margin: float = 1.0,
     method="match-true",
 ):

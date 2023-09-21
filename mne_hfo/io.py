@@ -125,7 +125,7 @@ def create_annotations_df(
 
 
 def read_annotations(
-    fname: Union[str, Path], root: Path = None
+    fname: Union[str, Path], root: Optional[Path] = None
 ) -> pandas.core.frame.DataFrame:
     """Read annotations.tsv Derivative file.
 
@@ -199,7 +199,7 @@ def write_annotations(
     fname: Union[str, Path],
     intended_for: str,
     root: Path,
-    description: str = None,
+    description: Optional[str] = None,
 ):
     """Write annotations dataframe to disc.
 

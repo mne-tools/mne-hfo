@@ -1,5 +1,5 @@
 [![Codecov](https://codecov.io/gh/mne-tools/mne-hfo/branch/master/graph/badge.svg)](https://codecov.io/gh/adam2392/mne-hfo)
-![.github/workflows/main.yml](https://github.com/mne-tools/mne-hfo/workflows/.github/workflows/main.yml/badge.svg)
+[![test_suite](https://github.com/mne-tools/mne-hfo/actions/workflows/unit_tests.yml/badge.svg?branch=main)](https://github.com/mne-tools/mne-hfo/actions/workflows/unit_tests.yml)
 [![CircleCI](https://circleci.com/gh/mne-tools/mne-hfo.svg?style=svg)](https://circleci.com/gh/mne-tools/mne-hfo)
 ![License](https://img.shields.io/pypi/l/mne-hfo)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)

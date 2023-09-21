@@ -10,32 +10,34 @@ import pandas as pd
 from scipy.signal import hilbert
 from tqdm import tqdm
 
-from mne_hfo.config import ANNOT_COLUMNS
+from .config import ANNOT_COLUMNS
 
 
-def _check_df(df: pd.DataFrame, df_type: str,
-              copy: bool = True) -> pd.DataFrame:
+def _check_df(df: pd.DataFrame, df_type: str, copy: bool = True) -> pd.DataFrame:
     """Check dataframe for correctness."""
-    if df_type == 'annotations':
-        if any([col not in df.columns
-                for col in ANNOT_COLUMNS + ['sample']]):
-            raise RuntimeError(f'Annotations dataframe columns must contain '
-                               f'{ANNOT_COLUMNS + ["sample"]}.')
+    if df_type == "annotations":
+        if any([col not in df.columns for col in ANNOT_COLUMNS + ["sample"]]):
+            raise RuntimeError(
+                f"Annotations dataframe columns must contain "
+                f'{ANNOT_COLUMNS + ["sample"]}.'
+            )
 
     # Only want to do this check if there are multiple rows. Handles edge case
     # of 1 HFO starting at 0. TODO: handle this more elegantly
     if df.shape[0] > 1:
         # first compute sampling rate from sample / onset columns
-        sfreq = df['sample'].divide(df['onset']).round(2)
+        sfreq = df["sample"].divide(df["onset"]).round(2)
 
         # onset=0 will cause sfreq to be inf, drop these rows to
         # prevent additional sfreqs
         sfreq = sfreq.replace([np.inf, -np.inf], np.nan).dropna()
         if sfreq.nunique() != 1:
-            raise ValueError(f'All rows in the annotations dataframe '
-                             f'should have the same sampling rate. '
-                             f'Found {sfreq.nunique()} different '
-                             f'sampling rates.')
+            raise ValueError(
+                f"All rows in the annotations dataframe "
+                f"should have the same sampling rate. "
+                f"Found {sfreq.nunique()} different "
+                f"sampling rates."
+            )
 
     if copy:
         return df.copy()
@@ -57,29 +59,41 @@ def _check_types(variables):
     """Make sure all vars are str or None."""
     for var in variables:
         if not isinstance(var, (str, type(None))):
-            raise ValueError(f"You supplied a value ({var}) of type "
-                             f"{type(var)}, where a string or None was "
-                             f"expected.")
+            raise ValueError(
+                f"You supplied a value ({var}) of type "
+                f"{type(var)}, where a string or None was "
+                f"expected."
+            )
 
 
 def _write_json(fname, dictionary, overwrite=False, verbose=False):
     """Write JSON to a file."""
     if op.exists(fname) and not overwrite:
-        raise FileExistsError(f'"{fname}" already exists. '
-                              'Please set overwrite to True.')
+        raise FileExistsError(
+            f'"{fname}" already exists. ' "Please set overwrite to True."
+        )
 
     json_output = json.dumps(dictionary, indent=4)
-    with open(fname, 'w', encoding='utf-8') as fid:
+    with open(fname, "w", encoding="utf-8") as fid:
         fid.write(json_output)
-        fid.write('\n')
+        fid.write("\n")
 
     if verbose is True:
         print(os.linesep + f"Writing '{fname}'..." + os.linesep)
         print(json_output)
 
 
-def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
-                        cycles_threshold, gap_threshold, zscore_threshold):
+def _band_zscore_detect(
+    signal,
+    sfreq,
+    band_idx,
+    l_freq,
+    h_freq,
+    n_times,
+    cycles_threshold,
+    gap_threshold,
+    zscore_threshold,
+):
     """
     Find detections that meet the Hilbert envelope criteria.
 
@@ -118,7 +132,7 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
     tdetects = []
 
     # Create boolean mask of signal greater than zscore_threshold
-    thresh_sig = np.zeros(n_times, dtype='bool')
+    thresh_sig = np.zeros(n_times, dtype="bool")
     thresh_sig[signal > zscore_threshold] = 1
 
     idx = 0
@@ -148,9 +162,15 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
                         cycs = l_freq * dur
                         if cycs > cycles_threshold:
                             # Valid, so append to detections
-                            tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(signal[start_idx:stop_idx]),
-                                             [l_freq, h_freq]])
+                            tdetects.append(
+                                [
+                                    band_idx,
+                                    start_idx,
+                                    stop_idx,
+                                    max(signal[start_idx:stop_idx]),
+                                    [l_freq, h_freq],
+                                ]
+                            )
                 else:
                     # If there is no gap between this and the next index,
                     # it is still part of this envelope. Increment the
@@ -166,9 +186,15 @@ def _band_zscore_detect(signal, sfreq, band_idx, l_freq, h_freq, n_times,
                         cycs = l_freq * dur
                         if cycs > cycles_threshold:
                             # Valid, so append to detections
-                            tdetects.append([band_idx, start_idx, stop_idx,
-                                             max(signal[start_idx:stop_idx]),
-                                             [l_freq, h_freq]])
+                            tdetects.append(
+                                [
+                                    band_idx,
+                                    start_idx,
+                                    stop_idx,
+                                    max(signal[start_idx:stop_idx]),
+                                    [l_freq, h_freq],
+                                ]
+                            )
                         idx += 1
                         break
         else:
@@ -194,11 +220,13 @@ def compute_rms(signal, win_size=6):
     """
     aux = np.power(signal, 2)
     window = np.ones(win_size) / float(win_size)
-    return np.sqrt(np.convolve(aux, window, 'same'))
+    return np.sqrt(np.convolve(aux, window, "same"))
 
 
 def compute_line_length(signal, win_size=6):
     """Calculate line length.
+
+    See :footcite:`esteller2001line` and :footcite:`dumpelmann2012automatic`.
 
     Parameters
     ----------
@@ -220,12 +248,7 @@ def compute_line_length(signal, win_size=6):
 
     References
     ----------
-    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for
-           seizure onset detection. In Engineering in Medicine and Biology
-           Society, 2001. Proceedings of the 23rd Annual International
-           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.
-
-    .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.
+    .. footbibliography::
     """
     aux = np.abs(np.subtract(signal[1:], signal[:-1]))
     window = np.ones(win_size) / float(win_size)
@@ -261,9 +284,14 @@ def compute_hilbert(signal, freq_cutoffs, freq_span, sfreq):
         h_freq = freq_cutoffs[ind + 1]
 
         # Filter the data for this frequency band
-        signal = mne.filter.filter_data(signal, sfreq=sfreq,
-                                        l_freq=l_freq, h_freq=h_freq,
-                                        method='iir', verbose=False)
+        signal = mne.filter.filter_data(
+            signal,
+            sfreq=sfreq,
+            l_freq=l_freq,
+            h_freq=h_freq,
+            method="iir",
+            verbose=False,
+        )
         # compute z-score of data
         signal = (signal - np.mean(signal)) / np.std(signal)
 
@@ -313,21 +341,28 @@ def apply_hilbert(metric, threshold_dict, kwargs):
     zscore_threshold = threshold_dict["zscore"]
     gap_threshold = threshold_dict["gap"]
     cycles_threshold = threshold_dict["cycles"]
-    if any(elem is None for elem in [zscore_threshold, gap_threshold,
-                                     cycles_threshold]):
-        raise RuntimeError(f"threshold_dict must have values for zscore,"
-                           f" gap, and cycles. You passed {threshold_dict}")
+    if any(
+        elem is None for elem in [zscore_threshold, gap_threshold, cycles_threshold]
+    ):
+        raise RuntimeError(
+            f"threshold_dict must have values for zscore,"
+            f" gap, and cycles. You passed {threshold_dict}"
+        )
     n_times = kwargs["n_times"]
     sfreq = kwargs["sfreq"]
     filter_band = kwargs["filter_band"]
     freq_cutoffs = kwargs["freq_cutoffs"]
     freq_span = kwargs["freq_span"]
     n_jobs = kwargs["n_jobs"]
-    if any(elem is None for elem in [n_times, sfreq, filter_band,
-                                     freq_cutoffs, freq_span, n_jobs]):
-        raise RuntimeError(f"kwargs must have values for n_times, sfreq,"
-                           f" filter_band, freq_cutoffs, freq_span, n_jobs."
-                           f" You passed {kwargs}")
+    if any(
+        elem is None
+        for elem in [n_times, sfreq, filter_band, freq_cutoffs, freq_span, n_jobs]
+    ):
+        raise RuntimeError(
+            f"kwargs must have values for n_times, sfreq,"
+            f" filter_band, freq_cutoffs, freq_span, n_jobs."
+            f" You passed {kwargs}"
+        )
 
     tdetects = []
     for i in tqdm(range(freq_span), unit="HFO-first-phase"):
@@ -336,10 +371,19 @@ def apply_hilbert(metric, threshold_dict, kwargs):
         top = freq_cutoffs[i + 1]
         # Make sure you only look at Hilbert envelope values
         # for the specific freq band
-        tdetects.append(_band_zscore_detect(metric[i], sfreq, i, bot,
-                                            top, n_times, cycles_threshold,
-                                            gap_threshold,
-                                            zscore_threshold))
+        tdetects.append(
+            _band_zscore_detect(
+                metric[i],
+                sfreq,
+                i,
+                bot,
+                top,
+                n_times,
+                cycles_threshold,
+                gap_threshold,
+                zscore_threshold,
+            )
+        )
     return tdetects
 
 
@@ -366,8 +410,10 @@ def apply_std(metric, threshold_dict, kwargs):
     # determine threshold value
     threshold = threshold_dict["thresh"]
     if threshold is None:
-        raise RuntimeError(f"threshold_dict must have a value for 'thresh'."
-                           f" You passed {threshold_dict}")
+        raise RuntimeError(
+            f"threshold_dict must have a value for 'thresh'."
+            f" You passed {threshold_dict}"
+        )
     det_th = _get_threshold_std(metric, threshold)
 
     n_windows = len(metric)
@@ -375,8 +421,10 @@ def apply_std(metric, threshold_dict, kwargs):
     win_size = kwargs["win_size"]
     n_times = kwargs["n_times"]
     if any(elem is None for elem in [step_size, win_size, n_times]):
-        raise RuntimeError(f"kwargs must have step_size, win_size, "
-                           f"and n_times. You passed {kwargs}")
+        raise RuntimeError(
+            f"kwargs must have step_size, win_size, "
+            f"and n_times. You passed {kwargs}"
+        )
 
     # store thresholded hfo events as a list
     output = []
@@ -392,8 +440,7 @@ def apply_std(metric, threshold_dict, kwargs):
             # contiguous windows
             # TODO: We could factor this out into an independent step,
             #  but that will just add comp time
-            while win_idx < n_windows and \
-                    metric[win_idx] >= det_th:
+            while win_idx < n_windows and metric[win_idx] >= det_th:
                 win_idx += 1
             event_stop = (win_idx * step_size) + win_size
 
@@ -452,6 +499,7 @@ def merge_contiguous_freq_bands(detections):
 
     """
     from mne_hfo.posthoc import _check_detection_overlap
+
     outlines = []
     for detection in detections[0]:
         band_idx = detection[0]
@@ -463,8 +511,9 @@ def merge_contiguous_freq_bands(detections):
                 # only try to merge contiguous freq bands
                 if outline[0] == band_idx + 1:
                     # Check if the events overlap in time
-                    if _check_detection_overlap([detection[1], detection[2]],
-                                                [outline[1], outline[2]]):
+                    if _check_detection_overlap(
+                        [detection[1], detection[2]], [outline[1], outline[2]]
+                    ):
                         # merge the overlapping events
                         outlines[ind] = _merge_outline(outlines, detection)
                     else:
@@ -510,7 +559,9 @@ def threshold_tukey(signal, threshold):
     [1] TUKEY JW. Comparing individual means in the analysis of
         variance. Biometrics. 1949 Jun;5(2):99-114. PMID: 18151955.
     """
-    ths_value = np.percentile(signal, 75) + threshold * (np.percentile(signal, 75) - np.percentile(signal, 25))  # noqa
+    ths_value = np.percentile(signal, 75) + threshold * (
+        np.percentile(signal, 75) - np.percentile(signal, 25)
+    )  # noqa
     return ths_value
 
 

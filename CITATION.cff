@@ -1,0 +1,27 @@
+# YAML 1.2
+---
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.2.0
+title: "MNE-HFO: Estimate HFOs with MNE in Python"
+authors:
+  - given-names: Adam
+    family-names: Li
+    affiliation: "Department of Computer Science, Columbia University, New York, NY, USA"
+    orcid: "https://orcid.org/0000-0001-8421-365X"
+type: software
+repository-code: "https://github.com/mne-tools/mne-hfo"
+license: BSD-3-Clause
+keywords:
+  - neuroscience
+  - neuroimaging
+  - mne
+  - python
+  - magnetoencephalography
+  - meg
+  - electroencephalography
+  - eeg
+  - ieeg
+  - hfo
+message: >-
+  Please cite this software using the metadata from
+  'preferred-citation' in the CITATION.cff file.

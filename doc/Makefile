@@ -44,7 +44,7 @@ clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf auto_examples/
 	rm -rf generated/*
-	rm -rf modules/*
+	rm -rf _build/*
 
 html-noplot:
 	$(SPHINXBUILD) -D plot_gallery=0 -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
@@ -56,6 +56,11 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+html_stable:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) _build/html_stable
+	@echo
+	@echo "Build finished. The HTML pages are in _build/html_stable."
 
 .PHONY: dirhtml
 dirhtml:

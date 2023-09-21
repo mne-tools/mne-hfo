@@ -1,6 +1,6 @@
 {
     "Description": "HFO annotated events detected using mne-hfo algorithms.",
-    "IntendedFor": "sub-01_ses-interictalsleep_run-01_ieeg.vhdr",
+    "IntendedFor": "sub-01_task-interictalsleep_run-01_ieeg.vhdr",
     "Author": "mne-hfo",
     "LabelDescription": {
         "hfo_<ch_name>": "Generic HFO detected at channel name.",

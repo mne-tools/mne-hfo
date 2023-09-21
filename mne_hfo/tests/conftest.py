@@ -1,14 +1,18 @@
 import os
 import platform
+import shutil as sh
+from pathlib import Path
+
+try:
+    from importlib.resources import files  # type: ignore
+except ImportError:
+    from importlib_resources import files  # type: ignore
 
 import numpy as np
 import pytest
-import shutil as sh
-from pathlib import Path
 from mne.utils import run_subprocess
 
 from mne_hfo.simulate import simulate_hfo, simulate_spike
-
 
 # WINDOWS issues:
 # the bids-validator development version does not work properly on Windows as
@@ -23,10 +27,10 @@ from mne_hfo.simulate import simulate_hfo, simulate_spike
 @pytest.fixture(scope="session")
 def _bids_validate():
     """Fixture to run BIDS validator."""
-    vadlidator_args = ['--config.error=41']
-    exe = os.getenv('VALIDATOR_EXECUTABLE', 'bids-validator')
+    vadlidator_args = ["--config.error=41"]
+    exe = os.getenv("VALIDATOR_EXECUTABLE", "bids-validator")
 
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         shell = True
     else:
         shell = False
@@ -40,13 +44,14 @@ def _bids_validate():
     return _validate
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def test_bids_root(tmpdir):
     """Temporary BIDS dataset.
 
     Copies over dataset in ``data/`` to temporary directory.
     """
-    data_path = Path('data')
+    data_path = files("mne_hfo")
+    data_path = Path(data_path) / "tests" / "data"
     sh.copytree(data_path, tmpdir, dirs_exist_ok=True)
     return tmpdir
 
@@ -54,8 +59,20 @@ def test_bids_root(tmpdir):
 @pytest.fixture(scope="module")
 def create_testing_eeg_data():
     """Create testing data with HFO and a spike."""
-    freqs = [2.5, 6.0, 10.0, 16.0, 32.5, 67.5, 165.0,
-             250.0, 425.0, 500.0, 800.0, 1500.0]
+    freqs = [
+        2.5,
+        6.0,
+        10.0,
+        16.0,
+        32.5,
+        67.5,
+        165.0,
+        250.0,
+        425.0,
+        500.0,
+        800.0,
+        1500.0,
+    ]
     random_state = 0
     fs = 5000
     n = fs * 10
@@ -73,26 +90,23 @@ def create_testing_eeg_data():
     fs = 5000
     freq = 250
     numcycles = 9
-    sim = simulate_hfo(fs, freq, numcycles,
-                       random_state=random_state)[0]
+    sim = simulate_hfo(fs, freq, numcycles, random_state=random_state)[0]
     ev_start = 5000
-    data[ev_start: ev_start + len(sim)] += sim * 10
+    data[ev_start : ev_start + len(sim)] += sim * 10
     hfo_samps.append((ev_start, ev_start + len(sim)))
 
     fs = 5000
     dur = 0.1
-    sim = simulate_spike(fs, dur,
-                         random_state=random_state)
+    sim = simulate_spike(fs, dur, random_state=random_state)
     ev_start = 4 * 5000
-    data[ev_start: ev_start + len(sim)] += sim * 30
+    data[ev_start : ev_start + len(sim)] += sim * 30
 
     fs = 5000
     freq = 500
     numcycles = 9
-    sim = simulate_hfo(fs, freq, numcycles,
-                       random_state=random_state)[0]
+    sim = simulate_hfo(fs, freq, numcycles, random_state=random_state)[0]
     ev_start = 7 * 5000
-    data[ev_start: ev_start + len(sim)] += sim * 10
+    data[ev_start : ev_start + len(sim)] += sim * 10
     hfo_samps.append((ev_start, ev_start + len(sim)))
 
     return data, hfo_samps

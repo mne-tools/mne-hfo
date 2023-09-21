@@ -27,7 +27,7 @@ clean: clean-build clean-so clean-ctags
 inplace:
 	$(PYTHON) setup.py develop
 
-test: inplace check-manifest
+test: inplace
 	rm -f .coverage
 	$(PYTESTS) mne_hfo
 
@@ -43,9 +43,6 @@ trailing-spaces:
 
 upload-pipy:
 	python setup.py sdist bdist_egg register upload
-
-check-manifest:
-	check-manifest --ignore .circleci/*,docs,.DS_Store
 
 reqs:
 	pipfile2req --dev > test_requirements.txt
@@ -78,7 +75,7 @@ type-check:
 	mypy ./mne_hfo
 
 pep:
-	@$(MAKE) -k flake pydocstyle check-manifest codespell-error type-check
+	@$(MAKE) -k flake pydocstyle codespell-error type-check
 
 build-doc:
 	cd docs; make clean

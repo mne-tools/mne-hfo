@@ -31,7 +31,9 @@ class MorphologyDetector(Detector):  # noqa
 
     """
 
-    def __init__(self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9):
+    def __init__(
+        self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9
+    ):
         self.sfreq = sfreq
         self.ripple_l_freq = 80
         self.ripple_h_freq = 250
@@ -75,18 +77,24 @@ class MorphologyDetector(Detector):  # noqa
     def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
         # create a copy of the ripple data
-        ripple_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                             l_freq=self.ripple_l_freq,
-                                             h_freq=self.ripple_h_freq,
-                                             method='fir',
-                                             copy=True)
+        ripple_data = mne.filter.filter_data(
+            X,
+            sfreq=self.sfreq,
+            l_freq=self.ripple_l_freq,
+            h_freq=self.ripple_h_freq,
+            method="fir",
+            copy=True,
+        )
 
         # create a copy of the fast ripple data
-        fr_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                         l_freq=self.fr_l_freq,
-                                         h_freq=self.fr_h_freq,
-                                         method='fir',
-                                         copy=True)
+        fr_data = mne.filter.filter_data(
+            X,
+            sfreq=self.sfreq,
+            l_freq=self.fr_l_freq,
+            h_freq=self.fr_h_freq,
+            method="fir",
+            copy=True,
+        )
 
         # compute the Hilbert transform envelope
         # (i.e. the envelope)

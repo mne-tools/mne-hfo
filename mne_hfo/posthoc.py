@@ -9,7 +9,7 @@ from mne_hfo.config import TIME_SCALE_TO_SECS
 from mne_hfo.utils import _check_df
 
 
-def _to_freq(x, rate: str = 's'):
+def _to_freq(x, rate: str = "s"):
     """Convert a groupby DataFrame to rate.
 
     Parameters
@@ -30,11 +30,13 @@ def _to_freq(x, rate: str = 's'):
     return f / TIME_SCALE_TO_SECS[rate]
 
 
-def compute_chs_hfo_rates(annot_df: pd.DataFrame,
-                          rate: str,
-                          ch_names: Optional[List[str]] = None,
-                          end_sec: float = None,
-                          verbose: bool = True):
+def compute_chs_hfo_rates(
+    annot_df: pd.DataFrame,
+    rate: str,
+    ch_names: Optional[List[str]] = None,
+    end_sec: float = None,
+    verbose: bool = True,
+):
     """Compute channel HFO rates from annotations DataFrame.
 
     This function will assume that each row is another
@@ -73,45 +75,45 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
     ----------
     .. [1] https://stackoverflow.com/questions/66143839/computing-rate-of-occurrences-per-unit-of-time-in-a-pandas-dataframe  # noqa
     """
-    annot_df = _check_df(annot_df, df_type='annotations')
+    annot_df = _check_df(annot_df, df_type="annotations")
 
     # store channel rates over sliding window
     ch_hfo_rates = collections.defaultdict(list)
 
     # start timestamp with current time
     ref_timestamp = datetime.now(tz=timezone.utc)
-    onset_tdelta = pd.to_timedelta(annot_df['onset'], unit='s')  # type: ignore
-    annot_df['timestamp'] = ref_timestamp + onset_tdelta
+    onset_tdelta = pd.to_timedelta(annot_df["onset"], unit="s")  # type: ignore
+    annot_df["timestamp"] = ref_timestamp + onset_tdelta
 
     # get the end point in seconds
     if end_sec is None:
-        end_timestamp = annot_df['timestamp'].max()
+        end_timestamp = annot_df["timestamp"].max()
     else:
         end_timestamp = ref_timestamp + timedelta(seconds=end_sec)
 
     # get end time in seconds
-    annot_df['end_time'] = \
-        (end_timestamp - ref_timestamp).total_seconds()  # type: ignore
+    annot_df["end_time"] = (
+        end_timestamp - ref_timestamp
+    ).total_seconds()  # type: ignore
 
     if verbose:
-        print(f'Beginning timestamp: {ref_timestamp}')
-        print(f'Got end timestamp of: {end_timestamp}')
+        print(f"Beginning timestamp: {ref_timestamp}")
+        print(f"Got end timestamp of: {end_timestamp}")
 
     # set timestamp as the datetime index to allow resampling
-    annot_df.set_index('timestamp', inplace=True)  # type: ignore
+    annot_df.set_index("timestamp", inplace=True)  # type: ignore
 
     # get all unique channels
     if ch_names is None:
-        ch_names = annot_df['channels'].unique()  # type: ignore
+        ch_names = annot_df["channels"].unique()  # type: ignore
     else:
         # search for channel names not inside pandas dataframe
-        if not all([name in annot_df['channels'] for name in ch_names]):
-            raise ValueError('Not all channels are inside the '
-                             'annotation DataFrame.')
+        if not all([name in annot_df["channels"] for name in ch_names]):
+            raise ValueError("Not all channels are inside the " "annotation DataFrame.")
 
-    for idx, group in annot_df.groupby(['channels']):
+    for idx, group in annot_df.groupby(["channels"]):
         # get channel name
-        ch_name = group['channels'].values[0]
+        ch_name = group["channels"].values[0]
 
         if ch_name not in ch_names:  # type: ignore
             continue
@@ -125,7 +127,7 @@ def compute_chs_hfo_rates(annot_df: pd.DataFrame,
         # see Reference [1] where we compute rate of occurrence
         result = group.end_time.agg(lambda x: _to_freq(x, rate=rate))
         if verbose:
-            print(f'Found HFO rate per {rate} for {ch_name} as {result}')
+            print(f"Found HFO rate per {rate} for {ch_name} as {result}")
 
         # now compute the rate in this group
         ch_hfo_rates[ch_name] = result
@@ -159,34 +161,45 @@ def _join_times(df: pd.DataFrame) -> pd.DataFrame:
     ----------
     .. [1] https://stackoverflow.com/questions/57804145/combining-rows-with-overlapping-time-periods-in-a-pandas-dataframe  # noqa
     """
-    startdf = pd.DataFrame({  # type: ignore
-        'time': df['start_timestamp'],  # type: ignore
-        'what': 1})  # type: ignore
-    enddf = pd.DataFrame({  # type: ignore
-        'time': df['end_timestamp'],  # type: ignore
-        'what': -1})  # type: ignore
+    startdf = pd.DataFrame(
+        {  # type: ignore
+            "time": df["start_timestamp"],  # type: ignore
+            "what": 1,
+        }
+    )  # type: ignore
+    enddf = pd.DataFrame(
+        {  # type: ignore
+            "time": df["end_timestamp"],  # type: ignore
+            "what": -1,
+        }
+    )  # type: ignore
 
     # create merged dataframe of start and end times that are
     # sorted by timestamp
-    mergdf = pd.concat([startdf, enddf]).sort_values('time')
+    mergdf = pd.concat([startdf, enddf]).sort_values("time")
 
     # get a running cumulative sum
-    mergdf['running'] = mergdf['what'].cumsum()  # type: ignore
+    mergdf["running"] = mergdf["what"].cumsum()  # type: ignore
 
     # assign groups to overlapping intervals
-    mergdf['newwin'] = (mergdf['running'].eq(1) &  # type: ignore
-                        mergdf['what'].eq(1))  # type: ignore
-    mergdf['group'] = mergdf['newwin'].cumsum()  # type: ignore
+    mergdf["newwin"] = mergdf["running"].eq(1) & mergdf["what"].eq(  # type: ignore
+        1
+    )  # type: ignore
+    mergdf["group"] = mergdf["newwin"].cumsum()  # type: ignore
 
     # add the group assignments to the original dataframe
-    df['group'] = mergdf['group'].loc[mergdf['what'].eq(1)]  # type: ignore
+    df["group"] = mergdf["group"].loc[mergdf["what"].eq(1)]  # type: ignore
 
     # now group all overlapping intervals in the original dataframe
     # agg_func_dict = {col: lambda x: set(x) for col in df.columns}
-    res = df.groupby('group').agg({'start_timestamp': 'first',
-                                   'end_timestamp': 'last',
-                                   'label': 'unique',
-                                   'ref_timestamp': 'first'})
+    res = df.groupby("group").agg(
+        {
+            "start_timestamp": "first",
+            "end_timestamp": "last",
+            "label": "unique",
+            "ref_timestamp": "first",
+        }
+    )
 
     return res
 
@@ -213,39 +226,45 @@ def merge_overlapping_events(df: pd.DataFrame):
     orig_cols = df.columns
 
     # check dataframe
-    df = _check_df(df, df_type='annotations')
+    df = _check_df(df, df_type="annotations")
 
     # compute sfreq. XXX: assumes only 1 sampling rate
-    sfreq = np.unique(df['sfreq'])[0]
+    sfreq = np.unique(df["sfreq"])[0]
 
     # start/end timestamp with current time for every row
     ref_timestamp = datetime.now(tz=timezone.utc)
-    onset_tdelta = pd.to_timedelta(df['onset'], unit='s')  # type: ignore
-    df['start_timestamp'] = ref_timestamp + onset_tdelta
+    onset_tdelta = pd.to_timedelta(df["onset"], unit="s")  # type: ignore
+    df["start_timestamp"] = ref_timestamp + onset_tdelta
 
-    duration_secs = pd.to_timedelta(df['duration'], unit='s')  # type: ignore
-    df['end_timestamp'] = df['start_timestamp'] + duration_secs
-    df['ref_timestamp'] = ref_timestamp
+    duration_secs = pd.to_timedelta(df["duration"], unit="s")  # type: ignore
+    df["end_timestamp"] = df["start_timestamp"] + duration_secs
+    df["ref_timestamp"] = ref_timestamp
 
     # first group by channels
     # now join rows that are overlapping
-    merged_df = df.groupby(['channels']).apply(  # type: ignore
-        _join_times
-    ).reset_index().drop('group', axis=1)
+    merged_df = (
+        df.groupby(["channels"])
+        .apply(_join_times)  # type: ignore
+        .reset_index()
+        .drop("group", axis=1)
+    )
 
     # get the old columns back and drop the intermediate computation columns
-    merged_df['duration'] = (merged_df['end_timestamp'] -
-                             merged_df['start_timestamp']).dt.total_seconds()
-    merged_df['onset'] = (merged_df['start_timestamp'] -
-                          merged_df['ref_timestamp']).dt.total_seconds()
-    merged_df['sample'] = merged_df['onset'] * sfreq
+    merged_df["duration"] = (
+        merged_df["end_timestamp"] - merged_df["start_timestamp"]
+    ).dt.total_seconds()
+    merged_df["onset"] = (
+        merged_df["start_timestamp"] - merged_df["ref_timestamp"]
+    ).dt.total_seconds()
+    merged_df["sample"] = merged_df["onset"] * sfreq
 
     # XXX: need to enable different sfreqs maybe
     print(sfreq)
     print(merged_df)
-    merged_df['sfreq'] = sfreq
-    merged_df.drop(['start_timestamp', 'end_timestamp', 'ref_timestamp'],
-                   axis=1, inplace=True)
+    merged_df["sfreq"] = sfreq
+    merged_df.drop(
+        ["start_timestamp", "end_timestamp", "ref_timestamp"], axis=1, inplace=True
+    )
     merged_df = merged_df[orig_cols]
 
     return merged_df
@@ -345,9 +364,13 @@ def _find_overlapping_events(list1, list2):
 
 
 def match_detected_annotations(
-        ytrue_annot_df: pd.DataFrame, ypred_annot_df: pd.DataFrame,
-        ch_names: Union[List[str], str] = None,
-        label: str = None, sec_margin: float = 1., method='match-true'):
+    ytrue_annot_df: pd.DataFrame,
+    ypred_annot_df: pd.DataFrame,
+    ch_names: Union[List[str], str] = None,
+    label: str = None,
+    sec_margin: float = 1.0,
+    method="match-true",
+):
     """Given two annotations.tsv DataFrames, match HFO detection overlaps.
 
     Parameters
@@ -387,77 +410,73 @@ def match_detected_annotations(
         which corresponds to indices.
     """
     # check adherence of the annotations dataframe structure
-    ytrue_annot_df = _check_df(ytrue_annot_df, df_type='annotations')
-    ypred_annot_df = _check_df(ypred_annot_df, df_type='annotations')
+    ytrue_annot_df = _check_df(ytrue_annot_df, df_type="annotations")
+    ypred_annot_df = _check_df(ypred_annot_df, df_type="annotations")
 
     # select only certain labels
     if label is not None:
-        if label not in ytrue_annot_df['label'] or \
-                label not in ypred_annot_df['label']:
-            raise ValueError(f'Label {label} is not inside the input '
-                             f'DataFrames.')
+        if label not in ytrue_annot_df["label"] or label not in ypred_annot_df["label"]:
+            raise ValueError(f"Label {label} is not inside the input " f"DataFrames.")
 
-        ytrue_annot_df = ytrue_annot_df.loc[ytrue_annot_df['label'] == label]
-        ypred_annot_df = ypred_annot_df.loc[ypred_annot_df['label'] == label]
+        ytrue_annot_df = ytrue_annot_df.loc[ytrue_annot_df["label"] == label]
+        ypred_annot_df = ypred_annot_df.loc[ypred_annot_df["label"] == label]
 
     # select only certain channels
     if ch_names is not None:
         if isinstance(ch_names, str):
             ch_names = [ch_names]
-        if any([ch not in ytrue_annot_df['channels'] for ch in ch_names]):
-            raise ValueError(f'Channels {ch_names} are not all inside '
-                             f'ground-truth HFO DataFrame.')
-        if any([ch not in ypred_annot_df['channels'] for ch in ch_names]):
-            raise ValueError(f'Channels {ch_names} are not all inside '
-                             f'predicted HFO DataFrame.')
+        if any([ch not in ytrue_annot_df["channels"] for ch in ch_names]):
+            raise ValueError(
+                f"Channels {ch_names} are not all inside "
+                f"ground-truth HFO DataFrame."
+            )
+        if any([ch not in ypred_annot_df["channels"] for ch in ch_names]):
+            raise ValueError(
+                f"Channels {ch_names} are not all inside " f"predicted HFO DataFrame."
+            )
 
-        ytrue_annot_df = ytrue_annot_df.loc[
-            ytrue_annot_df['channels'].isin(ch_names)
-        ]
-        ypred_annot_df = ypred_annot_df.loc[
-            ypred_annot_df['channels'].isin(ch_names)
-        ]
+        ytrue_annot_df = ytrue_annot_df.loc[ytrue_annot_df["channels"].isin(ch_names)]
+        ypred_annot_df = ypred_annot_df.loc[ypred_annot_df["channels"].isin(ch_names)]
 
     # if prediction yields no events and method is match-pred,
     # return empty structured dataframe
     if ypred_annot_df.empty and method == "match-pred":
-        return pd.DataFrame(columns=('true_index', 'pred_index'))
+        return pd.DataFrame(columns=("true_index", "pred_index"))
     # else if prediction yields no events, return structured dataframe
     # containing just true indices
     elif ypred_annot_df.empty:
-        match_df = pd.DataFrame(columns=('true_index', 'pred_index'))
+        match_df = pd.DataFrame(columns=("true_index", "pred_index"))
         for ind, row in ytrue_annot_df.iterrows():
             match_df.loc[ind] = [ind, None]
-        match_df.apply(pd.to_numeric, errors="coerce",
-                       downcast="float")
+        match_df.apply(pd.to_numeric, errors="coerce", downcast="float")
         return match_df
 
     # make sure columns match what is needed
-    ytrue_annot_df['offset'] = \
-        ytrue_annot_df['onset'] + ytrue_annot_df['duration']
-    ypred_annot_df['offset'] = \
-        ypred_annot_df['onset'] + ypred_annot_df['duration']
+    ytrue_annot_df["offset"] = ytrue_annot_df["onset"] + ytrue_annot_df["duration"]
+    ypred_annot_df["offset"] = ypred_annot_df["onset"] + ypred_annot_df["duration"]
 
     if method.lower() == "match-true":
         return _match_detections_overlap(
-            ytrue_annot_df, ypred_annot_df, sec_margin,
-            ('true_index', 'pred_index'))
+            ytrue_annot_df, ypred_annot_df, sec_margin, ("true_index", "pred_index")
+        )
     elif method.lower() == "match-pred":
         return _match_detections_overlap(
-            ypred_annot_df, ytrue_annot_df, sec_margin,
-            ('pred_index', 'true_index'))
+            ypred_annot_df, ytrue_annot_df, sec_margin, ("pred_index", "true_index")
+        )
     elif method.lower() == "match-total":
         true_match = _match_detections_overlap(
-            ytrue_annot_df, ypred_annot_df, sec_margin,
-            ('true_index', 'pred_index'))
+            ytrue_annot_df, ypred_annot_df, sec_margin, ("true_index", "pred_index")
+        )
         pred_match = _match_detections_overlap(
-            ypred_annot_df, ytrue_annot_df, sec_margin,
-            ('pred_index', 'true_index'))
-        return pd.concat([true_match, pred_match]).drop_duplicates(). \
-            reset_index(drop=True)
+            ypred_annot_df, ytrue_annot_df, sec_margin, ("pred_index", "true_index")
+        )
+        return (
+            pd.concat([true_match, pred_match]).drop_duplicates().reset_index(drop=True)
+        )
     else:
-        raise NotImplementedError("Method must be one of match-true,"
-                                  " match-pred, or match-total")
+        raise NotImplementedError(
+            "Method must be one of match-true," " match-pred, or match-total"
+        )
         # Iterate over true labels (gold standard)
 
 
@@ -491,16 +510,20 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
         which corresponds to indices
 
     """
-    if not all([col in gs_df for col in ['onset', 'offset']]):
-        raise ValueError(f'Gold standard reference Annotations '
-                         f'DataFrame must have both "onset" and '
-                         f'"offset" columns (in seconds). It '
-                         f'has columns: {gs_df.columns}')
-    if not all([col in check_df for col in ['onset', 'offset']]):
-        raise ValueError(f'Estimated Annotations '
-                         f'DataFrame must have both "onset" and '
-                         f'"offset" columns (in seconds).It '
-                         f'has columns: {check_df.columns}')
+    if not all([col in gs_df for col in ["onset", "offset"]]):
+        raise ValueError(
+            f"Gold standard reference Annotations "
+            f'DataFrame must have both "onset" and '
+            f'"offset" columns (in seconds). It '
+            f"has columns: {gs_df.columns}"
+        )
+    if not all([col in check_df for col in ["onset", "offset"]]):
+        raise ValueError(
+            f"Estimated Annotations "
+            f'DataFrame must have both "onset" and '
+            f'"offset" columns (in seconds).It '
+            f"has columns: {check_df.columns}"
+        )
 
     # List of tuples to populate the output DataFrame
     match_indices = []
@@ -511,20 +534,26 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
     # the DataFrames to numpy, we need to track the column order
     gs_cols = gs_df.columns
     check_cols = check_df.columns
-    gs_keep_inds = (gs_cols.get_loc("onset"),
-                    gs_cols.get_loc("offset"),
-                    gs_cols.get_loc("channels"))
-    check_keep_inds = (check_cols.get_loc("onset"),
-                       check_cols.get_loc("offset"),
-                       check_cols.get_loc("channels"))
+    gs_keep_inds = (
+        gs_cols.get_loc("onset"),
+        gs_cols.get_loc("offset"),
+        gs_cols.get_loc("channels"),
+    )
+    check_keep_inds = (
+        check_cols.get_loc("onset"),
+        check_cols.get_loc("offset"),
+        check_cols.get_loc("channels"),
+    )
     gs_numpy = gs_df.to_numpy()[:, gs_keep_inds]
-    gs_numpy = [[i, onset, offset, ch_name] for
-                i, (onset, offset, ch_name)
-                in enumerate(gs_numpy)]
+    gs_numpy = [
+        [i, onset, offset, ch_name]
+        for i, (onset, offset, ch_name) in enumerate(gs_numpy)
+    ]
     check_numpy = check_df.to_numpy()[:, check_keep_inds]
-    check_numpy = [[i, onset, offset, ch_name] for
-                   i, (onset, offset, ch_name)
-                   in enumerate(check_numpy)]
+    check_numpy = [
+        [i, onset, offset, ch_name]
+        for i, (onset, offset, ch_name) in enumerate(check_numpy)
+    ]
 
     # TODO: If there is a way to subset by channel, we can speed
     #  up the loop
@@ -534,10 +563,14 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
         gs_ind, gs_onset, gs_offset, gs_ch_name = gs_hfo
         check_window = (gs_onset - margin, gs_onset + margin)
         # Subset to the same channel and has onset within the expected window
-        check_numpy_channel = [x for x in check_numpy
-                               if (x[3] == gs_ch_name and
-                                   (x[1] > check_window[0] or
-                                    x[1] < check_window[1]))]
+        check_numpy_channel = [
+            x
+            for x in check_numpy
+            if (
+                x[3] == gs_ch_name
+                and (x[1] > check_window[0] or x[1] < check_window[1])
+            )
+        ]
         # check if nothing meets this criteria
         if not check_numpy_channel:
             match_indices.append((gs_ind, None))
@@ -562,7 +595,8 @@ def _match_detections_overlap(gs_df, check_df, margin, cols):
         match_df = pd.DataFrame(columns=cols)
     else:
         match_df = pd.DataFrame(match_indices, columns=cols).apply(
-            pd.to_numeric, errors="coerce", downcast="float")
+            pd.to_numeric, errors="coerce", downcast="float"
+        )
     return match_df
 
 

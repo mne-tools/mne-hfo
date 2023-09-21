@@ -20,7 +20,7 @@ xxx
 Notable changes
 ~~~~~~~~~~~~~~~
 
-- xxx
+- Minimum Python version updated to 3.8, by `Adam Li` (:pr:`10`)
 
 Authors
 ~~~~~~~

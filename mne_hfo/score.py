@@ -22,7 +22,7 @@ def true_positive_rate(y, y_pred):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method="match-total")
 
     # return actual metric
     return tp / (tp + fn)
@@ -44,10 +44,10 @@ def precision(y, y_pred):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method="match-total")
 
     if tp == 0:
-        return 0.
+        return 0.0
 
     # return actual metric
     return tp / (tp + fp)
@@ -69,7 +69,7 @@ def false_negative_rate(y, y_pred):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method="match-total")
 
     # return actual metric
     return fn / (fn + tp)
@@ -91,10 +91,10 @@ def false_discovery_rate(y, y_pred):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method="match-total")
 
-    if fp == 0.:
-        return 0.
+    if fp == 0.0:
+        return 0.0
 
     # return the actual metric
     return fp / (fp + tp)
@@ -120,7 +120,7 @@ def accuracy(y, y_pred):
     float
 
     """
-    tp, fp, fn = _compute_score_data(y, y_pred, method='match-total')
+    tp, fp, fn = _compute_score_data(y, y_pred, method="match-total")
     # return actual metric
     return tp / (tp + fp + fn)
 
@@ -128,13 +128,13 @@ def accuracy(y, y_pred):
 def _compute_score_data(y, y_pred, method):
     """Compute basic HFO scoring metrics."""
     if isinstance(y, pd.DataFrame):
-        y = _check_df(y, df_type='annotations')
+        y = _check_df(y, df_type="annotations")
     else:
         # assume y is now in the form of list of (onset, offset) per channel
         y = _convert_y_sklearn_to_annot_df(y)
 
     if isinstance(y_pred, pd.DataFrame):
-        y_pred = _check_df(y_pred, df_type='annotations')
+        y_pred = _check_df(y_pred, df_type="annotations")
     else:
         # assume y is now in the form of list of (onset, offset) per channel
         y_pred = _convert_y_sklearn_to_annot_df(y_pred)
@@ -142,10 +142,11 @@ def _compute_score_data(y, y_pred, method):
     overlap_df = match_detected_annotations(y, y_pred, method=method)
 
     # get the indices from the match event overlap output
-    y_true_series = overlap_df['true_index']
-    y_pred_series = overlap_df['pred_index']
-    tp, fp, fn = _calculate_match_stats(ytrue_indices=y_true_series,
-                                        ypred_indices=y_pred_series)
+    y_true_series = overlap_df["true_index"]
+    y_pred_series = overlap_df["pred_index"]
+    tp, fp, fn = _calculate_match_stats(
+        ytrue_indices=y_true_series, ypred_indices=y_pred_series
+    )
     return tp, fp, fn
 
 

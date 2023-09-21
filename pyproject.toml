@@ -1,3 +1,172 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta:__legacy__"
+requires = ['setuptools >= 61.0.0']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'mne-hfo'
+version = "0.3.dev0"
+description = 'mne-hfo: HFO estimation from EEG and iEEG data with MNE.'
+readme = 'README.md'
+license = {file = 'LICENSE'}
+requires-python = '~=3.8'
+maintainers = [
+    {name = 'Adam Li', email = 'adam.li@columbia.edu'},
+    {name = 'Patrick Myers', email = 'pemyers27@gmail.com'},
+]
+keywords = [
+    'meg',
+    'eeg',
+    'ieeg',
+    'neuroscience',
+    'hfo',
+]
+classifiers = [
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: Unix',
+    'Operating System :: MacOS',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Natural Language :: English',
+    'License :: OSI Approved :: BSD License',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Developers',
+    'Topic :: Software Development',
+    'Topic :: Scientific/Engineering',
+]
+dependencies = [
+    'importlib-resources; python_version<"3.9"',
+    'mne >= 1.1',
+    'numpy>=1.20',
+    'scipy>=1.6',
+    'scikit-learn>=1.0',
+    'pandas>=1.2',
+    'mne-bids>=1.0',
+    'matplotlib>=3.3',
+    'joblib>=1.0.0',
+    'tqdm>=4.59',
+]
+
+[project.optional-dependencies]
+build = [
+    'build',
+    'twine',
+]
+doc = [
+    'memory_profiler',
+    'numpydoc',
+    'pydata-sphinx-theme',
+    'PyQt6',
+    'sphinx',
+    'sphinxcontrib-bibtex',
+    'sphinx-copybutton',
+    'sphinx-design',
+    'sphinx-gallery',
+    'sphinx-issues',
+    'nbsphinx',
+    'pandoc',
+    'sphinx-autodoc-typehints',
+    'typing-extensions',
+]
+style = [
+    'bibclean',
+    'black',
+    'codespell',
+    'isort',
+    'flake8',
+    'mypy',
+    'pydocstyle[toml]',
+]
+test = [
+    'mne-bids',
+    'pandas',
+    'PyQt6',
+    'pymatreader',
+    'pytest',
+    'pytest-cov',
+    'openneuro-py',
+    'pytest-benchmark',
+]
+all = [
+    'mne-hfo[build]',
+    'mne-hfo[doc]',
+    'mne-hfo[style]',
+    'mne-hfo[test]',
+]
+full = [
+    'mne-hfo[all]',
+]
+
+[project.urls]
+documentation = 'https://mne.tools/mne-hfo'
+source = 'https://github.com/mne-tools/mne-hfo'
+tracker = 'https://github.com/mne-tools/mne-hfo/issues'
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ['mne_hfo*']
+exclude = ['mne_hfo*tests']
+
+[tool.setuptools.package-data]
+"mne_hfo.iclabel.network" = ["assets/*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+      __pycache__
+    | \.github
+    | setup.py
+    | doc/
+    | examples/
+)
+'''
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+line_length = 88
+py_version = 39
+extend_skip_glob = [
+    'setup.py',
+    'doc/*',
+    'examples/*',
+]
+
+[tool.pydocstyle]
+convention = 'numpy'
+ignore-decorators = '(copy_doc|property|.*setter|.*getter)'
+match = '^(?!setup|__init__|test_).*\.py'
+match-dir = '^mne_hfo.*'
+add_ignore = 'D100,D104,D107'
+
+[tool.mypy]
+ignore_missing_imports = true
+no_site_packages = true
+
+[tool.pytest.ini_options]
+minversion = '6.0'
+addopts = '--durations 20 --junit-xml=junit-results.xml --verbose'
+filterwarnings = []
+
+[tool.coverage.run]
+branch = true
+cover_pylib = false
+omit = [
+    '**/__init__.py',
+    '**/mne_hfo/_version.py',
+    '**/tests/**',
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    'pragma: no cover',
+    'if __name__ == .__main__.:',
+]
+precision = 2

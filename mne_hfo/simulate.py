@@ -55,7 +55,7 @@ def simulate_pink_noise(N, random_state=None):
     y = np.real(y)
     # normalising
     y -= np.mean(y)
-    y /= np.sqrt(np.mean(y ** 2))
+    y /= np.sqrt(np.mean(y**2))
     # returning size of N
     if M % 2 == 1:
         y = y[:-1]
@@ -108,7 +108,7 @@ def simulate_brown_noise(N, random_state=None):
     y = np.real(y)
     # normalising
     y -= np.mean(y)
-    y /= np.sqrt(np.mean(y ** 2))
+    y /= np.sqrt(np.mean(y**2))
     # returning size of N
     if M % 2 == 1:
         y = y[:-1]
@@ -154,8 +154,7 @@ def simulate_delta(fs=5000, decay_dur=None, random_state=None):
     return delta
 
 
-def simulate_line_noise(fs=5000, freq=50, numcycles=None,
-                        random_state=None):
+def simulate_line_noise(fs=5000, freq=50, numcycles=None, random_state=None):
     """
     Line noise artifact.
 
@@ -222,8 +221,8 @@ def simulate_artifact_spike(fs=5000, dur=None, random_state=None):
     if not N % 2:  # Check if the number is odd - we want to have proper spike
         N -= 1
     y = np.zeros(N)
-    y[:int(N / 2) + 1] = np.linspace(0, 1, int(N / 2) + 1)
-    y[-int(N / 2):] = np.linspace(1, 0, int(N / 2) + 1)[1:]
+    y[: int(N / 2) + 1] = np.linspace(0, 1, int(N / 2) + 1)
+    y[-int(N / 2) :] = np.linspace(1, 0, int(N / 2) + 1)[1:]
 
     return y
 
@@ -250,11 +249,12 @@ def _wavelet(numcycles, f, fs):
         1D numpy array with the time vector.
     """
     N = int((fs * numcycles) / f)
-    time = np.linspace((-numcycles / 2) / float(f),
-                       (numcycles / 2) / float(f), N)  # time vector
+    time = np.linspace(
+        (-numcycles / 2) / float(f), (numcycles / 2) / float(f), N
+    )  # time vector
     std = numcycles / (2 * np.pi * f)  # standard deviation
     wave = np.exp(2 * 1j * np.pi * f * time)
-    wave *= np.exp(-(time ** 2) / (2 * (std ** 2)))  # waveform
+    wave *= np.exp(-(time**2) / (2 * (std**2)))  # waveform
     return wave, time
 
 

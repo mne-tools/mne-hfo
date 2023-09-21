@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from mne_hfo.posthoc import match_detected_annotations
-from mne_hfo.sklearn import _convert_y_sklearn_to_annot_df
-from mne_hfo.utils import _check_df
+from .posthoc import match_detected_annotations
+from .sklearn import _convert_y_sklearn_to_annot_df
+from .utils import _check_df
 
 
 def true_positive_rate(y, y_pred):

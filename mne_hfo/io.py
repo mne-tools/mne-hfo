@@ -10,7 +10,7 @@ import pandas as pd
 from mne.utils import run_subprocess
 from mne_bids import BIDSPath, get_entities_from_fname, read_raw_bids
 
-from mne_hfo.config import ANNOT_COLUMNS
+from .config import ANNOT_COLUMNS
 
 
 def _bids_validate(bids_root):

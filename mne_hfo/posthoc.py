@@ -5,8 +5,8 @@ from typing import List, Optional, Union
 import numpy as np
 import pandas as pd
 
-from mne_hfo.config import TIME_SCALE_TO_SECS
-from mne_hfo.utils import _check_df
+from .config import TIME_SCALE_TO_SECS
+from .utils import _check_df
 
 
 def _to_freq(x, rate: str = "s"):

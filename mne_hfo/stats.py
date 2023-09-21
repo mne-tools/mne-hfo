@@ -7,7 +7,7 @@
 
 from mne_bids import BIDSPath, get_datatypes
 
-from mne_hfo.config import EPHY_ALLOWED_DATATYPES
+from .config import EPHY_ALLOWED_DATATYPES
 
 
 def count_hfo_events(root_or_path, datatype="auto"):

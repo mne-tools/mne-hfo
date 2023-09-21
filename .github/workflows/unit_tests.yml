@@ -50,7 +50,7 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: "./.git,./build,./.mypy_cache,./.pytest_cache,./doc/tutorial/*"
+          skip: "./.git,./build,./.mypy_cache,./.pytest_cache,./doc/tutorials/*"
           ignore_words_file: ./.codespellignore
       - name: Run pydocstyle
         run: pydocstyle .

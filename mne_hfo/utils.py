@@ -10,7 +10,7 @@ import pandas as pd
 from scipy.signal import hilbert
 from tqdm import tqdm
 
-from mne_hfo.config import ANNOT_COLUMNS
+from .config import ANNOT_COLUMNS
 
 
 def _check_df(df: pd.DataFrame, df_type: str, copy: bool = True) -> pd.DataFrame:

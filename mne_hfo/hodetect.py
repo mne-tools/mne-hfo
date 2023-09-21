@@ -2,7 +2,7 @@ import mne
 import numpy as np
 from scipy.signal import hilbert
 
-from mne_hfo.base import Detector
+from .base import Detector
 
 
 class CSDetector(Detector):

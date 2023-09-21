@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import cohen_kappa_score, mutual_info_score
 
-from mne_hfo import match_detected_annotations
+from .posthoc import match_detected_annotations
 
 implemented_comparisons = ["cohen-kappa", "mutual-info"]
 

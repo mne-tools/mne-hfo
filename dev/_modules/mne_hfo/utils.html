@@ -1,186 +1,462 @@
 
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mne_hfo.utils &#8212; MNE-HFO 0.3dev documentation</title>
-    
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+    <title>mne_hfo.utils &#8212; MNE-HFO 0.3.dev0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    
-    <!-- add `style` or `link` tags with your CSS `@font-face` declarations here -->
-    <!-- ... and a `style` tag with setting `font-family` in `body` and `.header-style` -->
-    <!-- ... and optionally preload the `woff2` for snappier page loads -->
-    <!-- or add a `style` tag with a font fallback chain with good cross-platform coverage -->
-    <style>
-        body,.header-style {font-family: 'Source Sans Pro', sans-serif;}
-        code,kbd,pre,samp {font-family: 'Source Code Pro', monospace;}
-    </style>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=a15751a1" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/basic.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
-    
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
-
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/documentation_options.js?v=0f596bff"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/mne_hfo/utils';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="canonical" href="https://mne.tools/mne-hfo/stable/index.html" />
     <script type="text/javascript" src="../../_static/copybutton.js"></script>
     <script type="text/javascript" src="../../_static/scrollfix.js"></script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
 
-  <div id="navbar-start">
-    
-    
-<a class="navbar-brand" href="../../index.html">
-<p class="title">MNE-HFO</p>
-</a>
-
-    
-  </div>
-
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
   </button>
 
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
-    <div id="navbar-center" class="mr-auto">
-      
-      <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference external nav-link" href="https://pypi.org/project/mne-hfo/">
-  mne-hfo @ PyPI
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference external nav-link" href="https://github.com/mne-tools/mne-hfo/issues">
-  Issue Tracker
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../whats_new.html">
-  News
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../install.html">
-  Install
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../use.html">
-  Use
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../api.html">
-  API
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../tutorial.html">
-  Tutorial
- </a>
-</li>
-
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../contribute.html">
-  Contribute
- </a>
-</li>
-
-    
-</ul>
-      </div>
-      
-    </div>
-
-    <div id="navbar-end">
-      
-      <div class="navbar-end-item">
-        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
-        <li class="nav-item">
-          <a class="nav-link" href="https://github.com/mne-tools/mne-hfo" rel="noopener" target="_blank" title="GitHub">
-            <span><i class="fab fa-github-square"></i></span>
-            <label class="sr-only">GitHub</label>
-          </a>
-        </li>
-      </ul>
-      </div>
-      
-    </div>
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
   </div>
-</div>
-    </nav>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
     
+      <div class="navbar-item">
+  
 
-    <div class="container-xl">
-      <div class="row">
-          
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-            </div>
-            
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">MNE-HFO 0.3.dev0 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="https://pypi.org/project/mne-hfo/">
+                        mne-hfo @ PyPI
+                      </a>
+                    </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="https://github.com/mne-tools/mne-hfo/issues">
+                        Issue Tracker
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../whats_new.html">
+                        News
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../install.html">
+                        Install
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../use.html">
+                        Use
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../tutorial.html">
+                        Tutorial
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../contribute.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><div class="dropdown">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+        v0.3.dev0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/dev/index.html">v0.2 (devel)</a>
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/stable/index.html">v0.1 (stable)</a>
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/v0.1/index.html">v0.1</a>
+    </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mne-tools/mne-hfo" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="https://pypi.org/project/mne-hfo/">
+                        mne-hfo @ PyPI
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="https://github.com/mne-tools/mne-hfo/issues">
+                        Issue Tracker
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../whats_new.html">
+                        News
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../install.html">
+                        Install
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../use.html">
+                        Use
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../api.html">
+                        API
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../tutorial.html">
+                        Tutorial
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../../contribute.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><div class="dropdown">
+    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="dLabelMore" data-toggle="dropdown">
+        v0.3.dev0
+        <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu list-group-flush py-0" aria-labelledby="dLabelMore">
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/dev/index.html">v0.2 (devel)</a>
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/stable/index.html">v0.1 (stable)</a>
+        <a class="list-group-item list-group-item-action py-1" href="https://mne.tools/mne-hfo/v0.1/index.html">v0.1</a>
+    </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/mne-tools/mne-hfo" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fab fa-github-square fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">mne_hfo.utils</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <h1>Source code for mne_hfo.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility and helper functions for MNE-HFO.&quot;&quot;&quot;</span>
 <span class="c1"># License: BSD (3-clause)</span>
@@ -194,37 +470,34 @@
 <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">hilbert</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">mne_hfo.config</span> <span class="kn">import</span> <span class="n">ANNOT_COLUMNS</span><span class="p">,</span> <span class="n">EVENT_COLUMNS</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">ANNOT_COLUMNS</span>
 
 
-<span class="k">def</span> <span class="nf">_check_df</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">df_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-              <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check dataframe for correctness.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">df_type</span> <span class="o">==</span> <span class="s1">&#39;annotations&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ANNOT_COLUMNS</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]]):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Annotations dataframe columns must contain &#39;</span>
-                               <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ANNOT_COLUMNS</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">df_type</span> <span class="o">==</span> <span class="s1">&#39;events&#39;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
-                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">EVENT_COLUMNS</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]]):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Events dataframe columns must contain &#39;</span>
-                               <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">EVENT_COLUMNS</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_check_df</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">df_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check dataframe for correctness.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">df_type</span> <span class="o">==</span> <span class="s2">&quot;annotations&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">ANNOT_COLUMNS</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]]):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Annotations dataframe columns must contain &quot;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ANNOT_COLUMNS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
 
     <span class="c1"># Only want to do this check if there are multiple rows. Handles edge case</span>
     <span class="c1"># of 1 HFO starting at 0. TODO: handle this more elegantly</span>
     <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># first compute sampling rate from sample / onset columns</span>
-        <span class="n">sfreq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sample&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">sfreq</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;onset&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># onset=0 will cause sfreq to be inf, drop these rows to</span>
         <span class="c1"># prevent additional sfreqs</span>
         <span class="n">sfreq</span> <span class="o">=</span> <span class="n">sfreq</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;All rows in the annotations dataframe &#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;should have the same sampling rate. &#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s1"> different &#39;</span>
-                             <span class="sa">f</span><span class="s1">&#39;sampling rates.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;All rows in the annotations dataframe &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;should have the same sampling rate. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">sfreq</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2"> different &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sampling rates.&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -233,7 +506,7 @@
 
 
 <span class="k">def</span> <span class="nf">_ensure_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a tuple.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a tuple.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">()</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -243,33 +516,45 @@
 
 
 <span class="k">def</span> <span class="nf">_check_types</span><span class="p">(</span><span class="n">variables</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make sure all vars are str or None.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure all vars are str or None.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You supplied a value (</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">) of type &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="si">}</span><span class="s2">, where a string or None was &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;expected.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;You supplied a value (</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">) of type &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span><span class="si">}</span><span class="s2">, where a string or None was &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;expected.&quot;</span>
+            <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_write_json</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write JSON to a file.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write JSON to a file.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1">&quot; already exists. &#39;</span>
-                              <span class="s1">&#39;Please set overwrite to True.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s1">&quot; already exists. &#39;</span> <span class="s2">&quot;Please set overwrite to True.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">json_output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
         <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_output</span><span class="p">)</span>
-        <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Writing &#39;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">&#39;...&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">json_output</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_band_zscore_detect</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">,</span> <span class="n">n_times</span><span class="p">,</span>
-                        <span class="n">cycles_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span> <span class="n">zscore_threshold</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">_band_zscore_detect</span><span class="p">(</span>
+    <span class="n">signal</span><span class="p">,</span>
+    <span class="n">sfreq</span><span class="p">,</span>
+    <span class="n">band_idx</span><span class="p">,</span>
+    <span class="n">l_freq</span><span class="p">,</span>
+    <span class="n">h_freq</span><span class="p">,</span>
+    <span class="n">n_times</span><span class="p">,</span>
+    <span class="n">cycles_threshold</span><span class="p">,</span>
+    <span class="n">gap_threshold</span><span class="p">,</span>
+    <span class="n">zscore_threshold</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find detections that meet the Hilbert envelope criteria.</span>
 
 <span class="sd">    Parameters</span>
@@ -295,7 +580,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    tdetects: List[Tuple[int, int, int, int]]</span>
+<span class="sd">    tdetects : List[Tuple[int, int, int, int]]</span>
 <span class="sd">        All HFO events that passed the bandpass, zscore. Each tuple contains:</span>
 <span class="sd">        [0] - The band index</span>
 <span class="sd">        [1] - The timepoint of the start of a detection</span>
@@ -307,7 +592,7 @@
     <span class="n">tdetects</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Create boolean mask of signal greater than zscore_threshold</span>
-    <span class="n">thresh_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;bool&#39;</span><span class="p">)</span>
+    <span class="n">thresh_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;bool&quot;</span><span class="p">)</span>
     <span class="n">thresh_sig</span><span class="p">[</span><span class="n">signal</span> <span class="o">&gt;</span> <span class="n">zscore_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -337,9 +622,15 @@
                         <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
                         <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycles_threshold</span><span class="p">:</span>
                             <span class="c1"># Valid, so append to detections</span>
-                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
-                                             <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
-                                             <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">]])</span>
+                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="p">[</span>
+                                    <span class="n">band_idx</span><span class="p">,</span>
+                                    <span class="n">start_idx</span><span class="p">,</span>
+                                    <span class="n">stop_idx</span><span class="p">,</span>
+                                    <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
+                                    <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">],</span>
+                                <span class="p">]</span>
+                            <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># If there is no gap between this and the next index,</span>
                     <span class="c1"># it is still part of this envelope. Increment the</span>
@@ -355,9 +646,15 @@
                         <span class="n">cycs</span> <span class="o">=</span> <span class="n">l_freq</span> <span class="o">*</span> <span class="n">dur</span>
                         <span class="k">if</span> <span class="n">cycs</span> <span class="o">&gt;</span> <span class="n">cycles_threshold</span><span class="p">:</span>
                             <span class="c1"># Valid, so append to detections</span>
-                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">,</span> <span class="n">stop_idx</span><span class="p">,</span>
-                                             <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
-                                             <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">]])</span>
+                            <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="p">[</span>
+                                    <span class="n">band_idx</span><span class="p">,</span>
+                                    <span class="n">start_idx</span><span class="p">,</span>
+                                    <span class="n">stop_idx</span><span class="p">,</span>
+                                    <span class="nb">max</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">stop_idx</span><span class="p">]),</span>
+                                    <span class="p">[</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="p">],</span>
+                                <span class="p">]</span>
+                            <span class="p">)</span>
                         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
@@ -365,41 +662,48 @@
     <span class="k">return</span> <span class="n">tdetects</span>
 
 
-<div class="viewcode-block" id="compute_rms"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms">[docs]</a><span class="k">def</span> <span class="nf">compute_rms</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="compute_rms">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_rms.html#mne_hfo.utils.compute_rms">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_rms</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Root Mean Square (RMS) energy.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    signal: numpy array</span>
-<span class="sd">        1D signal to be transformed</span>
-<span class="sd">    win_size: int</span>
-<span class="sd">        Number of the points of the window (default=6)</span>
+<span class="sd">    signal : numpy array</span>
+<span class="sd">        1D signal to be transformed.</span>
+<span class="sd">    win_size : int</span>
+<span class="sd">        Number of the points of the window (default=6).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    rms: numpy array</span>
-<span class="sd">        Root mean square transformed signal</span>
+<span class="sd">    rms: np.ndarray</span>
+<span class="sd">        Root mean square transformed signal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="s1">&#39;same&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="s2">&quot;same&quot;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="compute_line_length"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length">[docs]</a><span class="k">def</span> <span class="nf">compute_line_length</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate line length.</span>
+
+<div class="viewcode-block" id="compute_line_length">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_line_length.html#mne_hfo.utils.compute_line_length">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_line_length</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">win_size</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate line length.</span>
+
+<span class="sd">    See :footcite:`esteller2001line` and :footcite:`dumpelmann2012automatic`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    signal: numpy array</span>
-<span class="sd">        1D signal to be transformed</span>
-<span class="sd">    win_size: int</span>
-<span class="sd">        Number of the points of the window (default=6)</span>
+<span class="sd">    signal : numpy array</span>
+<span class="sd">        1D signal to be transformed.</span>
+<span class="sd">    win_size : int</span>
+<span class="sd">        Number of the points of the window (default=6).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    line_length: numpy array</span>
-<span class="sd">        Line length transformed signal</span>
+<span class="sd">        Line length transformed signal.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -409,12 +713,7 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] Esteller, R. et al. (2001). Line length: an efficient feature for</span>
-<span class="sd">           seizure onset detection. In Engineering in Medicine and Biology</span>
-<span class="sd">           Society, 2001. Proceedings of the 23rd Annual International</span>
-<span class="sd">           Conference of the IEEE (Vol. 2, pp. 1707-1710). IEEE.</span>
-
-<span class="sd">    .. [2] Dümpelmann et al, 2012.  Clinical Neurophysiology: 123 (9): 1721-31.</span>
+<span class="sd">    .. footbibliography::</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">aux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">signal</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span>
@@ -424,22 +723,27 @@
     <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="o">-</span><span class="n">stop</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="compute_hilbert"><a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_hilbert.html#mne_hfo.utils.compute_hilbert">[docs]</a><span class="k">def</span> <span class="nf">compute_hilbert</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute the Hilbert envelope for a single channel.</span>
+
+<div class="viewcode-block" id="compute_hilbert">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.compute_hilbert.html#mne_hfo.utils.compute_hilbert">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_hilbert</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Hilbert envelope for a single channel.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    signal : np.array</span>
-<span class="sd">        EEG signal for a single channel</span>
-<span class="sd">    extra_params : dict</span>
-<span class="sd">        Must have values for &#39;freq_cutoffs&#39;, &#39;freq_span&#39;, and</span>
-<span class="sd">        &#39;sfreq&#39;</span>
+<span class="sd">    signal : np.ndarray</span>
+<span class="sd">        EEG signal for a single channel.</span>
+<span class="sd">    freq_cutoffs : tuple</span>
+<span class="sd">        The lower and higher frequency cutoff.</span>
+<span class="sd">    freq_span : tuple</span>
+<span class="sd">        The span of how many frequencies there are.</span>
+<span class="sd">    sfreq : float</span>
+<span class="sd">        The sampling rate.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    hfx_bands: np.ndarray</span>
-<span class="sd">        Hilbert transforms per freq band</span>
-
+<span class="sd">    hfx_bands : np.ndarray</span>
+<span class="sd">        Hilbert transforms per freq band.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">hfx_bands</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Iterate over freq bands</span>
@@ -448,9 +752,14 @@
         <span class="n">h_freq</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Filter the data for this frequency band</span>
-        <span class="n">signal</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="n">sfreq</span><span class="p">,</span>
-                                        <span class="n">l_freq</span><span class="o">=</span><span class="n">l_freq</span><span class="p">,</span> <span class="n">h_freq</span><span class="o">=</span><span class="n">h_freq</span><span class="p">,</span>
-                                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;iir&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_data</span><span class="p">(</span>
+            <span class="n">signal</span><span class="p">,</span>
+            <span class="n">sfreq</span><span class="o">=</span><span class="n">sfreq</span><span class="p">,</span>
+            <span class="n">l_freq</span><span class="o">=</span><span class="n">l_freq</span><span class="p">,</span>
+            <span class="n">h_freq</span><span class="o">=</span><span class="n">h_freq</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;iir&quot;</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="c1"># compute z-score of data</span>
         <span class="n">signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
 
@@ -475,8 +784,11 @@
     <span class="k">return</span> <span class="n">hfx_bands</span></div>
 
 
-<div class="viewcode-block" id="apply_hilbert"><a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_hilbert.html#mne_hfo.utils.apply_hilbert">[docs]</a><span class="k">def</span> <span class="nf">apply_hilbert</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Apply the Hilbert z-score thresholding scheme.</span>
+
+<div class="viewcode-block" id="apply_hilbert">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_hilbert.html#mne_hfo.utils.apply_hilbert">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_hilbert</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply the Hilbert z-score thresholding scheme.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -484,7 +796,7 @@
 <span class="sd">        The values to apply the threshold rules to.</span>
 <span class="sd">    threshold_dict : dict</span>
 <span class="sd">        Dictionary of  threshold parameters to apply to metric.</span>
-<span class="sd">        Must have zscore, gap, and cycles keys</span>
+<span class="sd">        Must have zscore, gap, and cycles keys.</span>
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        Additional model parameters needed to apply hilbert threshold.</span>
 <span class="sd">        Must have n_times, sfreq, filter_band, freq_cutoffs,</span>
@@ -492,30 +804,36 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    tdetects: List(tuples)</span>
+<span class="sd">    tdetects : List of Tuple</span>
 <span class="sd">        Detected hfo events with the structure [band_idx, start,</span>
-<span class="sd">        stop, max_amplitude, freq_band]</span>
-
+<span class="sd">        stop, max_amplitude, freq_band].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get threshold vals</span>
     <span class="n">zscore_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;zscore&quot;</span><span class="p">]</span>
     <span class="n">gap_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span>
     <span class="n">cycles_threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;cycles&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">zscore_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span>
-                                     <span class="n">cycles_threshold</span><span class="p">]):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold_dict must have values for zscore,&quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot; gap, and cycles. You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">zscore_threshold</span><span class="p">,</span> <span class="n">gap_threshold</span><span class="p">,</span> <span class="n">cycles_threshold</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;threshold_dict must have values for zscore,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; gap, and cycles. You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
     <span class="n">n_times</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_times&quot;</span><span class="p">]</span>
     <span class="n">sfreq</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;sfreq&quot;</span><span class="p">]</span>
     <span class="n">filter_band</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;filter_band&quot;</span><span class="p">]</span>
     <span class="n">freq_cutoffs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;freq_cutoffs&quot;</span><span class="p">]</span>
     <span class="n">freq_span</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;freq_span&quot;</span><span class="p">]</span>
     <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_jobs&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n_times</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">filter_band</span><span class="p">,</span>
-                                     <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">]):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kwargs must have values for n_times, sfreq,&quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot; filter_band, freq_cutoffs, freq_span, n_jobs.&quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n_times</span><span class="p">,</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">filter_band</span><span class="p">,</span> <span class="n">freq_cutoffs</span><span class="p">,</span> <span class="n">freq_span</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;kwargs must have values for n_times, sfreq,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; filter_band, freq_cutoffs, freq_span, n_jobs.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">tdetects</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">freq_span</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;HFO-first-phase&quot;</span><span class="p">):</span>
@@ -524,23 +842,35 @@
         <span class="n">top</span> <span class="o">=</span> <span class="n">freq_cutoffs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Make sure you only look at Hilbert envelope values</span>
         <span class="c1"># for the specific freq band</span>
-        <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_band_zscore_detect</span><span class="p">(</span><span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">sfreq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">bot</span><span class="p">,</span>
-                                            <span class="n">top</span><span class="p">,</span> <span class="n">n_times</span><span class="p">,</span> <span class="n">cycles_threshold</span><span class="p">,</span>
-                                            <span class="n">gap_threshold</span><span class="p">,</span>
-                                            <span class="n">zscore_threshold</span><span class="p">))</span>
+        <span class="n">tdetects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">_band_zscore_detect</span><span class="p">(</span>
+                <span class="n">metric</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">sfreq</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">bot</span><span class="p">,</span>
+                <span class="n">top</span><span class="p">,</span>
+                <span class="n">n_times</span><span class="p">,</span>
+                <span class="n">cycles_threshold</span><span class="p">,</span>
+                <span class="n">gap_threshold</span><span class="p">,</span>
+                <span class="n">zscore_threshold</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">tdetects</span></div>
 
 
-<div class="viewcode-block" id="apply_std"><a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_std.html#mne_hfo.utils.apply_std">[docs]</a><span class="k">def</span> <span class="nf">apply_std</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate and apply the threshold based on number of standard deviations.</span>
+
+<div class="viewcode-block" id="apply_std">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.apply_std.html#mne_hfo.utils.apply_std">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_std</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold_dict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate and apply the threshold based on number of standard deviations.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    metric : np.ndarray</span>
-<span class="sd">        Values to apply the threshold to</span>
+<span class="sd">        Values to apply the threshold to.</span>
 <span class="sd">    threshold_dict : dict</span>
 <span class="sd">        Dictionary of threshold values. Should just have thresh,</span>
-<span class="sd">        which is the number of standard deviations to check against</span>
+<span class="sd">        which is the number of standard deviations to check against.</span>
 <span class="sd">    kwargs : dict</span>
 <span class="sd">        Additional key-word args from the detector needed to</span>
 <span class="sd">        apply the threshold.</span>
@@ -548,15 +878,16 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    output: List(tuples)</span>
-<span class="sd">        List of detected events that pass the threshold</span>
-
+<span class="sd">    output: List of tuple</span>
+<span class="sd">        List of detected events that pass the threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># determine threshold value</span>
     <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold_dict</span><span class="p">[</span><span class="s2">&quot;thresh&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;threshold_dict must have a value for &#39;thresh&#39;.&quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;threshold_dict must have a value for &#39;thresh&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; You passed </span><span class="si">{</span><span class="n">threshold_dict</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
     <span class="n">det_th</span> <span class="o">=</span> <span class="n">_get_threshold_std</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
 
     <span class="n">n_windows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
@@ -564,8 +895,10 @@
     <span class="n">win_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;win_size&quot;</span><span class="p">]</span>
     <span class="n">n_times</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_times&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="p">[</span><span class="n">step_size</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">n_times</span><span class="p">]):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kwargs must have step_size, win_size, &quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot;and n_times. You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;kwargs must have step_size, win_size, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;and n_times. You passed </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
     <span class="c1"># store thresholded hfo events as a list</span>
     <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
@@ -581,8 +914,7 @@
             <span class="c1"># contiguous windows</span>
             <span class="c1"># TODO: We could factor this out into an independent step,</span>
             <span class="c1">#  but that will just add comp time</span>
-            <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span> <span class="ow">and</span> \
-                    <span class="n">metric</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">win_idx</span> <span class="o">&lt;</span> <span class="n">n_windows</span> <span class="ow">and</span> <span class="n">metric</span><span class="p">[</span><span class="n">win_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">det_th</span><span class="p">:</span>
                 <span class="n">win_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">event_stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">win_idx</span> <span class="o">*</span> <span class="n">step_size</span><span class="p">)</span> <span class="o">+</span> <span class="n">win_size</span>
 
@@ -600,8 +932,9 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_get_threshold_std</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate threshold by Standard Deviations above the mean.</span>
 
 <span class="sd">    Parameters</span>
@@ -622,7 +955,7 @@
 
 
 <span class="k">def</span> <span class="nf">merge_contiguous_freq_bands</span><span class="p">(</span><span class="n">detections</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Merge detected events in contiguous freq bands and time windows.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge detected events in contiguous freq bands and time windows.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -641,6 +974,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">mne_hfo.posthoc</span> <span class="kn">import</span> <span class="n">_check_detection_overlap</span>
+
     <span class="n">outlines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">detection</span> <span class="ow">in</span> <span class="n">detections</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">band_idx</span> <span class="o">=</span> <span class="n">detection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -652,8 +986,9 @@
                 <span class="c1"># only try to merge contiguous freq bands</span>
                 <span class="k">if</span> <span class="n">outline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">band_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># Check if the events overlap in time</span>
-                    <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">([</span><span class="n">detection</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
-                                                <span class="p">[</span><span class="n">outline</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">outline</span><span class="p">[</span><span class="mi">2</span><span class="p">]]):</span>
+                    <span class="k">if</span> <span class="n">_check_detection_overlap</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">detection</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">detection</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">outline</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">outline</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+                    <span class="p">):</span>
                         <span class="c1"># merge the overlapping events</span>
                         <span class="n">outlines</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">_merge_outline</span><span class="p">(</span><span class="n">outlines</span><span class="p">,</span> <span class="n">detection</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -678,33 +1013,38 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">band_idx</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">max_frq</span><span class="p">,</span> <span class="n">freq_band</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="threshold_tukey"><a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey">[docs]</a><span class="k">def</span> <span class="nf">threshold_tukey</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="threshold_tukey">
+<a class="viewcode-back" href="../../generated/mne_hfo.utils.threshold_tukey.html#mne_hfo.utils.threshold_tukey">[docs]</a>
+<span class="k">def</span> <span class="nf">threshold_tukey</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate threshold by Tukey method.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    signal: numpy array</span>
-<span class="sd">        1D signal for threshold determination</span>
-<span class="sd">    threshold: float</span>
-<span class="sd">        Number of interquartile interval above the 75th percentile</span>
+<span class="sd">    signal : numpy array</span>
+<span class="sd">        1D signal for threshold determination.</span>
+<span class="sd">    threshold : float</span>
+<span class="sd">        Number of interquartile interval above the 75th percentile.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    ths_value: float</span>
-<span class="sd">        Value of the threshold</span>
+<span class="sd">    ths_value : float</span>
+<span class="sd">        Value of the threshold.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    [1] TUKEY JW. Comparing individual means in the analysis of</span>
 <span class="sd">        variance. Biometrics. 1949 Jun;5(2):99-114. PMID: 18151955.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ths_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>  <span class="c1"># noqa</span>
+    <span class="n">ths_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">+</span> <span class="n">threshold</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="p">)</span>  <span class="c1"># noqa</span>
     <span class="k">return</span> <span class="n">ths_value</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">threshold_quian</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate threshold by Quian.</span>
 
 <span class="sd">    Parameters</span>
@@ -727,38 +1067,71 @@
     <span class="k">return</span> <span class="n">ths_value</span>
 </pre></div>
 
-              </div>
+                </article>
               
               
-              <div class='prev-next-bottom'>
-                
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
 
-              </div>
-              
-          </main>
-          
-
-      </div>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2020-2023, MNE Developers. Last updated on 2023-09-21.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
     </div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
+</p></div>
+      
+    </div>
+  
+</div>
 
-  <footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2020-2021, MNE Developers. Last updated on 2021-06-14.<br/>
-</p>
-    </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
-</p>
-    </div>
-    
-  </div>
-</footer>
+  </footer>
   </body>
 </html>

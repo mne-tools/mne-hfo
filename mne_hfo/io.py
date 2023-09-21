@@ -178,7 +178,7 @@ def read_annotations(fname: Union[str, Path], root: Path = None) \
         )
 
     # read data
-    raw = read_raw_bids(raw_fpath)
+    raw = read_raw_bids(raw_fpath, verbose=False)
     sfreq = raw.info['sfreq']
 
     # create sample column

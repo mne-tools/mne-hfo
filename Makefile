@@ -4,8 +4,8 @@
 
 PYTHON ?= python
 PYTESTS ?= pytest
-CODESPELL_SKIPS ?= "docs/auto_*,*.fif,*.eve,*.gz,*.tgz,*.zip,*.mat,*.stc,*.label,*.w,*.bz2,*.annot,*.sulc,*.log,*.local-copy,*.orig_avg,*.inflated_avg,*.gii,*.pyc,*.doctree,*.pickle,*.inv,*.png,*.edf,*.touch,*.thickness,*.nofix,*.volume,*.defect_borders,*.mgh,lh.*,rh.*,COR-*,FreeSurferColorLUT.txt,*.examples,.xdebug_mris_calc,bad.segments,BadChannels,*.hist,empty_file,*.orig,*.js,*.map,*.ipynb,searchindex.dat,install_mne_c.rst,plot_*.rst,*.rst.txt,c_EULA.rst*,*.html,gdf_encodes.txt,*.svg,docs/_build*"
-CODESPELL_DIRS ?= mne_hfo/ docs/ examples/
+CODESPELL_SKIPS ?= "doc/auto_*,*.fif,*.eve,*.gz,*.tgz,*.zip,*.mat,*.stc,*.label,*.w,*.bz2,*.annot,*.sulc,*.log,*.local-copy,*.orig_avg,*.inflated_avg,*.gii,*.pyc,*.doctree,*.pickle,*.inv,*.png,*.edf,*.touch,*.thickness,*.nofix,*.volume,*.defect_borders,*.mgh,lh.*,rh.*,COR-*,FreeSurferColorLUT.txt,*.examples,.xdebug_mris_calc,bad.segments,BadChannels,*.hist,empty_file,*.orig,*.js,*.map,*.ipynb,searchindex.dat,install_mne_c.rst,plot_*.rst,*.rst.txt,c_EULA.rst*,*.html,gdf_encodes.txt,*.svg,doc/_build*"
+CODESPELL_DIRS ?= mne_hfo/ doc/ examples/
 
 all: clean inplace test
 
@@ -47,8 +47,8 @@ upload-pipy:
 reqs:
 	pipfile2req --dev > test_requirements.txt
 	pipfile2req > requirements.txt
-	pipfile2req > docs/requirements.txt
-	pipfile2req --dev >> docs/requirements.txt
+	pipfile2req > doc/requirements.txt
+	pipfile2req --dev >> doc/requirements.txt
 
 flake:
 	@if command -v flake8 > /dev/null; then \
@@ -78,9 +78,9 @@ pep:
 	@$(MAKE) -k flake pydocstyle codespell-error type-check
 
 build-doc:
-	cd docs; make clean
-	cd docs; make html
-	cd docs; make show
+	cd doc; make clean
+	cd doc; make html
+	cd doc; make show
 
 build-pipy:
 	python setup.py sdist bdist_wheel

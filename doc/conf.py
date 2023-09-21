@@ -96,7 +96,7 @@ numpydoc_xref_ignore = {
     'estimator', 'n_features', 'dataframe' ,'sparse', 'matrix',
     'n_output', 'Annotations', 'DataFrame', 'Detector', 'BIDSPath',
     'pd.DataFrame', 'List', 'Tuple',
-    "MetadataRequest",
+    "MetadataRequest", "sklearn.utils.metadata_routing.MetadataRequest",
 }
 numpydoc_xref_aliases = {
     # Python

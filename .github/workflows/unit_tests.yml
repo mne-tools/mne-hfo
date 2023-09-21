@@ -1,11 +1,23 @@
 name: test_suite
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}-${{ github.event.type }}
+  cancel-in-progress: true
+
 on:
   pull_request:
-    branches: [ '**' ]
-  create:
-    branches: [ main ]
-    tags: [ '**' ]
+    paths:
+      - "**"
+  push:
+    branches: [main]
+    paths:
+      - "**.py"
+    tags:
+      - "v*.*.*"
+
+env:
+  INSTALLDIR: "build-install"
+  CCACHE_DIR: "${{ github.workspace }}/.ccache"
 
 jobs:
   style:

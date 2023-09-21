@@ -1,4 +1,5 @@
 """Testing reading, creating and writing of files."""
+from importlib.resources import path
 from pathlib import Path
 
 import pandas as pd
@@ -8,7 +9,7 @@ from mne_bids import BIDSPath
 
 from mne_hfo import create_annotations_df, read_annotations, write_annotations
 
-data_path = Path("data")
+data_path = path("mne_hfo", Path("data"))
 subject = "01"
 session = "interictalsleep"
 run = "01"

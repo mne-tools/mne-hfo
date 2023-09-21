@@ -107,11 +107,7 @@ jobs:
           name: Build documentation
           command: |
             cd doc
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
-              make html
-            else
-              make html_stable
-            fi;
+            make html
       # Save the example test results
       - store_test_results:
           path: doc/_build/test-results
@@ -127,14 +123,14 @@ jobs:
       - store_artifacts:
           path: doc/_build/html/
           destination: dev
-      - store_artifacts:
-          path: doc/_build/html_stable/
-          destination: stable
+      # - store_artifacts:
+      #     path: doc/_build/html_stable/
+      #     destination: stable
       - persist_to_workspace:
           root: doc/_build
           paths:
             - html
-            - html_stable
+            # - html_stable
 
   docs-deploy:
     # will only be run on master branch

@@ -62,6 +62,7 @@ jobs:
       - name: Run bibclean
         run: |
           pwd
+          cd ..
           bibclean-check ./doc/references.bib
 
   build:

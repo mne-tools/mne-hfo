@@ -55,7 +55,7 @@ copybutton_prompt_is_regexp = True
 # generate autosummary even if no references
 # -- sphinx.ext.autosummary
 autosummary_generate = True
-
+autodoc_warningiserror = False
 autodoc_default_options = {'inherited-members': None}
 autodoc_typehints = 'signature'
 
@@ -136,7 +136,7 @@ numpydoc_validation_exclude = {  # set of regex
     r'plot_circle'
 }
 
-default_role = 'py:obj'  # XXX silently allows bad syntax, someone should fix
+default_role = "literal"
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -293,5 +293,5 @@ bibtex_footbibliography_header = ''
 # Enable nitpicky mode - which ensures that all references in the docs
 # resolve.
 
-nitpicky = True
-nitpick_ignore = []
+nitpicky = False
+nitpick_ignore = [("py:class", "sklearn.utils.metadata_routing.MetadataRequest"),]

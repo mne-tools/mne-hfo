@@ -2,20 +2,21 @@
 
 import numpy as np
 import pytest
+from mne import create_info
+from mne.io import RawArray
 from scipy.signal import butter, filtfilt
 from sklearn.utils.estimator_checks import parametrize_with_checks
-from mne.io import RawArray
-from mne import create_info
 
-from mne_hfo import LineLengthDetector, RMSDetector, \
-    HilbertDetector, CSDetector
+from mne_hfo import CSDetector, HilbertDetector, LineLengthDetector, RMSDetector
 
 
-@parametrize_with_checks([
-    RMSDetector(sfreq=2000, win_size=5),
-    LineLengthDetector(sfreq=2000, win_size=5),
-    # HilbertDetector(sfreq=2000),
-])
+@parametrize_with_checks(
+    [
+        RMSDetector(sfreq=2000, win_size=5),
+        LineLengthDetector(sfreq=2000, win_size=5),
+        # HilbertDetector(sfreq=2000),
+    ]
+)
 def test_sklearn_compat(estimator, check):
     """Tests sklearn API compatibility."""
     # in case there are any sklearn checks that need to be ignored
@@ -26,8 +27,8 @@ def test_sklearn_compat(estimator, check):
         # 'check_methods_sample_order_invariance',
         # negative window dimension not allowed
         # 'check_methods_subset_invariance',
-        'check_estimators_dtype',
-        'check_dtype_object',
+        "check_estimators_dtype",
+        "check_dtype_object",
     ]:
         pytest.skip()
 
@@ -49,32 +50,31 @@ def test_detect_hfo_ll(create_testing_eeg_data, benchmark):
     """
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
-    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
+    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], "bandpass")
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
     # create input data structure
-    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    info = create_info(sfreq=fs, ch_names=["a"], ch_types="seeg")
     raw = RawArray(filt_data, info=info)
 
-    compute_instance = LineLengthDetector(sfreq=fs, win_size=window_size,
-                                          filter_band=None, n_jobs=1)
-    dets = benchmark(compute_instance.fit,
-                     raw)
+    compute_instance = LineLengthDetector(
+        sfreq=fs, win_size=window_size, filter_band=None, n_jobs=1
+    )
+    dets = benchmark(compute_instance.fit, raw)
 
     compute_instance.fit(raw)
 
     # copied from epycom onset and offset sample of two HFO events
-    expected_vals = [(5040, 5198),
-                     (34992, 35134)]
+    expected_vals = [(5040, 5198), (34992, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
         onset = dets.hfo_annotations.onset[idx]
-        assert onset * raw.info['sfreq'] == exp_val[0]
+        assert onset * raw.info["sfreq"] == exp_val[0]
 
         duration = dets.hfo_annotations.duration[idx]
-        assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
+        assert (onset + duration) * raw.info["sfreq"] == exp_val[1]
 
 
 def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
@@ -84,33 +84,32 @@ def test_detect_hfo_rms(create_testing_eeg_data, benchmark):
     """
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
-    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
+    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], "bandpass")
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
     window_size = int((1 / 80) * fs)
 
     # create input data structure
-    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    info = create_info(sfreq=fs, ch_names=["a"], ch_types="seeg")
     raw = RawArray(filt_data, info=info)
 
-    compute_instance = RMSDetector(sfreq=fs, win_size=window_size,
-                                   filter_band=None, n_jobs=1)
-    dets = benchmark(compute_instance.fit,
-                     raw)
+    compute_instance = RMSDetector(
+        sfreq=fs, win_size=window_size, filter_band=None, n_jobs=1
+    )
+    dets = benchmark(compute_instance.fit, raw)
 
     # copied from epycom
-    expected_vals = [(5040, 5198),
-                     (35008, 35134)]
+    expected_vals = [(5040, 5198), (35008, 35134)]
 
     # loop over detected events
     for idx, (exp_val) in enumerate(expected_vals):
         onset = dets.hfo_annotations.onset[idx]
-        assert onset * raw.info['sfreq'] == exp_val[0]
+        assert onset * raw.info["sfreq"] == exp_val[0]
 
         duration = dets.hfo_annotations.duration[idx]
-        assert (onset + duration) * raw.info['sfreq'] == exp_val[1]
+        assert (onset + duration) * raw.info["sfreq"] == exp_val[1]
 
 
-@pytest.mark.skip(reason='Not as sensitive, need to investigate why')
+@pytest.mark.skip(reason="Not as sensitive, need to investigate why")
 def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     """Test HilbertDetector with simulated HFO.
 
@@ -118,45 +117,45 @@ def test_detect_hfo_hilbert(create_testing_eeg_data, benchmark):
     """
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
-    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], 'bandpass')
+    b, a = butter(3, [80 / (fs / 2), 600 / (fs / 2)], "bandpass")
     filt_data = filtfilt(b, a, data)[np.newaxis, :]
 
     # create input data structure
-    info = create_info(sfreq=fs, ch_names=['a'], ch_types='seeg')
+    info = create_info(sfreq=fs, ch_names=["a"], ch_types="seeg")
     raw = RawArray(filt_data, info=info)
 
-    compute_instance = HilbertDetector(filter_band=[80, 250],
-                                       n_jobs=1, threshold=3)
-    dets = benchmark(compute_instance.fit,
-                     raw)
+    compute_instance = HilbertDetector(filter_band=[80, 250], n_jobs=1, threshold=3)
+    dets = benchmark(compute_instance.fit, raw)
 
-    expected_vals = [(5056, 5123),
-                     (35028, 35063)]
+    expected_vals = [(5056, 5123), (35028, 35063)]
 
     for idx, (exp_val) in enumerate(expected_vals):
         assert dets.chs_hfos_list[0][idx][0] == exp_val[0]
         assert dets.chs_hfos_list[0][idx][1] == exp_val[1]
 
 
-@pytest.mark.skip(reason='need to implement...')
+@pytest.mark.skip(reason="need to implement...")
 def test_detect_hfo_cs_beta(create_testing_eeg_data, benchmark):
     data, hfo_samps = create_testing_eeg_data
     fs = 5000
     compute_instance = CSDetector()
-    compute_instance.params = {'fs': fs,
-                               'low_fc': 40,
-                               'high_fc': 1000,
-                               'threshold': 0.1,
-                               'cycs_per_detect': 4.0}
+    compute_instance.params = {
+        "fs": fs,
+        "low_fc": 40,
+        "high_fc": 1000,
+        "threshold": 0.1,
+        "cycs_per_detect": 4.0,
+    }
 
-    dets = benchmark(compute_instance.fit,
-                     data)
+    dets = benchmark(compute_instance.fit, data)
 
     compute_instance.fit(data)
 
     # Only the second HFO is caught by CS (due to signal artificiality)
-    expected_vals = [(34992, 35090),  # Band detection
-                     (34992, 35090)]  # Conglomerate detection
+    expected_vals = [
+        (34992, 35090),  # Band detection
+        (34992, 35090),
+    ]  # Conglomerate detection
     # [hfo_samps[1], hfo_samps[1]]  #
 
     for exp_val, det in zip(expected_vals, dets):

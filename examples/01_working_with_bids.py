@@ -50,11 +50,11 @@ from mne_hfo import (RMSDetector, write_annotations,
 #
 
 # root of BIDs dataset
-root = Path('../data/')
+root = Path('../mne_hfo/tests/data/')
 
 # BIDS entities
 subject = '01'
-session = 'interictalsleep'
+task = 'interictalsleep'
 run = '01'
 datatype = 'ieeg'
 
@@ -67,7 +67,7 @@ print(make_report(root, verbose=False))
 
 ###############################################################################
 # Load the dataset.
-bids_path = BIDSPath(subject=subject, session=session,
+bids_path = BIDSPath(subject=subject, task=task,
                      run=run, datatype=datatype, root=root,
                      suffix='ieeg', extension='.vhdr')
 raw = read_raw_bids(bids_path)

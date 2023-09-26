@@ -3,26 +3,35 @@ from typing import Union
 import mne
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed, cpu_count
+from joblib import Parallel, cpu_count, delayed
+from mne import Annotations
 from mne.utils import warn
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_is_fitted
 from tqdm import tqdm
 
-from mne import Annotations
-
 from mne_hfo.config import MINIMUM_SUGGESTED_SFREQ
 from mne_hfo.io import create_annotations_df
-from mne_hfo.score import accuracy, false_negative_rate, \
-    true_positive_rate, precision, false_discovery_rate
+from mne_hfo.score import (
+    accuracy,
+    false_discovery_rate,
+    false_negative_rate,
+    precision,
+    true_positive_rate,
+)
 from mne_hfo.sklearn import _make_ydf_sklearn
-from mne_hfo.utils import (apply_std, compute_rms,
-                           compute_line_length, compute_hilbert, apply_hilbert,
-                           merge_contiguous_freq_bands)
+from mne_hfo.utils import (
+    apply_hilbert,
+    apply_std,
+    compute_hilbert,
+    compute_line_length,
+    compute_rms,
+    merge_contiguous_freq_bands,
+)
 
-ACCEPTED_THRESHOLD_METHODS = ['std', 'hilbert']
-ACCEPTED_MERGE_METHODS = ['time-windows', 'freq-bands']
-ACCEPTED_HFO_METHODS = ['line_length', 'rms', 'hilbert']
+ACCEPTED_THRESHOLD_METHODS = ["std", "hilbert"]
+ACCEPTED_MERGE_METHODS = ["time-windows", "freq-bands"]
+ACCEPTED_HFO_METHODS = ["line_length", "rms", "hilbert"]
 
 
 class Detector(BaseEstimator):
@@ -53,10 +62,15 @@ class Detector(BaseEstimator):
     verbose: bool
     """
 
-    def __init__(self, threshold: Union[int, float],
-                 win_size: Union[int, None], overlap: Union[float, None],
-                 scoring_func: str, n_jobs: int,
-                 verbose: bool):
+    def __init__(
+        self,
+        threshold: Union[int, float],
+        win_size: Union[int, None],
+        overlap: Union[float, None],
+        scoring_func: str,
+        n_jobs: int,
+        verbose: bool,
+    ):
         self.win_size = win_size
         self.threshold = threshold
         self.overlap = overlap
@@ -76,12 +90,9 @@ class Detector(BaseEstimator):
             An array that consists of channels X windows X
             frequency bands.
         """
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
         if self.filter_band is not None:
-            self.freq_cutoffs = np.array([self.filter_band[0],
-                                          self.filter_band[1]])
+            self.freq_cutoffs = np.array([self.filter_band[0], self.filter_band[1]])
         else:
             self.freq_cutoffs = np.array([30, 500])
         n_bands = len(self.freq_cutoffs) - 1
@@ -107,8 +118,9 @@ class Detector(BaseEstimator):
             HFO event array that is (n_chs, n_windows). It is a boolean mask
             that consists of either 1's and 0's, or True's and False's.
         """
-        raise NotImplementedError('Private function that computes the HFOs '
-                                  'needs to be implemented.')
+        raise NotImplementedError(
+            "Private function that computes the HFOs " "needs to be implemented."
+        )
 
     def _threshold_statistic(self, hfo_statistic_arr):
         """Apply threshold(s) to the calculated statistic to generate hfo events.
@@ -124,8 +136,9 @@ class Detector(BaseEstimator):
             HFO event array that contains (at minimum) a series of start
             and stop times.
         """
-        raise NotImplementedError('Private function that computes the HFOs '
-                                  'needs to be implemented.')
+        raise NotImplementedError(
+            "Private function that computes the HFOs " "needs to be implemented."
+        )
 
     def _post_process_ch_hfos(self, hfo_event_array):
         """Post process one channel's HFO events generally after thresholding.
@@ -144,8 +157,9 @@ class Detector(BaseEstimator):
             A list of tuples, storing the event start and stop sample index
             for the detected HFO.
         """
-        raise NotImplementedError('Private function that computes the HFOs '
-                                  'needs to be implemented.')
+        raise NotImplementedError(
+            "Private function that computes the HFOs " "needs to be implemented."
+        )
 
     def _compute_n_wins(self, win_size, step_size, n_times):
         n_windows = int(np.ceil((n_times - win_size) / step_size)) + 1
@@ -154,11 +168,11 @@ class Detector(BaseEstimator):
     def _check_input_raw(self, X, y):
         if isinstance(X, mne.io.BaseRaw):
             X.shape = (len(X.ch_names), len(X))
-            self.sfreq = X.info['sfreq']
+            self.sfreq = X.info["sfreq"]
             self.ch_names = X.ch_names
             X = X.get_data()
         elif isinstance(X, pd.DataFrame):
-            '''Handle the case of SearchCV'''
+            """Handle the case of SearchCV"""
             ch_names = X.index
 
             # Dataframe was transposed
@@ -171,17 +185,19 @@ class Detector(BaseEstimator):
 
             # compute periods and the sampling rate
             periods = [x.total_seconds() for x in diff]
-            if not np.all(np.isclose(periods, np.median(periods),
-                                     rtol=1e-3, atol=1e-5)):
-                raise RuntimeError('Not all sampling periods of the '
-                                   'raw data are similar...')
-            sfreq = 1. / periods[0]
+            if not np.all(
+                np.isclose(periods, np.median(periods), rtol=1e-3, atol=1e-5)
+            ):
+                raise RuntimeError(
+                    "Not all sampling periods of the " "raw data are similar..."
+                )
+            sfreq = 1.0 / periods[0]
 
             self.ch_names = ch_names
             self.sfreq = sfreq
             X = X.to_numpy()
         else:
-            if not hasattr(self, 'ch_names'):
+            if not hasattr(self, "ch_names"):
                 self.ch_names = np.arange(len(X)).astype(str)
             # pass
             # raise ValueError(f'Only dataframe and mne.io.Raw input is '
@@ -189,31 +205,37 @@ class Detector(BaseEstimator):
 
         # use sklearn's validation of data
         if y is None:
-            X = self._validate_data(X, dtype='float64')
+            X = self._validate_data(X, dtype="float64")
         else:
-            X, y = self._validate_data(X, y, accept_sparse=False,
-                                       dtype='float64',
-                                       multi_output=True,
-                                       accept_large_sparse=False)
+            X, y = self._validate_data(
+                X,
+                y,
+                accept_sparse=False,
+                dtype="float64",
+                multi_output=True,
+                accept_large_sparse=False,
+            )
 
         self.n_chs, self.n_times = X.shape
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
 
         if n_windows < 0:
-            raise ValueError(f'Negative dimensions are not allowed. '
-                             f'This is probably due to there being '
-                             f'n_features=1 (sample point) in the dataset. '
-                             f'Current data segment has shape {X.shape}. '
-                             f'Pass in a longer data segment.')
+            raise ValueError(
+                f"Negative dimensions are not allowed. "
+                f"This is probably due to there being "
+                f"n_features=1 (sample point) in the dataset. "
+                f"Current data segment has shape {X.shape}. "
+                f"Pass in a longer data segment."
+            )
 
         # if the number of time points is smaller then the window size
         # then raise an Error
         if self.n_times < self.win_size:
-            raise ValueError(f'Got data matrix with {self.n_times} sample '
-                             f'points, which is less then {self.win_size} '
-                             f'window size. Please pass in a longer segment.')
+            raise ValueError(
+                f"Got data matrix with {self.n_times} sample "
+                f"points, which is less then {self.win_size} "
+                f"window size. Please pass in a longer segment."
+            )
 
         return X, y
 
@@ -330,7 +352,7 @@ class Detector(BaseEstimator):
         """
         if format is None:
             return self.hfo_annotations.to_data_frame()
-        elif format == 'bids':
+        elif format == "bids":
             # format as an annots.tsv DataFrame
             annots = self.hfo_annotations
             onset = annots.onset
@@ -342,8 +364,8 @@ class Detector(BaseEstimator):
 
             # create an annotations.tsv dataframe
             df = create_annotations_df(
-                onset, duration, ch_names,
-                annotation_label=label, sfreq=self.sfreq)
+                onset, duration, ch_names, annotation_label=label, sfreq=self.sfreq
+            )
             return df
 
     def fit(self, X, y=None):
@@ -373,12 +395,14 @@ class Detector(BaseEstimator):
 
         sfreq = self.sfreq
         if sfreq < MINIMUM_SUGGESTED_SFREQ:
-            warn(f'Sampling frequency of {sfreq} is '
-                 f'below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. '
-                 f'Please use with caution.')
+            warn(
+                f"Sampling frequency of {sfreq} is "
+                f"below the suggested rate of {MINIMUM_SUGGESTED_SFREQ}. "
+                f"Please use with caution."
+            )
 
         # store HFO events as list of mne.annotations
-        hfo_description = 'hfo'
+        hfo_description = "hfo"
         hfo_annotations = []
 
         self.hfo_event_arr_ = self._create_empty_event_arr()
@@ -389,7 +413,8 @@ class Detector(BaseEstimator):
 
                 # compute HFOs for this channel
                 ch_hfo_events, statistic = self._fit_channel(
-                    sig, sfreq, ch_name, hfo_description=hfo_description)
+                    sig, sfreq, ch_name, hfo_description=hfo_description
+                )
 
                 # create list of annotations
                 hfo_annotations.append(ch_hfo_events)
@@ -402,11 +427,14 @@ class Detector(BaseEstimator):
                 n_jobs = self.n_jobs
 
             # run joblib parallelization over channels
-            ch_hfos, statistics = zip(*Parallel(n_jobs=n_jobs)(
-                delayed(self._fit_channel)(
-                    X[idx, :], sfreq, self.ch_names[idx], hfo_description
-                ) for idx in tqdm(range(self.n_chs))
-            ))
+            ch_hfos, statistics = zip(
+                *Parallel(n_jobs=n_jobs)(
+                    delayed(self._fit_channel)(
+                        X[idx, :], sfreq, self.ch_names[idx], hfo_description
+                    )
+                    for idx in tqdm(range(self.n_chs))
+                )
+            )
             for idx in range(len(ch_hfos)):
                 # chs_hfos[self.ch_names[idx]] = ch_hfos[idx]
                 hfo_annotations.append(ch_hfos[idx])
@@ -422,7 +450,7 @@ class Detector(BaseEstimator):
         self.chs_hfos_ = all_hfo_annots
         return self
 
-    def _fit_channel(self, sig, sfreq, ch_name, hfo_description='hfo'):
+    def _fit_channel(self, sig, sfreq, ch_name, hfo_description="hfo"):
         """Compute a list of HFO events for channel."""
         # compute the metric over the signal used to compute the HFO
         # e.g. RMS, or Line Length over time
@@ -437,16 +465,16 @@ class Detector(BaseEstimator):
 
         # extract onset, and durations of each HFO detected to form Annotations
         onset, duration = [], []
-        for (start_sample, stop_sample) in ch_hfo_list:
+        for start_sample, stop_sample in ch_hfo_list:
             onset.append(start_sample / sfreq)
             duration.append((stop_sample - start_sample) / sfreq)
 
         # create Annotations object
         description = [hfo_description] * len(onset)
         ch_names = [[ch_name] for _ in range(len(onset))]
-        ch_hfo_events = Annotations(onset=onset, duration=duration,
-                                    description=description,
-                                    ch_names=ch_names)
+        ch_hfo_events = Annotations(
+            onset=onset, duration=duration, description=description, ch_names=ch_names
+        )
         return ch_hfo_events, hfo_statistic_arr
 
     def _apply_threshold(self, metric, threshold_method):
@@ -465,31 +493,36 @@ class Detector(BaseEstimator):
 
         """
         if threshold_method not in ACCEPTED_THRESHOLD_METHODS:
-            raise ValueError(f'Threshold method {threshold_method} '
-                             f'is not an implemented threshold method. '
-                             f'Please use one of {ACCEPTED_THRESHOLD_METHODS} '
-                             f'methods.')
-        if threshold_method == 'std':
+            raise ValueError(
+                f"Threshold method {threshold_method} "
+                f"is not an implemented threshold method. "
+                f"Please use one of {ACCEPTED_THRESHOLD_METHODS} "
+                f"methods."
+            )
+        if threshold_method == "std":
             threshold_func = apply_std
             threshold_dict = dict(thresh=self.threshold)
-            kwargs = dict(step_size=self.step_size,
-                          win_size=self.win_size,
-                          n_times=self.n_times)
-        elif threshold_method == 'hilbert':
+            kwargs = dict(
+                step_size=self.step_size, win_size=self.win_size, n_times=self.n_times
+            )
+        elif threshold_method == "hilbert":
             threshold_func = apply_hilbert
-            threshold_dict = dict(zscore=self.threshold,
-                                  cycles=self.cycle_threshold,
-                                  gap=self.gap_threshold)
-            kwargs = dict(n_times=self.n_times,
-                          sfreq=self.sfreq,
-                          filter_band=self.filter_band,
-                          freq_cutoffs=self.freq_cutoffs,
-                          freq_span=self.freq_span,
-                          n_jobs=self.n_jobs)
+            threshold_dict = dict(
+                zscore=self.threshold,
+                cycles=self.cycle_threshold,
+                gap=self.gap_threshold,
+            )
+            kwargs = dict(
+                n_times=self.n_times,
+                sfreq=self.sfreq,
+                filter_band=self.filter_band,
+                freq_cutoffs=self.freq_cutoffs,
+                freq_span=self.freq_span,
+                n_jobs=self.n_jobs,
+            )
 
         if self.verbose:
-            print(f'Using {threshold_method} to perform HFO '
-                  f'thresholding.')
+            print(f"Using {threshold_method} to perform HFO " f"thresholding.")
 
         thresholded_metric = threshold_func(metric, threshold_dict, kwargs)
         return thresholded_metric
@@ -514,7 +547,8 @@ class Detector(BaseEstimator):
         check_is_fitted(self)
         self.fit(X, None)
         ypred = _make_ydf_sklearn(
-            self.to_data_frame(format='bids'), ch_names=self.ch_names)
+            self.to_data_frame(format="bids"), ch_names=self.ch_names
+        )
         return ypred
 
     def _compute_sliding_window_detection(self, sig, method):
@@ -538,21 +572,21 @@ class Detector(BaseEstimator):
 
         """
         if method not in ACCEPTED_HFO_METHODS:
-            raise ValueError(f'Sliding window HFO detection method '
-                             f'{method} is not implemented. Please '
-                             f'use one of {ACCEPTED_HFO_METHODS}.')
+            raise ValueError(
+                f"Sliding window HFO detection method "
+                f"{method} is not implemented. Please "
+                f"use one of {ACCEPTED_HFO_METHODS}."
+            )
 
-        if method == 'rms':
+        if method == "rms":
             hfo_detect_func = compute_rms
-        elif method == 'line_length':
+        elif method == "line_length":
             hfo_detect_func = compute_line_length
 
         # Overlapping window
         win_start = 0
         win_stop = self.win_size
-        n_windows = self._compute_n_wins(self.win_size,
-                                         self.step_size,
-                                         self.n_times)
+        n_windows = self._compute_n_wins(self.win_size, self.step_size, self.n_times)
 
         # store the statistic of each window
         signal_win_stat = np.empty(n_windows)
@@ -564,7 +598,8 @@ class Detector(BaseEstimator):
             # compute the statistic based on 'method' on filtered signal
             # in this window
             stat = hfo_detect_func(
-                sig[int(win_start):int(win_stop)], win_size=self.win_size)[0]
+                sig[int(win_start) : int(win_stop)], win_size=self.win_size
+            )[0]
             signal_win_stat[win_idx] = stat
 
             if win_stop == self.n_times:
@@ -577,13 +612,16 @@ class Detector(BaseEstimator):
 
     def _compute_frq_band_detection(self, sig, method):
         if method not in ACCEPTED_HFO_METHODS:
-            raise ValueError(f'Sliding window HFO detection method '
-                             f'{method} is not implemented. Please '
-                             f'use one of {ACCEPTED_HFO_METHODS}.')
-        if method == 'hilbert':
+            raise ValueError(
+                f"Sliding window HFO detection method "
+                f"{method} is not implemented. Please "
+                f"use one of {ACCEPTED_HFO_METHODS}."
+            )
+        if method == "hilbert":
             hfo_detect_func = compute_hilbert
-        signal_stat = hfo_detect_func(sig, self.freq_cutoffs,
-                                      self.freq_span, self.sfreq)
+        signal_stat = hfo_detect_func(
+            sig, self.freq_cutoffs, self.freq_span, self.sfreq
+        )
         return signal_stat
 
     def _merge_contiguous_ch_detections(self, detections, method):
@@ -604,10 +642,12 @@ class Detector(BaseEstimator):
 
         """
         if method not in ACCEPTED_MERGE_METHODS:
-            raise ValueError(f'Merging method {method} '
-                             f'is not an implemented merging method. '
-                             f'Please use one of {ACCEPTED_MERGE_METHODS} '
-                             f'methods.')
+            raise ValueError(
+                f"Merging method {method} "
+                f"is not an implemented merging method. "
+                f"Please use one of {ACCEPTED_MERGE_METHODS} "
+                f"methods."
+            )
         if method == "time-windows":
             return detections
         elif method == "freq-bands":

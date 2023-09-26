@@ -2,7 +2,7 @@ import mne
 import numpy as np
 from scipy.signal import hilbert
 
-from mne_hfo.base import Detector
+from .base import Detector
 
 
 class CSDetector(Detector):
@@ -29,9 +29,13 @@ class MorphologyDetector(Detector):  # noqa
 
     The next step detects HFOs.
 
+    Note: Note implemented yet. TODO
+
     """
 
-    def __init__(self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9):
+    def __init__(
+        self, sfreq: int, l_freq: int, h_freq: int, entropy_threshold: float = 0.9
+    ):
         self.sfreq = sfreq
         self.ripple_l_freq = 80
         self.ripple_h_freq = 250
@@ -69,27 +73,33 @@ class MorphologyDetector(Detector):  # noqa
 
         # apply threshold and baseline
         freq_ent_thresh = freq_entropy > entropy_freq_threshold
-
+        print(freq_ent_thresh)
         # determine length of each epoch that passes the threshold
 
     def fit(self, X, y=None):
         """Override ``Detector.fit`` function."""
         # create a copy of the ripple data
-        ripple_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                             l_freq=self.ripple_l_freq,
-                                             h_freq=self.ripple_h_freq,
-                                             method='fir',
-                                             copy=True)
+        ripple_data = mne.filter.filter_data(
+            X,
+            sfreq=self.sfreq,
+            l_freq=self.ripple_l_freq,
+            h_freq=self.ripple_h_freq,
+            method="fir",
+            copy=True,
+        )
 
         # create a copy of the fast ripple data
-        fr_data = mne.filter.filter_data(X, sfreq=self.sfreq,
-                                         l_freq=self.fr_l_freq,
-                                         h_freq=self.fr_h_freq,
-                                         method='fir',
-                                         copy=True)
+        # fr_data = mne.filter.filter_data(
+        #     X,
+        #     sfreq=self.sfreq,
+        #     l_freq=self.fr_l_freq,
+        #     h_freq=self.fr_h_freq,
+        #     method="fir",
+        #     copy=True,
+        # )
 
         # compute the Hilbert transform envelope
         # (i.e. the envelope)
         hfx = np.abs(hilbert(ripple_data))
-
+        print(hfx)
         pass

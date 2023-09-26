@@ -6,19 +6,19 @@ Installation
 Dependencies
 ------------
 
-* ``mne`` (>=0.22)
-* ``mne-bids`` (>=0.6)
-* ``numpy`` (>=1.14)
-* ``scipy`` (>=1.5.0 for certain operations with EEGLAB data)
-* ``joblib`` (>=1.0.0)
-* ``pandas`` (>=0.23.4, optional, for generating event statistics)
+* ``mne``
+* ``mne-bids``
+* ``numpy``
+* ``scipy`` (for certain operations with EEGLAB data)
+* ``joblib``
+* ``pandas`` (optional, for generating event statistics)
 * ``matplotlib`` (optional, for using the interactive data inspector)
 
-We require that you use Python 3.6 or higher.
-You may choose to install ``mne-hfo`` `via pip <#Installation via pip>`_.
+We require that you use Python 3.8 or higher.
+You may choose to install ``mne-hfo`` via pip.
 
-Installation via Pipenv
------------------------
+Installation via Pip
+--------------------
 
 To install MNE-HFO including all dependencies required to use all features,
 simply run the following at the root of the repository:
@@ -26,7 +26,7 @@ simply run the following at the root of the repository:
 .. code-block:: bash
 
     python -m venv .venv
-    pipenv install
+    pip install -e .
 
 If you want to install a snapshot of the current development version, run:
 

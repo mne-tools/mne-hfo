@@ -4,8 +4,8 @@
 
 PYTHON ?= python
 PYTESTS ?= pytest
-CODESPELL_SKIPS ?= "docs/auto_*,*.fif,*.eve,*.gz,*.tgz,*.zip,*.mat,*.stc,*.label,*.w,*.bz2,*.annot,*.sulc,*.log,*.local-copy,*.orig_avg,*.inflated_avg,*.gii,*.pyc,*.doctree,*.pickle,*.inv,*.png,*.edf,*.touch,*.thickness,*.nofix,*.volume,*.defect_borders,*.mgh,lh.*,rh.*,COR-*,FreeSurferColorLUT.txt,*.examples,.xdebug_mris_calc,bad.segments,BadChannels,*.hist,empty_file,*.orig,*.js,*.map,*.ipynb,searchindex.dat,install_mne_c.rst,plot_*.rst,*.rst.txt,c_EULA.rst*,*.html,gdf_encodes.txt,*.svg,docs/_build*"
-CODESPELL_DIRS ?= mne_hfo/ docs/ examples/
+CODESPELL_SKIPS ?= "doc/auto_*,*.fif,*.eve,*.gz,*.tgz,*.zip,*.mat,*.stc,*.label,*.w,*.bz2,*.annot,*.sulc,*.log,*.local-copy,*.orig_avg,*.inflated_avg,*.gii,*.pyc,*.doctree,*.pickle,*.inv,*.png,*.edf,*.touch,*.thickness,*.nofix,*.volume,*.defect_borders,*.mgh,lh.*,rh.*,COR-*,FreeSurferColorLUT.txt,*.examples,.xdebug_mris_calc,bad.segments,BadChannels,*.hist,empty_file,*.orig,*.js,*.map,*.ipynb,searchindex.dat,install_mne_c.rst,plot_*.rst,*.rst.txt,c_EULA.rst*,*.html,gdf_encodes.txt,*.svg,doc/_build*"
+CODESPELL_DIRS ?= mne_hfo/ doc/ examples/
 
 all: clean inplace test
 
@@ -27,7 +27,7 @@ clean: clean-build clean-so clean-ctags
 inplace:
 	$(PYTHON) setup.py develop
 
-test: inplace check-manifest
+test: inplace
 	rm -f .coverage
 	$(PYTESTS) mne_hfo
 
@@ -44,14 +44,11 @@ trailing-spaces:
 upload-pipy:
 	python setup.py sdist bdist_egg register upload
 
-check-manifest:
-	check-manifest --ignore .circleci/*,docs,.DS_Store
-
 reqs:
 	pipfile2req --dev > test_requirements.txt
 	pipfile2req > requirements.txt
-	pipfile2req > docs/requirements.txt
-	pipfile2req --dev >> docs/requirements.txt
+	pipfile2req > doc/requirements.txt
+	pipfile2req --dev >> doc/requirements.txt
 
 flake:
 	@if command -v flake8 > /dev/null; then \
@@ -68,22 +65,38 @@ pydocstyle:
 	@pydocstyle
 
 codespell:  # running manually
-	@codespell -w -i 3 -q 3 -S $(CODESPELL_SKIPS) --ignore-words=ignore_words.txt $(CODESPELL_DIRS)
+	@codespell -w -i 3 -q 3 -S $(CODESPELL_SKIPS) --ignore-words=.codespellignore $(CODESPELL_DIRS)
 
 codespell-error:  # running on travis
 	@echo "Running code-spell check"
-	@codespell -i 0 -q 7 -S $(CODESPELL_SKIPS) --ignore-words=ignore_words.txt $(CODESPELL_DIRS)
+	@codespell -i 0 -q 7 -S $(CODESPELL_SKIPS) --ignore-words=.codespellignore $(CODESPELL_DIRS)
+
+isort:
+	@if command -v isort > /dev/null; then \
+		echo "Running isort"; \
+		isort mne_hfo examples doc; \
+	else \
+		echo "isort not found, please install it!"; \
+		exit 1; \
+	fi;
+	@echo "isort passed"
 
 type-check:
 	mypy ./mne_hfo
 
-pep:
-	@$(MAKE) -k flake pydocstyle check-manifest codespell-error type-check
+run-checks:
+	isort --check .
+	black --check mne_hfo examples
+	flake8 .
+	mypy ./mne_hfo
+	@$(MAKE) pydocstyle
+	@$(MAKE) codespell-error
+	bibclean-check ./doc/references.bib
 
 build-doc:
-	cd docs; make clean
-	cd docs; make html
-	cd docs; make show
+	cd doc; make clean
+	cd doc; make html
+	cd doc; make show
 
 build-pipy:
 	python setup.py sdist bdist_wheel

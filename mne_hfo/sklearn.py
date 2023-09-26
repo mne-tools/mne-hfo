@@ -24,8 +24,9 @@ def _convert_y_sklearn_to_annot_df(ylist):
             # if onset/offset is None, then there is
             # on HFO for this channel
             if onset is not None:
-                if (sfreq is not None) and \
-                        (not np.isnan(np.array([sfreq], dtype=np.float64))):
+                if (sfreq is not None) and (
+                    not np.isnan(np.array([sfreq], dtype=np.float64))
+                ):
                     # Sampling frequencies should always be integers
                     # Solves issues with unique check due to float
                     # division
@@ -39,18 +40,22 @@ def _convert_y_sklearn_to_annot_df(ylist):
     # If no hfos detected, return an empty annotation df
     if not sfreqs:
         empty_annotation_df = pd.DataFrame(
-            columns=['onset', 'duration', 'channels', 'label',
-                     'sample'])
+            columns=["onset", "duration", "channels", "label", "sample"]
+        )
         return empty_annotation_df
     # If hfos are detected, assert they all have the same frq
     assert len(np.unique(sfreqs)) == 1
     sfreq = sfreqs[0]
 
     # create the output annotations dataframe
-    annot_df = create_annotations_df(onset=onset_sec, duration=duration_sec,
-                                     ch_name=ch_names, sfreq=sfreq,
-                                     annotation_label=labels)
-    annot_df['sample'] = annot_df['onset'].multiply(sfreq)
+    annot_df = create_annotations_df(
+        onset=onset_sec,
+        duration=duration_sec,
+        ch_name=ch_names,
+        sfreq=sfreq,
+        annotation_label=labels,
+    )
+    annot_df["sample"] = annot_df["onset"].multiply(sfreq)
     return annot_df
 
 
@@ -84,12 +89,11 @@ def make_Xy_sklearn(raw, df):
     ch_results = _make_ydf_sklearn(df, ch_names)
 
     # set arbitrary measurement date to allow time format as a datetime
-    if raw.info['meas_date'] is None:
+    if raw.info["meas_date"] is None:
         raw.set_meas_date(datetime.now(tz=timezone.utc))
 
     # keep as C x T
-    raw_df = raw.to_data_frame(index='time',
-                               time_format='datetime').T
+    raw_df = raw.to_data_frame(index="time", time_format="datetime").T
 
     return raw_df, ch_results
 
@@ -134,15 +138,17 @@ def _make_ydf_sklearn(ydf, ch_names):
     ch_results = []
 
     # make sure offset in column
-    if 'offset' not in ydf.columns:
-        ydf['offset'] = ydf['onset'] + ydf['duration']
+    if "offset" not in ydf.columns:
+        ydf["offset"] = ydf["onset"] + ydf["duration"]
 
-    ch_groups = ydf.groupby(['channels'])
+    ch_groups = ydf.groupby(["channels"])
     if any([ch not in ch_names for ch in ch_groups.groups]):  # type: ignore
-        raise RuntimeError(f'Channel {ch_groups.groups} contain '
-                           f'channels not in '
-                           f'actual data channel names: '
-                           f'{ch_names}.')
+        raise RuntimeError(
+            f"Channel {ch_groups.groups} contain "
+            f"channels not in "
+            f"actual data channel names: "
+            f"{ch_names}."
+        )
 
     # group by channels
     for idx, ch in enumerate(ch_names):
@@ -153,15 +159,21 @@ def _make_ydf_sklearn(ydf, ch_names):
         ch_df = ch_groups.get_group(ch)
 
         # obtain list of HFO onset, offset for this channel
-        ch_name_as_list = [ch] * len(ch_df['onset'])
-        sfreqs = ch_df['sfreq']
-        ch_results.append(list(zip(ch_df['onset'],
-                                   ch_df['offset'],
-                                   ch_name_as_list,
-                                   ch_df['label'],
-                                   sfreqs)))
+        ch_name_as_list = [ch] * len(ch_df["onset"])
+        sfreqs = ch_df["sfreq"]
+        ch_results.append(
+            list(
+                zip(
+                    ch_df["onset"],
+                    ch_df["offset"],
+                    ch_name_as_list,
+                    ch_df["label"],
+                    sfreqs,
+                )
+            )
+        )
 
-    ch_results = np.asarray(ch_results, dtype='object')
+    ch_results = np.asarray(ch_results, dtype="object")
     return ch_results
 
 

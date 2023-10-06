@@ -317,6 +317,12 @@ class RMSDetector(Detector):
     verbose : bool
         Verbosity of the detector.
 
+    Notes
+    ----------
+
+    TODO later
+
+    
     References
     ----------
     .. footbibliography::

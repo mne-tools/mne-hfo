@@ -10,4 +10,5 @@ from .posthoc import (
     find_coincident_events,
     match_detected_annotations,
     merge_overlapping_events,
+    merge_channel_events
 )

@@ -203,6 +203,76 @@ def _join_times(df: pd.DataFrame) -> pd.DataFrame:
 
     return res
 
+def _join_times_channels(df: pd.DataFrame) -> pd.DataFrame:
+    """Join together start and end times sorted in order.
+
+    Creates a second column ``what`` that marks +1/-1 for start/end times
+    to keep track of how many intervals are overlapping. Then a ``newwin``
+    column is added to identify the beginning of a new non-overlapping time interval
+    and a ``group`` column is added to mark the rows that belong to the same
+    overlapping time interval.
+
+    This ``group`` column is added to the original dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+
+    Returns
+    -------
+    res : pd.DataFrame
+
+    References
+    ----------
+    .. [1] https://stackoverflow.com/questions/57804145/combining-rows-with-overlapping-time-periods-in-a-pandas-dataframe  # noqa
+    """
+    startdf = pd.DataFrame(
+        {  # type: ignore
+            "time": df["start_timestamp"],  # type: ignore
+            "what": 1,
+        }
+    )  # type: ignore
+    enddf = pd.DataFrame(
+        {  # type: ignore
+            "time": df["end_timestamp"],  # type: ignore
+            "what": -1,
+        }
+    )  # type: ignore
+
+    # create merged dataframe of start and end times that are
+    # sorted by timestamp
+    mergdf = pd.concat([startdf, enddf]).sort_values("time")
+
+    # get a running cumulative sum
+    mergdf["running"] = mergdf["what"].cumsum()  # type: ignore
+
+    # assign groups to overlapping intervals
+    mergdf["newwin"] = mergdf["running"].eq(1) & mergdf["what"].eq(  # type: ignore
+        1
+    )  # type: ignore
+    mergdf["group"] = mergdf["newwin"].cumsum()  # type: ignore
+
+    # add the group assignments to the original dataframe
+    df["group"] = mergdf["group"].loc[mergdf["what"].eq(1)]  # type: ignore
+
+    # now group all overlapping intervals in the original dataframe
+    # agg_func_dict = {col: lambda x: set(x) for col in df.columns}
+    res = (
+        df.reset_index(names="orig_indices")
+        .groupby("group")
+        .agg(
+            {
+                "start_timestamp": "first",
+                "end_timestamp": "last",
+                "label": "unique",
+                "ref_timestamp": "first",
+                "channels": lambda channel: list(channel),
+                "orig_indices": lambda i: list(i),
+            }
+        )
+    )
+
+    return res
 
 def merge_overlapping_events(df: pd.DataFrame):
     """Merge overlapping events detected.
@@ -269,6 +339,56 @@ def merge_overlapping_events(df: pd.DataFrame):
 
     return merged_df
 
+def merge_channel_events(df: pd.DataFrame):
+    """Merge overlapping events across channels
+
+    Parameters
+    
+    """
+
+    orig_cols = df.columns
+
+    # check dataframe
+    df = _check_df(df, df_type="annotations")
+
+    # compute sfreq. XXX: assumes only 1 sampling rate
+    sfreq = np.unique(df["sfreq"])[0]
+
+    # start/end timestamp with current time for every row
+    ref_timestamp = datetime.now(tz=timezone.utc)
+    onset_tdelta = pd.to_timedelta(df["onset"], unit="s")  # type: ignore
+    df["start_timestamp"] = ref_timestamp + onset_tdelta
+
+    duration_secs = pd.to_timedelta(df["duration"], unit="s")  # type: ignore
+    df["end_timestamp"] = df["start_timestamp"] + duration_secs
+    df["ref_timestamp"] = ref_timestamp
+
+    # first group by channels
+    # now join rows that are overlapping
+    merged_df = (
+        df.groupby(["label"])
+        .apply(_join_times_channels)  # type: ignore
+        .reset_index(drop=True)
+    )
+
+    # get the old columns back and drop the intermediate computation columns
+    merged_df["duration"] = (
+        merged_df["end_timestamp"] - merged_df["start_timestamp"]
+    ).dt.total_seconds()
+    merged_df["onset"] = (
+        merged_df["start_timestamp"] - merged_df["ref_timestamp"]
+    ).dt.total_seconds()
+    merged_df["sample"] = merged_df["onset"] * sfreq
+
+    # XXX: need to enable different sfreqs maybe
+    print(sfreq)
+    print(merged_df)
+    merged_df["sfreq"] = sfreq
+    merged_df.drop(
+        ["start_timestamp", "end_timestamp", "ref_timestamp"], axis=1, inplace=True
+    )
+
+    return merged_df
 
 def find_coincident_events(hfo_dict1, hfo_dict2):
     """

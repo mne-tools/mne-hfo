@@ -10,35 +10,27 @@ from .posthoc import match_detected_annotations
 implemented_labeling = ["raw-detections", "simple-binning", "overlap-predictions"]
 implemented_comparisons = ["cohen-kappa", "mutual-info", "similarity-ratio"]
 
-def compare_chart(det_list: list,
-                     out_file = None,
-                     normalize = True,
-                     **comp_kw):
+def correlation_matrix(det_list: list,
+                        **comp_kw):
     """
-    Compares similarity between detector results.
-    Creates a plot of the comparison values in a len(det_list) x len(det_list) plot.
-
-
-    The detectors should be fit to the same data.
+    Generates a correlation matrix of detectors using values called from compare_detectors()
+    using arguments pass in comp_kw. See compare_detectors() for more details about the
+    comp_kw argument.
 
     Parameters
     ----------
     det_list : List
-        A list containing Detector instances. Detectors should already been fit
-        to the data.
-    out_file : String (Default: None)
-        The file to write the chart to. If none, plot but do not save.
-    normalize : Bool (Default: True)
-        The method to use for comparison. Either 'cohen-kappa' or 'mutual-info'
+        A list containing Detector instances. Detectors should already be fit to
+        the data.
     **comp_kw
-        All other keywords are passed to compare_detectors().
+        Keywords that will be passed to compare_detectors()
 
     Returns
     -------
-    fig : matplotlib.pyplot.Figure
-        Figure containing detector comparison values.
+    comparison_matrix : np.ndarray
+        A lower triangular matrix with comparison values between all detectors. Upper
+        triangle is filled with np.nan values.
     """
-
     chart_size = (len(det_list), len(det_list))
 
     comparison_values = []
@@ -50,48 +42,9 @@ def compare_chart(det_list: list,
                 ch_vals = compare_detectors(i, j, **comp_kw)
                 comparison_values.append(np.mean([val for val in list(ch_vals.values()) if not math.isnan(val)]))
 
-    comparison_values = np.reshape(comparison_values, chart_size)
-
-    if normalize:
-        transformer = MinMaxScaler().fit(comparison_values)
-        minMaxVals = transformer.fit_transform(comparison_values)
-        transformer = Normalizer().fit(minMaxVals)
-        norm_vals = transformer.fit_transform(minMaxVals)
-        comparison_values = norm_vals.copy()
-
-
-    print("Plotting......make take a while")
-    fig, ax = plt.subplots()
-    im = ax.imshow(comparison_values, cmap='inferno')
-    ax.set_xticks(np.arange(len(det_list)), labels=[det.__class__() for det in det_list])
-    ax.set_yticks(np.arange(len(det_list)), labels=[det.__class__() for det in det_list])
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-             rotation_mode="anchor")
-
-    # Loop over data dimensions and create text annotations.
-    for i in range(len(det_list)):
-        for j in range(len(det_list)):
-            if round(float(comparison_values[i, j]),3) > 0.5:
-                color = 'k'
-            else:
-                color = 'w'
-            text = ax.text(j, i, round(float(comparison_values[i, j]),3),
-                        ha="center", va="center", color=color)
-
-    cbar = ax.figure.colorbar(im, ax=ax)
-    cbar.ax.set_ylabel("Similarity (normalized)", rotation=-90, va="bottom")
-
-
-    ax.set_title("Detector Comparison")
-    fig.tight_layout()
-    if out_file == None:
-        plt.show()
-    else:
-        plt.savefig(out_file)
-
-    return fig
-
-
+    comparison_matrix = np.reshape(comparison_values, chart_size)
+    comparison_matrix[np.triu_indices(comparison_matrix.shape[0], 1)] = np.nan
+    return comparison_matrix
 
 def compare_detectors(clf_1, clf_2, 
                       **kwargs):
@@ -113,8 +66,6 @@ def compare_detectors(clf_1, clf_2,
             Implemented comparison method
         bin_width : Int, default : 1
             Bin width if labeling requires a bin
-
-
 
     Returns
     -------
@@ -206,6 +157,8 @@ def _raw_detections(df1, df2, ch_names, data_len):
         Dataframe that contains detection information for each channel.
     ch_names: List[Str]
         The method to use for comparison. Either 'cohen-kappa' or 'mutual-info'
+    data_len: Int
+        The amount of samples in the raw data.
 
     Returns
     -------

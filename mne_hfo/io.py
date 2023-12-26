@@ -8,7 +8,7 @@ import numpy as np
 import pandas
 import pandas as pd
 from mne.utils import run_subprocess
-from mne_bids import BIDSPath, get_entities_from_fname, read_raw_bids
+from mne_bids import read_raw_bids, get_bids_path_from_fname, BIDSPath
 
 from .config import ANNOT_COLUMNS
 
@@ -175,13 +175,9 @@ def read_annotations(
         annot_json = json.load(fin)
 
     # extract the sample freq
-    raw_rel_fpath = annot_json["IntendedFor"]
-    entities = get_entities_from_fname(raw_rel_fpath)
-    print(raw_rel_fpath)
-    raw_fpath = BIDSPath(
-        **entities, datatype="ieeg", extension=Path(raw_rel_fpath).suffix, root=root
-    )
-    print("raw fpath: ", raw_fpath)
+    raw_rel_fpath = annot_json['IntendedFor']
+    raw_fpath = get_bids_path_from_fname(raw_rel_fpath)
+    raw_fpath.update(root=root)
     if not raw_fpath.fpath.exists():
         raise RuntimeError(
             f"No raw dataset found for {fpath}. " f'Please set "root" kwarg.'
@@ -229,12 +225,11 @@ def write_annotations(
         description = "HFO annotated events detected using " "mne-hfo algorithms."
 
     # error check that intendeFor exists
-    entities = get_entities_from_fname(intended_for)
-    _, ext = os.path.splitext(intended_for)
+    intended_for_path = get_bids_path_from_fname(intended_for)
     # write the correct extension for BrainVision
-    if ext == ".eeg":
-        ext = ".vhdr"
-    intended_for_path = BIDSPath(**entities, extension=ext, root=root)
+    if intended_for_path.extension == '.eeg':
+        intended_for_path.update(extension = '.vhdr')
+
     if not intended_for_path.fpath.exists():
         raise RuntimeError(
             f"The intended for raw dataset "

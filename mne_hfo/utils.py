@@ -16,10 +16,10 @@ from .config import ANNOT_COLUMNS
 def _check_df(df: pd.DataFrame, df_type: str, copy: bool = True) -> pd.DataFrame:
     """Check dataframe for correctness."""
     if df_type == "annotations":
-        if any([col not in df.columns for col in ANNOT_COLUMNS + ["sample"]]):
+        if any([col not in df.columns for col in ANNOT_COLUMNS]):
             raise RuntimeError(
                 f"Annotations dataframe columns must contain "
-                f'{ANNOT_COLUMNS + ["sample"]}.'
+                f'{ANNOT_COLUMNS}.'
             )
 
     # Only want to do this check if there are multiple rows. Handles edge case
